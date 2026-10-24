@@ -1,0 +1,19 @@
+name: tests
+on:
+  push:
+  pull_request:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ['3.10', '3.12']
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "${{ matrix.python-version }}"
+      - name: Run dependency-free unit tests
+        run: PYTHONPATH=src python -m unittest discover -s tests -v
+      - name: Synthetic diagnostic smoke test
+        run: PYTHONPATH=src python -m relational_lab.analysis examples/toy_counterfactual.json
