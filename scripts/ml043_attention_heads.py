@@ -350,10 +350,14 @@ def intervene(model, data, key, seed, device):
     for head in range(dheads.shape[0]):
         delta = dheads[head]
 
-        if float(delta.norm()) < 1e-9:
+        if not bool(torch.isfinite(delta).all()):
             raise RuntimeError(
-                f"Degenerate head interaction: {head}"
+                f"Non-finite head interaction: {head}"
             )
+
+        # A zero interaction is a valid scientific observation.
+        # Removing it produces a zero perturbation; retain the
+        # head and quartet rather than censoring the result.
 
         vectors = [delta] + [
             delta * signflip(
