@@ -1,0 +1,4055 @@
+{
+  "spec": {
+    "experiment": "ML-052",
+    "train_bank": [
+      [
+        "Harper",
+        "Quinn",
+        "praised"
+      ],
+      [
+        "Elena",
+        "Victor",
+        "helped"
+      ],
+      [
+        "Hazel",
+        "Caleb",
+        "admired"
+      ],
+      [
+        "Freya",
+        "Isaac",
+        "thanked"
+      ],
+      [
+        "Martha",
+        "Jonah",
+        "followed"
+      ],
+      [
+        "Piper",
+        "Louis",
+        "greeted"
+      ],
+      [
+        "Evelyn",
+        "Adrian",
+        "supported"
+      ],
+      [
+        "Phoebe",
+        "Arthur",
+        "rescued"
+      ],
+      [
+        "Amelia",
+        "Samuel",
+        "encouraged"
+      ],
+      [
+        "Chloe",
+        "Jacob",
+        "comforted"
+      ],
+      [
+        "Miriam",
+        "George",
+        "welcomed"
+      ],
+      [
+        "Sylvia",
+        "Martin",
+        "guided"
+      ],
+      [
+        "Lydia",
+        "Marcus",
+        "advised"
+      ],
+      [
+        "Ruth",
+        "Thomas",
+        "visited"
+      ],
+      [
+        "Adele",
+        "Vincent",
+        "assisted"
+      ],
+      [
+        "Rose",
+        "Elliot",
+        "alerted"
+      ]
+    ],
+    "protected_bank": [
+      [
+        "Cora",
+        "Elias",
+        "congratulated"
+      ],
+      [
+        "Fiona",
+        "Miles",
+        "applauded"
+      ],
+      [
+        "Beatrice",
+        "Rowan",
+        "recognized"
+      ],
+      [
+        "Nadia",
+        "Hugo",
+        "reassured"
+      ],
+      [
+        "Daphne",
+        "Colin",
+        "hugged"
+      ],
+      [
+        "Naomi",
+        "Ezra",
+        "invited"
+      ],
+      [
+        "Willa",
+        "Gavin",
+        "chased"
+      ],
+      [
+        "Vera",
+        "Leon",
+        "respected"
+      ],
+      [
+        "Ivy",
+        "Nathan",
+        "photographed"
+      ],
+      [
+        "Selena",
+        "Tobias",
+        "surprised"
+      ],
+      [
+        "Bianca",
+        "Rafael",
+        "consoled"
+      ],
+      [
+        "Mabel",
+        "Owen",
+        "trusted"
+      ],
+      [
+        "Leila",
+        "Dominic",
+        "consulted"
+      ],
+      [
+        "Olive",
+        "Calvin",
+        "observed"
+      ],
+      [
+        "Jade",
+        "Stanley",
+        "criticized"
+      ],
+      [
+        "Esther",
+        "Lawrence",
+        "questioned"
+      ]
+    ],
+    "required_groups_per_split": 6,
+    "train_constructions": [
+      "active",
+      "passive",
+      "object_cleft",
+      "subject_cleft"
+    ],
+    "compositional_holdout": "passive_cleft",
+    "directions": [
+      0,
+      1
+    ],
+    "roles": [
+      "agent",
+      "patient"
+    ],
+    "selection": "First six tokenizer-eligible groups from each fixed bank; no output scores",
+    "eligible": "Both candidate continuations have equal token counts in both tokenizers for every evaluated prompt",
+    "primary": "Correct-minus-other conditional name log-likelihood",
+    "primary_test": "Unseen passive-cleft composition with new names and verbs",
+    "baselines": "Role-only, position, subjecthood, construction-conditioned, additive cues",
+    "independent_unit": "Name-pair/verb group; grammatical variants within a group are dependent",
+    "interpretation": "Behavioral prediction; causal evidence requires a separate intervention"
+  },
+  "selection": {
+    "calibration": [
+      [
+        "Harper",
+        "Quinn",
+        "praised"
+      ],
+      [
+        "Elena",
+        "Victor",
+        "helped"
+      ],
+      [
+        "Hazel",
+        "Caleb",
+        "admired"
+      ],
+      [
+        "Freya",
+        "Isaac",
+        "thanked"
+      ],
+      [
+        "Martha",
+        "Jonah",
+        "followed"
+      ],
+      [
+        "Amelia",
+        "Samuel",
+        "encouraged"
+      ]
+    ],
+    "protected": [
+      [
+        "Cora",
+        "Elias",
+        "congratulated"
+      ],
+      [
+        "Fiona",
+        "Miles",
+        "applauded"
+      ],
+      [
+        "Beatrice",
+        "Rowan",
+        "recognized"
+      ],
+      [
+        "Nadia",
+        "Hugo",
+        "reassured"
+      ],
+      [
+        "Willa",
+        "Gavin",
+        "chased"
+      ],
+      [
+        "Ivy",
+        "Nathan",
+        "photographed"
+      ]
+    ]
+  },
+  "excluded_for_tokenization": {
+    "calibration": [
+      {
+        "group": [
+          "Piper",
+          "Louis",
+          "greeted"
+        ],
+        "reason": "qwen7b:active:agent:2/1"
+      },
+      {
+        "group": [
+          "Evelyn",
+          "Adrian",
+          "supported"
+        ],
+        "reason": "qwen7b:active:agent:3/2"
+      },
+      {
+        "group": [
+          "Phoebe",
+          "Arthur",
+          "rescued"
+        ],
+        "reason": "qwen7b:active:agent:3/1"
+      },
+      {
+        "group": [
+          "Chloe",
+          "Jacob",
+          "comforted"
+        ],
+        "reason": "qwen7b:active:agent:2/1"
+      },
+      {
+        "group": [
+          "Miriam",
+          "George",
+          "welcomed"
+        ],
+        "reason": "qwen7b:active:agent:2/1"
+      },
+      {
+        "group": [
+          "Sylvia",
+          "Martin",
+          "guided"
+        ],
+        "reason": "qwen7b:active:agent:3/1"
+      },
+      {
+        "group": [
+          "Lydia",
+          "Marcus",
+          "advised"
+        ],
+        "reason": "qwen7b:active:agent:2/1"
+      },
+      {
+        "group": [
+          "Ruth",
+          "Thomas",
+          "visited"
+        ],
+        "reason": "qwen7b:active:agent:2/1"
+      },
+      {
+        "group": [
+          "Adele",
+          "Vincent",
+          "assisted"
+        ],
+        "reason": "qwen7b:active:agent:3/2"
+      },
+      {
+        "group": [
+          "Rose",
+          "Elliot",
+          "alerted"
+        ],
+        "reason": "qwen7b:active:agent:1/2"
+      }
+    ],
+    "protected": [
+      {
+        "group": [
+          "Daphne",
+          "Colin",
+          "hugged"
+        ],
+        "reason": "qwen7b:active:agent:3/2"
+      },
+      {
+        "group": [
+          "Naomi",
+          "Ezra",
+          "invited"
+        ],
+        "reason": "qwen7b:active:agent:2/3"
+      },
+      {
+        "group": [
+          "Vera",
+          "Leon",
+          "respected"
+        ],
+        "reason": "qwen7b:active:agent:2/1"
+      },
+      {
+        "group": [
+          "Selena",
+          "Tobias",
+          "surprised"
+        ],
+        "reason": "qwen7b:active:agent:2/3"
+      }
+    ]
+  },
+  "cases": {
+    "calibration": [
+      {
+        "id": "calibration_Harper_Quinn_praised_0_active_agent",
+        "split": "calibration",
+        "pair": [
+          "Harper",
+          "Quinn"
+        ],
+        "verb": "praised",
+        "direction": 0,
+        "construction": "active",
+        "role": "agent",
+        "agent": "Harper",
+        "patient": "Quinn",
+        "gold": "Harper",
+        "passage": "At dawn, Harper praised Quinn.",
+        "question": "Who performed the action at dawn?"
+      },
+      {
+        "id": "calibration_Harper_Quinn_praised_0_active_patient",
+        "split": "calibration",
+        "pair": [
+          "Harper",
+          "Quinn"
+        ],
+        "verb": "praised",
+        "direction": 0,
+        "construction": "active",
+        "role": "patient",
+        "agent": "Harper",
+        "patient": "Quinn",
+        "gold": "Quinn",
+        "passage": "At dawn, Harper praised Quinn.",
+        "question": "Who received the action at dawn?"
+      },
+      {
+        "id": "calibration_Harper_Quinn_praised_0_passive_agent",
+        "split": "calibration",
+        "pair": [
+          "Harper",
+          "Quinn"
+        ],
+        "verb": "praised",
+        "direction": 0,
+        "construction": "passive",
+        "role": "agent",
+        "agent": "Harper",
+        "patient": "Quinn",
+        "gold": "Harper",
+        "passage": "At dawn, Quinn was praised by Harper.",
+        "question": "Who performed the action at dawn?"
+      },
+      {
+        "id": "calibration_Harper_Quinn_praised_0_passive_patient",
+        "split": "calibration",
+        "pair": [
+          "Harper",
+          "Quinn"
+        ],
+        "verb": "praised",
+        "direction": 0,
+        "construction": "passive",
+        "role": "patient",
+        "agent": "Harper",
+        "patient": "Quinn",
+        "gold": "Quinn",
+        "passage": "At dawn, Quinn was praised by Harper.",
+        "question": "Who received the action at dawn?"
+      },
+      {
+        "id": "calibration_Harper_Quinn_praised_0_object_cleft_agent",
+        "split": "calibration",
+        "pair": [
+          "Harper",
+          "Quinn"
+        ],
+        "verb": "praised",
+        "direction": 0,
+        "construction": "object_cleft",
+        "role": "agent",
+        "agent": "Harper",
+        "patient": "Quinn",
+        "gold": "Harper",
+        "passage": "At dawn, it was Quinn that Harper praised.",
+        "question": "Who performed the action at dawn?"
+      },
+      {
+        "id": "calibration_Harper_Quinn_praised_0_object_cleft_patient",
+        "split": "calibration",
+        "pair": [
+          "Harper",
+          "Quinn"
+        ],
+        "verb": "praised",
+        "direction": 0,
+        "construction": "object_cleft",
+        "role": "patient",
+        "agent": "Harper",
+        "patient": "Quinn",
+        "gold": "Quinn",
+        "passage": "At dawn, it was Quinn that Harper praised.",
+        "question": "Who received the action at dawn?"
+      },
+      {
+        "id": "calibration_Harper_Quinn_praised_0_subject_cleft_agent",
+        "split": "calibration",
+        "pair": [
+          "Harper",
+          "Quinn"
+        ],
+        "verb": "praised",
+        "direction": 0,
+        "construction": "subject_cleft",
+        "role": "agent",
+        "agent": "Harper",
+        "patient": "Quinn",
+        "gold": "Harper",
+        "passage": "At dawn, it was Harper who praised Quinn.",
+        "question": "Who performed the action at dawn?"
+      },
+      {
+        "id": "calibration_Harper_Quinn_praised_0_subject_cleft_patient",
+        "split": "calibration",
+        "pair": [
+          "Harper",
+          "Quinn"
+        ],
+        "verb": "praised",
+        "direction": 0,
+        "construction": "subject_cleft",
+        "role": "patient",
+        "agent": "Harper",
+        "patient": "Quinn",
+        "gold": "Quinn",
+        "passage": "At dawn, it was Harper who praised Quinn.",
+        "question": "Who received the action at dawn?"
+      },
+      {
+        "id": "calibration_Harper_Quinn_praised_1_active_agent",
+        "split": "calibration",
+        "pair": [
+          "Harper",
+          "Quinn"
+        ],
+        "verb": "praised",
+        "direction": 1,
+        "construction": "active",
+        "role": "agent",
+        "agent": "Quinn",
+        "patient": "Harper",
+        "gold": "Quinn",
+        "passage": "At dawn, Quinn praised Harper.",
+        "question": "Who performed the action at dawn?"
+      },
+      {
+        "id": "calibration_Harper_Quinn_praised_1_active_patient",
+        "split": "calibration",
+        "pair": [
+          "Harper",
+          "Quinn"
+        ],
+        "verb": "praised",
+        "direction": 1,
+        "construction": "active",
+        "role": "patient",
+        "agent": "Quinn",
+        "patient": "Harper",
+        "gold": "Harper",
+        "passage": "At dawn, Quinn praised Harper.",
+        "question": "Who received the action at dawn?"
+      },
+      {
+        "id": "calibration_Harper_Quinn_praised_1_passive_agent",
+        "split": "calibration",
+        "pair": [
+          "Harper",
+          "Quinn"
+        ],
+        "verb": "praised",
+        "direction": 1,
+        "construction": "passive",
+        "role": "agent",
+        "agent": "Quinn",
+        "patient": "Harper",
+        "gold": "Quinn",
+        "passage": "At dawn, Harper was praised by Quinn.",
+        "question": "Who performed the action at dawn?"
+      },
+      {
+        "id": "calibration_Harper_Quinn_praised_1_passive_patient",
+        "split": "calibration",
+        "pair": [
+          "Harper",
+          "Quinn"
+        ],
+        "verb": "praised",
+        "direction": 1,
+        "construction": "passive",
+        "role": "patient",
+        "agent": "Quinn",
+        "patient": "Harper",
+        "gold": "Harper",
+        "passage": "At dawn, Harper was praised by Quinn.",
+        "question": "Who received the action at dawn?"
+      },
+      {
+        "id": "calibration_Harper_Quinn_praised_1_object_cleft_agent",
+        "split": "calibration",
+        "pair": [
+          "Harper",
+          "Quinn"
+        ],
+        "verb": "praised",
+        "direction": 1,
+        "construction": "object_cleft",
+        "role": "agent",
+        "agent": "Quinn",
+        "patient": "Harper",
+        "gold": "Quinn",
+        "passage": "At dawn, it was Harper that Quinn praised.",
+        "question": "Who performed the action at dawn?"
+      },
+      {
+        "id": "calibration_Harper_Quinn_praised_1_object_cleft_patient",
+        "split": "calibration",
+        "pair": [
+          "Harper",
+          "Quinn"
+        ],
+        "verb": "praised",
+        "direction": 1,
+        "construction": "object_cleft",
+        "role": "patient",
+        "agent": "Quinn",
+        "patient": "Harper",
+        "gold": "Harper",
+        "passage": "At dawn, it was Harper that Quinn praised.",
+        "question": "Who received the action at dawn?"
+      },
+      {
+        "id": "calibration_Harper_Quinn_praised_1_subject_cleft_agent",
+        "split": "calibration",
+        "pair": [
+          "Harper",
+          "Quinn"
+        ],
+        "verb": "praised",
+        "direction": 1,
+        "construction": "subject_cleft",
+        "role": "agent",
+        "agent": "Quinn",
+        "patient": "Harper",
+        "gold": "Quinn",
+        "passage": "At dawn, it was Quinn who praised Harper.",
+        "question": "Who performed the action at dawn?"
+      },
+      {
+        "id": "calibration_Harper_Quinn_praised_1_subject_cleft_patient",
+        "split": "calibration",
+        "pair": [
+          "Harper",
+          "Quinn"
+        ],
+        "verb": "praised",
+        "direction": 1,
+        "construction": "subject_cleft",
+        "role": "patient",
+        "agent": "Quinn",
+        "patient": "Harper",
+        "gold": "Harper",
+        "passage": "At dawn, it was Quinn who praised Harper.",
+        "question": "Who received the action at dawn?"
+      },
+      {
+        "id": "calibration_Elena_Victor_helped_0_active_agent",
+        "split": "calibration",
+        "pair": [
+          "Elena",
+          "Victor"
+        ],
+        "verb": "helped",
+        "direction": 0,
+        "construction": "active",
+        "role": "agent",
+        "agent": "Elena",
+        "patient": "Victor",
+        "gold": "Elena",
+        "passage": "At dawn, Elena helped Victor.",
+        "question": "Who performed the action at dawn?"
+      },
+      {
+        "id": "calibration_Elena_Victor_helped_0_active_patient",
+        "split": "calibration",
+        "pair": [
+          "Elena",
+          "Victor"
+        ],
+        "verb": "helped",
+        "direction": 0,
+        "construction": "active",
+        "role": "patient",
+        "agent": "Elena",
+        "patient": "Victor",
+        "gold": "Victor",
+        "passage": "At dawn, Elena helped Victor.",
+        "question": "Who received the action at dawn?"
+      },
+      {
+        "id": "calibration_Elena_Victor_helped_0_passive_agent",
+        "split": "calibration",
+        "pair": [
+          "Elena",
+          "Victor"
+        ],
+        "verb": "helped",
+        "direction": 0,
+        "construction": "passive",
+        "role": "agent",
+        "agent": "Elena",
+        "patient": "Victor",
+        "gold": "Elena",
+        "passage": "At dawn, Victor was helped by Elena.",
+        "question": "Who performed the action at dawn?"
+      },
+      {
+        "id": "calibration_Elena_Victor_helped_0_passive_patient",
+        "split": "calibration",
+        "pair": [
+          "Elena",
+          "Victor"
+        ],
+        "verb": "helped",
+        "direction": 0,
+        "construction": "passive",
+        "role": "patient",
+        "agent": "Elena",
+        "patient": "Victor",
+        "gold": "Victor",
+        "passage": "At dawn, Victor was helped by Elena.",
+        "question": "Who received the action at dawn?"
+      },
+      {
+        "id": "calibration_Elena_Victor_helped_0_object_cleft_agent",
+        "split": "calibration",
+        "pair": [
+          "Elena",
+          "Victor"
+        ],
+        "verb": "helped",
+        "direction": 0,
+        "construction": "object_cleft",
+        "role": "agent",
+        "agent": "Elena",
+        "patient": "Victor",
+        "gold": "Elena",
+        "passage": "At dawn, it was Victor that Elena helped.",
+        "question": "Who performed the action at dawn?"
+      },
+      {
+        "id": "calibration_Elena_Victor_helped_0_object_cleft_patient",
+        "split": "calibration",
+        "pair": [
+          "Elena",
+          "Victor"
+        ],
+        "verb": "helped",
+        "direction": 0,
+        "construction": "object_cleft",
+        "role": "patient",
+        "agent": "Elena",
+        "patient": "Victor",
+        "gold": "Victor",
+        "passage": "At dawn, it was Victor that Elena helped.",
+        "question": "Who received the action at dawn?"
+      },
+      {
+        "id": "calibration_Elena_Victor_helped_0_subject_cleft_agent",
+        "split": "calibration",
+        "pair": [
+          "Elena",
+          "Victor"
+        ],
+        "verb": "helped",
+        "direction": 0,
+        "construction": "subject_cleft",
+        "role": "agent",
+        "agent": "Elena",
+        "patient": "Victor",
+        "gold": "Elena",
+        "passage": "At dawn, it was Elena who helped Victor.",
+        "question": "Who performed the action at dawn?"
+      },
+      {
+        "id": "calibration_Elena_Victor_helped_0_subject_cleft_patient",
+        "split": "calibration",
+        "pair": [
+          "Elena",
+          "Victor"
+        ],
+        "verb": "helped",
+        "direction": 0,
+        "construction": "subject_cleft",
+        "role": "patient",
+        "agent": "Elena",
+        "patient": "Victor",
+        "gold": "Victor",
+        "passage": "At dawn, it was Elena who helped Victor.",
+        "question": "Who received the action at dawn?"
+      },
+      {
+        "id": "calibration_Elena_Victor_helped_1_active_agent",
+        "split": "calibration",
+        "pair": [
+          "Elena",
+          "Victor"
+        ],
+        "verb": "helped",
+        "direction": 1,
+        "construction": "active",
+        "role": "agent",
+        "agent": "Victor",
+        "patient": "Elena",
+        "gold": "Victor",
+        "passage": "At dawn, Victor helped Elena.",
+        "question": "Who performed the action at dawn?"
+      },
+      {
+        "id": "calibration_Elena_Victor_helped_1_active_patient",
+        "split": "calibration",
+        "pair": [
+          "Elena",
+          "Victor"
+        ],
+        "verb": "helped",
+        "direction": 1,
+        "construction": "active",
+        "role": "patient",
+        "agent": "Victor",
+        "patient": "Elena",
+        "gold": "Elena",
+        "passage": "At dawn, Victor helped Elena.",
+        "question": "Who received the action at dawn?"
+      },
+      {
+        "id": "calibration_Elena_Victor_helped_1_passive_agent",
+        "split": "calibration",
+        "pair": [
+          "Elena",
+          "Victor"
+        ],
+        "verb": "helped",
+        "direction": 1,
+        "construction": "passive",
+        "role": "agent",
+        "agent": "Victor",
+        "patient": "Elena",
+        "gold": "Victor",
+        "passage": "At dawn, Elena was helped by Victor.",
+        "question": "Who performed the action at dawn?"
+      },
+      {
+        "id": "calibration_Elena_Victor_helped_1_passive_patient",
+        "split": "calibration",
+        "pair": [
+          "Elena",
+          "Victor"
+        ],
+        "verb": "helped",
+        "direction": 1,
+        "construction": "passive",
+        "role": "patient",
+        "agent": "Victor",
+        "patient": "Elena",
+        "gold": "Elena",
+        "passage": "At dawn, Elena was helped by Victor.",
+        "question": "Who received the action at dawn?"
+      },
+      {
+        "id": "calibration_Elena_Victor_helped_1_object_cleft_agent",
+        "split": "calibration",
+        "pair": [
+          "Elena",
+          "Victor"
+        ],
+        "verb": "helped",
+        "direction": 1,
+        "construction": "object_cleft",
+        "role": "agent",
+        "agent": "Victor",
+        "patient": "Elena",
+        "gold": "Victor",
+        "passage": "At dawn, it was Elena that Victor helped.",
+        "question": "Who performed the action at dawn?"
+      },
+      {
+        "id": "calibration_Elena_Victor_helped_1_object_cleft_patient",
+        "split": "calibration",
+        "pair": [
+          "Elena",
+          "Victor"
+        ],
+        "verb": "helped",
+        "direction": 1,
+        "construction": "object_cleft",
+        "role": "patient",
+        "agent": "Victor",
+        "patient": "Elena",
+        "gold": "Elena",
+        "passage": "At dawn, it was Elena that Victor helped.",
+        "question": "Who received the action at dawn?"
+      },
+      {
+        "id": "calibration_Elena_Victor_helped_1_subject_cleft_agent",
+        "split": "calibration",
+        "pair": [
+          "Elena",
+          "Victor"
+        ],
+        "verb": "helped",
+        "direction": 1,
+        "construction": "subject_cleft",
+        "role": "agent",
+        "agent": "Victor",
+        "patient": "Elena",
+        "gold": "Victor",
+        "passage": "At dawn, it was Victor who helped Elena.",
+        "question": "Who performed the action at dawn?"
+      },
+      {
+        "id": "calibration_Elena_Victor_helped_1_subject_cleft_patient",
+        "split": "calibration",
+        "pair": [
+          "Elena",
+          "Victor"
+        ],
+        "verb": "helped",
+        "direction": 1,
+        "construction": "subject_cleft",
+        "role": "patient",
+        "agent": "Victor",
+        "patient": "Elena",
+        "gold": "Elena",
+        "passage": "At dawn, it was Victor who helped Elena.",
+        "question": "Who received the action at dawn?"
+      },
+      {
+        "id": "calibration_Hazel_Caleb_admired_0_active_agent",
+        "split": "calibration",
+        "pair": [
+          "Hazel",
+          "Caleb"
+        ],
+        "verb": "admired",
+        "direction": 0,
+        "construction": "active",
+        "role": "agent",
+        "agent": "Hazel",
+        "patient": "Caleb",
+        "gold": "Hazel",
+        "passage": "At dawn, Hazel admired Caleb.",
+        "question": "Who performed the action at dawn?"
+      },
+      {
+        "id": "calibration_Hazel_Caleb_admired_0_active_patient",
+        "split": "calibration",
+        "pair": [
+          "Hazel",
+          "Caleb"
+        ],
+        "verb": "admired",
+        "direction": 0,
+        "construction": "active",
+        "role": "patient",
+        "agent": "Hazel",
+        "patient": "Caleb",
+        "gold": "Caleb",
+        "passage": "At dawn, Hazel admired Caleb.",
+        "question": "Who received the action at dawn?"
+      },
+      {
+        "id": "calibration_Hazel_Caleb_admired_0_passive_agent",
+        "split": "calibration",
+        "pair": [
+          "Hazel",
+          "Caleb"
+        ],
+        "verb": "admired",
+        "direction": 0,
+        "construction": "passive",
+        "role": "agent",
+        "agent": "Hazel",
+        "patient": "Caleb",
+        "gold": "Hazel",
+        "passage": "At dawn, Caleb was admired by Hazel.",
+        "question": "Who performed the action at dawn?"
+      },
+      {
+        "id": "calibration_Hazel_Caleb_admired_0_passive_patient",
+        "split": "calibration",
+        "pair": [
+          "Hazel",
+          "Caleb"
+        ],
+        "verb": "admired",
+        "direction": 0,
+        "construction": "passive",
+        "role": "patient",
+        "agent": "Hazel",
+        "patient": "Caleb",
+        "gold": "Caleb",
+        "passage": "At dawn, Caleb was admired by Hazel.",
+        "question": "Who received the action at dawn?"
+      },
+      {
+        "id": "calibration_Hazel_Caleb_admired_0_object_cleft_agent",
+        "split": "calibration",
+        "pair": [
+          "Hazel",
+          "Caleb"
+        ],
+        "verb": "admired",
+        "direction": 0,
+        "construction": "object_cleft",
+        "role": "agent",
+        "agent": "Hazel",
+        "patient": "Caleb",
+        "gold": "Hazel",
+        "passage": "At dawn, it was Caleb that Hazel admired.",
+        "question": "Who performed the action at dawn?"
+      },
+      {
+        "id": "calibration_Hazel_Caleb_admired_0_object_cleft_patient",
+        "split": "calibration",
+        "pair": [
+          "Hazel",
+          "Caleb"
+        ],
+        "verb": "admired",
+        "direction": 0,
+        "construction": "object_cleft",
+        "role": "patient",
+        "agent": "Hazel",
+        "patient": "Caleb",
+        "gold": "Caleb",
+        "passage": "At dawn, it was Caleb that Hazel admired.",
+        "question": "Who received the action at dawn?"
+      },
+      {
+        "id": "calibration_Hazel_Caleb_admired_0_subject_cleft_agent",
+        "split": "calibration",
+        "pair": [
+          "Hazel",
+          "Caleb"
+        ],
+        "verb": "admired",
+        "direction": 0,
+        "construction": "subject_cleft",
+        "role": "agent",
+        "agent": "Hazel",
+        "patient": "Caleb",
+        "gold": "Hazel",
+        "passage": "At dawn, it was Hazel who admired Caleb.",
+        "question": "Who performed the action at dawn?"
+      },
+      {
+        "id": "calibration_Hazel_Caleb_admired_0_subject_cleft_patient",
+        "split": "calibration",
+        "pair": [
+          "Hazel",
+          "Caleb"
+        ],
+        "verb": "admired",
+        "direction": 0,
+        "construction": "subject_cleft",
+        "role": "patient",
+        "agent": "Hazel",
+        "patient": "Caleb",
+        "gold": "Caleb",
+        "passage": "At dawn, it was Hazel who admired Caleb.",
+        "question": "Who received the action at dawn?"
+      },
+      {
+        "id": "calibration_Hazel_Caleb_admired_1_active_agent",
+        "split": "calibration",
+        "pair": [
+          "Hazel",
+          "Caleb"
+        ],
+        "verb": "admired",
+        "direction": 1,
+        "construction": "active",
+        "role": "agent",
+        "agent": "Caleb",
+        "patient": "Hazel",
+        "gold": "Caleb",
+        "passage": "At dawn, Caleb admired Hazel.",
+        "question": "Who performed the action at dawn?"
+      },
+      {
+        "id": "calibration_Hazel_Caleb_admired_1_active_patient",
+        "split": "calibration",
+        "pair": [
+          "Hazel",
+          "Caleb"
+        ],
+        "verb": "admired",
+        "direction": 1,
+        "construction": "active",
+        "role": "patient",
+        "agent": "Caleb",
+        "patient": "Hazel",
+        "gold": "Hazel",
+        "passage": "At dawn, Caleb admired Hazel.",
+        "question": "Who received the action at dawn?"
+      },
+      {
+        "id": "calibration_Hazel_Caleb_admired_1_passive_agent",
+        "split": "calibration",
+        "pair": [
+          "Hazel",
+          "Caleb"
+        ],
+        "verb": "admired",
+        "direction": 1,
+        "construction": "passive",
+        "role": "agent",
+        "agent": "Caleb",
+        "patient": "Hazel",
+        "gold": "Caleb",
+        "passage": "At dawn, Hazel was admired by Caleb.",
+        "question": "Who performed the action at dawn?"
+      },
+      {
+        "id": "calibration_Hazel_Caleb_admired_1_passive_patient",
+        "split": "calibration",
+        "pair": [
+          "Hazel",
+          "Caleb"
+        ],
+        "verb": "admired",
+        "direction": 1,
+        "construction": "passive",
+        "role": "patient",
+        "agent": "Caleb",
+        "patient": "Hazel",
+        "gold": "Hazel",
+        "passage": "At dawn, Hazel was admired by Caleb.",
+        "question": "Who received the action at dawn?"
+      },
+      {
+        "id": "calibration_Hazel_Caleb_admired_1_object_cleft_agent",
+        "split": "calibration",
+        "pair": [
+          "Hazel",
+          "Caleb"
+        ],
+        "verb": "admired",
+        "direction": 1,
+        "construction": "object_cleft",
+        "role": "agent",
+        "agent": "Caleb",
+        "patient": "Hazel",
+        "gold": "Caleb",
+        "passage": "At dawn, it was Hazel that Caleb admired.",
+        "question": "Who performed the action at dawn?"
+      },
+      {
+        "id": "calibration_Hazel_Caleb_admired_1_object_cleft_patient",
+        "split": "calibration",
+        "pair": [
+          "Hazel",
+          "Caleb"
+        ],
+        "verb": "admired",
+        "direction": 1,
+        "construction": "object_cleft",
+        "role": "patient",
+        "agent": "Caleb",
+        "patient": "Hazel",
+        "gold": "Hazel",
+        "passage": "At dawn, it was Hazel that Caleb admired.",
+        "question": "Who received the action at dawn?"
+      },
+      {
+        "id": "calibration_Hazel_Caleb_admired_1_subject_cleft_agent",
+        "split": "calibration",
+        "pair": [
+          "Hazel",
+          "Caleb"
+        ],
+        "verb": "admired",
+        "direction": 1,
+        "construction": "subject_cleft",
+        "role": "agent",
+        "agent": "Caleb",
+        "patient": "Hazel",
+        "gold": "Caleb",
+        "passage": "At dawn, it was Caleb who admired Hazel.",
+        "question": "Who performed the action at dawn?"
+      },
+      {
+        "id": "calibration_Hazel_Caleb_admired_1_subject_cleft_patient",
+        "split": "calibration",
+        "pair": [
+          "Hazel",
+          "Caleb"
+        ],
+        "verb": "admired",
+        "direction": 1,
+        "construction": "subject_cleft",
+        "role": "patient",
+        "agent": "Caleb",
+        "patient": "Hazel",
+        "gold": "Hazel",
+        "passage": "At dawn, it was Caleb who admired Hazel.",
+        "question": "Who received the action at dawn?"
+      },
+      {
+        "id": "calibration_Freya_Isaac_thanked_0_active_agent",
+        "split": "calibration",
+        "pair": [
+          "Freya",
+          "Isaac"
+        ],
+        "verb": "thanked",
+        "direction": 0,
+        "construction": "active",
+        "role": "agent",
+        "agent": "Freya",
+        "patient": "Isaac",
+        "gold": "Freya",
+        "passage": "At dawn, Freya thanked Isaac.",
+        "question": "Who performed the action at dawn?"
+      },
+      {
+        "id": "calibration_Freya_Isaac_thanked_0_active_patient",
+        "split": "calibration",
+        "pair": [
+          "Freya",
+          "Isaac"
+        ],
+        "verb": "thanked",
+        "direction": 0,
+        "construction": "active",
+        "role": "patient",
+        "agent": "Freya",
+        "patient": "Isaac",
+        "gold": "Isaac",
+        "passage": "At dawn, Freya thanked Isaac.",
+        "question": "Who received the action at dawn?"
+      },
+      {
+        "id": "calibration_Freya_Isaac_thanked_0_passive_agent",
+        "split": "calibration",
+        "pair": [
+          "Freya",
+          "Isaac"
+        ],
+        "verb": "thanked",
+        "direction": 0,
+        "construction": "passive",
+        "role": "agent",
+        "agent": "Freya",
+        "patient": "Isaac",
+        "gold": "Freya",
+        "passage": "At dawn, Isaac was thanked by Freya.",
+        "question": "Who performed the action at dawn?"
+      },
+      {
+        "id": "calibration_Freya_Isaac_thanked_0_passive_patient",
+        "split": "calibration",
+        "pair": [
+          "Freya",
+          "Isaac"
+        ],
+        "verb": "thanked",
+        "direction": 0,
+        "construction": "passive",
+        "role": "patient",
+        "agent": "Freya",
+        "patient": "Isaac",
+        "gold": "Isaac",
+        "passage": "At dawn, Isaac was thanked by Freya.",
+        "question": "Who received the action at dawn?"
+      },
+      {
+        "id": "calibration_Freya_Isaac_thanked_0_object_cleft_agent",
+        "split": "calibration",
+        "pair": [
+          "Freya",
+          "Isaac"
+        ],
+        "verb": "thanked",
+        "direction": 0,
+        "construction": "object_cleft",
+        "role": "agent",
+        "agent": "Freya",
+        "patient": "Isaac",
+        "gold": "Freya",
+        "passage": "At dawn, it was Isaac that Freya thanked.",
+        "question": "Who performed the action at dawn?"
+      },
+      {
+        "id": "calibration_Freya_Isaac_thanked_0_object_cleft_patient",
+        "split": "calibration",
+        "pair": [
+          "Freya",
+          "Isaac"
+        ],
+        "verb": "thanked",
+        "direction": 0,
+        "construction": "object_cleft",
+        "role": "patient",
+        "agent": "Freya",
+        "patient": "Isaac",
+        "gold": "Isaac",
+        "passage": "At dawn, it was Isaac that Freya thanked.",
+        "question": "Who received the action at dawn?"
+      },
+      {
+        "id": "calibration_Freya_Isaac_thanked_0_subject_cleft_agent",
+        "split": "calibration",
+        "pair": [
+          "Freya",
+          "Isaac"
+        ],
+        "verb": "thanked",
+        "direction": 0,
+        "construction": "subject_cleft",
+        "role": "agent",
+        "agent": "Freya",
+        "patient": "Isaac",
+        "gold": "Freya",
+        "passage": "At dawn, it was Freya who thanked Isaac.",
+        "question": "Who performed the action at dawn?"
+      },
+      {
+        "id": "calibration_Freya_Isaac_thanked_0_subject_cleft_patient",
+        "split": "calibration",
+        "pair": [
+          "Freya",
+          "Isaac"
+        ],
+        "verb": "thanked",
+        "direction": 0,
+        "construction": "subject_cleft",
+        "role": "patient",
+        "agent": "Freya",
+        "patient": "Isaac",
+        "gold": "Isaac",
+        "passage": "At dawn, it was Freya who thanked Isaac.",
+        "question": "Who received the action at dawn?"
+      },
+      {
+        "id": "calibration_Freya_Isaac_thanked_1_active_agent",
+        "split": "calibration",
+        "pair": [
+          "Freya",
+          "Isaac"
+        ],
+        "verb": "thanked",
+        "direction": 1,
+        "construction": "active",
+        "role": "agent",
+        "agent": "Isaac",
+        "patient": "Freya",
+        "gold": "Isaac",
+        "passage": "At dawn, Isaac thanked Freya.",
+        "question": "Who performed the action at dawn?"
+      },
+      {
+        "id": "calibration_Freya_Isaac_thanked_1_active_patient",
+        "split": "calibration",
+        "pair": [
+          "Freya",
+          "Isaac"
+        ],
+        "verb": "thanked",
+        "direction": 1,
+        "construction": "active",
+        "role": "patient",
+        "agent": "Isaac",
+        "patient": "Freya",
+        "gold": "Freya",
+        "passage": "At dawn, Isaac thanked Freya.",
+        "question": "Who received the action at dawn?"
+      },
+      {
+        "id": "calibration_Freya_Isaac_thanked_1_passive_agent",
+        "split": "calibration",
+        "pair": [
+          "Freya",
+          "Isaac"
+        ],
+        "verb": "thanked",
+        "direction": 1,
+        "construction": "passive",
+        "role": "agent",
+        "agent": "Isaac",
+        "patient": "Freya",
+        "gold": "Isaac",
+        "passage": "At dawn, Freya was thanked by Isaac.",
+        "question": "Who performed the action at dawn?"
+      },
+      {
+        "id": "calibration_Freya_Isaac_thanked_1_passive_patient",
+        "split": "calibration",
+        "pair": [
+          "Freya",
+          "Isaac"
+        ],
+        "verb": "thanked",
+        "direction": 1,
+        "construction": "passive",
+        "role": "patient",
+        "agent": "Isaac",
+        "patient": "Freya",
+        "gold": "Freya",
+        "passage": "At dawn, Freya was thanked by Isaac.",
+        "question": "Who received the action at dawn?"
+      },
+      {
+        "id": "calibration_Freya_Isaac_thanked_1_object_cleft_agent",
+        "split": "calibration",
+        "pair": [
+          "Freya",
+          "Isaac"
+        ],
+        "verb": "thanked",
+        "direction": 1,
+        "construction": "object_cleft",
+        "role": "agent",
+        "agent": "Isaac",
+        "patient": "Freya",
+        "gold": "Isaac",
+        "passage": "At dawn, it was Freya that Isaac thanked.",
+        "question": "Who performed the action at dawn?"
+      },
+      {
+        "id": "calibration_Freya_Isaac_thanked_1_object_cleft_patient",
+        "split": "calibration",
+        "pair": [
+          "Freya",
+          "Isaac"
+        ],
+        "verb": "thanked",
+        "direction": 1,
+        "construction": "object_cleft",
+        "role": "patient",
+        "agent": "Isaac",
+        "patient": "Freya",
+        "gold": "Freya",
+        "passage": "At dawn, it was Freya that Isaac thanked.",
+        "question": "Who received the action at dawn?"
+      },
+      {
+        "id": "calibration_Freya_Isaac_thanked_1_subject_cleft_agent",
+        "split": "calibration",
+        "pair": [
+          "Freya",
+          "Isaac"
+        ],
+        "verb": "thanked",
+        "direction": 1,
+        "construction": "subject_cleft",
+        "role": "agent",
+        "agent": "Isaac",
+        "patient": "Freya",
+        "gold": "Isaac",
+        "passage": "At dawn, it was Isaac who thanked Freya.",
+        "question": "Who performed the action at dawn?"
+      },
+      {
+        "id": "calibration_Freya_Isaac_thanked_1_subject_cleft_patient",
+        "split": "calibration",
+        "pair": [
+          "Freya",
+          "Isaac"
+        ],
+        "verb": "thanked",
+        "direction": 1,
+        "construction": "subject_cleft",
+        "role": "patient",
+        "agent": "Isaac",
+        "patient": "Freya",
+        "gold": "Freya",
+        "passage": "At dawn, it was Isaac who thanked Freya.",
+        "question": "Who received the action at dawn?"
+      },
+      {
+        "id": "calibration_Martha_Jonah_followed_0_active_agent",
+        "split": "calibration",
+        "pair": [
+          "Martha",
+          "Jonah"
+        ],
+        "verb": "followed",
+        "direction": 0,
+        "construction": "active",
+        "role": "agent",
+        "agent": "Martha",
+        "patient": "Jonah",
+        "gold": "Martha",
+        "passage": "At dawn, Martha followed Jonah.",
+        "question": "Who performed the action at dawn?"
+      },
+      {
+        "id": "calibration_Martha_Jonah_followed_0_active_patient",
+        "split": "calibration",
+        "pair": [
+          "Martha",
+          "Jonah"
+        ],
+        "verb": "followed",
+        "direction": 0,
+        "construction": "active",
+        "role": "patient",
+        "agent": "Martha",
+        "patient": "Jonah",
+        "gold": "Jonah",
+        "passage": "At dawn, Martha followed Jonah.",
+        "question": "Who received the action at dawn?"
+      },
+      {
+        "id": "calibration_Martha_Jonah_followed_0_passive_agent",
+        "split": "calibration",
+        "pair": [
+          "Martha",
+          "Jonah"
+        ],
+        "verb": "followed",
+        "direction": 0,
+        "construction": "passive",
+        "role": "agent",
+        "agent": "Martha",
+        "patient": "Jonah",
+        "gold": "Martha",
+        "passage": "At dawn, Jonah was followed by Martha.",
+        "question": "Who performed the action at dawn?"
+      },
+      {
+        "id": "calibration_Martha_Jonah_followed_0_passive_patient",
+        "split": "calibration",
+        "pair": [
+          "Martha",
+          "Jonah"
+        ],
+        "verb": "followed",
+        "direction": 0,
+        "construction": "passive",
+        "role": "patient",
+        "agent": "Martha",
+        "patient": "Jonah",
+        "gold": "Jonah",
+        "passage": "At dawn, Jonah was followed by Martha.",
+        "question": "Who received the action at dawn?"
+      },
+      {
+        "id": "calibration_Martha_Jonah_followed_0_object_cleft_agent",
+        "split": "calibration",
+        "pair": [
+          "Martha",
+          "Jonah"
+        ],
+        "verb": "followed",
+        "direction": 0,
+        "construction": "object_cleft",
+        "role": "agent",
+        "agent": "Martha",
+        "patient": "Jonah",
+        "gold": "Martha",
+        "passage": "At dawn, it was Jonah that Martha followed.",
+        "question": "Who performed the action at dawn?"
+      },
+      {
+        "id": "calibration_Martha_Jonah_followed_0_object_cleft_patient",
+        "split": "calibration",
+        "pair": [
+          "Martha",
+          "Jonah"
+        ],
+        "verb": "followed",
+        "direction": 0,
+        "construction": "object_cleft",
+        "role": "patient",
+        "agent": "Martha",
+        "patient": "Jonah",
+        "gold": "Jonah",
+        "passage": "At dawn, it was Jonah that Martha followed.",
+        "question": "Who received the action at dawn?"
+      },
+      {
+        "id": "calibration_Martha_Jonah_followed_0_subject_cleft_agent",
+        "split": "calibration",
+        "pair": [
+          "Martha",
+          "Jonah"
+        ],
+        "verb": "followed",
+        "direction": 0,
+        "construction": "subject_cleft",
+        "role": "agent",
+        "agent": "Martha",
+        "patient": "Jonah",
+        "gold": "Martha",
+        "passage": "At dawn, it was Martha who followed Jonah.",
+        "question": "Who performed the action at dawn?"
+      },
+      {
+        "id": "calibration_Martha_Jonah_followed_0_subject_cleft_patient",
+        "split": "calibration",
+        "pair": [
+          "Martha",
+          "Jonah"
+        ],
+        "verb": "followed",
+        "direction": 0,
+        "construction": "subject_cleft",
+        "role": "patient",
+        "agent": "Martha",
+        "patient": "Jonah",
+        "gold": "Jonah",
+        "passage": "At dawn, it was Martha who followed Jonah.",
+        "question": "Who received the action at dawn?"
+      },
+      {
+        "id": "calibration_Martha_Jonah_followed_1_active_agent",
+        "split": "calibration",
+        "pair": [
+          "Martha",
+          "Jonah"
+        ],
+        "verb": "followed",
+        "direction": 1,
+        "construction": "active",
+        "role": "agent",
+        "agent": "Jonah",
+        "patient": "Martha",
+        "gold": "Jonah",
+        "passage": "At dawn, Jonah followed Martha.",
+        "question": "Who performed the action at dawn?"
+      },
+      {
+        "id": "calibration_Martha_Jonah_followed_1_active_patient",
+        "split": "calibration",
+        "pair": [
+          "Martha",
+          "Jonah"
+        ],
+        "verb": "followed",
+        "direction": 1,
+        "construction": "active",
+        "role": "patient",
+        "agent": "Jonah",
+        "patient": "Martha",
+        "gold": "Martha",
+        "passage": "At dawn, Jonah followed Martha.",
+        "question": "Who received the action at dawn?"
+      },
+      {
+        "id": "calibration_Martha_Jonah_followed_1_passive_agent",
+        "split": "calibration",
+        "pair": [
+          "Martha",
+          "Jonah"
+        ],
+        "verb": "followed",
+        "direction": 1,
+        "construction": "passive",
+        "role": "agent",
+        "agent": "Jonah",
+        "patient": "Martha",
+        "gold": "Jonah",
+        "passage": "At dawn, Martha was followed by Jonah.",
+        "question": "Who performed the action at dawn?"
+      },
+      {
+        "id": "calibration_Martha_Jonah_followed_1_passive_patient",
+        "split": "calibration",
+        "pair": [
+          "Martha",
+          "Jonah"
+        ],
+        "verb": "followed",
+        "direction": 1,
+        "construction": "passive",
+        "role": "patient",
+        "agent": "Jonah",
+        "patient": "Martha",
+        "gold": "Martha",
+        "passage": "At dawn, Martha was followed by Jonah.",
+        "question": "Who received the action at dawn?"
+      },
+      {
+        "id": "calibration_Martha_Jonah_followed_1_object_cleft_agent",
+        "split": "calibration",
+        "pair": [
+          "Martha",
+          "Jonah"
+        ],
+        "verb": "followed",
+        "direction": 1,
+        "construction": "object_cleft",
+        "role": "agent",
+        "agent": "Jonah",
+        "patient": "Martha",
+        "gold": "Jonah",
+        "passage": "At dawn, it was Martha that Jonah followed.",
+        "question": "Who performed the action at dawn?"
+      },
+      {
+        "id": "calibration_Martha_Jonah_followed_1_object_cleft_patient",
+        "split": "calibration",
+        "pair": [
+          "Martha",
+          "Jonah"
+        ],
+        "verb": "followed",
+        "direction": 1,
+        "construction": "object_cleft",
+        "role": "patient",
+        "agent": "Jonah",
+        "patient": "Martha",
+        "gold": "Martha",
+        "passage": "At dawn, it was Martha that Jonah followed.",
+        "question": "Who received the action at dawn?"
+      },
+      {
+        "id": "calibration_Martha_Jonah_followed_1_subject_cleft_agent",
+        "split": "calibration",
+        "pair": [
+          "Martha",
+          "Jonah"
+        ],
+        "verb": "followed",
+        "direction": 1,
+        "construction": "subject_cleft",
+        "role": "agent",
+        "agent": "Jonah",
+        "patient": "Martha",
+        "gold": "Jonah",
+        "passage": "At dawn, it was Jonah who followed Martha.",
+        "question": "Who performed the action at dawn?"
+      },
+      {
+        "id": "calibration_Martha_Jonah_followed_1_subject_cleft_patient",
+        "split": "calibration",
+        "pair": [
+          "Martha",
+          "Jonah"
+        ],
+        "verb": "followed",
+        "direction": 1,
+        "construction": "subject_cleft",
+        "role": "patient",
+        "agent": "Jonah",
+        "patient": "Martha",
+        "gold": "Martha",
+        "passage": "At dawn, it was Jonah who followed Martha.",
+        "question": "Who received the action at dawn?"
+      },
+      {
+        "id": "calibration_Amelia_Samuel_encouraged_0_active_agent",
+        "split": "calibration",
+        "pair": [
+          "Amelia",
+          "Samuel"
+        ],
+        "verb": "encouraged",
+        "direction": 0,
+        "construction": "active",
+        "role": "agent",
+        "agent": "Amelia",
+        "patient": "Samuel",
+        "gold": "Amelia",
+        "passage": "At dawn, Amelia encouraged Samuel.",
+        "question": "Who performed the action at dawn?"
+      },
+      {
+        "id": "calibration_Amelia_Samuel_encouraged_0_active_patient",
+        "split": "calibration",
+        "pair": [
+          "Amelia",
+          "Samuel"
+        ],
+        "verb": "encouraged",
+        "direction": 0,
+        "construction": "active",
+        "role": "patient",
+        "agent": "Amelia",
+        "patient": "Samuel",
+        "gold": "Samuel",
+        "passage": "At dawn, Amelia encouraged Samuel.",
+        "question": "Who received the action at dawn?"
+      },
+      {
+        "id": "calibration_Amelia_Samuel_encouraged_0_passive_agent",
+        "split": "calibration",
+        "pair": [
+          "Amelia",
+          "Samuel"
+        ],
+        "verb": "encouraged",
+        "direction": 0,
+        "construction": "passive",
+        "role": "agent",
+        "agent": "Amelia",
+        "patient": "Samuel",
+        "gold": "Amelia",
+        "passage": "At dawn, Samuel was encouraged by Amelia.",
+        "question": "Who performed the action at dawn?"
+      },
+      {
+        "id": "calibration_Amelia_Samuel_encouraged_0_passive_patient",
+        "split": "calibration",
+        "pair": [
+          "Amelia",
+          "Samuel"
+        ],
+        "verb": "encouraged",
+        "direction": 0,
+        "construction": "passive",
+        "role": "patient",
+        "agent": "Amelia",
+        "patient": "Samuel",
+        "gold": "Samuel",
+        "passage": "At dawn, Samuel was encouraged by Amelia.",
+        "question": "Who received the action at dawn?"
+      },
+      {
+        "id": "calibration_Amelia_Samuel_encouraged_0_object_cleft_agent",
+        "split": "calibration",
+        "pair": [
+          "Amelia",
+          "Samuel"
+        ],
+        "verb": "encouraged",
+        "direction": 0,
+        "construction": "object_cleft",
+        "role": "agent",
+        "agent": "Amelia",
+        "patient": "Samuel",
+        "gold": "Amelia",
+        "passage": "At dawn, it was Samuel that Amelia encouraged.",
+        "question": "Who performed the action at dawn?"
+      },
+      {
+        "id": "calibration_Amelia_Samuel_encouraged_0_object_cleft_patient",
+        "split": "calibration",
+        "pair": [
+          "Amelia",
+          "Samuel"
+        ],
+        "verb": "encouraged",
+        "direction": 0,
+        "construction": "object_cleft",
+        "role": "patient",
+        "agent": "Amelia",
+        "patient": "Samuel",
+        "gold": "Samuel",
+        "passage": "At dawn, it was Samuel that Amelia encouraged.",
+        "question": "Who received the action at dawn?"
+      },
+      {
+        "id": "calibration_Amelia_Samuel_encouraged_0_subject_cleft_agent",
+        "split": "calibration",
+        "pair": [
+          "Amelia",
+          "Samuel"
+        ],
+        "verb": "encouraged",
+        "direction": 0,
+        "construction": "subject_cleft",
+        "role": "agent",
+        "agent": "Amelia",
+        "patient": "Samuel",
+        "gold": "Amelia",
+        "passage": "At dawn, it was Amelia who encouraged Samuel.",
+        "question": "Who performed the action at dawn?"
+      },
+      {
+        "id": "calibration_Amelia_Samuel_encouraged_0_subject_cleft_patient",
+        "split": "calibration",
+        "pair": [
+          "Amelia",
+          "Samuel"
+        ],
+        "verb": "encouraged",
+        "direction": 0,
+        "construction": "subject_cleft",
+        "role": "patient",
+        "agent": "Amelia",
+        "patient": "Samuel",
+        "gold": "Samuel",
+        "passage": "At dawn, it was Amelia who encouraged Samuel.",
+        "question": "Who received the action at dawn?"
+      },
+      {
+        "id": "calibration_Amelia_Samuel_encouraged_1_active_agent",
+        "split": "calibration",
+        "pair": [
+          "Amelia",
+          "Samuel"
+        ],
+        "verb": "encouraged",
+        "direction": 1,
+        "construction": "active",
+        "role": "agent",
+        "agent": "Samuel",
+        "patient": "Amelia",
+        "gold": "Samuel",
+        "passage": "At dawn, Samuel encouraged Amelia.",
+        "question": "Who performed the action at dawn?"
+      },
+      {
+        "id": "calibration_Amelia_Samuel_encouraged_1_active_patient",
+        "split": "calibration",
+        "pair": [
+          "Amelia",
+          "Samuel"
+        ],
+        "verb": "encouraged",
+        "direction": 1,
+        "construction": "active",
+        "role": "patient",
+        "agent": "Samuel",
+        "patient": "Amelia",
+        "gold": "Amelia",
+        "passage": "At dawn, Samuel encouraged Amelia.",
+        "question": "Who received the action at dawn?"
+      },
+      {
+        "id": "calibration_Amelia_Samuel_encouraged_1_passive_agent",
+        "split": "calibration",
+        "pair": [
+          "Amelia",
+          "Samuel"
+        ],
+        "verb": "encouraged",
+        "direction": 1,
+        "construction": "passive",
+        "role": "agent",
+        "agent": "Samuel",
+        "patient": "Amelia",
+        "gold": "Samuel",
+        "passage": "At dawn, Amelia was encouraged by Samuel.",
+        "question": "Who performed the action at dawn?"
+      },
+      {
+        "id": "calibration_Amelia_Samuel_encouraged_1_passive_patient",
+        "split": "calibration",
+        "pair": [
+          "Amelia",
+          "Samuel"
+        ],
+        "verb": "encouraged",
+        "direction": 1,
+        "construction": "passive",
+        "role": "patient",
+        "agent": "Samuel",
+        "patient": "Amelia",
+        "gold": "Amelia",
+        "passage": "At dawn, Amelia was encouraged by Samuel.",
+        "question": "Who received the action at dawn?"
+      },
+      {
+        "id": "calibration_Amelia_Samuel_encouraged_1_object_cleft_agent",
+        "split": "calibration",
+        "pair": [
+          "Amelia",
+          "Samuel"
+        ],
+        "verb": "encouraged",
+        "direction": 1,
+        "construction": "object_cleft",
+        "role": "agent",
+        "agent": "Samuel",
+        "patient": "Amelia",
+        "gold": "Samuel",
+        "passage": "At dawn, it was Amelia that Samuel encouraged.",
+        "question": "Who performed the action at dawn?"
+      },
+      {
+        "id": "calibration_Amelia_Samuel_encouraged_1_object_cleft_patient",
+        "split": "calibration",
+        "pair": [
+          "Amelia",
+          "Samuel"
+        ],
+        "verb": "encouraged",
+        "direction": 1,
+        "construction": "object_cleft",
+        "role": "patient",
+        "agent": "Samuel",
+        "patient": "Amelia",
+        "gold": "Amelia",
+        "passage": "At dawn, it was Amelia that Samuel encouraged.",
+        "question": "Who received the action at dawn?"
+      },
+      {
+        "id": "calibration_Amelia_Samuel_encouraged_1_subject_cleft_agent",
+        "split": "calibration",
+        "pair": [
+          "Amelia",
+          "Samuel"
+        ],
+        "verb": "encouraged",
+        "direction": 1,
+        "construction": "subject_cleft",
+        "role": "agent",
+        "agent": "Samuel",
+        "patient": "Amelia",
+        "gold": "Samuel",
+        "passage": "At dawn, it was Samuel who encouraged Amelia.",
+        "question": "Who performed the action at dawn?"
+      },
+      {
+        "id": "calibration_Amelia_Samuel_encouraged_1_subject_cleft_patient",
+        "split": "calibration",
+        "pair": [
+          "Amelia",
+          "Samuel"
+        ],
+        "verb": "encouraged",
+        "direction": 1,
+        "construction": "subject_cleft",
+        "role": "patient",
+        "agent": "Samuel",
+        "patient": "Amelia",
+        "gold": "Amelia",
+        "passage": "At dawn, it was Samuel who encouraged Amelia.",
+        "question": "Who received the action at dawn?"
+      }
+    ],
+    "protected": [
+      {
+        "id": "protected_Cora_Elias_congratulated_0_active_agent",
+        "split": "protected",
+        "pair": [
+          "Cora",
+          "Elias"
+        ],
+        "verb": "congratulated",
+        "direction": 0,
+        "construction": "active",
+        "role": "agent",
+        "agent": "Cora",
+        "patient": "Elias",
+        "gold": "Cora",
+        "passage": "At dawn, Cora congratulated Elias.",
+        "question": "Who performed the action at dawn?"
+      },
+      {
+        "id": "protected_Cora_Elias_congratulated_0_active_patient",
+        "split": "protected",
+        "pair": [
+          "Cora",
+          "Elias"
+        ],
+        "verb": "congratulated",
+        "direction": 0,
+        "construction": "active",
+        "role": "patient",
+        "agent": "Cora",
+        "patient": "Elias",
+        "gold": "Elias",
+        "passage": "At dawn, Cora congratulated Elias.",
+        "question": "Who received the action at dawn?"
+      },
+      {
+        "id": "protected_Cora_Elias_congratulated_0_passive_agent",
+        "split": "protected",
+        "pair": [
+          "Cora",
+          "Elias"
+        ],
+        "verb": "congratulated",
+        "direction": 0,
+        "construction": "passive",
+        "role": "agent",
+        "agent": "Cora",
+        "patient": "Elias",
+        "gold": "Cora",
+        "passage": "At dawn, Elias was congratulated by Cora.",
+        "question": "Who performed the action at dawn?"
+      },
+      {
+        "id": "protected_Cora_Elias_congratulated_0_passive_patient",
+        "split": "protected",
+        "pair": [
+          "Cora",
+          "Elias"
+        ],
+        "verb": "congratulated",
+        "direction": 0,
+        "construction": "passive",
+        "role": "patient",
+        "agent": "Cora",
+        "patient": "Elias",
+        "gold": "Elias",
+        "passage": "At dawn, Elias was congratulated by Cora.",
+        "question": "Who received the action at dawn?"
+      },
+      {
+        "id": "protected_Cora_Elias_congratulated_0_object_cleft_agent",
+        "split": "protected",
+        "pair": [
+          "Cora",
+          "Elias"
+        ],
+        "verb": "congratulated",
+        "direction": 0,
+        "construction": "object_cleft",
+        "role": "agent",
+        "agent": "Cora",
+        "patient": "Elias",
+        "gold": "Cora",
+        "passage": "At dawn, it was Elias that Cora congratulated.",
+        "question": "Who performed the action at dawn?"
+      },
+      {
+        "id": "protected_Cora_Elias_congratulated_0_object_cleft_patient",
+        "split": "protected",
+        "pair": [
+          "Cora",
+          "Elias"
+        ],
+        "verb": "congratulated",
+        "direction": 0,
+        "construction": "object_cleft",
+        "role": "patient",
+        "agent": "Cora",
+        "patient": "Elias",
+        "gold": "Elias",
+        "passage": "At dawn, it was Elias that Cora congratulated.",
+        "question": "Who received the action at dawn?"
+      },
+      {
+        "id": "protected_Cora_Elias_congratulated_0_subject_cleft_agent",
+        "split": "protected",
+        "pair": [
+          "Cora",
+          "Elias"
+        ],
+        "verb": "congratulated",
+        "direction": 0,
+        "construction": "subject_cleft",
+        "role": "agent",
+        "agent": "Cora",
+        "patient": "Elias",
+        "gold": "Cora",
+        "passage": "At dawn, it was Cora who congratulated Elias.",
+        "question": "Who performed the action at dawn?"
+      },
+      {
+        "id": "protected_Cora_Elias_congratulated_0_subject_cleft_patient",
+        "split": "protected",
+        "pair": [
+          "Cora",
+          "Elias"
+        ],
+        "verb": "congratulated",
+        "direction": 0,
+        "construction": "subject_cleft",
+        "role": "patient",
+        "agent": "Cora",
+        "patient": "Elias",
+        "gold": "Elias",
+        "passage": "At dawn, it was Cora who congratulated Elias.",
+        "question": "Who received the action at dawn?"
+      },
+      {
+        "id": "protected_Cora_Elias_congratulated_0_passive_cleft_agent",
+        "split": "protected",
+        "pair": [
+          "Cora",
+          "Elias"
+        ],
+        "verb": "congratulated",
+        "direction": 0,
+        "construction": "passive_cleft",
+        "role": "agent",
+        "agent": "Cora",
+        "patient": "Elias",
+        "gold": "Cora",
+        "passage": "At dawn, it was Elias who was congratulated by Cora.",
+        "question": "Who performed the action at dawn?"
+      },
+      {
+        "id": "protected_Cora_Elias_congratulated_0_passive_cleft_patient",
+        "split": "protected",
+        "pair": [
+          "Cora",
+          "Elias"
+        ],
+        "verb": "congratulated",
+        "direction": 0,
+        "construction": "passive_cleft",
+        "role": "patient",
+        "agent": "Cora",
+        "patient": "Elias",
+        "gold": "Elias",
+        "passage": "At dawn, it was Elias who was congratulated by Cora.",
+        "question": "Who received the action at dawn?"
+      },
+      {
+        "id": "protected_Cora_Elias_congratulated_1_active_agent",
+        "split": "protected",
+        "pair": [
+          "Cora",
+          "Elias"
+        ],
+        "verb": "congratulated",
+        "direction": 1,
+        "construction": "active",
+        "role": "agent",
+        "agent": "Elias",
+        "patient": "Cora",
+        "gold": "Elias",
+        "passage": "At dawn, Elias congratulated Cora.",
+        "question": "Who performed the action at dawn?"
+      },
+      {
+        "id": "protected_Cora_Elias_congratulated_1_active_patient",
+        "split": "protected",
+        "pair": [
+          "Cora",
+          "Elias"
+        ],
+        "verb": "congratulated",
+        "direction": 1,
+        "construction": "active",
+        "role": "patient",
+        "agent": "Elias",
+        "patient": "Cora",
+        "gold": "Cora",
+        "passage": "At dawn, Elias congratulated Cora.",
+        "question": "Who received the action at dawn?"
+      },
+      {
+        "id": "protected_Cora_Elias_congratulated_1_passive_agent",
+        "split": "protected",
+        "pair": [
+          "Cora",
+          "Elias"
+        ],
+        "verb": "congratulated",
+        "direction": 1,
+        "construction": "passive",
+        "role": "agent",
+        "agent": "Elias",
+        "patient": "Cora",
+        "gold": "Elias",
+        "passage": "At dawn, Cora was congratulated by Elias.",
+        "question": "Who performed the action at dawn?"
+      },
+      {
+        "id": "protected_Cora_Elias_congratulated_1_passive_patient",
+        "split": "protected",
+        "pair": [
+          "Cora",
+          "Elias"
+        ],
+        "verb": "congratulated",
+        "direction": 1,
+        "construction": "passive",
+        "role": "patient",
+        "agent": "Elias",
+        "patient": "Cora",
+        "gold": "Cora",
+        "passage": "At dawn, Cora was congratulated by Elias.",
+        "question": "Who received the action at dawn?"
+      },
+      {
+        "id": "protected_Cora_Elias_congratulated_1_object_cleft_agent",
+        "split": "protected",
+        "pair": [
+          "Cora",
+          "Elias"
+        ],
+        "verb": "congratulated",
+        "direction": 1,
+        "construction": "object_cleft",
+        "role": "agent",
+        "agent": "Elias",
+        "patient": "Cora",
+        "gold": "Elias",
+        "passage": "At dawn, it was Cora that Elias congratulated.",
+        "question": "Who performed the action at dawn?"
+      },
+      {
+        "id": "protected_Cora_Elias_congratulated_1_object_cleft_patient",
+        "split": "protected",
+        "pair": [
+          "Cora",
+          "Elias"
+        ],
+        "verb": "congratulated",
+        "direction": 1,
+        "construction": "object_cleft",
+        "role": "patient",
+        "agent": "Elias",
+        "patient": "Cora",
+        "gold": "Cora",
+        "passage": "At dawn, it was Cora that Elias congratulated.",
+        "question": "Who received the action at dawn?"
+      },
+      {
+        "id": "protected_Cora_Elias_congratulated_1_subject_cleft_agent",
+        "split": "protected",
+        "pair": [
+          "Cora",
+          "Elias"
+        ],
+        "verb": "congratulated",
+        "direction": 1,
+        "construction": "subject_cleft",
+        "role": "agent",
+        "agent": "Elias",
+        "patient": "Cora",
+        "gold": "Elias",
+        "passage": "At dawn, it was Elias who congratulated Cora.",
+        "question": "Who performed the action at dawn?"
+      },
+      {
+        "id": "protected_Cora_Elias_congratulated_1_subject_cleft_patient",
+        "split": "protected",
+        "pair": [
+          "Cora",
+          "Elias"
+        ],
+        "verb": "congratulated",
+        "direction": 1,
+        "construction": "subject_cleft",
+        "role": "patient",
+        "agent": "Elias",
+        "patient": "Cora",
+        "gold": "Cora",
+        "passage": "At dawn, it was Elias who congratulated Cora.",
+        "question": "Who received the action at dawn?"
+      },
+      {
+        "id": "protected_Cora_Elias_congratulated_1_passive_cleft_agent",
+        "split": "protected",
+        "pair": [
+          "Cora",
+          "Elias"
+        ],
+        "verb": "congratulated",
+        "direction": 1,
+        "construction": "passive_cleft",
+        "role": "agent",
+        "agent": "Elias",
+        "patient": "Cora",
+        "gold": "Elias",
+        "passage": "At dawn, it was Cora who was congratulated by Elias.",
+        "question": "Who performed the action at dawn?"
+      },
+      {
+        "id": "protected_Cora_Elias_congratulated_1_passive_cleft_patient",
+        "split": "protected",
+        "pair": [
+          "Cora",
+          "Elias"
+        ],
+        "verb": "congratulated",
+        "direction": 1,
+        "construction": "passive_cleft",
+        "role": "patient",
+        "agent": "Elias",
+        "patient": "Cora",
+        "gold": "Cora",
+        "passage": "At dawn, it was Cora who was congratulated by Elias.",
+        "question": "Who received the action at dawn?"
+      },
+      {
+        "id": "protected_Fiona_Miles_applauded_0_active_agent",
+        "split": "protected",
+        "pair": [
+          "Fiona",
+          "Miles"
+        ],
+        "verb": "applauded",
+        "direction": 0,
+        "construction": "active",
+        "role": "agent",
+        "agent": "Fiona",
+        "patient": "Miles",
+        "gold": "Fiona",
+        "passage": "At dawn, Fiona applauded Miles.",
+        "question": "Who performed the action at dawn?"
+      },
+      {
+        "id": "protected_Fiona_Miles_applauded_0_active_patient",
+        "split": "protected",
+        "pair": [
+          "Fiona",
+          "Miles"
+        ],
+        "verb": "applauded",
+        "direction": 0,
+        "construction": "active",
+        "role": "patient",
+        "agent": "Fiona",
+        "patient": "Miles",
+        "gold": "Miles",
+        "passage": "At dawn, Fiona applauded Miles.",
+        "question": "Who received the action at dawn?"
+      },
+      {
+        "id": "protected_Fiona_Miles_applauded_0_passive_agent",
+        "split": "protected",
+        "pair": [
+          "Fiona",
+          "Miles"
+        ],
+        "verb": "applauded",
+        "direction": 0,
+        "construction": "passive",
+        "role": "agent",
+        "agent": "Fiona",
+        "patient": "Miles",
+        "gold": "Fiona",
+        "passage": "At dawn, Miles was applauded by Fiona.",
+        "question": "Who performed the action at dawn?"
+      },
+      {
+        "id": "protected_Fiona_Miles_applauded_0_passive_patient",
+        "split": "protected",
+        "pair": [
+          "Fiona",
+          "Miles"
+        ],
+        "verb": "applauded",
+        "direction": 0,
+        "construction": "passive",
+        "role": "patient",
+        "agent": "Fiona",
+        "patient": "Miles",
+        "gold": "Miles",
+        "passage": "At dawn, Miles was applauded by Fiona.",
+        "question": "Who received the action at dawn?"
+      },
+      {
+        "id": "protected_Fiona_Miles_applauded_0_object_cleft_agent",
+        "split": "protected",
+        "pair": [
+          "Fiona",
+          "Miles"
+        ],
+        "verb": "applauded",
+        "direction": 0,
+        "construction": "object_cleft",
+        "role": "agent",
+        "agent": "Fiona",
+        "patient": "Miles",
+        "gold": "Fiona",
+        "passage": "At dawn, it was Miles that Fiona applauded.",
+        "question": "Who performed the action at dawn?"
+      },
+      {
+        "id": "protected_Fiona_Miles_applauded_0_object_cleft_patient",
+        "split": "protected",
+        "pair": [
+          "Fiona",
+          "Miles"
+        ],
+        "verb": "applauded",
+        "direction": 0,
+        "construction": "object_cleft",
+        "role": "patient",
+        "agent": "Fiona",
+        "patient": "Miles",
+        "gold": "Miles",
+        "passage": "At dawn, it was Miles that Fiona applauded.",
+        "question": "Who received the action at dawn?"
+      },
+      {
+        "id": "protected_Fiona_Miles_applauded_0_subject_cleft_agent",
+        "split": "protected",
+        "pair": [
+          "Fiona",
+          "Miles"
+        ],
+        "verb": "applauded",
+        "direction": 0,
+        "construction": "subject_cleft",
+        "role": "agent",
+        "agent": "Fiona",
+        "patient": "Miles",
+        "gold": "Fiona",
+        "passage": "At dawn, it was Fiona who applauded Miles.",
+        "question": "Who performed the action at dawn?"
+      },
+      {
+        "id": "protected_Fiona_Miles_applauded_0_subject_cleft_patient",
+        "split": "protected",
+        "pair": [
+          "Fiona",
+          "Miles"
+        ],
+        "verb": "applauded",
+        "direction": 0,
+        "construction": "subject_cleft",
+        "role": "patient",
+        "agent": "Fiona",
+        "patient": "Miles",
+        "gold": "Miles",
+        "passage": "At dawn, it was Fiona who applauded Miles.",
+        "question": "Who received the action at dawn?"
+      },
+      {
+        "id": "protected_Fiona_Miles_applauded_0_passive_cleft_agent",
+        "split": "protected",
+        "pair": [
+          "Fiona",
+          "Miles"
+        ],
+        "verb": "applauded",
+        "direction": 0,
+        "construction": "passive_cleft",
+        "role": "agent",
+        "agent": "Fiona",
+        "patient": "Miles",
+        "gold": "Fiona",
+        "passage": "At dawn, it was Miles who was applauded by Fiona.",
+        "question": "Who performed the action at dawn?"
+      },
+      {
+        "id": "protected_Fiona_Miles_applauded_0_passive_cleft_patient",
+        "split": "protected",
+        "pair": [
+          "Fiona",
+          "Miles"
+        ],
+        "verb": "applauded",
+        "direction": 0,
+        "construction": "passive_cleft",
+        "role": "patient",
+        "agent": "Fiona",
+        "patient": "Miles",
+        "gold": "Miles",
+        "passage": "At dawn, it was Miles who was applauded by Fiona.",
+        "question": "Who received the action at dawn?"
+      },
+      {
+        "id": "protected_Fiona_Miles_applauded_1_active_agent",
+        "split": "protected",
+        "pair": [
+          "Fiona",
+          "Miles"
+        ],
+        "verb": "applauded",
+        "direction": 1,
+        "construction": "active",
+        "role": "agent",
+        "agent": "Miles",
+        "patient": "Fiona",
+        "gold": "Miles",
+        "passage": "At dawn, Miles applauded Fiona.",
+        "question": "Who performed the action at dawn?"
+      },
+      {
+        "id": "protected_Fiona_Miles_applauded_1_active_patient",
+        "split": "protected",
+        "pair": [
+          "Fiona",
+          "Miles"
+        ],
+        "verb": "applauded",
+        "direction": 1,
+        "construction": "active",
+        "role": "patient",
+        "agent": "Miles",
+        "patient": "Fiona",
+        "gold": "Fiona",
+        "passage": "At dawn, Miles applauded Fiona.",
+        "question": "Who received the action at dawn?"
+      },
+      {
+        "id": "protected_Fiona_Miles_applauded_1_passive_agent",
+        "split": "protected",
+        "pair": [
+          "Fiona",
+          "Miles"
+        ],
+        "verb": "applauded",
+        "direction": 1,
+        "construction": "passive",
+        "role": "agent",
+        "agent": "Miles",
+        "patient": "Fiona",
+        "gold": "Miles",
+        "passage": "At dawn, Fiona was applauded by Miles.",
+        "question": "Who performed the action at dawn?"
+      },
+      {
+        "id": "protected_Fiona_Miles_applauded_1_passive_patient",
+        "split": "protected",
+        "pair": [
+          "Fiona",
+          "Miles"
+        ],
+        "verb": "applauded",
+        "direction": 1,
+        "construction": "passive",
+        "role": "patient",
+        "agent": "Miles",
+        "patient": "Fiona",
+        "gold": "Fiona",
+        "passage": "At dawn, Fiona was applauded by Miles.",
+        "question": "Who received the action at dawn?"
+      },
+      {
+        "id": "protected_Fiona_Miles_applauded_1_object_cleft_agent",
+        "split": "protected",
+        "pair": [
+          "Fiona",
+          "Miles"
+        ],
+        "verb": "applauded",
+        "direction": 1,
+        "construction": "object_cleft",
+        "role": "agent",
+        "agent": "Miles",
+        "patient": "Fiona",
+        "gold": "Miles",
+        "passage": "At dawn, it was Fiona that Miles applauded.",
+        "question": "Who performed the action at dawn?"
+      },
+      {
+        "id": "protected_Fiona_Miles_applauded_1_object_cleft_patient",
+        "split": "protected",
+        "pair": [
+          "Fiona",
+          "Miles"
+        ],
+        "verb": "applauded",
+        "direction": 1,
+        "construction": "object_cleft",
+        "role": "patient",
+        "agent": "Miles",
+        "patient": "Fiona",
+        "gold": "Fiona",
+        "passage": "At dawn, it was Fiona that Miles applauded.",
+        "question": "Who received the action at dawn?"
+      },
+      {
+        "id": "protected_Fiona_Miles_applauded_1_subject_cleft_agent",
+        "split": "protected",
+        "pair": [
+          "Fiona",
+          "Miles"
+        ],
+        "verb": "applauded",
+        "direction": 1,
+        "construction": "subject_cleft",
+        "role": "agent",
+        "agent": "Miles",
+        "patient": "Fiona",
+        "gold": "Miles",
+        "passage": "At dawn, it was Miles who applauded Fiona.",
+        "question": "Who performed the action at dawn?"
+      },
+      {
+        "id": "protected_Fiona_Miles_applauded_1_subject_cleft_patient",
+        "split": "protected",
+        "pair": [
+          "Fiona",
+          "Miles"
+        ],
+        "verb": "applauded",
+        "direction": 1,
+        "construction": "subject_cleft",
+        "role": "patient",
+        "agent": "Miles",
+        "patient": "Fiona",
+        "gold": "Fiona",
+        "passage": "At dawn, it was Miles who applauded Fiona.",
+        "question": "Who received the action at dawn?"
+      },
+      {
+        "id": "protected_Fiona_Miles_applauded_1_passive_cleft_agent",
+        "split": "protected",
+        "pair": [
+          "Fiona",
+          "Miles"
+        ],
+        "verb": "applauded",
+        "direction": 1,
+        "construction": "passive_cleft",
+        "role": "agent",
+        "agent": "Miles",
+        "patient": "Fiona",
+        "gold": "Miles",
+        "passage": "At dawn, it was Fiona who was applauded by Miles.",
+        "question": "Who performed the action at dawn?"
+      },
+      {
+        "id": "protected_Fiona_Miles_applauded_1_passive_cleft_patient",
+        "split": "protected",
+        "pair": [
+          "Fiona",
+          "Miles"
+        ],
+        "verb": "applauded",
+        "direction": 1,
+        "construction": "passive_cleft",
+        "role": "patient",
+        "agent": "Miles",
+        "patient": "Fiona",
+        "gold": "Fiona",
+        "passage": "At dawn, it was Fiona who was applauded by Miles.",
+        "question": "Who received the action at dawn?"
+      },
+      {
+        "id": "protected_Beatrice_Rowan_recognized_0_active_agent",
+        "split": "protected",
+        "pair": [
+          "Beatrice",
+          "Rowan"
+        ],
+        "verb": "recognized",
+        "direction": 0,
+        "construction": "active",
+        "role": "agent",
+        "agent": "Beatrice",
+        "patient": "Rowan",
+        "gold": "Beatrice",
+        "passage": "At dawn, Beatrice recognized Rowan.",
+        "question": "Who performed the action at dawn?"
+      },
+      {
+        "id": "protected_Beatrice_Rowan_recognized_0_active_patient",
+        "split": "protected",
+        "pair": [
+          "Beatrice",
+          "Rowan"
+        ],
+        "verb": "recognized",
+        "direction": 0,
+        "construction": "active",
+        "role": "patient",
+        "agent": "Beatrice",
+        "patient": "Rowan",
+        "gold": "Rowan",
+        "passage": "At dawn, Beatrice recognized Rowan.",
+        "question": "Who received the action at dawn?"
+      },
+      {
+        "id": "protected_Beatrice_Rowan_recognized_0_passive_agent",
+        "split": "protected",
+        "pair": [
+          "Beatrice",
+          "Rowan"
+        ],
+        "verb": "recognized",
+        "direction": 0,
+        "construction": "passive",
+        "role": "agent",
+        "agent": "Beatrice",
+        "patient": "Rowan",
+        "gold": "Beatrice",
+        "passage": "At dawn, Rowan was recognized by Beatrice.",
+        "question": "Who performed the action at dawn?"
+      },
+      {
+        "id": "protected_Beatrice_Rowan_recognized_0_passive_patient",
+        "split": "protected",
+        "pair": [
+          "Beatrice",
+          "Rowan"
+        ],
+        "verb": "recognized",
+        "direction": 0,
+        "construction": "passive",
+        "role": "patient",
+        "agent": "Beatrice",
+        "patient": "Rowan",
+        "gold": "Rowan",
+        "passage": "At dawn, Rowan was recognized by Beatrice.",
+        "question": "Who received the action at dawn?"
+      },
+      {
+        "id": "protected_Beatrice_Rowan_recognized_0_object_cleft_agent",
+        "split": "protected",
+        "pair": [
+          "Beatrice",
+          "Rowan"
+        ],
+        "verb": "recognized",
+        "direction": 0,
+        "construction": "object_cleft",
+        "role": "agent",
+        "agent": "Beatrice",
+        "patient": "Rowan",
+        "gold": "Beatrice",
+        "passage": "At dawn, it was Rowan that Beatrice recognized.",
+        "question": "Who performed the action at dawn?"
+      },
+      {
+        "id": "protected_Beatrice_Rowan_recognized_0_object_cleft_patient",
+        "split": "protected",
+        "pair": [
+          "Beatrice",
+          "Rowan"
+        ],
+        "verb": "recognized",
+        "direction": 0,
+        "construction": "object_cleft",
+        "role": "patient",
+        "agent": "Beatrice",
+        "patient": "Rowan",
+        "gold": "Rowan",
+        "passage": "At dawn, it was Rowan that Beatrice recognized.",
+        "question": "Who received the action at dawn?"
+      },
+      {
+        "id": "protected_Beatrice_Rowan_recognized_0_subject_cleft_agent",
+        "split": "protected",
+        "pair": [
+          "Beatrice",
+          "Rowan"
+        ],
+        "verb": "recognized",
+        "direction": 0,
+        "construction": "subject_cleft",
+        "role": "agent",
+        "agent": "Beatrice",
+        "patient": "Rowan",
+        "gold": "Beatrice",
+        "passage": "At dawn, it was Beatrice who recognized Rowan.",
+        "question": "Who performed the action at dawn?"
+      },
+      {
+        "id": "protected_Beatrice_Rowan_recognized_0_subject_cleft_patient",
+        "split": "protected",
+        "pair": [
+          "Beatrice",
+          "Rowan"
+        ],
+        "verb": "recognized",
+        "direction": 0,
+        "construction": "subject_cleft",
+        "role": "patient",
+        "agent": "Beatrice",
+        "patient": "Rowan",
+        "gold": "Rowan",
+        "passage": "At dawn, it was Beatrice who recognized Rowan.",
+        "question": "Who received the action at dawn?"
+      },
+      {
+        "id": "protected_Beatrice_Rowan_recognized_0_passive_cleft_agent",
+        "split": "protected",
+        "pair": [
+          "Beatrice",
+          "Rowan"
+        ],
+        "verb": "recognized",
+        "direction": 0,
+        "construction": "passive_cleft",
+        "role": "agent",
+        "agent": "Beatrice",
+        "patient": "Rowan",
+        "gold": "Beatrice",
+        "passage": "At dawn, it was Rowan who was recognized by Beatrice.",
+        "question": "Who performed the action at dawn?"
+      },
+      {
+        "id": "protected_Beatrice_Rowan_recognized_0_passive_cleft_patient",
+        "split": "protected",
+        "pair": [
+          "Beatrice",
+          "Rowan"
+        ],
+        "verb": "recognized",
+        "direction": 0,
+        "construction": "passive_cleft",
+        "role": "patient",
+        "agent": "Beatrice",
+        "patient": "Rowan",
+        "gold": "Rowan",
+        "passage": "At dawn, it was Rowan who was recognized by Beatrice.",
+        "question": "Who received the action at dawn?"
+      },
+      {
+        "id": "protected_Beatrice_Rowan_recognized_1_active_agent",
+        "split": "protected",
+        "pair": [
+          "Beatrice",
+          "Rowan"
+        ],
+        "verb": "recognized",
+        "direction": 1,
+        "construction": "active",
+        "role": "agent",
+        "agent": "Rowan",
+        "patient": "Beatrice",
+        "gold": "Rowan",
+        "passage": "At dawn, Rowan recognized Beatrice.",
+        "question": "Who performed the action at dawn?"
+      },
+      {
+        "id": "protected_Beatrice_Rowan_recognized_1_active_patient",
+        "split": "protected",
+        "pair": [
+          "Beatrice",
+          "Rowan"
+        ],
+        "verb": "recognized",
+        "direction": 1,
+        "construction": "active",
+        "role": "patient",
+        "agent": "Rowan",
+        "patient": "Beatrice",
+        "gold": "Beatrice",
+        "passage": "At dawn, Rowan recognized Beatrice.",
+        "question": "Who received the action at dawn?"
+      },
+      {
+        "id": "protected_Beatrice_Rowan_recognized_1_passive_agent",
+        "split": "protected",
+        "pair": [
+          "Beatrice",
+          "Rowan"
+        ],
+        "verb": "recognized",
+        "direction": 1,
+        "construction": "passive",
+        "role": "agent",
+        "agent": "Rowan",
+        "patient": "Beatrice",
+        "gold": "Rowan",
+        "passage": "At dawn, Beatrice was recognized by Rowan.",
+        "question": "Who performed the action at dawn?"
+      },
+      {
+        "id": "protected_Beatrice_Rowan_recognized_1_passive_patient",
+        "split": "protected",
+        "pair": [
+          "Beatrice",
+          "Rowan"
+        ],
+        "verb": "recognized",
+        "direction": 1,
+        "construction": "passive",
+        "role": "patient",
+        "agent": "Rowan",
+        "patient": "Beatrice",
+        "gold": "Beatrice",
+        "passage": "At dawn, Beatrice was recognized by Rowan.",
+        "question": "Who received the action at dawn?"
+      },
+      {
+        "id": "protected_Beatrice_Rowan_recognized_1_object_cleft_agent",
+        "split": "protected",
+        "pair": [
+          "Beatrice",
+          "Rowan"
+        ],
+        "verb": "recognized",
+        "direction": 1,
+        "construction": "object_cleft",
+        "role": "agent",
+        "agent": "Rowan",
+        "patient": "Beatrice",
+        "gold": "Rowan",
+        "passage": "At dawn, it was Beatrice that Rowan recognized.",
+        "question": "Who performed the action at dawn?"
+      },
+      {
+        "id": "protected_Beatrice_Rowan_recognized_1_object_cleft_patient",
+        "split": "protected",
+        "pair": [
+          "Beatrice",
+          "Rowan"
+        ],
+        "verb": "recognized",
+        "direction": 1,
+        "construction": "object_cleft",
+        "role": "patient",
+        "agent": "Rowan",
+        "patient": "Beatrice",
+        "gold": "Beatrice",
+        "passage": "At dawn, it was Beatrice that Rowan recognized.",
+        "question": "Who received the action at dawn?"
+      },
+      {
+        "id": "protected_Beatrice_Rowan_recognized_1_subject_cleft_agent",
+        "split": "protected",
+        "pair": [
+          "Beatrice",
+          "Rowan"
+        ],
+        "verb": "recognized",
+        "direction": 1,
+        "construction": "subject_cleft",
+        "role": "agent",
+        "agent": "Rowan",
+        "patient": "Beatrice",
+        "gold": "Rowan",
+        "passage": "At dawn, it was Rowan who recognized Beatrice.",
+        "question": "Who performed the action at dawn?"
+      },
+      {
+        "id": "protected_Beatrice_Rowan_recognized_1_subject_cleft_patient",
+        "split": "protected",
+        "pair": [
+          "Beatrice",
+          "Rowan"
+        ],
+        "verb": "recognized",
+        "direction": 1,
+        "construction": "subject_cleft",
+        "role": "patient",
+        "agent": "Rowan",
+        "patient": "Beatrice",
+        "gold": "Beatrice",
+        "passage": "At dawn, it was Rowan who recognized Beatrice.",
+        "question": "Who received the action at dawn?"
+      },
+      {
+        "id": "protected_Beatrice_Rowan_recognized_1_passive_cleft_agent",
+        "split": "protected",
+        "pair": [
+          "Beatrice",
+          "Rowan"
+        ],
+        "verb": "recognized",
+        "direction": 1,
+        "construction": "passive_cleft",
+        "role": "agent",
+        "agent": "Rowan",
+        "patient": "Beatrice",
+        "gold": "Rowan",
+        "passage": "At dawn, it was Beatrice who was recognized by Rowan.",
+        "question": "Who performed the action at dawn?"
+      },
+      {
+        "id": "protected_Beatrice_Rowan_recognized_1_passive_cleft_patient",
+        "split": "protected",
+        "pair": [
+          "Beatrice",
+          "Rowan"
+        ],
+        "verb": "recognized",
+        "direction": 1,
+        "construction": "passive_cleft",
+        "role": "patient",
+        "agent": "Rowan",
+        "patient": "Beatrice",
+        "gold": "Beatrice",
+        "passage": "At dawn, it was Beatrice who was recognized by Rowan.",
+        "question": "Who received the action at dawn?"
+      },
+      {
+        "id": "protected_Nadia_Hugo_reassured_0_active_agent",
+        "split": "protected",
+        "pair": [
+          "Nadia",
+          "Hugo"
+        ],
+        "verb": "reassured",
+        "direction": 0,
+        "construction": "active",
+        "role": "agent",
+        "agent": "Nadia",
+        "patient": "Hugo",
+        "gold": "Nadia",
+        "passage": "At dawn, Nadia reassured Hugo.",
+        "question": "Who performed the action at dawn?"
+      },
+      {
+        "id": "protected_Nadia_Hugo_reassured_0_active_patient",
+        "split": "protected",
+        "pair": [
+          "Nadia",
+          "Hugo"
+        ],
+        "verb": "reassured",
+        "direction": 0,
+        "construction": "active",
+        "role": "patient",
+        "agent": "Nadia",
+        "patient": "Hugo",
+        "gold": "Hugo",
+        "passage": "At dawn, Nadia reassured Hugo.",
+        "question": "Who received the action at dawn?"
+      },
+      {
+        "id": "protected_Nadia_Hugo_reassured_0_passive_agent",
+        "split": "protected",
+        "pair": [
+          "Nadia",
+          "Hugo"
+        ],
+        "verb": "reassured",
+        "direction": 0,
+        "construction": "passive",
+        "role": "agent",
+        "agent": "Nadia",
+        "patient": "Hugo",
+        "gold": "Nadia",
+        "passage": "At dawn, Hugo was reassured by Nadia.",
+        "question": "Who performed the action at dawn?"
+      },
+      {
+        "id": "protected_Nadia_Hugo_reassured_0_passive_patient",
+        "split": "protected",
+        "pair": [
+          "Nadia",
+          "Hugo"
+        ],
+        "verb": "reassured",
+        "direction": 0,
+        "construction": "passive",
+        "role": "patient",
+        "agent": "Nadia",
+        "patient": "Hugo",
+        "gold": "Hugo",
+        "passage": "At dawn, Hugo was reassured by Nadia.",
+        "question": "Who received the action at dawn?"
+      },
+      {
+        "id": "protected_Nadia_Hugo_reassured_0_object_cleft_agent",
+        "split": "protected",
+        "pair": [
+          "Nadia",
+          "Hugo"
+        ],
+        "verb": "reassured",
+        "direction": 0,
+        "construction": "object_cleft",
+        "role": "agent",
+        "agent": "Nadia",
+        "patient": "Hugo",
+        "gold": "Nadia",
+        "passage": "At dawn, it was Hugo that Nadia reassured.",
+        "question": "Who performed the action at dawn?"
+      },
+      {
+        "id": "protected_Nadia_Hugo_reassured_0_object_cleft_patient",
+        "split": "protected",
+        "pair": [
+          "Nadia",
+          "Hugo"
+        ],
+        "verb": "reassured",
+        "direction": 0,
+        "construction": "object_cleft",
+        "role": "patient",
+        "agent": "Nadia",
+        "patient": "Hugo",
+        "gold": "Hugo",
+        "passage": "At dawn, it was Hugo that Nadia reassured.",
+        "question": "Who received the action at dawn?"
+      },
+      {
+        "id": "protected_Nadia_Hugo_reassured_0_subject_cleft_agent",
+        "split": "protected",
+        "pair": [
+          "Nadia",
+          "Hugo"
+        ],
+        "verb": "reassured",
+        "direction": 0,
+        "construction": "subject_cleft",
+        "role": "agent",
+        "agent": "Nadia",
+        "patient": "Hugo",
+        "gold": "Nadia",
+        "passage": "At dawn, it was Nadia who reassured Hugo.",
+        "question": "Who performed the action at dawn?"
+      },
+      {
+        "id": "protected_Nadia_Hugo_reassured_0_subject_cleft_patient",
+        "split": "protected",
+        "pair": [
+          "Nadia",
+          "Hugo"
+        ],
+        "verb": "reassured",
+        "direction": 0,
+        "construction": "subject_cleft",
+        "role": "patient",
+        "agent": "Nadia",
+        "patient": "Hugo",
+        "gold": "Hugo",
+        "passage": "At dawn, it was Nadia who reassured Hugo.",
+        "question": "Who received the action at dawn?"
+      },
+      {
+        "id": "protected_Nadia_Hugo_reassured_0_passive_cleft_agent",
+        "split": "protected",
+        "pair": [
+          "Nadia",
+          "Hugo"
+        ],
+        "verb": "reassured",
+        "direction": 0,
+        "construction": "passive_cleft",
+        "role": "agent",
+        "agent": "Nadia",
+        "patient": "Hugo",
+        "gold": "Nadia",
+        "passage": "At dawn, it was Hugo who was reassured by Nadia.",
+        "question": "Who performed the action at dawn?"
+      },
+      {
+        "id": "protected_Nadia_Hugo_reassured_0_passive_cleft_patient",
+        "split": "protected",
+        "pair": [
+          "Nadia",
+          "Hugo"
+        ],
+        "verb": "reassured",
+        "direction": 0,
+        "construction": "passive_cleft",
+        "role": "patient",
+        "agent": "Nadia",
+        "patient": "Hugo",
+        "gold": "Hugo",
+        "passage": "At dawn, it was Hugo who was reassured by Nadia.",
+        "question": "Who received the action at dawn?"
+      },
+      {
+        "id": "protected_Nadia_Hugo_reassured_1_active_agent",
+        "split": "protected",
+        "pair": [
+          "Nadia",
+          "Hugo"
+        ],
+        "verb": "reassured",
+        "direction": 1,
+        "construction": "active",
+        "role": "agent",
+        "agent": "Hugo",
+        "patient": "Nadia",
+        "gold": "Hugo",
+        "passage": "At dawn, Hugo reassured Nadia.",
+        "question": "Who performed the action at dawn?"
+      },
+      {
+        "id": "protected_Nadia_Hugo_reassured_1_active_patient",
+        "split": "protected",
+        "pair": [
+          "Nadia",
+          "Hugo"
+        ],
+        "verb": "reassured",
+        "direction": 1,
+        "construction": "active",
+        "role": "patient",
+        "agent": "Hugo",
+        "patient": "Nadia",
+        "gold": "Nadia",
+        "passage": "At dawn, Hugo reassured Nadia.",
+        "question": "Who received the action at dawn?"
+      },
+      {
+        "id": "protected_Nadia_Hugo_reassured_1_passive_agent",
+        "split": "protected",
+        "pair": [
+          "Nadia",
+          "Hugo"
+        ],
+        "verb": "reassured",
+        "direction": 1,
+        "construction": "passive",
+        "role": "agent",
+        "agent": "Hugo",
+        "patient": "Nadia",
+        "gold": "Hugo",
+        "passage": "At dawn, Nadia was reassured by Hugo.",
+        "question": "Who performed the action at dawn?"
+      },
+      {
+        "id": "protected_Nadia_Hugo_reassured_1_passive_patient",
+        "split": "protected",
+        "pair": [
+          "Nadia",
+          "Hugo"
+        ],
+        "verb": "reassured",
+        "direction": 1,
+        "construction": "passive",
+        "role": "patient",
+        "agent": "Hugo",
+        "patient": "Nadia",
+        "gold": "Nadia",
+        "passage": "At dawn, Nadia was reassured by Hugo.",
+        "question": "Who received the action at dawn?"
+      },
+      {
+        "id": "protected_Nadia_Hugo_reassured_1_object_cleft_agent",
+        "split": "protected",
+        "pair": [
+          "Nadia",
+          "Hugo"
+        ],
+        "verb": "reassured",
+        "direction": 1,
+        "construction": "object_cleft",
+        "role": "agent",
+        "agent": "Hugo",
+        "patient": "Nadia",
+        "gold": "Hugo",
+        "passage": "At dawn, it was Nadia that Hugo reassured.",
+        "question": "Who performed the action at dawn?"
+      },
+      {
+        "id": "protected_Nadia_Hugo_reassured_1_object_cleft_patient",
+        "split": "protected",
+        "pair": [
+          "Nadia",
+          "Hugo"
+        ],
+        "verb": "reassured",
+        "direction": 1,
+        "construction": "object_cleft",
+        "role": "patient",
+        "agent": "Hugo",
+        "patient": "Nadia",
+        "gold": "Nadia",
+        "passage": "At dawn, it was Nadia that Hugo reassured.",
+        "question": "Who received the action at dawn?"
+      },
+      {
+        "id": "protected_Nadia_Hugo_reassured_1_subject_cleft_agent",
+        "split": "protected",
+        "pair": [
+          "Nadia",
+          "Hugo"
+        ],
+        "verb": "reassured",
+        "direction": 1,
+        "construction": "subject_cleft",
+        "role": "agent",
+        "agent": "Hugo",
+        "patient": "Nadia",
+        "gold": "Hugo",
+        "passage": "At dawn, it was Hugo who reassured Nadia.",
+        "question": "Who performed the action at dawn?"
+      },
+      {
+        "id": "protected_Nadia_Hugo_reassured_1_subject_cleft_patient",
+        "split": "protected",
+        "pair": [
+          "Nadia",
+          "Hugo"
+        ],
+        "verb": "reassured",
+        "direction": 1,
+        "construction": "subject_cleft",
+        "role": "patient",
+        "agent": "Hugo",
+        "patient": "Nadia",
+        "gold": "Nadia",
+        "passage": "At dawn, it was Hugo who reassured Nadia.",
+        "question": "Who received the action at dawn?"
+      },
+      {
+        "id": "protected_Nadia_Hugo_reassured_1_passive_cleft_agent",
+        "split": "protected",
+        "pair": [
+          "Nadia",
+          "Hugo"
+        ],
+        "verb": "reassured",
+        "direction": 1,
+        "construction": "passive_cleft",
+        "role": "agent",
+        "agent": "Hugo",
+        "patient": "Nadia",
+        "gold": "Hugo",
+        "passage": "At dawn, it was Nadia who was reassured by Hugo.",
+        "question": "Who performed the action at dawn?"
+      },
+      {
+        "id": "protected_Nadia_Hugo_reassured_1_passive_cleft_patient",
+        "split": "protected",
+        "pair": [
+          "Nadia",
+          "Hugo"
+        ],
+        "verb": "reassured",
+        "direction": 1,
+        "construction": "passive_cleft",
+        "role": "patient",
+        "agent": "Hugo",
+        "patient": "Nadia",
+        "gold": "Nadia",
+        "passage": "At dawn, it was Nadia who was reassured by Hugo.",
+        "question": "Who received the action at dawn?"
+      },
+      {
+        "id": "protected_Willa_Gavin_chased_0_active_agent",
+        "split": "protected",
+        "pair": [
+          "Willa",
+          "Gavin"
+        ],
+        "verb": "chased",
+        "direction": 0,
+        "construction": "active",
+        "role": "agent",
+        "agent": "Willa",
+        "patient": "Gavin",
+        "gold": "Willa",
+        "passage": "At dawn, Willa chased Gavin.",
+        "question": "Who performed the action at dawn?"
+      },
+      {
+        "id": "protected_Willa_Gavin_chased_0_active_patient",
+        "split": "protected",
+        "pair": [
+          "Willa",
+          "Gavin"
+        ],
+        "verb": "chased",
+        "direction": 0,
+        "construction": "active",
+        "role": "patient",
+        "agent": "Willa",
+        "patient": "Gavin",
+        "gold": "Gavin",
+        "passage": "At dawn, Willa chased Gavin.",
+        "question": "Who received the action at dawn?"
+      },
+      {
+        "id": "protected_Willa_Gavin_chased_0_passive_agent",
+        "split": "protected",
+        "pair": [
+          "Willa",
+          "Gavin"
+        ],
+        "verb": "chased",
+        "direction": 0,
+        "construction": "passive",
+        "role": "agent",
+        "agent": "Willa",
+        "patient": "Gavin",
+        "gold": "Willa",
+        "passage": "At dawn, Gavin was chased by Willa.",
+        "question": "Who performed the action at dawn?"
+      },
+      {
+        "id": "protected_Willa_Gavin_chased_0_passive_patient",
+        "split": "protected",
+        "pair": [
+          "Willa",
+          "Gavin"
+        ],
+        "verb": "chased",
+        "direction": 0,
+        "construction": "passive",
+        "role": "patient",
+        "agent": "Willa",
+        "patient": "Gavin",
+        "gold": "Gavin",
+        "passage": "At dawn, Gavin was chased by Willa.",
+        "question": "Who received the action at dawn?"
+      },
+      {
+        "id": "protected_Willa_Gavin_chased_0_object_cleft_agent",
+        "split": "protected",
+        "pair": [
+          "Willa",
+          "Gavin"
+        ],
+        "verb": "chased",
+        "direction": 0,
+        "construction": "object_cleft",
+        "role": "agent",
+        "agent": "Willa",
+        "patient": "Gavin",
+        "gold": "Willa",
+        "passage": "At dawn, it was Gavin that Willa chased.",
+        "question": "Who performed the action at dawn?"
+      },
+      {
+        "id": "protected_Willa_Gavin_chased_0_object_cleft_patient",
+        "split": "protected",
+        "pair": [
+          "Willa",
+          "Gavin"
+        ],
+        "verb": "chased",
+        "direction": 0,
+        "construction": "object_cleft",
+        "role": "patient",
+        "agent": "Willa",
+        "patient": "Gavin",
+        "gold": "Gavin",
+        "passage": "At dawn, it was Gavin that Willa chased.",
+        "question": "Who received the action at dawn?"
+      },
+      {
+        "id": "protected_Willa_Gavin_chased_0_subject_cleft_agent",
+        "split": "protected",
+        "pair": [
+          "Willa",
+          "Gavin"
+        ],
+        "verb": "chased",
+        "direction": 0,
+        "construction": "subject_cleft",
+        "role": "agent",
+        "agent": "Willa",
+        "patient": "Gavin",
+        "gold": "Willa",
+        "passage": "At dawn, it was Willa who chased Gavin.",
+        "question": "Who performed the action at dawn?"
+      },
+      {
+        "id": "protected_Willa_Gavin_chased_0_subject_cleft_patient",
+        "split": "protected",
+        "pair": [
+          "Willa",
+          "Gavin"
+        ],
+        "verb": "chased",
+        "direction": 0,
+        "construction": "subject_cleft",
+        "role": "patient",
+        "agent": "Willa",
+        "patient": "Gavin",
+        "gold": "Gavin",
+        "passage": "At dawn, it was Willa who chased Gavin.",
+        "question": "Who received the action at dawn?"
+      },
+      {
+        "id": "protected_Willa_Gavin_chased_0_passive_cleft_agent",
+        "split": "protected",
+        "pair": [
+          "Willa",
+          "Gavin"
+        ],
+        "verb": "chased",
+        "direction": 0,
+        "construction": "passive_cleft",
+        "role": "agent",
+        "agent": "Willa",
+        "patient": "Gavin",
+        "gold": "Willa",
+        "passage": "At dawn, it was Gavin who was chased by Willa.",
+        "question": "Who performed the action at dawn?"
+      },
+      {
+        "id": "protected_Willa_Gavin_chased_0_passive_cleft_patient",
+        "split": "protected",
+        "pair": [
+          "Willa",
+          "Gavin"
+        ],
+        "verb": "chased",
+        "direction": 0,
+        "construction": "passive_cleft",
+        "role": "patient",
+        "agent": "Willa",
+        "patient": "Gavin",
+        "gold": "Gavin",
+        "passage": "At dawn, it was Gavin who was chased by Willa.",
+        "question": "Who received the action at dawn?"
+      },
+      {
+        "id": "protected_Willa_Gavin_chased_1_active_agent",
+        "split": "protected",
+        "pair": [
+          "Willa",
+          "Gavin"
+        ],
+        "verb": "chased",
+        "direction": 1,
+        "construction": "active",
+        "role": "agent",
+        "agent": "Gavin",
+        "patient": "Willa",
+        "gold": "Gavin",
+        "passage": "At dawn, Gavin chased Willa.",
+        "question": "Who performed the action at dawn?"
+      },
+      {
+        "id": "protected_Willa_Gavin_chased_1_active_patient",
+        "split": "protected",
+        "pair": [
+          "Willa",
+          "Gavin"
+        ],
+        "verb": "chased",
+        "direction": 1,
+        "construction": "active",
+        "role": "patient",
+        "agent": "Gavin",
+        "patient": "Willa",
+        "gold": "Willa",
+        "passage": "At dawn, Gavin chased Willa.",
+        "question": "Who received the action at dawn?"
+      },
+      {
+        "id": "protected_Willa_Gavin_chased_1_passive_agent",
+        "split": "protected",
+        "pair": [
+          "Willa",
+          "Gavin"
+        ],
+        "verb": "chased",
+        "direction": 1,
+        "construction": "passive",
+        "role": "agent",
+        "agent": "Gavin",
+        "patient": "Willa",
+        "gold": "Gavin",
+        "passage": "At dawn, Willa was chased by Gavin.",
+        "question": "Who performed the action at dawn?"
+      },
+      {
+        "id": "protected_Willa_Gavin_chased_1_passive_patient",
+        "split": "protected",
+        "pair": [
+          "Willa",
+          "Gavin"
+        ],
+        "verb": "chased",
+        "direction": 1,
+        "construction": "passive",
+        "role": "patient",
+        "agent": "Gavin",
+        "patient": "Willa",
+        "gold": "Willa",
+        "passage": "At dawn, Willa was chased by Gavin.",
+        "question": "Who received the action at dawn?"
+      },
+      {
+        "id": "protected_Willa_Gavin_chased_1_object_cleft_agent",
+        "split": "protected",
+        "pair": [
+          "Willa",
+          "Gavin"
+        ],
+        "verb": "chased",
+        "direction": 1,
+        "construction": "object_cleft",
+        "role": "agent",
+        "agent": "Gavin",
+        "patient": "Willa",
+        "gold": "Gavin",
+        "passage": "At dawn, it was Willa that Gavin chased.",
+        "question": "Who performed the action at dawn?"
+      },
+      {
+        "id": "protected_Willa_Gavin_chased_1_object_cleft_patient",
+        "split": "protected",
+        "pair": [
+          "Willa",
+          "Gavin"
+        ],
+        "verb": "chased",
+        "direction": 1,
+        "construction": "object_cleft",
+        "role": "patient",
+        "agent": "Gavin",
+        "patient": "Willa",
+        "gold": "Willa",
+        "passage": "At dawn, it was Willa that Gavin chased.",
+        "question": "Who received the action at dawn?"
+      },
+      {
+        "id": "protected_Willa_Gavin_chased_1_subject_cleft_agent",
+        "split": "protected",
+        "pair": [
+          "Willa",
+          "Gavin"
+        ],
+        "verb": "chased",
+        "direction": 1,
+        "construction": "subject_cleft",
+        "role": "agent",
+        "agent": "Gavin",
+        "patient": "Willa",
+        "gold": "Gavin",
+        "passage": "At dawn, it was Gavin who chased Willa.",
+        "question": "Who performed the action at dawn?"
+      },
+      {
+        "id": "protected_Willa_Gavin_chased_1_subject_cleft_patient",
+        "split": "protected",
+        "pair": [
+          "Willa",
+          "Gavin"
+        ],
+        "verb": "chased",
+        "direction": 1,
+        "construction": "subject_cleft",
+        "role": "patient",
+        "agent": "Gavin",
+        "patient": "Willa",
+        "gold": "Willa",
+        "passage": "At dawn, it was Gavin who chased Willa.",
+        "question": "Who received the action at dawn?"
+      },
+      {
+        "id": "protected_Willa_Gavin_chased_1_passive_cleft_agent",
+        "split": "protected",
+        "pair": [
+          "Willa",
+          "Gavin"
+        ],
+        "verb": "chased",
+        "direction": 1,
+        "construction": "passive_cleft",
+        "role": "agent",
+        "agent": "Gavin",
+        "patient": "Willa",
+        "gold": "Gavin",
+        "passage": "At dawn, it was Willa who was chased by Gavin.",
+        "question": "Who performed the action at dawn?"
+      },
+      {
+        "id": "protected_Willa_Gavin_chased_1_passive_cleft_patient",
+        "split": "protected",
+        "pair": [
+          "Willa",
+          "Gavin"
+        ],
+        "verb": "chased",
+        "direction": 1,
+        "construction": "passive_cleft",
+        "role": "patient",
+        "agent": "Gavin",
+        "patient": "Willa",
+        "gold": "Willa",
+        "passage": "At dawn, it was Willa who was chased by Gavin.",
+        "question": "Who received the action at dawn?"
+      },
+      {
+        "id": "protected_Ivy_Nathan_photographed_0_active_agent",
+        "split": "protected",
+        "pair": [
+          "Ivy",
+          "Nathan"
+        ],
+        "verb": "photographed",
+        "direction": 0,
+        "construction": "active",
+        "role": "agent",
+        "agent": "Ivy",
+        "patient": "Nathan",
+        "gold": "Ivy",
+        "passage": "At dawn, Ivy photographed Nathan.",
+        "question": "Who performed the action at dawn?"
+      },
+      {
+        "id": "protected_Ivy_Nathan_photographed_0_active_patient",
+        "split": "protected",
+        "pair": [
+          "Ivy",
+          "Nathan"
+        ],
+        "verb": "photographed",
+        "direction": 0,
+        "construction": "active",
+        "role": "patient",
+        "agent": "Ivy",
+        "patient": "Nathan",
+        "gold": "Nathan",
+        "passage": "At dawn, Ivy photographed Nathan.",
+        "question": "Who received the action at dawn?"
+      },
+      {
+        "id": "protected_Ivy_Nathan_photographed_0_passive_agent",
+        "split": "protected",
+        "pair": [
+          "Ivy",
+          "Nathan"
+        ],
+        "verb": "photographed",
+        "direction": 0,
+        "construction": "passive",
+        "role": "agent",
+        "agent": "Ivy",
+        "patient": "Nathan",
+        "gold": "Ivy",
+        "passage": "At dawn, Nathan was photographed by Ivy.",
+        "question": "Who performed the action at dawn?"
+      },
+      {
+        "id": "protected_Ivy_Nathan_photographed_0_passive_patient",
+        "split": "protected",
+        "pair": [
+          "Ivy",
+          "Nathan"
+        ],
+        "verb": "photographed",
+        "direction": 0,
+        "construction": "passive",
+        "role": "patient",
+        "agent": "Ivy",
+        "patient": "Nathan",
+        "gold": "Nathan",
+        "passage": "At dawn, Nathan was photographed by Ivy.",
+        "question": "Who received the action at dawn?"
+      },
+      {
+        "id": "protected_Ivy_Nathan_photographed_0_object_cleft_agent",
+        "split": "protected",
+        "pair": [
+          "Ivy",
+          "Nathan"
+        ],
+        "verb": "photographed",
+        "direction": 0,
+        "construction": "object_cleft",
+        "role": "agent",
+        "agent": "Ivy",
+        "patient": "Nathan",
+        "gold": "Ivy",
+        "passage": "At dawn, it was Nathan that Ivy photographed.",
+        "question": "Who performed the action at dawn?"
+      },
+      {
+        "id": "protected_Ivy_Nathan_photographed_0_object_cleft_patient",
+        "split": "protected",
+        "pair": [
+          "Ivy",
+          "Nathan"
+        ],
+        "verb": "photographed",
+        "direction": 0,
+        "construction": "object_cleft",
+        "role": "patient",
+        "agent": "Ivy",
+        "patient": "Nathan",
+        "gold": "Nathan",
+        "passage": "At dawn, it was Nathan that Ivy photographed.",
+        "question": "Who received the action at dawn?"
+      },
+      {
+        "id": "protected_Ivy_Nathan_photographed_0_subject_cleft_agent",
+        "split": "protected",
+        "pair": [
+          "Ivy",
+          "Nathan"
+        ],
+        "verb": "photographed",
+        "direction": 0,
+        "construction": "subject_cleft",
+        "role": "agent",
+        "agent": "Ivy",
+        "patient": "Nathan",
+        "gold": "Ivy",
+        "passage": "At dawn, it was Ivy who photographed Nathan.",
+        "question": "Who performed the action at dawn?"
+      },
+      {
+        "id": "protected_Ivy_Nathan_photographed_0_subject_cleft_patient",
+        "split": "protected",
+        "pair": [
+          "Ivy",
+          "Nathan"
+        ],
+        "verb": "photographed",
+        "direction": 0,
+        "construction": "subject_cleft",
+        "role": "patient",
+        "agent": "Ivy",
+        "patient": "Nathan",
+        "gold": "Nathan",
+        "passage": "At dawn, it was Ivy who photographed Nathan.",
+        "question": "Who received the action at dawn?"
+      },
+      {
+        "id": "protected_Ivy_Nathan_photographed_0_passive_cleft_agent",
+        "split": "protected",
+        "pair": [
+          "Ivy",
+          "Nathan"
+        ],
+        "verb": "photographed",
+        "direction": 0,
+        "construction": "passive_cleft",
+        "role": "agent",
+        "agent": "Ivy",
+        "patient": "Nathan",
+        "gold": "Ivy",
+        "passage": "At dawn, it was Nathan who was photographed by Ivy.",
+        "question": "Who performed the action at dawn?"
+      },
+      {
+        "id": "protected_Ivy_Nathan_photographed_0_passive_cleft_patient",
+        "split": "protected",
+        "pair": [
+          "Ivy",
+          "Nathan"
+        ],
+        "verb": "photographed",
+        "direction": 0,
+        "construction": "passive_cleft",
+        "role": "patient",
+        "agent": "Ivy",
+        "patient": "Nathan",
+        "gold": "Nathan",
+        "passage": "At dawn, it was Nathan who was photographed by Ivy.",
+        "question": "Who received the action at dawn?"
+      },
+      {
+        "id": "protected_Ivy_Nathan_photographed_1_active_agent",
+        "split": "protected",
+        "pair": [
+          "Ivy",
+          "Nathan"
+        ],
+        "verb": "photographed",
+        "direction": 1,
+        "construction": "active",
+        "role": "agent",
+        "agent": "Nathan",
+        "patient": "Ivy",
+        "gold": "Nathan",
+        "passage": "At dawn, Nathan photographed Ivy.",
+        "question": "Who performed the action at dawn?"
+      },
+      {
+        "id": "protected_Ivy_Nathan_photographed_1_active_patient",
+        "split": "protected",
+        "pair": [
+          "Ivy",
+          "Nathan"
+        ],
+        "verb": "photographed",
+        "direction": 1,
+        "construction": "active",
+        "role": "patient",
+        "agent": "Nathan",
+        "patient": "Ivy",
+        "gold": "Ivy",
+        "passage": "At dawn, Nathan photographed Ivy.",
+        "question": "Who received the action at dawn?"
+      },
+      {
+        "id": "protected_Ivy_Nathan_photographed_1_passive_agent",
+        "split": "protected",
+        "pair": [
+          "Ivy",
+          "Nathan"
+        ],
+        "verb": "photographed",
+        "direction": 1,
+        "construction": "passive",
+        "role": "agent",
+        "agent": "Nathan",
+        "patient": "Ivy",
+        "gold": "Nathan",
+        "passage": "At dawn, Ivy was photographed by Nathan.",
+        "question": "Who performed the action at dawn?"
+      },
+      {
+        "id": "protected_Ivy_Nathan_photographed_1_passive_patient",
+        "split": "protected",
+        "pair": [
+          "Ivy",
+          "Nathan"
+        ],
+        "verb": "photographed",
+        "direction": 1,
+        "construction": "passive",
+        "role": "patient",
+        "agent": "Nathan",
+        "patient": "Ivy",
+        "gold": "Ivy",
+        "passage": "At dawn, Ivy was photographed by Nathan.",
+        "question": "Who received the action at dawn?"
+      },
+      {
+        "id": "protected_Ivy_Nathan_photographed_1_object_cleft_agent",
+        "split": "protected",
+        "pair": [
+          "Ivy",
+          "Nathan"
+        ],
+        "verb": "photographed",
+        "direction": 1,
+        "construction": "object_cleft",
+        "role": "agent",
+        "agent": "Nathan",
+        "patient": "Ivy",
+        "gold": "Nathan",
+        "passage": "At dawn, it was Ivy that Nathan photographed.",
+        "question": "Who performed the action at dawn?"
+      },
+      {
+        "id": "protected_Ivy_Nathan_photographed_1_object_cleft_patient",
+        "split": "protected",
+        "pair": [
+          "Ivy",
+          "Nathan"
+        ],
+        "verb": "photographed",
+        "direction": 1,
+        "construction": "object_cleft",
+        "role": "patient",
+        "agent": "Nathan",
+        "patient": "Ivy",
+        "gold": "Ivy",
+        "passage": "At dawn, it was Ivy that Nathan photographed.",
+        "question": "Who received the action at dawn?"
+      },
+      {
+        "id": "protected_Ivy_Nathan_photographed_1_subject_cleft_agent",
+        "split": "protected",
+        "pair": [
+          "Ivy",
+          "Nathan"
+        ],
+        "verb": "photographed",
+        "direction": 1,
+        "construction": "subject_cleft",
+        "role": "agent",
+        "agent": "Nathan",
+        "patient": "Ivy",
+        "gold": "Nathan",
+        "passage": "At dawn, it was Nathan who photographed Ivy.",
+        "question": "Who performed the action at dawn?"
+      },
+      {
+        "id": "protected_Ivy_Nathan_photographed_1_subject_cleft_patient",
+        "split": "protected",
+        "pair": [
+          "Ivy",
+          "Nathan"
+        ],
+        "verb": "photographed",
+        "direction": 1,
+        "construction": "subject_cleft",
+        "role": "patient",
+        "agent": "Nathan",
+        "patient": "Ivy",
+        "gold": "Ivy",
+        "passage": "At dawn, it was Nathan who photographed Ivy.",
+        "question": "Who received the action at dawn?"
+      },
+      {
+        "id": "protected_Ivy_Nathan_photographed_1_passive_cleft_agent",
+        "split": "protected",
+        "pair": [
+          "Ivy",
+          "Nathan"
+        ],
+        "verb": "photographed",
+        "direction": 1,
+        "construction": "passive_cleft",
+        "role": "agent",
+        "agent": "Nathan",
+        "patient": "Ivy",
+        "gold": "Nathan",
+        "passage": "At dawn, it was Ivy who was photographed by Nathan.",
+        "question": "Who performed the action at dawn?"
+      },
+      {
+        "id": "protected_Ivy_Nathan_photographed_1_passive_cleft_patient",
+        "split": "protected",
+        "pair": [
+          "Ivy",
+          "Nathan"
+        ],
+        "verb": "photographed",
+        "direction": 1,
+        "construction": "passive_cleft",
+        "role": "patient",
+        "agent": "Nathan",
+        "patient": "Ivy",
+        "gold": "Ivy",
+        "passage": "At dawn, it was Ivy who was photographed by Nathan.",
+        "question": "Who received the action at dawn?"
+      }
+    ]
+  },
+  "manifest_sha256": "8694d6ce0e51640bda42eec53e664176b2aee5af8e7f69cbe61bd1e838e7f341"
+}
