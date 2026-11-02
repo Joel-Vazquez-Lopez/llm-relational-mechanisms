@@ -1,0 +1,270 @@
+{
+  "design_hash": "254c9566a01fe0428170677600753908ddaf6c365158e72bac545fb7f92fb9a6",
+  "spec": {
+    "id": "ML-047",
+    "source_model": "ml037 ScratchTransformer",
+    "language": "es",
+    "seeds": [
+      301,
+      307,
+      311,
+      313
+    ],
+    "split_seed": 4701,
+    "split": {
+      "train": [
+        [
+          "Nora",
+          "Felix"
+        ],
+        [
+          "Maya",
+          "Iris"
+        ],
+        [
+          "Omar",
+          "Nora"
+        ],
+        [
+          "Maya",
+          "Nora"
+        ],
+        [
+          "Maya",
+          "Omar"
+        ],
+        [
+          "Maya",
+          "Clara"
+        ],
+        [
+          "Omar",
+          "Felix"
+        ],
+        [
+          "Maya",
+          "Lena"
+        ],
+        [
+          "Omar",
+          "Clara"
+        ],
+        [
+          "Rosa",
+          "Clara"
+        ],
+        [
+          "Omar",
+          "Iris"
+        ],
+        [
+          "Rosa",
+          "Iris"
+        ],
+        [
+          "Nora",
+          "Clara"
+        ],
+        [
+          "Rosa",
+          "Felix"
+        ]
+      ],
+      "calibration": [
+        [
+          "Maya",
+          "Rosa"
+        ],
+        [
+          "Clara",
+          "Felix"
+        ],
+        [
+          "Lena",
+          "Rosa"
+        ],
+        [
+          "Rosa",
+          "Nora"
+        ],
+        [
+          "Nora",
+          "Iris"
+        ],
+        [
+          "Clara",
+          "Iris"
+        ],
+        [
+          "Felix",
+          "Iris"
+        ]
+      ],
+      "protected": [
+        [
+          "Maya",
+          "Felix"
+        ],
+        [
+          "Lena",
+          "Omar"
+        ],
+        [
+          "Omar",
+          "Rosa"
+        ],
+        [
+          "Lena",
+          "Felix"
+        ],
+        [
+          "Lena",
+          "Clara"
+        ],
+        [
+          "Lena",
+          "Nora"
+        ],
+        [
+          "Lena",
+          "Iris"
+        ]
+      ]
+    },
+    "train_fronted_verbs": [
+      0,
+      1,
+      2
+    ],
+    "protected_fronted_verb": 3,
+    "steps": 500,
+    "batch": 64,
+    "lr": 0.002,
+    "controls": 4,
+    "calibration_threshold": 0.9,
+    "nomination_threshold": 0.5,
+    "vocab": [
+      "<pad>",
+      ",",
+      ".",
+      "<answer>",
+      "<bos>",
+      "<sep>",
+      "?",
+      "A",
+      "Clara",
+      "Felix",
+      "Iris",
+      "Lena",
+      "Maya",
+      "Nora",
+      "Omar",
+      "Rosa",
+      "a",
+      "acción",
+      "ayudada",
+      "ayudado",
+      "ayudó",
+      "elogiada",
+      "elogiado",
+      "elogió",
+      "fue",
+      "la",
+      "lo",
+      "por",
+      "quién",
+      "realizó",
+      "recibió",
+      "saludada",
+      "saludado",
+      "saludó",
+      "visitada",
+      "visitado",
+      "visitó",
+      "¿"
+    ],
+    "architecture": {
+      "layers": 2,
+      "heads": 4,
+      "width": 96
+    },
+    "nomination": "training-only max of min(active agent-patient harm, passive patient-agent harm); verbs 0,1",
+    "main_endpoint": "natural swap on fronted verb 3 protected pairs: agent-harm minus patient-harm (positive=subject-compatible, negative=first-compatible)",
+    "secondary": "same agent-question-derived vector applied to both role questions; inspect agent-v-patient logit-shift interaction",
+    "protected_baseline_interpretability_threshold": 0.85,
+    "reference_endpoint": "active agent-patient and passive patient-agent harm on protected pairs",
+    "eligibility": "both active/passive and seen-verb fronted pair accuracy >= .90 on calibration; nomination score >= .50",
+    "data_limit": "name pairs repeated; protected examples are clustered by pair and seed"
+  },
+  "models": {
+    "301": {
+      "checkpoint_sha256": "bfd8783027b3f0c08152468b4a6ac91ef5c77e0ff145f14bd5459f92029a5b01",
+      "head": 3,
+      "cal_ref_accuracy": 0.7857142857142857,
+      "cal_front_seen_accuracy": 0.7142857142857143,
+      "training_scores": [
+        -0.45517669405256,
+        0.2489022335835866,
+        -8.854337138789042,
+        1.0337162592581342
+      ],
+      "training_voice_contrasts": [
+        1.2272485962935857,
+        1.0337162592581342
+      ],
+      "eligible": false
+    },
+    "307": {
+      "checkpoint_sha256": "768f38234ddf32b06070a75e716a490a9ae8351bb004fe7fa459ddb67990d61e",
+      "head": 0,
+      "cal_ref_accuracy": 1.0,
+      "cal_front_seen_accuracy": 1.0,
+      "training_scores": [
+        4.110072842666081,
+        1.5558750799724035,
+        -3.711489788123539,
+        0.8781491092273167
+      ],
+      "training_voice_contrasts": [
+        4.110072842666081,
+        5.881666515554701
+      ],
+      "eligible": true
+    },
+    "311": {
+      "checkpoint_sha256": "a95d3cb3350136fc6c05d31badefd89e7e9aea4172db9afd9ba005912774545f",
+      "head": 1,
+      "cal_ref_accuracy": 0.9821428571428571,
+      "cal_front_seen_accuracy": 0.9642857142857143,
+      "training_scores": [
+        -0.18050846883228844,
+        4.254744069916862,
+        0.08088774340493338,
+        1.0689971021243505
+      ],
+      "training_voice_contrasts": [
+        4.570514989750726,
+        4.254744069916862
+      ],
+      "eligible": true
+    },
+    "313": {
+      "checkpoint_sha256": "e797470333299ff6e822f5ca66ce8c46f2a961458bcdd3a3462f6e7a890f5241",
+      "head": 1,
+      "cal_ref_accuracy": 0.75,
+      "cal_front_seen_accuracy": 0.8214285714285714,
+      "training_scores": [
+        -0.1415725882564272,
+        0.5708798148802349,
+        -2.187882197754724,
+        -0.01568127955709185
+      ],
+      "training_voice_contrasts": [
+        0.8012608204569135,
+        0.5708798148802349
+      ],
+      "eligible": false
+    }
+  },
+  "complete": true
+}
