@@ -152,10 +152,10 @@ def check_frozen(args, plan):
         Path(args.protocol).read_text()
     )
 
-    assert saved == {
+    assert saved == json.loads(json.dumps({
         **plan,
         "sha256": digest(plan),
-    }, (
+    })), (
         "ML-074 source or plan changed "
         "after freezing"
     )
