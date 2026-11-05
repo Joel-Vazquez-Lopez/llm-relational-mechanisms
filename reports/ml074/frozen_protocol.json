@@ -1,0 +1,103 @@
+{
+  "experiment": "ML-074",
+  "analysis_code_sha256": "5aae76c7664f311509da81f2fb4ee6be9cc4db9014810e8fccf8ef82ecf42f42",
+  "ml072_protocol_sha256": "82c425a480d78ec1b37be7c2d16cdf8a53f4bf89869f3c118a1ab790b757d92e",
+  "ml073_protocol_sha256": "bdf1a5a27c7d375ab7221b83e9e1392758a251311f430667ffc154a8623f32d9",
+  "source_sha256": {
+    "ml072": "95fb2d8600f74056680fe1fd85223dec4a88b305ee562431c2aac3d319a6bd89",
+    "ml073": "57471910accb2a68f3eff90c16ef0e87cadb9b16ed6f05f24653a4188300f278"
+  },
+  "seeds": [
+    211,
+    223,
+    227,
+    229,
+    233,
+    239
+  ],
+  "arms": [
+    "control",
+    "sparse",
+    "broad"
+  ],
+  "groups": {
+    "active_alternate": [
+      [
+        "active",
+        "alternate"
+      ]
+    ],
+    "passive_standard": [
+      [
+        "passive",
+        "standard"
+      ]
+    ],
+    "passive_alternate_target": [
+      [
+        "passive",
+        "alternate"
+      ]
+    ]
+  },
+  "participant_pairs": [
+    [
+      "Gia",
+      "Hugo"
+    ],
+    [
+      "Inez",
+      "Jules"
+    ],
+    [
+      "Ema",
+      "Gia"
+    ],
+    [
+      "Hugo",
+      "Inez"
+    ],
+    [
+      "Davi",
+      "Finn"
+    ],
+    [
+      "Ada",
+      "Inez"
+    ],
+    [
+      "Ben",
+      "Finn"
+    ],
+    [
+      "Finn",
+      "Gia"
+    ],
+    [
+      "Ben",
+      "Inez"
+    ]
+  ],
+  "verbs": [
+    "helped",
+    "praised",
+    "thanked",
+    "followed",
+    "noticed",
+    "visited"
+  ],
+  "unit_of_comparison": "paired training seed (n=6)",
+  "primary_measure": "all-question mean correct-answer-margin damage under opposite-role layer-2 attention update, minus norm-matched same-role different-verb damage",
+  "secondary_measure": "same contrast versus norm-matched random-direction damage",
+  "predeclared_comparisons": [
+    "sparse-control on passive_alternate_target",
+    "broad-control on passive_alternate_target",
+    "broad-sparse on passive_alternate_target",
+    "same arm across active_alternate, passive_standard and passive_alternate_target"
+  ],
+  "interpretation": "Exploratory, post-hoc intervention comparison on an already examined benchmark. Off-manifold hybrids and changes in logit margins limit causal localization claims. No independent holdout is claimed.",
+  "numerical_tolerance": 0.001,
+  "random_control": "one fixed random vector per question, scaled to role-swap delta norm",
+  "verb_control": "next verb cyclically, same pair/role/voice/style, norm matched",
+  "sha256": "2e1f9d54af67c55bd9c8d0b723e10d14f2a4fcfad0503ccefbef224c528ea5fd"
+}
