@@ -1,14 +1,18 @@
-# LLM Relational Mechanisms
+# Model Linguistics — Relational Computation in Transformers
 
-**Human-led computational research on how pretrained language models represent, select and use linguistic relationships.**
+**Human-led computational research into how Transformers learn, represent, route and use relationships expressed in language.**
 
-This is the official, researcher-written research codebase. The scientific objective is to identify reproducible, causally discriminating mechanisms in real pretrained LLMs, without assuming that an output contrast, probing result, or activation patch proves a unique computation.
+The project has **two separate investigations** sharing a common evidence policy. Neither is evidence for the other without an explicit bridging experiment.
 
-**Status:** infrastructure / exploration. No novel LLM mechanism is established by this repository.
+| Investigation | Scientific objective | Research section |
+|---|---|---|
+| **Scratch-trained Transformers** | Development from random initialization; causal routing; compositional generalization | [Overview](investigations/scratch_transformers/README.md) · [Experiment scripts](investigations/scratch_transformers/EXPERIMENT_INDEX.md) · [Current findings](investigations/scratch_transformers/CURRENT_FINDINGS.md) |
+| **Pretrained LLMs** | Relational computation in existing Qwen/Llama models, using lexical/position controls and causal interventions | [Overview](investigations/pretrained_llms/README.md) · [Experiment scripts](investigations/pretrained_llms/EXPERIMENT_INDEX.md) |
+| **Shared research infrastructure** | Provenance, tests, instrumentation and reproducibility standards | [Shared resources](investigations/shared/README.md) |
 
-## Start here
+## Quick start
 
-Requires Python 3.10+; initial example has no model download or mandatory third-party dependencies.
+Python 3.10+; research scripts may have additional model-specific dependencies. The lightweight repository test does not download a model.
 
 ```bash
 python3 -m venv .venv
@@ -18,30 +22,20 @@ python -m unittest discover -s tests -v
 python -m relational_lab.analysis examples/toy_counterfactual.json
 ```
 
-The included counterfactual example is **synthetic test data**, not evidence about a real language model.
+## Structure and compatibility
 
-## Structure
+- `investigations/` — distinct research-track overviews, experiment indices, and evidence checkpoints.
+- `scripts/` — **canonical executable code**, intentionally left at its existing paths.
+- `src/relational_lab/` — shared analyses and instrumentation.
+- `reports/` — archived research reports and frozen protocol files.
+- `results/` — older tracked artifacts and newer local/gitignored experiment outputs; do not assume local runs have been committed.
+- `docs/` — charter, evidence policy, provenance and workflows.
+- `tests/`, `examples/`, `configs/`, `data/`, `notebooks/` — supporting material.
 
-- `src/relational_lab/analysis/` — read-only diagnostics
-- `src/relational_lab/instrumentation/` — future model adapters and hooks
-- `src/relational_lab/experiments/` — prespecified investigations
-- `tests/` and `examples/` — verifiable unit tests and synthetic examples
-- `configs/`, `notebooks/`, `data/`, `results/`, `reports/` — experiment organization
-- `docs/` — charter, provenance, evidence policy and experiment templates
-- `.github/workflows/ci.yml` — automated tests
+**Safety for active ML-072:** we have not moved or modified its Python script or frozen protocol. The ML-072 protocol records a hash of the script. A future physical code migration would require a new explicitly versioned protocol; do not relocate the active implementation mid-experiment.
 
 ## Scientific standards
 
-Preserve raw evidence, failed gates and independent units. Before new model inference, write hypotheses, plausible copying/position/output baselines, a discriminating prediction, dataset and checkpoint revisions, budget, test integrity checks and stopping criteria. Interpret descriptive, predictive and causal evidence separately. Never treat a corrected numerical bug as confirmation of a scientific hypothesis.
+Preserve failures and all seeds. Distinguish exploratory findings, controlled evaluations and independent replications; constrained answer accuracy is not full-vocabulary correctness. An activation intervention identifies causal sensitivity under that manipulation, not necessarily a unique internal algorithm. See [evidence policy](docs/EVIDENCE_POLICY.md), [scientific charter](docs/RESEARCH_CHARTER.md), and [provenance](docs/PROVENANCE.md).
 
-## Research provenance
-
-[relational-transfer](https://github.com/Joel-Vazquez-Lopez/relational-transfer) is the separate historical evidence and coordination repository. Its results have varied validation status. Nothing from it is automatically imported into this codebase; review provenance, permissions and licensing before copying artifacts.
-
-## Workflow
-
-- **Scientific Research Lab:** formulate hypotheses and interpret evidence.
-- **Hands-On Coding Lab:** researcher implements and runs code here.
-- **Codex HQ:** bounded implementation reviews and engineering coordination.
-
-Private by default. No open-source license selected; do not redistribute restricted datasets or weights.
+[relational-transfer](https://github.com/Joel-Vazquez-Lopez/relational-transfer) remains a separate historical coordination and evidence archive. This repository is private; no open-source licence has been selected. Do not redistribute model weights or restricted datasets.
