@@ -1,0 +1,32 @@
+{
+  "experiment": "ML-079",
+  "code_sha256": "017d17bcafb916d5c49ecb8303c79d868cc4a21476befc77deb0b4ac2c03a6d9",
+  "ml075_protocol_sha256": "2ab33e02703c95a0cef2c2e7e9c2d1431605ae41c4cc94ce38d443ea54dc7534",
+  "ml078_protocol_sha256": "05de697aa1d1e6002885c8bbcb62c5c3cd49c0952581610cada366dd802759c7",
+  "data": "The same 1152 paired-role, two-active-event calibration questions as ML-078",
+  "intervention": "first/second query-cue substitution; every other prompt token fixed",
+  "arms": [
+    "control",
+    "sparse",
+    "broad"
+  ],
+  "seeds": [
+    211,
+    223,
+    227,
+    229,
+    233,
+    239
+  ],
+  "primary_diagnostics": [
+    "event group log-odds for first-cue and second-cue queries",
+    "difference of event log-odds across cues (correct direction: positive)",
+    "both cues place >50% of four-name probability in the correct event",
+    "wrong-event answers with positive versus nonpositive cue-direction shift",
+    "within-target-event correct-name versus wrong-role logit margin"
+  ],
+  "rule": "Event log-odds = logsumexp(first-event name logits) - logsumexp(second-event name logits)",
+  "unit": "Question pairs within the same checkpoint, descriptive seed-level summaries",
+  "limits": "Non-causal logit diagnostics; ML-075 competence gate failed; no protected evaluation",
+  "sha256": "4f93896c703d79c0becbc58631fc8829e58cd8410a99b62ab8395cb2078a273a"
+}
