@@ -1,0 +1,35 @@
+{
+  "experiment": "ML-078",
+  "code_sha256": "adfc91c80a7265cc35f1f3bec182f645e0a4457ee6d4a589eaaa24089b8de442",
+  "ml075_protocol_sha256": "2ab33e02703c95a0cef2c2e7e9c2d1431605ae41c4cc94ce38d443ea54dc7534",
+  "input": "ML-075 calibration pairs only, using sentences with two active events",
+  "intervention": "Replace exactly one query token: first <-> second; identical sentence",
+  "paired_role_questions": 1152,
+  "models": {
+    "seeds": [
+      211,
+      223,
+      227,
+      229,
+      233,
+      239
+    ],
+    "arms": [
+      "control",
+      "sparse",
+      "broad"
+    ]
+  },
+  "metrics": [
+    "first/second accuracy",
+    "first/second wrong-event selection",
+    "first/second wrong-role selection",
+    "prediction unchanged across cue",
+    "both cues correct for the same role",
+    "all four queries correct per sentence",
+    "unchanged prediction given second-cue wrong-event output"
+  ],
+  "analysis": "Within-checkpoint descriptive paired comparisons, not a new training experiment",
+  "exclusions": "No protected participant-pair split; no passive-second target queries; no new training",
+  "sha256": "05de697aa1d1e6002885c8bbcb62c5c3cd49c0952581610cada366dd802759c7"
+}
