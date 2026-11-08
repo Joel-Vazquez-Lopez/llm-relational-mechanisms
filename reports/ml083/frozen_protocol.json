@@ -1,0 +1,79 @@
+{
+  "experiment": "ML-083",
+  "script_sha256": "7f06791403478fe4fc7936754de42824692b2aeaba00e8b3535390b20b189e67",
+  "ml080_protocol_sha256": "7e6e71fafbadc3d60e61ec41a32227c5e06e4026853fbb9046c3073f341a8cff",
+  "ml081_source_sha256": "258de9c8ce02c70fee11fbb6972ab0f9d8dc5fa436bbea61858434441a55f529",
+  "case_selection": "SHA256-sorted active/active second-agent CALIBRATION prompts indices 112:176; 0:48 ML-081, 48:112 ML-082",
+  "sentences": 64,
+  "sample_sha256": "6da18ba1278544ef890908c13e79584dce822955384e364ba534dc4ea8cde9d4",
+  "seeds": [
+    307,
+    311,
+    313,
+    317,
+    331,
+    337,
+    347,
+    349
+  ],
+  "arms": [
+    "familiar",
+    "target"
+  ],
+  "step": 12800,
+  "sites": [
+    [
+      0,
+      "attn"
+    ],
+    [
+      0,
+      "mlp"
+    ],
+    [
+      1,
+      "attn"
+    ],
+    [
+      1,
+      "mlp"
+    ],
+    [
+      2,
+      "attn"
+    ],
+    [
+      2,
+      "mlp"
+    ]
+  ],
+  "grid": {
+    "00": "first agent (recipient)",
+    "01": "first patient (role-only donor)",
+    "10": "second agent (event-only donor)",
+    "11": "second patient (joint target, not used for composition)"
+  },
+  "composition": "h10 + h01 - h00, final-token component at one site",
+  "primary_site": [
+    1,
+    "attn"
+  ],
+  "primary_per_seed_measure": "four-choice target-hit for composition minus target-hit for cyclically shuffled role delta normalized to composition norm; report all 8 seeds by exposure arm, no post hoc seed exclusions",
+  "controls": [
+    "true h11 direct joint donor (positive reference; not a test of additivity)",
+    "event-only h10 and role-only h01 (not norm matched)",
+    "h10 + role delta from a different sentence, normalized to composition norm",
+    "h00 + event delta - role delta, normalized to composition norm",
+    "3 independent isotropic Gaussian perturbations normalized per-example to composition norm"
+  ],
+  "extra_metrics": [
+    "full-vocabulary target hit",
+    "native four-question accuracy",
+    "median interaction norm ||h11-h10-h01+h00||",
+    "relative interaction norm divided by ||h11-h00||",
+    "all condition-specific patch norms and candidate-hit rates"
+  ],
+  "interpretation": "Same-model exploratory calibration, not unseen grammar or independent model testing. Successful composition tests a manipulation of final-token states, not native necessity or a grammatical algorithm; successful shuffled controls may indicate context-general transformations rather than failure. The two apparent addition orders are algebraically identical.",
+  "result_rule": "freeze and commit script plus generated protocol before evaluate; do not overwrite existing result file; no protected cases",
+  "sha256": "98ec14c1656fae6f31bfb7330efe3f963c7f715e7b9eaa8307d3a780588d66ea"
+}
