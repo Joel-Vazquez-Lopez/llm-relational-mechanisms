@@ -1,0 +1,47 @@
+{
+  "experiment": "ML-081",
+  "code_sha256": "258de9c8ce02c70fee11fbb6972ab0f9d8dc5fa436bbea61858434441a55f529",
+  "ml080_protocol_sha256": "7e6e71fafbadc3d60e61ec41a32227c5e06e4026853fbb9046c3073f341a8cff",
+  "source": "ML-080 familiar active/active CALIBRATION only; no protected cases",
+  "selection": "first 48 second-event agent calibration prompts after SHA256 lexical sort",
+  "sample_digest": "7d89e4c74093ce2d6e77242b0b1d56239bbc153366f75a0fc98b7be8cf63200e",
+  "random_controls_per_donor": 3,
+  "random_baseline": "isotropic Gaussian normalized to recipient-donor site delta per question",
+  "lexical_control": "one distractor verb substitution preserving correct answer; NOT norm matched to role or event",
+  "positive_control": "last-layer final-token residual patch copies donor readout, so is NOT evidence for a unique circuit",
+  "seeds": [
+    307,
+    311,
+    313,
+    317,
+    331,
+    337,
+    347,
+    349
+  ],
+  "arms": [
+    "familiar",
+    "target"
+  ],
+  "checkpoint": 12800,
+  "layers": [
+    0,
+    1,
+    2
+  ],
+  "sites": [
+    "attn",
+    "mlp",
+    "residual"
+  ],
+  "patches": [
+    "opposite role",
+    "opposite event",
+    "answer-preserving distractor verb",
+    "norm-matched Gaussian controls"
+  ],
+  "primary_descriptive": "mean gold-vs-best-other candidate margin reduction by patch and site",
+  "auxiliary": "native candidate accuracy, donor-relative logit shifts, effect norms, matched random control",
+  "note": "Exploratory discovery; same examples for all models; no independent or prospective mechanism validation",
+  "sha256": "03dc458a2146c84db3a148940f12740c00c20949417b8f92791cb56cfe16bfa0"
+}
