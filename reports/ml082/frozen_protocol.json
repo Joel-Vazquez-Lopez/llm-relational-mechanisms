@@ -1,0 +1,71 @@
+{
+  "experiment": "ML-082",
+  "script_sha256": "6e8aa640f47dc6787870ae16efc72c82060bdf645c49d2cad15ca526584ab9cb",
+  "ml080_protocol_sha256": "7e6e71fafbadc3d60e61ec41a32227c5e06e4026853fbb9046c3073f341a8cff",
+  "ml081_source_sha256": "258de9c8ce02c70fee11fbb6972ab0f9d8dc5fa436bbea61858434441a55f529",
+  "case_selection": "SHA256-sorted active/active calibration second-agent entries 48:112; ML-081 used 0:48",
+  "n_sentences": 64,
+  "n_questions": 256,
+  "sample_digest": "da6992f589d3511a7fa4c67ff8014a95c6b8a52c41707346e22b1012b8e8c8df",
+  "seeds": [
+    307,
+    311,
+    313,
+    317,
+    331,
+    337,
+    347,
+    349
+  ],
+  "arms": [
+    "familiar",
+    "target"
+  ],
+  "step": 12800,
+  "sites": [
+    [
+      0,
+      "attn"
+    ],
+    [
+      0,
+      "mlp"
+    ],
+    [
+      1,
+      "attn"
+    ],
+    [
+      1,
+      "mlp"
+    ],
+    [
+      2,
+      "attn"
+    ],
+    [
+      2,
+      "mlp"
+    ]
+  ],
+  "donors": [
+    "role",
+    "event"
+  ],
+  "random_repetitions": 5,
+  "primary_metric": "donor-hit excess = P(patched predicts counterfactual gold) - average P(norm-matched random patch predicts counterfactual gold)",
+  "primary_contrast": "paired seed average donor-hit excess for L1/L2 attention versus L1/L2 MLP; report both arms and donor types separately",
+  "secondary_metrics": [
+    "wrong-other flip (not donor)",
+    "native accuracy",
+    "patched flip rate",
+    "lexical corruption",
+    "donor change in logit advantage",
+    "median patch delta norm",
+    "random-control flip rate"
+  ],
+  "design": "same 16 ML-080 models, disjoint ML-081 calibration instances only, no ML-080 protected examples",
+  "interpretation": "Directional donor switching above isotropic norm-matched baselines supports answer-specific information transfer at a site, not native necessity, a unique circuit, or explanation of protected generalization; intervention magnitude remains site/arm dependent",
+  "evaluation_rule": "after plan/preflight, freeze and commit script/protocol before running evaluate; no overwrite or reruns for tuning",
+  "sha256": "5849181e46477452285bd925e083da5ab6c7a47686c79e774048c612939b4dcf"
+}
