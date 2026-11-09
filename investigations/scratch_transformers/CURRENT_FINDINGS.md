@@ -1,6 +1,15 @@
 # Scratch-trained Transformers — evidence checkpoint
 
-**Status as of 5 November 2026:** exploratory mechanistic results and one prospective replication failure. This document separates findings from interpretations; it does not claim a general learned role algorithm.
+**Evidence checkpoint:** controlled behavioral effects, bounded intervention results and failed mechanistic predictions. This document separates findings from interpretations; it does not claim a general learned role algorithm.
+
+## Recent evidence (ML-072–087)
+
+- **Exposure and behavior:** ML-072 and ML-080 compared matched training regimes; target exposure improved held-out recombination in the tested synthetic grammars. ML-084 replicated the ML-080 behavioral contrast on fresh seeds, names and pair splits. Familiar vocabulary and the grammar template remained shared within each study. [ML-080 results](../../reports/ml080/protected_evaluation.json) · [ML-084 results](../../reports/ml084/protected_evaluation.json)
+- **A failed predictive account:** ML-084's frozen layer-geometry score did not predict the ordering of protected behavioral benefits. Its eight-seed rank correlation was approximately -0.048; the calibration-margin baseline was approximately +0.452. [Results](../../reports/ml084/protected_evaluation.json)
+- **Protected intervention:** ML-085's target-exposure role-donor patch exceeded the norm-matched event-donor control by 0.397 on average; the frozen primary rule passed in 7/8 positive seeds. The outcome does not establish native necessity or mediation of the training effect. [Protocol](../../reports/ml085/frozen_protocol.json) · [Results](../../reports/ml085/protected_causal_evaluation.json)
+- **Subspace overlap and a negative test:** ML-086's frozen erasure rule narrowly passed, while its bootstrap interval included zero. Role- and event-derived subspaces overlapped and produced similar erasure effects. ML-087's exploratory residualized interaction-ablation test did not meet its primary criterion. [ML-086 interpretation](../../reports/ml086/interpretation.md) · [ML-087 results](../../reports/ml087/calibration_evaluation.json)
+
+The richer ML-075 benchmark failed its frozen competence gate. These results do not establish a unique grammatical circuit, explain generalization by causal mediation, or validate the synthetic findings in pretrained LLMs. [ML-075 gate](../../reports/ml075/competence_gate.json)
 
 ## Developmental investigation (ML-057–059)
 
@@ -26,13 +35,13 @@ Most double-OOD failures selected the *same* participant for agent and patient q
 
 ## Controlled exposure experiment (ML-072)
 
-Three paired training arms—control, sparse, broad—test whether limited or diverse exposure repairs the unseen grammatical combination. The protocol is [frozen](../../reports/ml072/frozen_protocol.json). At the time of this documentation update, the researcher reported 18/18 models at 100% familiar-task training accuracy, with calibration accuracy ranging from 92.6% to 100%; the protected ML-072 outcomes have **not** been incorporated into this record.
+Three paired training arms—control, sparse, broad—tested whether limited or diverse exposure repairs the unseen grammatical combination. The [frozen protocol](../../reports/ml072/frozen_protocol.json) and [completed evaluation](../../reports/ml072/evaluation.json) are available. Average both-role accuracy on the target held-out combinations was 34.3% for control, 94.9% for sparse and 98.6% for broad exposure; broad varies both pair and verb diversity.
 
 ## Research priorities
 
-1. Preserve ML-072's frozen protocol; evaluate and report **all** seeds and arms without modifying thresholds.
+1. Test whether a computational account predicts independent held-out effects beyond behavioral and positional baselines.
 2. Separate behavioral competence from the interpretation of activation interventions.
-3. Design a new external validation set, with controlled lexical, positional, and grammatical confounds.
+3. Evaluate controlled lexical, positional and grammatical alternatives, then test any proposed bridge to pretrained models separately.
 4. Audit prior art before claiming novelty or publication readiness.
 
 Raw model checkpoints and recent result JSON files live locally (typically under gitignored `results/`) and are **not** assumed to exist in this GitHub branch. Use exact manifests and hashes for reproducibility.
