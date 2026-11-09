@@ -1,0 +1,67 @@
+{
+  "experiment": "ML-087",
+  "status": "EXPLORATORY_SAME_ML086_MODELS_CALIBRATION_ONLY",
+  "script_sha256": "5556477f1af104ac2991a2a1829cc9e3d7cf24c214f5ca035bbca38d2c005eb5",
+  "ml080_source_sha256": "827a22367605dc0db93165d53c022de4e007ff00729de75a9216e10c56a438e8",
+  "ml081_source_sha256": "258de9c8ce02c70fee11fbb6972ab0f9d8dc5fa436bbea61858434441a55f529",
+  "ml086_source_sha256": "58802454f1a5af55a232cf417daa8a2281b2f189482f2272739265acb6c28f29",
+  "ml086_protocol_sha256": "f90585d299bd5f5b2a9bd3fb3f94bde8e026e370cbac7501b8eba5818586612d",
+  "checkpoint_step": 12800,
+  "seeds": [
+    601,
+    607,
+    613,
+    617,
+    619,
+    631,
+    641,
+    643
+  ],
+  "arms": [
+    "familiar",
+    "target"
+  ],
+  "site": "L2 final answer token attention output",
+  "rank": 8,
+  "fit_events": 64,
+  "evaluation_events": 64,
+  "four_queries_per_event": true,
+  "fit_slice_in_sorted_576_calibration_events": [
+    64,
+    128
+  ],
+  "evaluation_slice_in_sorted_576_calibration_events": [
+    128,
+    192
+  ],
+  "fit_prompt_sha256": "9b370a3e1892ad2240632450ac479165a4ed9e99841ca19c118812826aa353e9",
+  "evaluation_prompt_sha256": "9f943cd03fbcf7821bedfdd64f812985764371ee5cb136cc98c180de4800c9ee",
+  "basis": {
+    "main": "SVD top-8 of stacked average role and event effects",
+    "gamma": "SVD top-8 of factorial interaction",
+    "gamma_unique": "SVD top-8 of gamma after projection out of pooled main-8",
+    "center": "mean of all four fit-corner attention outputs"
+  },
+  "interventions": {
+    "primary": "exact erasure of gamma_unique projected component",
+    "random": "three random rank-8 complement-of-main erasure directions, each norm-matched to gamma_unique erasure",
+    "secondary_main": "pooled main-8 direction, norm-matched to gamma_unique erasure",
+    "secondary_gamma": "raw gamma-8 direction, norm-matched to gamma_unique erasure"
+  },
+  "primary": {
+    "population": "eight target-exposure ML-086 models",
+    "unit": "seed (all 256 evaluation questions per seed)",
+    "statistic": "mean(random-complement accuracy - gamma_unique accuracy)",
+    "success": "mean>0.05 and >=6/8 positive and paired-seed bootstrap 95% lower>0",
+    "comparison": "same per-example perturbation L2 norms"
+  },
+  "secondary": [
+    "familiar arm primary contrast",
+    "pooled main vs gamma and unique matched perturbations",
+    "full vocabulary correctness",
+    "gamma residual energy after removing main subspace"
+  ],
+  "limitations": "Reuses same models and grammar family as ML-086; calibration examples may be exposed to model selection and were not a separately protected set. Purely exploratory and NOT a fresh-cohort validation of the unfamiliar-grammar mechanism.",
+  "safety": "No protected cases generated and no protected evaluation run",
+  "sha256": "e624ee2df78c1e8d26a7ba367cae5a3b099e2827a8e9942073a706eca382f022"
+}
