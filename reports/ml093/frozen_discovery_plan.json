@@ -1,0 +1,56 @@
+{
+  "experiment": "ML-093",
+  "status": "EXPLORATORY_MAGNITUDE_AUDIT_NO_NEW_MODELS_OR_CASES",
+  "script_sha256": "da66694b18e1f44505bde6bef979b53ef754600a98ed43aad7720e7fb5de0efa",
+  "ml080_sha256": "827a22367605dc0db93165d53c022de4e007ff00729de75a9216e10c56a438e8",
+  "ml088_sha256": "51e495de46c8707c1bc8f23f4d59bb3b8ead041f08e13c12d39afdbdae1e65d1",
+  "ml091_sha256": "def271a91654962eb9b798699f92db71cf0e546d0bd157282eebe3d0bb55bf1a",
+  "ml092_sha256": "ece74cfa577e85cfb3a67f4bc51ea5d48e6191080093e97275419e2cfa7b27e6",
+  "ml088_protocol_sha256": "388c2b8d6b3739d98b64bdc9681f5b44d04dbeeb01a28af6fb15c671fe45ce7a",
+  "ml092_frozen_plan_sha256": "1f3a4d0f9df0852c447f0f71058e50ebcb0d874358051f6992736e33bcf15f64",
+  "ml092_report_file_sha256": "fc7ef3e8bebcf85cea0904cc1e5d3224e9a68da9f6d155fb29803c07b7c9a3f5",
+  "cohort": "Same 16 frozen ML-088 step-12800 checkpoints, eight paired seeds",
+  "cases": "Exactly ML-092's 96 already examined calibration sentence templates; no newly held-out cases",
+  "passive_prompts_sha256": "286e9fb5c82ddee8558a917b072895d055ca2d1c6c2db836bf7cf93175ee6c6f",
+  "seeds": [
+    701,
+    709,
+    719,
+    727,
+    733,
+    739,
+    743,
+    751
+  ],
+  "arms": [
+    "familiar",
+    "target"
+  ],
+  "patch_site": "Post-L1 residual source-token positions, aligned by participant NAME, not answer query",
+  "modes": [
+    "native",
+    "original_aligned",
+    "original_reversed",
+    "equalnorm_aligned",
+    "equalnorm_reversed",
+    "equalnorm_random_0",
+    "equalnorm_random_1",
+    "equalnorm_random_2",
+    "equalnorm_random_3"
+  ],
+  "matched_donor": "Second-active source; same agent/patient semantics as passive receiver",
+  "reversed_donor": "Second-active source; agent/patient assignments swapped, names unchanged",
+  "delta": "Donor source state minus receiver source state; two participant positions before question",
+  "normalization": "For each source example and each of its two participant tokens, common norm = min(aligned delta norm, reversed delta norm); equalnorm deltas preserve each original direction but never increase magnitude",
+  "random_control": "Four deterministic isotropic unit directions in model-width space, seeded independently per paired seed and replicate, reused across exposure arms and four role/event queries for each sentence; scaled to identical common norms",
+  "random_seed_formula": "93093000 + 1000 * model_seed + replicate_index; sample shape [96,2,width] on CPU",
+  "sites_1indexed": [
+    1
+  ],
+  "primary_exploratory_contrast": "Within the familiar arm at L1, equalnorm_aligned minus equalnorm_reversed in second_event_role_gating, paired across all 8 seeds",
+  "secondary": "Equalnorm aligned-minus-reversed second-question accuracy; each intervention minus native; direction controls versus equalnorm random mean; target arm; full-vocabulary, wrong-event/role, four-query all-correct, per-token patch norms and clipping ratios",
+  "predeclared_controls": "Original aligned and reversed reproduce ML-092 descriptively; four common-norm random source edits; native exact no-op; all four queries per source share identical intervention; frozen ML-092 report checked without mutation",
+  "scope": "Previously examined models AND cases, exploratory audit only, not confirmation; equal norms do not equate positions/semantic contents; patch transfers potential answer-relevant information",
+  "protected_safety": "Do not access/generate ML-088 protected examples or rerun ML-092; do not repeat ML-093 after output exists",
+  "sha256": "f75311199a30516c76c16a80bc7889032c7567f35756568035dc6a9ef5c03129"
+}
