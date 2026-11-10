@@ -1,0 +1,71 @@
+{
+  "experiment": "ML-090",
+  "status": "EXPLORATORY_CALIBRATION_ONLY_PREDECLARED_DISCOVERY",
+  "script_sha256": "b2b1ff7ec5d4f0ab69664c45840b19da8b3b07cf0c921c0ef8764123490f8f14",
+  "ml080_source_sha256": "827a22367605dc0db93165d53c022de4e007ff00729de75a9216e10c56a438e8",
+  "ml088_source_sha256": "51e495de46c8707c1bc8f23f4d59bb3b8ead041f08e13c12d39afdbdae1e65d1",
+  "ml088_protocol_sha256": "388c2b8d6b3739d98b64bdc9681f5b44d04dbeeb01a28af6fb15c671fe45ce7a",
+  "seeds": [
+    701,
+    709,
+    719,
+    727,
+    733,
+    739,
+    743,
+    751
+  ],
+  "arms": [
+    "familiar",
+    "target"
+  ],
+  "existing_models": "16 frozen ML-088 checkpoints, step 12800",
+  "selection": "Among calibration pairs, SHA256-json sort first-passive agent templates with exposure-unseen verbs; use indices [4:8] from each of 24 target pairs, disjoint from ML-089's [0:4]",
+  "n_templates": 96,
+  "per_construction_questions": 192,
+  "constructions": [
+    "first_active",
+    "first_passive",
+    "second_active",
+    "second_passive"
+  ],
+  "question_counterfactual": "same entire sentence, agent vs patient single-token cue; all four voice-by-position constructions preserve event semantics",
+  "prompt_sha256": {
+    "first_active": "9e7173a5b2aa1cd6c1efabe7c934cad951140b4951e909272c02bf7a3ecf4482",
+    "first_passive": "9b04a1448bccc632a17701f2e4e5cde70d29b5f71207cc15506515658d063e71",
+    "second_active": "ad4468c470712aad25c1e8b62310e9ad0f2314dbf0028a832dd37f8ed96b1fb9",
+    "second_passive": "0d44bc2177a531c3d88e9be9094acf9133e4ca50c006308bcbc802b19b24e311"
+  },
+  "interventions": {
+    "method": "Mask attention FROM the role, event, or who question-token KEY TO ALL strictly later positions, from a specified block through the final transformer block. No activation donor.",
+    "from_blocks_1indexed": [
+      1,
+      2,
+      3
+    ],
+    "roles": [
+      "role",
+      "event",
+      "who"
+    ],
+    "control": "first/second event-cue key and fixed who key",
+    "sanity": "Cutting the role-key path from layer 1 through all layers must make agent/patient logits identical. This is a structural check, NOT the empirical discovery."
+  },
+  "primary_exploratory_question": "Among target second-passive questions, is target-pair 2-choice role accuracy substantially higher than native 4-choice accuracy, including on native wrong-event predictions? How does removal of role-key access from L2 onward change role-conditioned target-pair logit evidence relative to event and who control cuts, in each exposure arm?",
+  "summary_comparison": "Paired target-minus-familiar arm contrast in the role-cut-vs-who-cut effect on role-antisymmetric target-pair logit evidence for second-passive, also report second-active and first-passive controls.",
+  "metrics": [
+    "four-choice accuracy",
+    "full-vocabulary accuracy",
+    "within-target-pair two-choice role accuracy",
+    "within-distractor-pair two-choice role accuracy",
+    "two-choice target-role accuracy conditional on wrong-event native output",
+    "wrong-event prediction role correctness",
+    "pairwise agent/patient evidence and flip rates",
+    "gold margin",
+    "native-error rescues and native-correct harms",
+    "output-logit delta norm"
+  ],
+  "interpretation": "No confirmation claim. Even strong two-choice performance need not show native event binding: two-choice decoding supplies the target pair externally. Cutting a token key may produce generic out-of-distribution disruption and paths can be redundant. The main question is information-flow dependence, not a proof of a circuit.",
+  "safety": "Never invoke protected_target_cases or ML-088 protected cases; never rerun ML-089; one-time ML-090 calibration discovery report.",
+  "sha256": "2836eb742e968c99f06e0a236d5b9e5db448c9a4f1a69a8a379800a3ed9f4929"
+}
