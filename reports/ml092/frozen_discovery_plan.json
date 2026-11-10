@@ -1,0 +1,66 @@
+{
+  "experiment": "ML-092",
+  "status": "EXPLORATORY_SOURCE_TRANSPLANT_FREEZE_BEFORE_TRAINED_INFERENCE",
+  "script_sha256": "ece74cfa577e85cfb3a67f4bc51ea5d48e6191080093e97275419e2cfa7b27e6",
+  "ml080_sha256": "827a22367605dc0db93165d53c022de4e007ff00729de75a9216e10c56a438e8",
+  "ml088_sha256": "51e495de46c8707c1bc8f23f4d59bb3b8ead041f08e13c12d39afdbdae1e65d1",
+  "ml091_sha256": "def271a91654962eb9b798699f92db71cf0e546d0bd157282eebe3d0bb55bf1a",
+  "ml088_protocol_sha256": "388c2b8d6b3739d98b64bdc9681f5b44d04dbeeb01a28af6fb15c671fe45ce7a",
+  "ml091_plan_sha256": "7ef603faa3ce313fc97faf918db26fb24a7078103db8936368645f8d591973f2",
+  "seeds": [
+    701,
+    709,
+    719,
+    727,
+    733,
+    739,
+    743,
+    751
+  ],
+  "arms": [
+    "familiar",
+    "target"
+  ],
+  "model_cohort": "16 existing frozen ML-088 checkpoints at step 12800",
+  "selection": "Reconstruct prior ML-089/090/091 source sets on 24 calibration pairs; select next four unused anchors per pair, all first/second x active/passive realized sentences disjoint",
+  "n_source_templates": 96,
+  "questions_per_sentence": 4,
+  "query_order": [
+    "first_agent",
+    "first_patient",
+    "second_agent",
+    "second_patient"
+  ],
+  "source_sentence_hashes": {
+    "active": "be5e5d61e510884d0ac0d87e3d5dadcad25edc8649076e18a6952279b4f9dee9",
+    "passive": "5614cb7737f929d78383e280a9b9a56ebf5c5b0b04beca19504820720a2a6d94"
+  },
+  "prompts_hashes": {
+    "active": "f8b49ec0c2027e3c3ad846561b48b0fa4fb915934cf37a9b0044d48b40526d68",
+    "passive": "286e9fb5c82ddee8558a917b072895d055ca2d1c6c2db836bf7cf93175ee6c6f"
+  },
+  "interventions": {
+    "sites": "Post-block residual at source participant positions after L1 or L2; continue remaining layers without changes",
+    "modes": [
+      "aligned_both",
+      "reversed_both",
+      "aligned_agent",
+      "aligned_patient",
+      "self_both",
+      "first_event_control"
+    ],
+    "aligned_both": "Replace passive second-clause agent/patient states with active donor states matched by SAME NAME and SAME SEMANTIC ROLE",
+    "reversed_both": "Identical active-donor construction, but agent/patient assignments reversed. Donor still has same names, aligned by NAME. Main semantic control.",
+    "aligned_agent": "Replace second-clause agent state only from semantically matched active donor",
+    "aligned_patient": "Replace second-clause patient state only from semantically matched active donor",
+    "self_both": "Replace second-clause states by identical passive source states, strict no-op control",
+    "first_event_control": "Copy first-clause participant source states from active donor to passive receiver; first clause is unchanged and causal, strict no-op",
+    "L3_site": "After final layer, replacing source positions must not influence answer (preflight only)",
+    "question_independence": "Source tokens precede question; causal mask prevents source state from accessing queried event or role cue"
+  },
+  "primary_exploratory_contrast": "For each familiar-arm seed, second-passive aligned_both(L1) minus reversed_both(L1) in second_event_role_gating; report also aligned_both minus native and matched-vs-reversed four-choice rescue. No formal pass/fail threshold.",
+  "secondary": "Both arms, L1/L2 sites; agent-only/patient-only; effects on the two second-event questions, all-four accuracy, wrong event/role, full-vocab output, mean source-patch norm and logit change; native second-active control; per-seed paired summaries",
+  "limitations": "Even pre-question source states can transmit answer-relevant role semantics; transplant is sufficiency, not native necessity. Active/passive name positions, causal histories and token lengths differ. Controls match source identity but not exact perturbation direction or scale. This uses previously studied models and calibration pairs, not independent confirmation.",
+  "protected_safety": "Never access/open ML-088 protected results or generate protected cases; refuse repeated ML-092 report",
+  "sha256": "1f3a4d0f9df0852c447f0f71058e50ebcb0d874358051f6992736e33bcf15f64"
+}
