@@ -1,0 +1,47 @@
+{
+  "experiment": "ML-089",
+  "status": "EXPLORATORY_DISCOVERY_NO_PROTECTED_CASES",
+  "script_sha256": "c2d4af809105869ea1619a7742761b355d5c699db4cfc40a98ad0077e335f1ad",
+  "ml080_sha256": "827a22367605dc0db93165d53c022de4e007ff00729de75a9216e10c56a438e8",
+  "ml088_sha256": "51e495de46c8707c1bc8f23f4d59bb3b8ead041f08e13c12d39afdbdae1e65d1",
+  "ml088_protocol_sha256": "388c2b8d6b3739d98b64bdc9681f5b44d04dbeeb01a28af6fb15c671fe45ce7a",
+  "cohort": "Existing ML-088 16 frozen step-12800 checkpoints, eight paired seeds",
+  "seeds": [
+    701,
+    709,
+    719,
+    727,
+    733,
+    739,
+    743,
+    751
+  ],
+  "selection": "Four SHA256-sorted first-passive, exposure-unseen-verb agent events for each of 24 calibration target pairs; append agent+patient",
+  "per_construction_questions": 192,
+  "familiar_prompt_sha256": "683e48755df9a88aec95ddb460ec8e897d33401f5f3b363ad12386c3271f0da8",
+  "target_prompt_sha256": "95d85fe709a8f61574198fd6666e5a84d961dc8dced83c53b5525cedfe5f51aa",
+  "intervention": {
+    "mechanism": "Within the same receiver, add fixed log(4) to attention logits of answer query for source-token keys only, renormalizing normally",
+    "source_token_selection": "Using queried event metadata, choose BOTH participant names, never choose the gold answer name alone",
+    "source_positions": [
+      "target_pair",
+      "distractor_pair",
+      "both_verbs",
+      "all_names"
+    ],
+    "layer_sites_zero_indexed": [
+      0,
+      1,
+      2
+    ],
+    "primary_site": 1,
+    "gain_log": 1.3862943611198906,
+    "controls": "Distractor pair: two names in the nonqueried event; both verbs: matched count, no names; all names: nonselective participant boost (different count)",
+    "no_donor": "No activation from any other prompt or model is imported; avoids direct donor-answer injection"
+  },
+  "primary_exploratory_contrast": "Mean across 8 familiar-arm seeds of (target-pair minus distractor-pair) change in gold-vs-best-other four-choice margin at L2, on target-construction calibration pairs",
+  "secondary": "Same contrast on familiar construction, target-exposure models, L1/L3 sites; continuous margins, 4-choice and full-vocabulary accuracy, correct-both-event, native-error rescue and native-correct damage, source attention mass, realized attention-output perturbation norms",
+  "limitations": "External oracle selection of queried event; can supply event location but not role identity. Source positions contain names, not verified grammatical binding. Matched logit bias and token counts do not ensure matched attention-output change magnitudes; log those norms as descriptive covariates. No independent nonrelational retrieval task or native-circuit proof. All results exploratory, ML-088 models previously studied.",
+  "safety": "Never instantiate previously protected ML-088 cases; use calibration pairs only. One-time output file, no overwrite.",
+  "sha256": "57d04291f263481aad25c2d8bd80636cc35f96f5ba67df53d07cf6f2bc02cc80"
+}
