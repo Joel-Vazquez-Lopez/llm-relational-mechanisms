@@ -21,7 +21,7 @@ How does limited exposure to a previously withheld grammatical construction chan
 | ML-080 | 15.54% | 57.85% | **+42.32 pp** | 8/8 |
 | ML-084 | 8.6% | 56.1% | **+47.54 pp** | 8/8 |
 | ML-085 | 9.3% | 58.5% | **+49.16 pp** | 8/8 |
-| ML-086 | 12.1% | 51.6% | **+39.47 pp** | 8/8 |
+| ML-086 | 12.44% | 51.91% | **+39.47 pp** | 8/8 |
 
 **Total: 32/32 positive paired-seed effects across four fresh cohorts.** This is strong reproducibility *within* the fixed synthetic grammar family, training algorithm and model architecture. These effects are not 32 independent task-family replications.
 
