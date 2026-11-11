@@ -1,0 +1,53 @@
+{
+  "experiment": "ML-095",
+  "status": "EXPLORATORY_POST_L1_SOURCE_SITE_DEPENDENCY",
+  "script_sha256": "1acf57306f7bdf2d8550998b04b1210f32424fbdfafa1533b52f260860a80025",
+  "dependency_hashes": {
+    "ml080": "827a22367605dc0db93165d53c022de4e007ff00729de75a9216e10c56a438e8",
+    "ml088": "51e495de46c8707c1bc8f23f4d59bb3b8ead041f08e13c12d39afdbdae1e65d1",
+    "ml091": "def271a91654962eb9b798699f92db71cf0e546d0bd157282eebe3d0bb55bf1a",
+    "ml092": "ece74cfa577e85cfb3a67f4bc51ea5d48e6191080093e97275419e2cfa7b27e6",
+    "ml094": "0c7dce0eb281bd39fee581c5bc491e9da02261334039bfe5808a24a009a68589"
+  },
+  "ml088_protocol_sha256": "388c2b8d6b3739d98b64bdc9681f5b44d04dbeeb01a28af6fb15c671fe45ce7a",
+  "ml094_frozen_plan_sha256": "af38186bc994b366e5470afdaf4716a59b261229ed3b62ff24d2d9ab4d4c5562",
+  "ml094_report_sha256": "36c338f090ee929136d74522610562e23e480364191a1f7fe44ac5558be613f5",
+  "models": "Same 16 ML-088 frozen step-12800 checkpoints, 8 paired seeds",
+  "examples": "Exact 96 previously examined ML-092/093/094 passive calibration sentences; 4 queries per sentence",
+  "sentence_hash": "5614cb7737f929d78383e280a9b9a56ebf5c5b0b04beca19504820720a2a6d94",
+  "seeds": [
+    701,
+    709,
+    719,
+    727,
+    733,
+    739,
+    743,
+    751
+  ],
+  "arms": [
+    "familiar",
+    "target"
+  ],
+  "modes": [
+    "native",
+    "self_sep",
+    "zero_sep_L1",
+    "shuffle_sep_L1",
+    "zero_sep_L2",
+    "zero_sep_L1_L2",
+    "zero_second_agent_L1",
+    "zero_second_patient_L1",
+    "zero_second_pair_L1",
+    "zero_first_pair_L1",
+    "zero_role_cue_L1",
+    "zero_event_cue_L1"
+  ],
+  "sites": "Post-L1 residual, except zero_sep_L2 after L2 and zero_sep_L1_L2 at both sites; all other computation unchanged",
+  "shuffle": "At post-L1 SEP, donor is a different sentence with identical SEP index (same source length), cyclic within each index group, same donor state shared across four questions; no label-based selection",
+  "primary_descriptive": "Across familiar seeds, source-end zero/shuffle impact on native four-choice prediction rate and absolute output logit shift, compared descriptively with second-participant source zeroing; no confirmatory criterion",
+  "secondary": "Post-L2 SEP zeroing, both-layer SEP zeroing, first-event participant controls, question-role/event cue controls, native accuracy, four-choice error taxonomy, event-role logit gating and per-seed impact",
+  "limitations": "Direct zeroing and cross-sentence shuffling can be off-manifold; token counts, source state norms, and downstream paths differ; null effects on answers do not imply an information-free residual. Previously explored data/models; neither independent confirmation nor a native binding circuit test.",
+  "protected_safety": "No protected examples, no ML-094 report overwrite, no ML-088 protected evaluation, one-run report lock.",
+  "sha256": "38f5965a6e65615b291be38a483434c9b944cbab98880d317c9ab3628f808bca"
+}
