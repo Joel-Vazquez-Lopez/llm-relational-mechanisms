@@ -1,0 +1,42 @@
+{
+  "experiment": "ML-096",
+  "status": "EXPLORATORY_QUESTION_CONDITIONED_SOURCE_ABLATIONS",
+  "script_sha256": "0793b3564d7e3d165d8c11a8f48311c2980c4272cc3554f5885a767d99e3424f",
+  "dependencies_sha256": {
+    "ml080": "827a22367605dc0db93165d53c022de4e007ff00729de75a9216e10c56a438e8",
+    "ml088": "51e495de46c8707c1bc8f23f4d59bb3b8ead041f08e13c12d39afdbdae1e65d1",
+    "ml091": "def271a91654962eb9b798699f92db71cf0e546d0bd157282eebe3d0bb55bf1a",
+    "ml092": "ece74cfa577e85cfb3a67f4bc51ea5d48e6191080093e97275419e2cfa7b27e6",
+    "ml095": "1acf57306f7bdf2d8550998b04b1210f32424fbdfafa1533b52f260860a80025"
+  },
+  "ml088_protocol_sha256": "388c2b8d6b3739d98b64bdc9681f5b44d04dbeeb01a28af6fb15c671fe45ce7a",
+  "ml095_plan_sha256": "38f5965a6e65615b291be38a483434c9b944cbab98880d317c9ab3628f808bca",
+  "ml095_report_sha256": "7894e514c41f5c4e7ed271e65a739934a2e01cf7104692d063499759846f5b41",
+  "models": "Same 16 ML-088 12800-step checkpoints, eight paired seeds",
+  "examples": "Exactly 96 previously examined ML-092\u2013095 passive calibration sentences, four questions each",
+  "sentence_sha256": "5614cb7737f929d78383e280a9b9a56ebf5c5b0b04beca19504820720a2a6d94",
+  "modes": [
+    "native",
+    "first_pair_half",
+    "first_pair_zero",
+    "second_pair_half",
+    "second_pair_zero",
+    "second_agent_half",
+    "second_patient_half",
+    "sep_zero"
+  ],
+  "interventions": {
+    "site": "Post-L1 residual source tokens, at original receiver positions",
+    "scaling": "For half ablations, multiply selected token residuals by 0.5. For zero ablations set to zero. No donor.",
+    "pair": "Both event-participant name tokens; first versus second event",
+    "single": "Agent or patient of the second event",
+    "control": "Source-end SEP zero; strict native identity",
+    "identical_questions": "Same source-side changes across four query variants of each sentence"
+  },
+  "primary_descriptive": "Familiar arm, first_pair_half minus native accuracy on SECOND-event questions only, with wrong-event->correct, wrong-role->correct, correct->wrong-event, correct->wrong-role counts",
+  "secondary": "Per-question accuracy, first/second question prediction flip rates, dose dependence, second-event outcome transitions, all-seed paired summaries, target-arm effects",
+  "parity": "Unmodified native, full first-pair zero, full second-pair zero and SEP zero reproduce ML-095's already preserved aggregate endpoints",
+  "limits": "Same models and cases; post-hoc motivated diagnostic, not confirmatory. Zero/half ablations are off-manifold and have non-matched norms across sites. They may alter competition rather than representational binding.",
+  "safety": "No ML-088 protected examples. No overwrite of earlier reports. One-run report lock.",
+  "sha256": "ad370473416458da72b7c8989921d55f89d69d60fe4a998df36f52916bf108cb"
+}
