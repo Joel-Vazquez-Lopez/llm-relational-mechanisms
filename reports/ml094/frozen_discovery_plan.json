@@ -1,0 +1,64 @@
+{
+  "experiment": "ML-094",
+  "status": "EXPLORATORY_SOURCE_END_ANCHOR_AUDIT",
+  "script_sha256": "0c7dce0eb281bd39fee581c5bc491e9da02261334039bfe5808a24a009a68589",
+  "source_hashes": {
+    "ml080": "827a22367605dc0db93165d53c022de4e007ff00729de75a9216e10c56a438e8",
+    "ml088": "51e495de46c8707c1bc8f23f4d59bb3b8ead041f08e13c12d39afdbdae1e65d1",
+    "ml091": "def271a91654962eb9b798699f92db71cf0e546d0bd157282eebe3d0bb55bf1a",
+    "ml092": "ece74cfa577e85cfb3a67f4bc51ea5d48e6191080093e97275419e2cfa7b27e6",
+    "ml093": "da66694b18e1f44505bde6bef979b53ef754600a98ed43aad7720e7fb5de0efa"
+  },
+  "ml088_protocol_sha256": "388c2b8d6b3739d98b64bdc9681f5b44d04dbeeb01a28af6fb15c671fe45ce7a",
+  "ml093_plan_sha256": "f75311199a30516c76c16a80bc7889032c7567f35756568035dc6a9ef5c03129",
+  "ml093_report_file_sha256": "2b25becb9cc55017ed2f6d829333d68fe12c9e316b14720cf31ac8a031ccb790",
+  "seeds": [
+    701,
+    709,
+    719,
+    727,
+    733,
+    739,
+    743,
+    751
+  ],
+  "arms": [
+    "familiar",
+    "target"
+  ],
+  "cohort": "Existing 16 ML-088 step-12800 checkpoints; no retraining",
+  "cases": "Same 96 examined ML-092/093 calibration sentences; no fresh independent evaluation",
+  "prompts_sha256": "286e9fb5c82ddee8558a917b072895d055ca2d1c6c2db836bf7cf93175ee6c6f",
+  "n_sentences": 96,
+  "n_questions": 384,
+  "source_position": "The <sep> source-end token, after both events and before event/role question",
+  "site": "post-L1 residual at source <sep> only; normal L2-L3 downstream",
+  "donors": {
+    "active_aligned": "Second event active, same semantic participants/roles as passive receiver",
+    "active_reversed": "Same active template and word positions; names swapped so agent/patient reversed",
+    "passive_role_reversed": "Same passive voice/length/<sep> position, second-event names swapped and roles reversed",
+    "passive_verb_changed": "Same passive voice/length/<sep> position and participant roles, change only second verb to first distinct alternative",
+    "self": "Same passive receiver, must give exact zero changes"
+  },
+  "controls": [
+    "native",
+    "self_copy",
+    "raw_active_aligned",
+    "raw_active_reversed",
+    "equal_active_aligned",
+    "equal_active_reversed",
+    "equal_passive_role_reversed",
+    "equal_passive_verb_changed",
+    "equal_random_0",
+    "equal_random_1",
+    "equal_random_2",
+    "equal_random_3"
+  ],
+  "scale": "For active aligned/reversed, per-example common=min(|delta_aligned|,|delta_reversed|), scale both DOWN only. Four deterministic isotropic random directions have exactly this norm. Passive role-vs-verb pair similarly scaled down to shared min norm.",
+  "random_seed_formula": "94094000 + 1000*model_seed + replicate_index; CPU [96,96] standard normal, per-sentence",
+  "primary": "Familiar-arm paired 8-seed mean difference in ML-091 second_event_role_gating: equal_active_aligned minus equal_active_reversed at source-end <sep>, with seed-bootstrap CI and positive count",
+  "secondary": "Native accuracy, raw aligned/reversed, equal-norm source-end effects and second-question accuracy, aligned minus random, passive fixed-position role reversal vs same-role verb control, output wrong event/wrong role. No post hoc seed exclusions.",
+  "interpretation": "Both active donors are patched from identical absolute donor <sep> token positions with full source prefix available. This removes participant-token source-position swapping as the patch SITE, but active donors still differ by name order/identity-role binding, and active/passive token lengths differ. Patches may import answer-relevant semantic content; not proof of a necessary native binding circuit.",
+  "protected_safety": "Never open/regenerate ML-088 protected items; do not rerun ML-092/093; no report overwrite",
+  "sha256": "af38186bc994b366e5470afdaf4716a59b261229ed3b62ff24d2d9ab4d4c5562"
+}
