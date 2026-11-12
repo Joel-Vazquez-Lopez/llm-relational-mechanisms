@@ -1,6 +1,6 @@
 # Targeted Experience, Relational Generalization, and Role-Assignment Errors in Transformers
 
-**Working manuscript — 12 November 2026.** Target first complete draft: 15 December 2026. This file is the repository's editable working draft; it does **not** replace the separate manuscript package on the local Mac. Numeric results in Sections 3–4 are backed by the archived reports cited below. The proposed SLOG analysis has **not** produced model results.
+**Working manuscript — 12 November 2026.** Target first complete draft: 15 December 2026. This file is the repository's editable working draft; it does **not** replace the separate manuscript package on the local Mac. Numeric results in Sections 3–4 are backed by the archived reports cited below. A SLOG public-development-only pretrained-model scoring pilot has now been run, but **no SLOG protected structural-generalization evaluation** has been performed.
 
 ## Working abstract
 
@@ -61,13 +61,23 @@ ML-085 role-donor interventions have a substantial control-relative effect in th
 
 References: `reports/ml085/protected_causal_evaluation.json`, `reports/ml086/protected_evaluation.json`, `reports/ml099_role_q/protected_evaluation.json`, `reports/ml100_source_access/exploratory_summary.json`.
 
-## 4. Prospective external-validation study [PROTOCOL DEVELOPMENT — NO RESULTS]
+## 4. Deferred external-validation study and public-development scoring pilot [NO PROTECTED RESULTS]
 
 We intend to inspect the **public SLOG development split only** to determine whether a subset of semantic representations supports an unambiguous pair of `agent` and `theme` arguments for a single identifiable predicate. SLOG's annotated *theme* is **not literally identical** to the synthetic task's *patient*: terminology and semantic scope must be stated explicitly. The SLOG structural generalization test archive must remain unopened until eligibility, extraction, prompts, checkpoint IDs, scoring, and exclusions are frozen. The public development-split extraction preflight has **passed**. From 4,046 development sentences (SHA256 `177128c3f64be56732a102db119139bbec33a771c485a525ea0f9f4e45926a5c`), 812 contain an eligible agent–theme role pair within a multi-predicate sentence; 462 have two eligible events and only 53 have two events with four distinct participant heads. The dominant eligible category is object-modifying relative clauses (613); in-distribution sentences contribute 149, center embedding at depth 2 contributes 29 and at depth 4 contributes 14, complement-clause depth 4 contributes six, and prepositional-phrase depth 4 contributes one. None of the public `wh_Q_simple_trans` rows passes these conservative multi-event conditions. These are eligibility counts, **not** scored performance. A deterministic public-dev label audit has now selected 50 unique sentences for QA projection review; the script's indexing self-test passed, the printed 14 sample projections were visually plausible, and the local Mac reports MPS availability, but full manual validation remains outstanding. The publicly released dev file includes `in_distribution` plus six named structural categories; the categories are recorded as metadata, while any model/prompt calibration should use `in_distribution` only. A subset that collapses to trivial single-clause sentences would not validate our two-event binding claim; report such failure honestly and consider a different benchmark before testing models.
 
 A future pretrained-model evaluation must specify fixed model revisions, whether the output is unconstrained generation or candidates, role-specific baselines, event-conditional scoring, in-domain controls, structural category stratification, and a stopping rule. Crucially, a pretrained-model evaluation would test **error-taxonomy transfer**, not replicate the **causal effect of training exposure**, unless a controlled exposure intervention is separately designed.
 
 Official source: https://github.com/bingzhilee/SLOG ; benchmark paper: Li et al., EMNLP 2023, https://aclanthology.org/2023.emnlp-main.194/ .
+
+### 4.1 Development-only Qwen scoring pilot: insufficient answer-order robustness
+
+After confirming local Apple Silicon inference feasibility, we ran one calibration on **16 public in-distribution development sentences** (64 agent/theme × candidate-order prompt variants) using `Qwen/Qwen2.5-1.5B-Instruct` at exact model revision `989aa7980e4cf806f80c7fef2b1adb7bc71aa306` (MPS, PyTorch 2.15.0, Transformers 5.20.2). The model's next-token scoring compared the logits of single-token labels `A` and `B` following a fixed chat template and verb-marked sentence. The two correct-event participants were offered as response candidates.
+
+The first ordering returned **4/16** both-role-correct pairs and **12/16** duplicate same-person pairs. Across both candidate orders, **43/64** individual responses were correct. Crucially, the selected agent and theme participant identities were consistent across the two answer-option orders for **only 3/16** sentences (18.8%); none of the four first-order both-correct pairs remained entirely unchanged under candidate-order reversal. As the scoring procedure is highly sensitive to candidate order and the manual audit of all 50 development sample sentences remains incomplete, we **do not** interpret the 75% duplicate rate as evidence of model-level role-binding failure, nor the 67.2% individual correctness as evidence of external structural generalization. There was no prespecified confirmatory competence threshold. The planned protected SLOG evaluation remains unopened and is **deferred**.
+
+Dataset SHA256: `177128c3f64be56732a102db119139bbec33a771c485a525ea0f9f4e45926a5c`; selected development-sample manifest SHA256: `7c3e953872620451c5e43c2534149c5b9cf71555c78188343ba4d16cc05f64b1`. The detailed local output is `reports/paper_slog/dev_model_calibration.json` (not committed because it contains source sentences and labels). The exact numerical report and stopping interpretation are archived in `reports/paper_slog/qwen_dev_calibration_interpretation.md`.
+
+This pilot is reported **only as a methodological feasibility and measurement-robustness limitation**, not as an additional experiment demonstrating or refuting the paper's controlled-training hypothesis.
 
 ## 5. Discussion and limitations [TO WRITE]
 
@@ -83,7 +93,7 @@ Official source: https://github.com/bingzhilee/SLOG ; benchmark paper: Li et al.
 2. **Main Fig. 2:** Native five-cohort changes in joint correctness, per-question wrong-role errors, and same-participant pairs (keep distinct denominators); separate inset for ML-088 calibration-only oracle-restricted correct/reversed/collapsed assignments. ML-072 comparison appears as clearly labeled exploratory cross-study evidence.
 3. **Main Fig. 3 or supplement:** ML-099 prespecified interaction failure and heterogeneous seed effects.
 4. **Supplement:** ML-100 control-relative specificity screening and null outcomes.
-5. **External benchmark figure:** **Reserved; do not create results panel before evaluation.**
+5. **External benchmark figure:** **Deferred; do not create structural-generalization results from development-only calibration.**
 
 ## References [TO FORMAT]
 
@@ -93,4 +103,4 @@ Official source: https://github.com/bingzhilee/SLOG ; benchmark paper: Li et al.
 
 ## Evidence and analysis status
 
-Archived experiment reports: repo-accessible. ML-088 paired-role local observations and summary: user has generated files on their Mac; **not yet verified committed in this branch**. SLOG external dataset/model results: **not run**. Do not imply any protected SLOG scores have been seen.
+Archived experiment reports: repo-accessible. ML-088 paired-role local observations and summary: user has generated files on their Mac; **not yet verified committed in this branch**. SLOG **protected structural-generalization evaluation: not run**. A small pretrained-model engineering calibration on 16 SLOG public in-distribution development sentences was completed but failed measurement robustness (see Section 4). Do not imply any protected SLOG scores have been seen.
