@@ -12,8 +12,9 @@ This is an external *error-pattern* study. It **does not** replicate the causal 
 
 - Official source: https://github.com/bingzhilee/SLOG
 - Li et al. (EMNLP 2023): https://aclanthology.org/2023.emnlp-main.194/
-- First permitted input for preflight: **public `data/cogs_LF/dev.tsv` only**, encoding `sentence<TAB>logical_form<TAB>in_distribution`. The output LF includes `verb.agent(event, argument)` and `verb.theme(event, argument)` clauses. The predicate variable index anchors the verb in the source sentence (zero-based).
+- First permitted input for preflight: **public `data/cogs_LF/dev.tsv` only**, encoding `sentence<TAB>logical_form<TAB>category`. This public development file contains 3,000 `in_distribution` rows and 1,046 rows spanning six labeled structural categories; these labels are retained for stratified feasibility auditing, not rejected. The output LF includes `verb.agent(event, argument)` and `verb.theme(event, argument)` clauses. The predicate variable index anchors the verb in the source sentence (zero-based).
 - **No access to `generalization_sets.zip`**, SLOG test, or other held-out data until the protocol is checked, the model/checkpoint revisions and inference scoring are fixed, and a run is authorized.
+- Pretrained-model prompt selection, scoring calibrations, and competence gating may use **only dev rows labeled `in_distribution`**, with additional disjointness exclusions if needed. The six structural-category slices of public dev are examined for feasibility only until the protocol is frozen; do not tune on their observed model performance.
 - SLOG's `theme` role is not perfectly equivalent to the scratch grammar's `patient`, so make any comparison explicit and limited.
 
 ## Eligibility rule (development stage)
