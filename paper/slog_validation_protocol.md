@@ -1,6 +1,6 @@
 # Prospective SLOG External-Validation Protocol — Development Stage
 
-**Created:** 12 November 2026. **Status:** DRAFT / NO MODEL OR TEST DATA EVALUATED. This document is **not frozen**. The independent generalization/test archive remains unopened; no results are claimed.
+**Created:** 12 November 2026. **Status:** DEFERRED FUTURE EXTENSION / NO MODEL OR TEST DATA EVALUATED. This document is **not frozen**. We completed public-development eligibility and prompt-preview checks, but will not run Qwen or other pretrained models in the current paper's final experiment phase. The independent SLOG generalization/test archive remains unopened; no external model results are claimed.
 
 ## Objective and what this experiment can establish
 
@@ -96,3 +96,7 @@ Report:
 Do not commit third-party raw SLOG dataset copies or model weights. Commit the audit script and the counts/hash report only. Store per-example data or model outputs locally until copyright/license and privacy review. Pin dataset revision (Git commit or blob SHA) and model revision when frozen.
 
 **Current status:** Manuscript sections 3.1–3.5 saved in `paper/manuscript.md`. Preflight code committed; no trained-model inference and no protected SLOG generalization data opened.
+
+## Decision checkpoint — 12 November 2026
+
+Following a completed five-cohort audit of the already archived scratch-Transformer protected results, **the current manuscript's experimental work is closed**. The external pretrained-model SLOG validation is postponed to a separately registered future study. The public dataset preflight and question-preview scripts remain available, but the `paper_slog_dev_model_calibration.py` model-inference engineering step has **not** been executed. Do not interpret the public-development sample review as model evaluation or as evidence of natural-language generalization.
