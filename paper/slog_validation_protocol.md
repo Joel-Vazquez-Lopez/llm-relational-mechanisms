@@ -48,6 +48,16 @@ The user-run development label audit completed with the same official dataset SH
 
 Stop if any incorrect role alignment, invalid head reference, missing event disambiguation, or semantic mismatch is found. Corrections to extraction/prompting must be documented and followed by a new public-dev preflight **before** freeze. A sample audit provides diagnostic confidence, not a proof of complete correctness.
 
+## Stage 0c — local pretrained checkpoint engineering calibration [SCRIPT READY; NOT RUN]
+
+Local machine environment reported **16 GiB unified memory** (`hw.memsize=17179869184`), Apple Silicon MPS available, Python 3.13.13, torch 2.15.0, Transformers 5.20.2.
+
+A feasible provisional checkpoint for this engineering gate is `Qwen/Qwen2.5-1.5B-Instruct` (official Hugging Face model card; Apache-2.0, 1.54B parameters). It is not yet the frozen protected-evaluation model. The script `scripts/paper_slog_dev_model_calibration.py` deterministically selects **16 in_distribution public-development sentences** with at least two annotated predicates and exactly one eligible event per sentence, verifies the audited dataset SHA256, and scores **agent/theme × balanced A/B candidate order** with a chat-template next-token comparison. This is a **model-inference engineering check**, not an external generalization result; its single run is logged with the resolved model commit SHA, script hash, PyTorch/Transformers versions, and per-example scoring.
+
+Before any protected generalization data are considered, check that option A/B each correspond to a single tokenizer token at the model's answer position; that both-order answer consistency is high; and that the model can correctly answer development cases. The code currently reports the first ordering separately; final role-assignment results must use a separately specified order-robust aggregation. Any prompt tuning or model replacement using development observations must be disclosed and the **final** protocol independently frozen; do not select scoring variants based on protected outcomes.
+
+A genuine role-projection audit of all 50 chosen public-dev sentences is still **outstanding**. Passing the inference gate alone does not substitute for it.
+
 ## Stage 1 — protocol freeze [NOT DONE]
 
 Before model inference, freeze in a new file:
