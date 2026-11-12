@@ -80,7 +80,7 @@ Official source: https://github.com/bingzhilee/SLOG ; benchmark paper: Li et al.
 ## 6. Figure plan
 
 1. **Main Fig. 1:** Six-cohort held-out exposure benefit (48 paired seed effects) and full-vocabulary comparison.
-2. **Main Fig. 2:** Paired-role error taxonomy: native versus oracle-restricted answers for ML-088 calibration and each seed; ML-072 as a clearly marked, non-controlled cross-study comparison.
+2. **Main Fig. 2:** Native five-cohort changes in joint correctness, per-question wrong-role errors, and same-participant pairs (keep distinct denominators); separate inset for ML-088 calibration-only oracle-restricted correct/reversed/collapsed assignments. ML-072 comparison appears as clearly labeled exploratory cross-study evidence.
 3. **Main Fig. 3 or supplement:** ML-099 prespecified interaction failure and heterogeneous seed effects.
 4. **Supplement:** ML-100 control-relative specificity screening and null outcomes.
 5. **External benchmark figure:** **Reserved; do not create results panel before evaluation.**
