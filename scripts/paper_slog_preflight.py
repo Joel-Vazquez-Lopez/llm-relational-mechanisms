@@ -140,6 +140,17 @@ def preflight(path: Path, out: Path) -> None:
         if eligible:
             counters["eligible_multi_event_sentences"] += 1
             counters["eligible_multi_event_role_pairs"] += len(eligible)
+            if len(eligible) >= 2:
+                counters["multi_event_sentences_with_two_eligible_events"] += 1
+                if any(
+                    len({
+                        *[a["agent_surface"].casefold(), a["theme_surface"].casefold()],
+                        *[b["agent_surface"].casefold(), b["theme_surface"].casefold()]
+                    }) == 4
+                    for i, a in enumerate(eligible)
+                    for b in eligible[i+1:]
+                ):
+                    counters["multi_event_sentences_with_disjoint_four_participants"] += 1
             counters["multi_event_with_passive_surface_cue"] += bool(
                 re.search(r"\bwas\b.*\bby\b", sentence, flags=re.I)
             )
