@@ -122,13 +122,19 @@ def preflight(path: Path, out: Path) -> None:
     lines = data.decode("utf-8").splitlines()
     counters: Counter[str] = Counter()
     rejects: Counter[str] = Counter()
+    categories: Counter[str] = Counter()
+    eligible_by_category: Counter[str] = Counter()
+    disjoint_by_category: Counter[str] = Counter()
     for line_idx, line in enumerate(lines, start=1):
         fields = line.split("\t")
         if len(fields) != 3:
             raise ValueError(f"TSV row {line_idx}: expected sentence, LF, category")
         sentence, lf, category = fields
-        if category != "in_distribution":
-            raise ValueError(f"Unexpected development category {category!r} on row {line_idx}")
+        if not category.strip():
+            raise ValueError(f"Missing development category on row {line_idx}")
+        # Public SLOG development files include structural categories, not
+        # just 'in_distribution'. Treat their labels as metadata, not errors.
+        categories[category] += 1
         events, eligible, why = extract(sentence, lf)
         counters["sentences"] += 1
         counters["all_predicate_events_with_agent_or_theme"] += len(events)
@@ -139,6 +145,7 @@ def preflight(path: Path, out: Path) -> None:
             continue
         if eligible:
             counters["eligible_multi_event_sentences"] += 1
+            eligible_by_category[category] += 1
             counters["eligible_multi_event_role_pairs"] += len(eligible)
             if len(eligible) >= 2:
                 counters["multi_event_sentences_with_two_eligible_events"] += 1
@@ -151,6 +158,7 @@ def preflight(path: Path, out: Path) -> None:
                     for b in eligible[i+1:]
                 ):
                     counters["multi_event_sentences_with_disjoint_four_participants"] += 1
+                    disjoint_by_category[category] += 1
             counters["multi_event_with_passive_surface_cue"] += bool(
                 re.search(r"\bwas\b.*\bby\b", sentence, flags=re.I)
             )
@@ -165,6 +173,9 @@ def preflight(path: Path, out: Path) -> None:
         "dataset_sha256": sha256(data),
         "script_sha256": sha256(Path(__file__).read_bytes()),
         "metrics": dict(sorted(counters.items())),
+        "development_categories": dict(sorted(categories.items())),
+        "eligible_multi_event_by_category": dict(sorted(eligible_by_category.items())),
+        "four_participant_multi_event_by_category": dict(sorted(disjoint_by_category.items())),
         "rejection_reasons": dict(sorted(rejects.items())),
         "eligibility_note": (
             "Unique surface agent/theme and predicate token, >=2 LF predicates. "
@@ -185,7 +196,10 @@ def preflight(path: Path, out: Path) -> None:
     print("dataset SHA256:", report["dataset_sha256"])
     for k, v in report["metrics"].items():
         print(f"{k}: {v}")
-    print("No generalization/test split and no trained-model outputs read.")
+    print("Development categories:", report["development_categories"])
+    print("Eligible multi-event cases by category:", report["eligible_multi_event_by_category"])
+    print("Four-participant cases by category:", report["four_participant_multi_event_by_category"])
+    print("No protected generalization archive/test split or trained-model outputs read.")
     print("Saved:", out)
 
 
