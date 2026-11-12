@@ -40,6 +40,14 @@ Use `scripts/paper_slog_preflight.py` from the paper branch. The script:
 
 **Go/no-go** before model selection: at least 500 distinct multi-predicate sentences with an extractable role pair, and a documented manual/independent audit of annotation mapping on public development examples. If the mapping is invalid, mark stage failed; don't inspect protected SLOG material to repair it.
 
+## Stage 0b — QA prompt and semantic projection review [IN PROGRESS]
+
+The user-run development label audit completed with the same official dataset SHA256, **50 unique selected sentences**, an available macOS MPS backend, Python 3.13.13, PyTorch 2.15.0 and Transformers 5.20.2. Printed examples looked structurally aligned, but all 50 selected sentences and every eligible verb must be reviewed before calling the projection validated.
+
+`scripts/paper_slog_prompt_preview.py` locally constructs four balanced **development-only** question variants per eligible event (agent/theme × A/B option order). Each marks the exact source verb with `[EVENT]` tags, includes the two candidate *surface heads*, and writes a local JSONL preview with gold labels **for human verification only**. It does **not** load a model or any protected split. The candidate prompt wording is *provisional*, not frozen or validated for model competence. Do not commit raw source/gold preview text.
+
+Stop if any incorrect role alignment, invalid head reference, missing event disambiguation, or semantic mismatch is found. Corrections to extraction/prompting must be documented and followed by a new public-dev preflight **before** freeze. A sample audit provides diagnostic confidence, not a proof of complete correctness.
+
 ## Stage 1 — protocol freeze [NOT DONE]
 
 Before model inference, freeze in a new file:
