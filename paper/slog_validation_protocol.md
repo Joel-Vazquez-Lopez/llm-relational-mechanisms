@@ -1,6 +1,6 @@
 # Prospective SLOG External-Validation Protocol — Development Stage
 
-**Created:** 12 November 2026. **Status:** DEFERRED FUTURE EXTENSION / NO MODEL OR TEST DATA EVALUATED. This document is **not frozen**. We completed public-development eligibility and prompt-preview checks, but will not run Qwen or other pretrained models in the current paper's final experiment phase. The independent SLOG generalization/test archive remains unopened; no external model results are claimed.
+**Created:** 12 November 2026. **Status:** DEFERRED FUTURE EXTENSION / DEVELOPMENT-ONLY MODEL CALIBRATION COMPLETE / NO PROTECTED STRUCTURAL TEST OPENED. This document is **not frozen**. We completed public-development eligibility and prompt-preview checks, and a single Qwen development-model scoring calibration; the method was too sensitive to A/B candidate ordering for protected evaluation. No external structural-generalization results are claimed.
 
 ## Objective and what this experiment can establish
 
@@ -48,15 +48,15 @@ The user-run development label audit completed with the same official dataset SH
 
 Stop if any incorrect role alignment, invalid head reference, missing event disambiguation, or semantic mismatch is found. Corrections to extraction/prompting must be documented and followed by a new public-dev preflight **before** freeze. A sample audit provides diagnostic confidence, not a proof of complete correctness.
 
-## Stage 0c — local pretrained checkpoint engineering calibration [SCRIPT READY; NOT RUN]
+## Stage 0c — local pretrained checkpoint engineering calibration [COMPLETED, MEASUREMENT UNSUITABLE]
 
 Local machine environment reported **16 GiB unified memory** (`hw.memsize=17179869184`), Apple Silicon MPS available, Python 3.13.13, torch 2.15.0, Transformers 5.20.2.
 
-A feasible provisional checkpoint for this engineering gate is `Qwen/Qwen2.5-1.5B-Instruct` (official Hugging Face model card; Apache-2.0, 1.54B parameters). It is not yet the frozen protected-evaluation model. The script `scripts/paper_slog_dev_model_calibration.py` deterministically selects **16 in_distribution public-development sentences** with at least two annotated predicates and exactly one eligible event per sentence, verifies the audited dataset SHA256, and scores **agent/theme × balanced A/B candidate order** with a chat-template next-token comparison. This is a **model-inference engineering check**, not an external generalization result; its single run is logged with the resolved model commit SHA, script hash, PyTorch/Transformers versions, and per-example scoring.
+The development-only pilot used `Qwen/Qwen2.5-1.5B-Instruct` at immutable model revision `989aa7980e4cf806f80c7fef2b1adb7bc71aa306`. This was **not** a frozen protected-evaluation model. The script `scripts/paper_slog_dev_model_calibration.py` deterministically selects **16 in_distribution public-development sentences** with at least two annotated predicates and exactly one eligible event per sentence, verifies the audited dataset SHA256, and scores **agent/theme × balanced A/B candidate order** with a chat-template next-token comparison. This is a **model-inference engineering check**, not an external generalization result; its single run is logged with the resolved model commit SHA, script hash, PyTorch/Transformers versions, and per-example scoring.
 
 Before any protected generalization data are considered, check that option A/B each correspond to a single tokenizer token at the model's answer position; that both-order answer consistency is high; and that the model can correctly answer development cases. The code currently reports the first ordering separately; final role-assignment results must use a separately specified order-robust aggregation. Any prompt tuning or model replacement using development observations must be disclosed and the **final** protocol independently frozen; do not select scoring variants based on protected outcomes.
 
-A genuine role-projection audit of all 50 chosen public-dev sentences is still **outstanding**. Passing the inference gate alone does not substitute for it.
+The development scoring pilot returned 43/64 correct individual A/B responses; at the first option order, 4/16 sentence-level agent/theme pairs were both correct and 12/16 assigned the same participant to both roles. However, only **3/16** sentence pairs had both selected participant identities invariant to reversing the A/B candidate order. None of the four first-order both-correct cases had both answers invariant. This large candidate-order sensitivity makes the method **unsuitable for protected testing** without a separate redesigned and frozen evaluation. The full role-projection audit of all 50 selected development sentences also remains **outstanding**. The result is **not** evidence for or against pretrained LLM role-binding competence. See `reports/paper_slog/qwen_dev_calibration_interpretation.md`.
 
 ## Stage 1 — protocol freeze [NOT DONE]
 
@@ -95,8 +95,8 @@ Report:
 
 Do not commit third-party raw SLOG dataset copies or model weights. Commit the audit script and the counts/hash report only. Store per-example data or model outputs locally until copyright/license and privacy review. Pin dataset revision (Git commit or blob SHA) and model revision when frozen.
 
-**Current status:** Manuscript sections 3.1–3.5 saved in `paper/manuscript.md`. Preflight code committed; no trained-model inference and no protected SLOG generalization data opened.
+**Current status:** Manuscript sections 3.1–3.5 and the development-only calibration are saved in `paper/manuscript.md`. The public-development pilot was run once; it does **not** constitute structural-generalization evaluation. No protected SLOG generalization data were opened.
 
 ## Decision checkpoint — 12 November 2026
 
-Following a completed five-cohort audit of the already archived scratch-Transformer protected results, **the current manuscript's experimental work is closed**. The external pretrained-model SLOG validation is postponed to a separately registered future study. The public dataset preflight and question-preview scripts remain available, but the `paper_slog_dev_model_calibration.py` model-inference engineering step has **not** been executed. Do not interpret the public-development sample review as model evaluation or as evidence of natural-language generalization.
+Following a completed five-cohort audit of the already archived scratch-Transformer protected results, **the current manuscript's experimental work is closed**. The external pretrained-model SLOG validation is postponed to a separately registered future study. The public dataset preflight and question-preview scripts remain available. The `paper_slog_dev_model_calibration.py` engineering pilot **was executed**, showing only 3/16 sentence-level agent/theme pairs invariant to answer-candidate reversal. It is documented as a measurement failure, and no follow-up scoring or protected dataset access is planned. Do not interpret the public-development sample review as model evaluation or as evidence of natural-language generalization.
