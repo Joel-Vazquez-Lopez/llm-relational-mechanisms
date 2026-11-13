@@ -11,6 +11,30 @@ import hashlib
 import io
 
 
+
+def configure_determinism(device: str) -> dict:
+    """Bounded RC3 backend policy shared by hardware fixture and study path.
+
+    CPU requires strict deterministic operators. Mac MPS has operators whose
+    backward kernels are known nondeterministic, so warn-only permits the
+    disposable hardware fixture to quantify actual reproducibility. This is
+    NOT evidence of a deterministic MPS backend or a training authorization.
+    """
+    import torch
+    if device not in ('cpu', 'mps'):
+        raise ValueError('EXP-101 RC3 only documents cpu/mps backend policies')
+    if device == 'mps' and not torch.backends.mps.is_available():
+        raise RuntimeError('MPS is not available; cannot validate MPS policy here')
+    warn_only = device == 'mps'
+    torch.use_deterministic_algorithms(True, warn_only=warn_only)
+    check = getattr(torch, 'is_deterministic_algorithms_warn_only_enabled', None)
+    actual_warn_only = bool(check()) if check is not None else warn_only
+    if not torch.are_deterministic_algorithms_enabled() or actual_warn_only != warn_only:
+        raise RuntimeError('PyTorch backend determinism policy not applied')
+    return {'device':device, 'deterministic_algorithms_enabled':True,
+            'warn_only':warn_only, 'mode': 'mps_warn_only' if warn_only else 'cpu_strict',
+            'bitwise_determinism_claimed':not warn_only}
+
 def init_state(seed: int, model_factory, *, device='cpu', learning_rate=.002, weight_decay=.01):
     import torch
     torch.manual_seed(seed)
