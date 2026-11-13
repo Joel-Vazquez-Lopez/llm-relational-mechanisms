@@ -10,7 +10,7 @@
 #
 # One-time setup on a login node (login nodes have internet; download weights there):
 #   python3 -m venv ~/venvs/order-role && source ~/venvs/order-role/bin/activate
-#   pip install torch transformers accelerate
+#   pip install torch transformers accelerate matplotlib
 #   export HF_HOME=/proj/<your-project>/hf_cache   # weights are large; keep them out of $HOME
 #   huggingface-cli login                           # only for gated models such as Llama
 #   huggingface-cli download Qwen/Qwen2.5-1.5B

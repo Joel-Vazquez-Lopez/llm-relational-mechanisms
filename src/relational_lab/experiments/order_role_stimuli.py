@@ -9,7 +9,15 @@ first-mentioned name, the grammatical subject and the agent:
     by_cleft        It was by Leon that Mira was praised.  first=A  subj=P  agent=A
 
 plus a subject-cleft control ("It was Leon who praised Mira.") that changes
-the frame but not the order, so cleft effects can be separated from order.
+the frame but not the order, so cleft effects can be separated from order,
+and two held-out pseudo-clefts that are never used to fit anything and exist
+only to test whether a fitted role code transfers to unseen surface forms:
+
+    relative_active   The one who praised Mira was Leon.         first=P  subj=A  agent=A
+    relative_passive  The one who was praised by Leon was Mira.   first=A  subj=P  agent=A
+
+("subject" there means the subject of the event verb's clause, i.e. the
+participant the relative pronoun stands for.)
 
 Across the four main constructions the three binary labels carried by each
 name token (is_first, is_subject, is_agent) are exactly uncorrelated.
@@ -27,12 +35,13 @@ import argparse
 import hashlib
 import json
 import random
+import re
 from collections.abc import Callable, Iterable, Sequence
 from dataclasses import asdict, dataclass
 from itertools import combinations
 from pathlib import Path
 
-GENERATOR_VERSION = "1.1.0"
+GENERATOR_VERSION = "1.2.0"
 
 # Gender-balanced, common English first names. Single-token status depends on
 # the tokenizer; use ``filter_names`` with a real tokenizer before freezing.
@@ -56,7 +65,8 @@ VERBS: tuple[tuple[str, str], ...] = (
 
 MAIN_CONSTRUCTIONS: tuple[str, ...] = ("active", "passive", "object_cleft", "by_cleft")
 CONTROL_CONSTRUCTIONS: tuple[str, ...] = ("subject_cleft",)
-CONSTRUCTIONS: tuple[str, ...] = MAIN_CONSTRUCTIONS + CONTROL_CONSTRUCTIONS
+HELDOUT_CONSTRUCTIONS: tuple[str, ...] = ("relative_active", "relative_passive")
+CONSTRUCTIONS: tuple[str, ...] = MAIN_CONSTRUCTIONS + CONTROL_CONSTRUCTIONS + HELDOUT_CONSTRUCTIONS
 
 ROLES: tuple[str, ...] = ("agent", "patient")
 QUESTION_VOICES: tuple[str, ...] = ("active", "passive")
@@ -69,7 +79,15 @@ CONSTRUCTION_LABELS: dict[str, dict[str, str]] = {
     "object_cleft": {"first": "P", "subject": "A"},
     "by_cleft": {"first": "A", "subject": "P"},
     "subject_cleft": {"first": "A", "subject": "A"},
+    "relative_active": {"first": "P", "subject": "A"},
+    "relative_passive": {"first": "A", "subject": "P"},
 }
+
+# Position labels shared across constructions, so a patching site means the
+# same thing everywhere. Absent labels (no "by" in an active) are simply missing.
+POSITION_LABELS: tuple[str, ...] = (
+    "first_name", "second_name", "verb", "aux", "by", "period", "question_end", "answer_cue",
+)
 
 # The "Sentence: " prefix puts a space before every name in every construction,
 # so BPE tokenizers see the same name token (" Anna") regardless of position.
@@ -88,6 +106,10 @@ def render_sentence(construction: str, agent: str, patient: str, past: str) -> s
         return f"It was by {agent} that {patient} was {past}."
     if construction == "subject_cleft":
         return f"It was {agent} who {past} {patient}."
+    if construction == "relative_active":
+        return f"The one who {past} {patient} was {agent}."
+    if construction == "relative_passive":
+        return f"The one who was {past} by {agent} was {patient}."
     raise ValueError(f"unknown construction: {construction}")
 
 
@@ -128,6 +150,7 @@ class Item:
     test_set: int  # 0..n_test_sets-1 for test items, -1 for dev
     construction: str
     is_control: bool
+    is_heldout: bool
     agent: str
     patient: str
     lemma: str
@@ -141,6 +164,14 @@ class Item:
     distractor: str
     answer_is_first: bool
     names: tuple[NameToken, NameToken]  # in order of mention
+    # (label, prompt_char_start, prompt_char_end) for each POSITION_LABELS entry present
+    spans: tuple[tuple[str, int, int], ...] = ()
+
+    def span(self, label: str) -> tuple[int, int] | None:
+        for lab, start, end in self.spans:
+            if lab == label:
+                return (start, end)
+        return None
 
 
 def _name_tokens(construction: str, sentence: str, agent: str, patient: str) -> tuple[NameToken, NameToken]:
@@ -169,6 +200,39 @@ def _name_tokens(construction: str, sentence: str, agent: str, patient: str) -> 
     return tokens[0], tokens[1]
 
 
+_WORD = re.compile(r"\w+|[^\w\s]")
+
+
+def _position_spans(
+    sentence: str, question: str, prompt: str, names: tuple[NameToken, NameToken], past: str
+) -> tuple[tuple[str, int, int], ...]:
+    off = len(PROMPT_PREFIX)
+    words = [(m.group(), m.start(), m.end()) for m in _WORD.finditer(sentence)]
+    out = [
+        ("first_name", names[0].prompt_char_start, names[0].prompt_char_end),
+        ("second_name", names[1].prompt_char_start, names[1].prompt_char_end),
+    ]
+    verb_idx = [i for i, (w, _, _) in enumerate(words) if w == past]
+    if len(verb_idx) != 1:
+        raise AssertionError(f"verb {past!r} must occur once in {sentence!r}")
+    vi = verb_idx[0]
+    out.append(("verb", words[vi][1] + off, words[vi][2] + off))
+    if vi > 0 and words[vi - 1][0] == "was":  # passive auxiliary, not a cleft copula
+        out.append(("aux", words[vi - 1][1] + off, words[vi - 1][2] + off))
+    by = [w for w in words if w[0] == "by"]
+    if len(by) > 1:
+        raise AssertionError(f"'by' occurs more than once in {sentence!r}")
+    if by:
+        out.append(("by", by[0][1] + off, by[0][2] + off))
+    if words[-1][0] != ".":
+        raise AssertionError(f"sentence must end with a period: {sentence!r}")
+    out.append(("period", words[-1][1] + off, words[-1][2] + off))
+    q = prompt.index(question)
+    out.append(("question_end", q + len(question) - 1, q + len(question)))
+    out.append(("answer_cue", len(prompt) - 1, len(prompt)))
+    return tuple(out)
+
+
 def _check_names(names: Sequence[str]) -> None:
     if len(set(names)) != len(names):
         raise ValueError("names must be unique")
@@ -194,6 +258,62 @@ def split_families(
     return out
 
 
+def build_item(
+    agent: str,
+    patient: str,
+    lemma: str,
+    past: str,
+    construction: str,
+    role: str,
+    question_voice: str,
+    family_id: str | None = None,
+    split: str = "dev",
+    test_set: int = -1,
+) -> Item:
+    """One prompt. ``family_id`` defaults to the sorted name pair."""
+    family = family_id or "|".join(sorted((agent, patient)))
+    event = f"{agent}>{patient}:{lemma}"
+    sentence = render_sentence(construction, agent, patient, past)
+    tokens = _name_tokens(construction, sentence, agent, patient)
+    answer, distractor = (agent, patient) if role == "agent" else (patient, agent)
+    question = render_question(role, question_voice, lemma, past)
+    prompt = PROMPT_TEMPLATE.format(sentence=sentence, question=question)
+    return Item(
+        item_id=f"{event}:{construction}:{role}:{question_voice}",
+        family_id=family,
+        event_id=event,
+        split=split,
+        test_set=test_set,
+        construction=construction,
+        is_control=construction in CONTROL_CONSTRUCTIONS,
+        is_heldout=construction in HELDOUT_CONSTRUCTIONS,
+        agent=agent,
+        patient=patient,
+        lemma=lemma,
+        verb=past,
+        role_asked=role,
+        question_voice=question_voice,
+        sentence=sentence,
+        question=question,
+        prompt=prompt,
+        answer=answer,
+        distractor=distractor,
+        answer_is_first=(tokens[0].name == answer),
+        names=tokens,
+        spans=_position_spans(sentence, question, prompt, tokens, past),
+    )
+
+
+def role_swapped(item: Item) -> Item:
+    """The same verb, construction and question with agent and patient exchanged.
+    Same names in the same slots' token positions, opposite correct answer."""
+    return build_item(
+        item.patient, item.agent, item.lemma, item.verb, item.construction,
+        item.role_asked, item.question_voice,
+        family_id=item.family_id, split=item.split, test_set=item.test_set,
+    )
+
+
 def generate_items(
     names: Sequence[str] = NAMES,
     verbs: Sequence[tuple[str, str]] = VERBS,
@@ -202,6 +322,7 @@ def generate_items(
     dev_fraction: float = 0.15,
     n_test_sets: int = 4,
     include_controls: bool = True,
+    include_heldout: bool = True,
 ) -> list[Item]:
     """Every family appears with both role assignments, in every construction,
     with every question. Each orientation of a family gets its own verbs."""
@@ -214,7 +335,11 @@ def generate_items(
     verb_order = list(verbs)
     random.Random(seed + 1).shuffle(verb_order)
     verb_cursor = 0
-    constructions = CONSTRUCTIONS if include_controls else MAIN_CONSTRUCTIONS
+    constructions = MAIN_CONSTRUCTIONS
+    if include_controls:
+        constructions += CONTROL_CONSTRUCTIONS
+    if include_heldout:
+        constructions += HELDOUT_CONSTRUCTIONS
     items: list[Item] = []
     for a, b in combinations(sorted(names), 2):
         family = f"{a}|{b}"
@@ -223,36 +348,13 @@ def generate_items(
             chosen = [verb_order[(verb_cursor + k) % len(verb_order)] for k in range(verbs_per_orientation)]
             verb_cursor += verbs_per_orientation
             for lemma, past in chosen:
-                event = f"{agent}>{patient}:{lemma}"
                 for construction in constructions:
-                    sentence = render_sentence(construction, agent, patient, past)
-                    tokens = _name_tokens(construction, sentence, agent, patient)
                     for role in ROLES:
-                        answer, distractor = (agent, patient) if role == "agent" else (patient, agent)
                         for qv in QUESTION_VOICES:
-                            question = render_question(role, qv, lemma, past)
                             items.append(
-                                Item(
-                                    item_id=f"{event}:{construction}:{role}:{qv}",
-                                    family_id=family,
-                                    event_id=event,
-                                    split=split,
-                                    test_set=test_set,
-                                    construction=construction,
-                                    is_control=construction in CONTROL_CONSTRUCTIONS,
-                                    agent=agent,
-                                    patient=patient,
-                                    lemma=lemma,
-                                    verb=past,
-                                    role_asked=role,
-                                    question_voice=qv,
-                                    sentence=sentence,
-                                    question=question,
-                                    prompt=PROMPT_TEMPLATE.format(sentence=sentence, question=question),
-                                    answer=answer,
-                                    distractor=distractor,
-                                    answer_is_first=(tokens[0].name == answer),
-                                    names=tokens,
+                                build_item(
+                                    agent, patient, lemma, past, construction, role, qv,
+                                    family_id=family, split=split, test_set=test_set,
                                 )
                             )
     return items
@@ -296,6 +398,7 @@ def label_correlations(items: Iterable[Item]) -> dict[str, float]:
 def item_to_json(item: Item) -> dict:
     d = asdict(item)
     d["names"] = [asdict(t) for t in item.names]
+    d["spans"] = [list(sp) for sp in item.spans]
     return d
 
 
@@ -313,7 +416,7 @@ def write_dataset(items: Sequence[Item], out_dir: Path, config: dict) -> dict:
         "n_families": len({it.family_id for it in items}),
         "n_events": len({it.event_id for it in items}),
         "items_sha256": hashlib.sha256(payload).hexdigest(),
-        "label_correlations_main": label_correlations(i for i in items if not i.is_control),
+        "label_correlations_main": label_correlations(i for i in items if i.construction in MAIN_CONSTRUCTIONS),
     }
     (out_dir / "manifest.json").write_text(json.dumps(manifest, indent=2, sort_keys=True) + "\n")
     return manifest

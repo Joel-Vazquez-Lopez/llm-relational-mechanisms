@@ -19,6 +19,8 @@ class TestTemplates(unittest.TestCase):
             "object_cleft": "It was Mira that Leon praised.",
             "by_cleft": "It was by Leon that Mira was praised.",
             "subject_cleft": "It was Leon who praised Mira.",
+            "relative_active": "The one who praised Mira was Leon.",
+            "relative_passive": "The one who was praised by Leon was Mira.",
         }
         for construction, sentence in expected.items():
             with self.subTest(construction=construction):
@@ -47,7 +49,7 @@ class TestDesign(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.items = ors.generate_items()
-        cls.main = [i for i in cls.items if not i.is_control]
+        cls.main = [i for i in cls.items if i.construction in ors.MAIN_CONSTRUCTIONS]
 
     def test_size_and_unique_ids(self):
         n_names = len(ors.NAMES)
@@ -120,6 +122,8 @@ class TestDesign(unittest.TestCase):
             "object_cleft": (False, True),
             "by_cleft": (True, False),
             "subject_cleft": (True, True),
+            "relative_active": (False, True),
+            "relative_passive": (True, False),
         }
         for it in self.items:
             agent_tok = next(t for t in it.names if t.is_agent)
@@ -207,3 +211,62 @@ class TestValidationAndIO(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class TestPositions(unittest.TestCase):
+
+    @classmethod
+    def setUpClass(cls):
+        cls.items = ors.generate_items(names=ors.NAMES[:6])
+
+    def test_spans_point_at_the_right_words(self):
+        for it in self.items:
+            text = {lab: it.prompt[a:b] for lab, a, b in it.spans}
+            self.assertEqual(text["first_name"], it.names[0].name)
+            self.assertEqual(text["second_name"], it.names[1].name)
+            self.assertEqual(text["verb"], it.verb)
+            self.assertEqual(text["period"], ".")
+            self.assertEqual(text["question_end"], "?")
+            self.assertEqual(text["answer_cue"], ":")
+            self.assertTrue(it.prompt.endswith("Answer:"))
+            if "aux" in text:
+                self.assertEqual(text["aux"], "was")
+            if "by" in text:
+                self.assertEqual(text["by"], "by")
+
+    def test_aux_and_by_appear_exactly_in_passive_forms(self):
+        passive_forms = {"passive", "by_cleft", "relative_passive"}
+        for it in self.items:
+            labels = {lab for lab, _, _ in it.spans}
+            self.assertEqual("aux" in labels, it.construction in passive_forms, it.item_id)
+            self.assertEqual("by" in labels, it.construction in passive_forms, it.item_id)
+
+    def test_spans_are_ordered_within_the_prompt(self):
+        for it in self.items:
+            self.assertLess(it.span("period")[0], it.span("question_end")[0])
+            self.assertLess(it.span("question_end")[0], it.span("answer_cue")[0])
+
+    def test_heldout_constructions_balance_order_against_role(self):
+        held = [i for i in self.items if i.is_heldout]
+        self.assertEqual({i.construction for i in held}, set(ors.HELDOUT_CONSTRUCTIONS))
+        for role in ors.ROLES:
+            subset = [i for i in held if i.role_asked == role]
+            self.assertEqual(sum(i.answer_is_first for i in subset) / len(subset), 0.5)
+
+    def test_can_exclude_heldout(self):
+        items = ors.generate_items(names=ors.NAMES[:4], include_heldout=False)
+        self.assertFalse(any(i.is_heldout for i in items))
+
+
+class TestRoleSwap(unittest.TestCase):
+
+    def test_swap_exchanges_roles_and_keeps_everything_else(self):
+        for it in ors.generate_items(names=ors.NAMES[:4]):
+            sw = ors.role_swapped(it)
+            self.assertEqual((sw.agent, sw.patient), (it.patient, it.agent))
+            self.assertEqual((sw.answer, sw.distractor), (it.distractor, it.answer))
+            self.assertEqual((sw.construction, sw.verb, sw.question), (it.construction, it.verb, it.question))
+            self.assertEqual(len(sw.prompt), len(it.prompt) - len(it.agent) - len(it.patient)
+                             + len(sw.agent) + len(sw.patient))
+            self.assertEqual([lab for lab, _, _ in sw.spans], [lab for lab, _, _ in it.spans])
+            self.assertEqual(ors.role_swapped(sw), it)
