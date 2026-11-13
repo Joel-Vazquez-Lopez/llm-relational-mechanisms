@@ -19,11 +19,14 @@ class ReleaseOfflineTests(unittest.TestCase):
         self.assertFalse(candidate['training_authorized'])
         self.assertEqual(candidate['status'],'PREFREEZE_REVIEW_ONLY_NO_TRAIN_AUTHORIZATION')
         self.assertTrue(candidate['position_coverage']['LI_within_arch_embedding_capacity'])
-        self.assertFalse(candidate['position_coverage']['all_LI_positions_trained'])
+        self.assertTrue(candidate['position_coverage']['all_LI_eval_positions_covered'])
+        self.assertEqual(candidate['position_coverage']['position_offsets'],list(range(9)))
+        self.assertTrue(all(v>0 for v in candidate['position_coverage']['question_token_opportunities_per_index'].values()))
         self.assertEqual(candidate['position_coverage']['training_max_tokens'],34)
         self.assertGreater(candidate['position_coverage']['LI_development_static_max_tokens'],34)
         self.assertEqual(len(candidate['sources_sha256']),len(release.SOURCE_PATHS))
         self.assertEqual(release.validate_candidate(root/'reports/exp101/release_manifest_candidate.json'),candidate)
+        self.assertEqual(candidate['intended_hardware_runtime_review'],'PENDING_MAC_MPS_ENGINEERING_FIXTURE')
         with self.assertRaises(PermissionError):
             release.require_approved_release(root/'reports/exp101/frozen_release.json')
 
@@ -183,5 +186,47 @@ class ReleaseOfflineTests(unittest.TestCase):
                     if isinstance(va[k],torch.Tensor):
                         self.assertTrue(torch.equal(va[k],vb[k]),f'optimizer mismatch {k}')
                     else:self.assertEqual(va[k],vb[k])
+
+
+    def test_position_offset_rejects_invalid_ids_and_preserves_no_shift_inference(self):
+        import torch
+        model=prod.make_model().eval()
+        x=torch.full((2,8),prod.VOCAB['<bos>'],dtype=torch.long)
+        r=torch.tensor([7,7])
+        with torch.no_grad():
+            legacy=model(x,r)
+            shifted=model(x,r,position_offset=8)
+            zero=model(x,r,position_offset=0)
+        self.assertTrue(torch.equal(legacy,zero))
+        self.assertFalse(torch.equal(zero,shifted))
+        with self.assertRaises(ValueError):model(x,r,position_offset=9)
+
+    def test_disposable_cpu_hardware_fixture(self):
+        # Three engineering optimizer steps, not study training; uses seed 101999.
+        from exp101_hardware_fixture import run_fixture,FIXTURE_SEED
+        self.assertNotIn(FIXTURE_SEED,prod.SEEDS)
+        result=run_fixture('cpu')
+        self.assertEqual(result['fixture_steps'],3)
+        self.assertFalse(result['experiment_training_started'])
+        self.assertEqual(result['resume_parameter_max_abs_difference'],0)
+        self.assertTrue(result['resume_optimizer_within_tolerance'])
+        self.assertTrue(all(x>1e-12 for x in result['position_gradient_norms_34_through_38'].values()))
+
+    def test_checkpoint_schedule_identifier_guard(self):
+        import torch, tempfile
+        from pathlib import Path
+        with tempfile.TemporaryDirectory() as folder:
+            m,o,b,d=rt.init_state(101999,prod.make_model)
+            state=Path(folder)/'state.pt'
+            rt.save_state(state,model=m,optimizer=o,gbase=b,gdose=d,
+               seed=101999,arm='fixture',step=1,release_fingerprint='fixture',
+               data_hash='fixture',device='cpu')
+            payload=torch.load(state,map_location='cpu',weights_only=True)
+            payload['position_schedule']='UNAPPROVED_CHANGE'
+            torch.save(payload,state)
+            with self.assertRaises(PermissionError):
+                rt.load_state(state,model=m,optimizer=o,gbase=b,gdose=d,
+                  seed=101999,arm='fixture',release_fingerprint='fixture',
+                  data_hash='fixture',device='cpu')
 
 if __name__=='__main__':unittest.main()

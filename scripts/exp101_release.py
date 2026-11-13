@@ -22,16 +22,22 @@ SOURCE_PATHS=(
     'scripts/test_exp101_release_offline.py',
     'paper/exp101_counterfactual_generalization_protocol.md',
     'paper/exp101_release_candidate_review.md',
+    'paper/exp101_position_amendment_RC2.md',
+    'paper/exp101_grammar_review_RC2.md',
+    'scripts/exp101_hardware_fixture.py',
 )
 CONFIG={
     'architecture':{'layers':3,'width':96,'heads':4,'max_tokens':64,
        'attention':'torch.nn.MultiheadAttention, causal bool upper triangular',
-       'positional_embedding':'learned_absolute'},
+       'positional_embedding':'learned_absolute_with_deterministic_training_index_offset'},
     'optimizer':{'name':'AdamW','learning_rate':.002,'weight_decay':.01,
        'scheduler':'constant','steps':12800},
     'training':{'shared_batch':56,'dose_batch':8,'seeds':[907,911,919,929,937,941,947,953],
         'arms':['familiar','target'],'checkpoint_interval':800,
-        'paired_initialization':True,'paired_shared_batch_rng':True},
+        'paired_initialization':True,'paired_shared_batch_rng':True,
+        'position_offset_cycle':[0,1,2,3,4,5,6,7,8],
+        'position_offset_schedule':'offset_for_zero_based_update_index = update_index % 9',
+        'position_offset_inference':0},
     'scoring':{'primary':'C_voice target_second L+I',
        'choice':'native four event-participant name logits',
        'bootstrap':'paired seeds 20000 reps RNG 101101',
@@ -79,10 +85,34 @@ def build_candidate(root:Path):
          for pos in (False,True):
           p=render_packet(a,b,nn,'LI',pos)
           li_max=max(li_max,len(token_sequence(p,'agent')))
+    from exp101_production_candidate import POSITION_OFFSETS
+    # Actual non-padding question-token opportunities from all training prompts.
+    # This is not trained-model evidence or proof of gradient magnitude.
+    question_hits={str(i):0 for i in range(train_max,li_max)}
+    token_hits={str(i):0 for i in range(train_max,li_max)}
+    for pkt in train:
+      for role in ('agent','patient'):
+        toks=token_sequence(pkt,role)
+        sep=toks.index('<sep>')
+        for shift in POSITION_OFFSETS:
+          for j in range(train_max,li_max):
+            original_pos=j-shift
+            if 0<=original_pos<len(toks):
+                token_hits[str(j)]+=1
+                if original_pos>=sep:question_hits[str(j)]+=1
+    all_covered=all(token_hits[str(i)]>0 and question_hits[str(i)]>0
+                    for i in range(train_max,li_max))
     length_issue={'training_max_tokens':train_max,'LI_development_static_max_tokens':li_max,
        'LI_within_arch_embedding_capacity':li_max<=MAX_TOKENS,
-       'all_LI_positions_trained':li_max<=train_max,
-       'untrained_positions':list(range(train_max,li_max)) if li_max>train_max else []}
+       'position_offsets':list(POSITION_OFFSETS),
+       'unshifted_training_uncovered_indices':list(range(train_max,li_max)),
+       'nonpad_token_opportunities_per_index':token_hits,
+       'question_token_opportunities_per_index':question_hits,
+       'all_LI_eval_positions_covered':all_covered,
+       'augmentation_changes_training_regime':True,
+       'fixed_offset_zero_for_dev_and_future_test':True,
+       'measured_gradient_fixture_status':'SEE_SEPARATE_OFFLINE_VALIDATION'}
+    if not all_covered:raise AssertionError('Position amendment does not cover LI evaluation indices')
     meta=protected_metadata_plan()
     data_hash=stable_hash(dm)
     obj={'study':'EXP-101','status':'PREFREEZE_REVIEW_ONLY_NO_TRAIN_AUTHORIZATION',
@@ -90,9 +120,11 @@ def build_candidate(root:Path):
          'config_sha256':hash_bytes(canonical(CONFIG)),
          'dataset_manifest_sha256':data_hash,
          'dataset_provenance_sha256':dm.get('provenance_sha256'),
-         'static_report_sha256':hash_bytes((root/'reports/exp101/static_preflight_R3.json').read_bytes()),
+         'static_report_sha256':hash_bytes((root/'reports/exp101/static_preflight_RC2.json').read_bytes()),
+         'cpu_engineering_fixture_sha256':hash_bytes((root/'reports/exp101/engineering_fixture_cpu_RC2.json').read_bytes()),
          'protected_plan':meta,'position_coverage':length_issue,
-         'human_grammatical_review':'PENDING_REPEATED_BY_ACCEPTABILITY',
+         'human_grammatical_review':'PENDING_EXTERNAL_REVIEW',
+         'intended_hardware_runtime_review':'PENDING_MAC_MPS_ENGINEERING_FIXTURE',
          'training_authorized':False,
          'protected_evaluation_authorized':False}
     obj['fingerprint']=hash_bytes(canonical(obj))
@@ -120,8 +152,18 @@ def require_approved_release(path:Path):
         or not approved.get('training_authorized')
         or approved.get('authorized_by') is None
         or approved.get('human_grammatical_review')!='PASSED'
-        or not candidate['position_coverage']['all_LI_positions_trained']):
+        or not candidate['position_coverage']['all_LI_eval_positions_covered']):
         raise PermissionError('Source, grammar or length issue unresolved; release not approved')
+    # Independently generated Mac MPS engineering fixture report must be signed
+    # against the approved exact fingerprint, without any study seed training.
+    report_path=root/'reports/exp101/intended_hardware_fixture_approved.json'
+    if not report_path.exists():raise PermissionError('Mac MPS fixture not reviewed')
+    hardware=json.loads(report_path.read_text())
+    if (hardware.get('fingerprint')!=candidate['fingerprint']
+        or hardware.get('status')!='PASSED_ON_INTENDED_HARDWARE'
+        or approved.get('intended_hardware_review')!='PASSED'
+        or approved.get('intended_hardware_report_sha256')!=hash_bytes(report_path.read_bytes())):
+        raise PermissionError('Hardware integration review is absent or mismatched')
     return candidate
 
 if __name__=='__main__':

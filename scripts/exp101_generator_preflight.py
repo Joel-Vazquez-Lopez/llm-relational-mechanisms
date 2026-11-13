@@ -62,7 +62,7 @@ def render_event(ev: Event, cond: str) -> str:
                 else f"{ev.patient} was {ev.verb} by {ev.agent}")
     if cond in ("L", "LI"):
         core = (f"By {ev.by_name}'s gate, {core}" if ev.layout == 0
-                else f"{core} by {ev.by_name}'s gate")
+                else f"{core} beside {ev.by_name}'s gate")
     return core
 
 
@@ -140,7 +140,7 @@ def shallow_core(clause: str, names: tuple[str,...]):
     # surface order + voice. This intentionally performs *no query binding*.
     s=re.sub(r"^By [A-Z][a-z]+'s gate, ","",clause)
     s=re.sub(r"^Near [A-Z][a-z]+, ","",s)
-    s=re.sub(r" by [A-Z][a-z]+'s gate$","",s)
+    s=re.sub(r" beside [A-Z][a-z]+'s gate$","",s)
     s=re.sub(r", near [A-Z][a-z]+, "," ",s)
     s=re.sub(r" near [A-Z][a-z]+ by "," by ",s)
     ns=names_in(s,names)
@@ -270,9 +270,9 @@ def check_deliberate_corruptions() -> int:
         f"near {target.near_name}", f"near {target.by_name}")
     attempts.append(replace(packet, text=" ; ".join((swapped_target,clauses[1]))+"."))
     # Swap same two locative people in the other event, not the queried one.
-    loc = f" by {other.by_name}'s gate"
+    loc = f" beside {other.by_name}'s gate"
     assert loc in clauses[1]
-    swapped_other = clauses[1].replace(loc,f" by {other.near_name}'s gate")
+    swapped_other = clauses[1].replace(loc,f" beside {other.near_name}'s gate")
     swapped_other = swapped_other.replace(
         f"near {other.near_name}",f"near {other.by_name}")
     attempts.append(replace(packet, text=" ; ".join((clauses[0],swapped_other))+"."))

@@ -44,7 +44,7 @@ def parse_clause(clause: str, names: tuple[str, ...]) -> ParsedClause:
         near_person = m.group(1)
         s = s[m.end():]
     # Postposed gate locative. Must be stripped before role parsing.
-    m = re.search(rf" by {NAME}'s gate$", s)
+    m = re.search(rf" beside {NAME}'s gate$", s)
     if m:
         if gate_owner is not None:
             raise ValueError("Two gate owners")

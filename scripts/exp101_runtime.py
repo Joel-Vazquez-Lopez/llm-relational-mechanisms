@@ -22,7 +22,7 @@ def init_state(seed: int, model_factory, *, device='cpu', learning_rate=.002, we
 
 
 def one_optimizer_step(model,optimizer,base_data,dose_data,gbase,gdose,
-                       *,base_batch:int=56,dose_batch:int=8,pad_id:int=0,device='cpu'):
+                       *,base_batch:int=56,dose_batch:int=8,pad_id:int=0,device='cpu',position_offset:int=0):
     import torch
     from torch.nn import functional as F
     base_x,base_readout,base_y,_=base_data
@@ -37,7 +37,7 @@ def one_optimizer_step(model,optimizer,base_data,dose_data,gbase,gdose,
     labels=torch.cat((base_y[idxb],dose_y[idxd])).to(device)
     model.train()
     optimizer.zero_grad(set_to_none=True)
-    loss=F.cross_entropy(model(ids,readout),labels)
+    loss=F.cross_entropy(model(ids,readout,position_offset=position_offset),labels)
     loss.backward()
     optimizer.step()
     # Expose sampled indices in tests only, not data-dependent tuning.
@@ -53,6 +53,7 @@ def save_state(path:Path, *, model,optimizer,gbase,gdose,seed:int,arm:str,
          'device':str(device),'model':model.state_dict(),
          'optimizer':optimizer.state_dict(),
          'base_rng':gbase.get_state(), 'dose_rng':gdose.get_state(),
+         'position_schedule':'cycle_0_to_8_at_step_index',
          'torch_cpu_rng':torch.get_rng_state()}
     if str(device).startswith('cuda'):
         obj['torch_cuda_rng']=torch.cuda.get_rng_state_all()
@@ -71,6 +72,8 @@ def load_state(path:Path, *, model,optimizer,gbase,gdose,seed:int,arm:str,
         ('release_fingerprint',release_fingerprint),('data_hash',data_hash),
         ('device',str(device))):
         if v.get(key)!=expected:raise PermissionError(f'Checkpoint {key} differs from release')
+    if v.get('position_schedule')!='cycle_0_to_8_at_step_index':
+        raise PermissionError('Position-index schedule mismatch')
     step=v['step']
     if not (isinstance(step,int) and 0<=step<=12800):raise ValueError('Invalid checkpoint step')
     model.load_state_dict(v['model'],strict=True)

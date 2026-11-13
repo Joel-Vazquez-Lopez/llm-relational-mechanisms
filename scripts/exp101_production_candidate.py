@@ -31,11 +31,13 @@ STEPS = 12800
 SHARED_BATCH = 56
 DOSE_BATCH = 8
 SPLIT_RNG = 101103
+# Fixed, paired-arm absolute position-index coverage amendment.
+POSITION_OFFSETS = tuple(range(9))  # one update at each offset, repeated cyclically
 WIDTH, HEADS, LAYERS, MAX_TOKENS = 96, 4, 3, 64
 SPLIT_REPORT = Path("reports/exp101/production_preflight_candidate.json")
 TOKEN_RE = re.compile(r"'s|[A-Za-z]+|[;,.?]")
 VOCAB_WORDS = tuple(dict.fromkeys(("<pad>", "<bos>", "<sep>", "<answer>") +
-    NAMES + VERBS + ("By", "by", "near", "gate", "was", "'s",
+    NAMES + VERBS + ("By", "by", "beside", "near", "gate", "was", "'s",
     "In", "the", "first", "second", "event", "who", "agent", "patient",
     ",", ";", ".", "?")))
 VOCAB = {token:i for i,token in enumerate(VOCAB_WORDS)}
@@ -242,10 +244,13 @@ def make_model():
             self.blocks=nn.ModuleList([Block() for _ in range(LAYERS)])
             self.norm=nn.LayerNorm(WIDTH)
             self.out=nn.Linear(WIDTH,len(VOCAB))
-        def forward(self,ids,readout):
+        def forward(self,ids,readout,*,position_offset:int=0):
             batch,n=ids.shape
-            if n>MAX_TOKENS:raise ValueError("Sequence too long")
-            position=torch.arange(n,device=ids.device)
+            if type(position_offset) is not int or position_offset not in POSITION_OFFSETS:
+                raise ValueError("Position offset must follow frozen schedule 0..8")
+            if n + position_offset > MAX_TOKENS:
+                raise ValueError("Sequence plus offset exceeds embedding table")
+            position=torch.arange(n,device=ids.device)+position_offset
             x=self.embed(ids)+self.pos(position)
             mask=torch.ones(n,n,dtype=torch.bool,device=ids.device).triu(1)
             for block in self.blocks:x=block(x,mask)
@@ -285,7 +290,8 @@ def train_one(seed:int,arm:str,device:str="cpu",
     while step<STEPS:
         runtime.one_optimizer_step(model,optimizer,base_data,dose_data,
             rg_base,rg_dose,base_batch=SHARED_BATCH,dose_batch=DOSE_BATCH,
-            pad_id=VOCAB["<pad>"],device=device)
+            pad_id=VOCAB["<pad>"],device=device,
+            position_offset=POSITION_OFFSETS[step % len(POSITION_OFFSETS)])
         step+=1
         if step%800==0 or step==STEPS:
             runtime.save_state(state,model=model,optimizer=optimizer,
