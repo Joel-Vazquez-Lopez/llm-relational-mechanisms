@@ -65,9 +65,11 @@ def all_matchings():
 
 
 def examples(rounds):
-    """All three familiar grammar cells, 3 reference constructions, 2 queries.
+    """Balanced reference clauses: 3 conditions x familiar cells x roles.
 
-    Construct from only train/development matchings; no protected case call.
+    The *other event* agent direction has its own orthogonal factor. Without
+    this factor the old deterministic shift/orientation yielded large
+    distractor-role and locative-name imbalances despite target role balance.
     """
     for matching in rounds:
         for i,pair in enumerate(matching):
@@ -77,24 +79,20 @@ def examples(rounds):
                         for reverse in (0,1):
                             for other_voice in VOICES:
                                 for layout in (0,1):
-                                    shift=1+(vi+2*reverse+layout)%7
-                                    opair=matching[(i+shift)%8]
-                                    a,p=pair if not reverse else pair[::-1]
-                                    c,d=opair
-                                    # The distractor direction is balanced by
-                                    # layout, independent of target reversal.
-                                    if (i+vi+layout)%2:c,d=d,c
-                                    target=Event(a,p,verb,c,d,voice,layout)
-                                    other=Event(c,d,VERBS[(vi+2+i%3)%6],
-                                                a if layout else p,
-                                                p if layout else a,
-                                                other_voice,1-layout)
-                                    nn=tuple(sorted(set(pair+opair)))
-                                    # exact same *participant* answer pool for
-                                    # agent and patient queries.
-                                    pkt=render_packet(target,other,nn,cond,target_first)
-                                    validate_case(pkt)
-                                    yield pkt
+                                    for other_reverse in (0,1):
+                                        shift=1+(vi+2*reverse+layout)%7
+                                        opair=matching[(i+shift)%8]
+                                        a,p=pair if not reverse else pair[::-1]
+                                        c,d=opair if not other_reverse else opair[::-1]
+                                        target=Event(a,p,verb,c,d,voice,layout)
+                                        other=Event(c,d,VERBS[(vi+2+i%3)%6],
+                                                    a if layout else p,
+                                                    p if layout else a,
+                                                    other_voice,1-layout)
+                                        nn=tuple(sorted(set(pair+opair)))
+                                        pkt=render_packet(target,other,nn,cond,target_first)
+                                        validate_case(pkt)
+                                        yield pkt
 
 
 def exposure_doses(train_rounds):
@@ -104,7 +102,8 @@ def exposure_doses(train_rounds):
     for i,vi,cond,direction,role in itertools.product(
             range(4),range(2),("L","I"),(0,1),("agent","patient")):
         pair=matching[i]
-        c,d=matching[(i+3)%8]
+        opair=matching[(i+3)%8]
+        c,d=opair if not direction else opair[::-1]
         a,p=pair if not direction else pair[::-1]
         target=Event(a,p,VERBS[vi],c,d,"passive",(i+vi)%2)
         other=Event(c,d,VERBS[(vi+2+i)%6],a,p,
@@ -153,6 +152,17 @@ def dataset_manifest():
     assert not trtext&dvtext
     assert len(trtext) == 2*len(training), "Duplicate training rendered prompts"
     assert len(dvtext) == 2*len(development), "Duplicate development rendered prompts"
+    for split_name,rows in (("train",training),("dev",development)):
+        # Each name must be equally frequent in every event-role slot and
+        # as target vs distractor; gate/near referents must also balance.
+        for slot,vals in (("target_agent",Counter(e.event.agent for e in rows)),
+                          ("target_patient",Counter(e.event.patient for e in rows)),
+                          ("other_agent",Counter(e.other_event.agent for e in rows)),
+                          ("other_patient",Counter(e.other_event.patient for e in rows)),
+                          ("target_gate",Counter(e.event.by_name for e in rows)),
+                          ("target_near",Counter(e.event.near_name for e in rows))):
+            if set(vals)!=set(NAMES) or len(set(vals.values()))!=1:
+                raise AssertionError(f"Unbalanced {split_name} {slot}: {vals}")
     for pkt in itertools.chain(training,development):
         for role in ("agent","patient"):token_sequence(pkt,role)
     for arm in ARMS:
