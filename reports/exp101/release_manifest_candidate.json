@@ -1,0 +1,116 @@
+{
+  "config": {
+    "architecture": {
+      "attention": "torch.nn.MultiheadAttention, causal bool upper triangular",
+      "heads": 4,
+      "layers": 3,
+      "max_tokens": 64,
+      "positional_embedding": "learned_absolute",
+      "width": 96
+    },
+    "conditions": [
+      "bare",
+      "L",
+      "I",
+      "LI"
+    ],
+    "optimizer": {
+      "learning_rate": 0.002,
+      "name": "AdamW",
+      "scheduler": "constant",
+      "steps": 12800,
+      "weight_decay": 0.01
+    },
+    "protected": {
+      "additional_LI_opposite_questions": 4608,
+      "anchors": 288,
+      "models": 16,
+      "packets_per_condition": 2304,
+      "target_questions_per_condition": 4608,
+      "total_inferences_per_model": 23040
+    },
+    "scoring": {
+      "bootstrap": "paired seeds 20000 reps RNG 101101",
+      "choice": "native four event-participant name logits",
+      "cquery": "4 different people, same source 2 events x 2 roles",
+      "gate": "9 familiar cells >=95% individual and >=90% both, >=6 joint seed pairs",
+      "primary": "C_voice target_second L+I"
+    },
+    "training": {
+      "arms": [
+        "familiar",
+        "target"
+      ],
+      "checkpoint_interval": 800,
+      "dose_batch": 8,
+      "paired_initialization": true,
+      "paired_shared_batch_rng": true,
+      "seeds": [
+        907,
+        911,
+        919,
+        929,
+        937,
+        941,
+        947,
+        953
+      ],
+      "shared_batch": 56
+    }
+  },
+  "config_sha256": "36ffe0ac9be8ff91e3401a58b32c86b25175160f59990378364c421bb6f1c9d4",
+  "dataset_manifest_sha256": "6baa529f6ed780fce8082682e95655b93268c48ed7f05bc6e50af69b55ea885d",
+  "dataset_provenance_sha256": null,
+  "fingerprint": "e28cb3f0a2efcd4b8b0f5185fa5a6041b2d8a66f895db54b8f49763cf2ae90f9",
+  "human_grammatical_review": "PENDING_REPEATED_BY_ACCEPTABILITY",
+  "position_coverage": {
+    "LI_development_static_max_tokens": 39,
+    "LI_within_arch_embedding_capacity": true,
+    "all_LI_positions_trained": false,
+    "training_max_tokens": 34,
+    "untrained_positions": [
+      34,
+      35,
+      36,
+      37,
+      38
+    ]
+  },
+  "protected_evaluation_authorized": false,
+  "protected_plan": {
+    "anchor_metadata_sha256": "ae0e3906efc81508cc99df2b1765bf6bb24afbf802738c4c87eebd643d1e9bb0",
+    "anchors": 288,
+    "conditions": [
+      "bare",
+      "L",
+      "I",
+      "LI"
+    ],
+    "extra_LI_other_event_queries_per_variant": 2,
+    "extra_LI_questions_per_model": 4608,
+    "models": 16,
+    "no_protected_text_generated": true,
+    "target_queries_per_variant": 2,
+    "target_role_questions_per_model": 18432,
+    "total_questions_across_models": 368640,
+    "total_questions_per_model": 23040,
+    "variants_per_anchor_condition": 8
+  },
+  "sources_sha256": {
+    "paper/exp101_counterfactual_generalization_protocol.md": "e2f3916022af39c73f1a3df304dfa502acd66689a35e170f006de482adf34904",
+    "paper/exp101_release_candidate_review.md": "23e581477720ff8d391a226d0d8f6b0e6907849aa869cfb9675a508bd7443235",
+    "scripts/exp101_generator_preflight.py": "f9b7eb99da81a6ad0fd937a7600ee46a04d8483103b7815d029a02b83ed5ffd8",
+    "scripts/exp101_production_candidate.py": "bd6339b03dcb4636920e906fd2d9a6dbfcbd4d3708fe39965b14a4ef4ec46276",
+    "scripts/exp101_protected_candidate.py": "6a122638657f3c3690c7f80610c5f6a6ec1eb62a3c7a2efaacb7dd53525738ef",
+    "scripts/exp101_release.py": "7ce268b406c74be07e309d38027490ae419f83f1670eaa724edaa098ef3eba08",
+    "scripts/exp101_render_validator.py": "894fd8768bc97f701aecca4e068a369a3b58103aa1375e5d68c6b9bfe7025550",
+    "scripts/exp101_runtime.py": "cb992b1407471a35f066a58891865ef2284ec06620d65e190f06680bfadb698d",
+    "scripts/exp101_scoring.py": "e05f21552929bd6bb76c120ad641bb951fe4ca707cb92d498e5d2ac4cfda017e",
+    "scripts/test_exp101_offline.py": "9f1c91f1e3c75ee11a4dc3f492149224e2d4de582233409fb08c8bf21836b249",
+    "scripts/test_exp101_release_offline.py": "633c9944d496f16a9d82fc9910eb5a60521abd257ac6b19f6cd77b840eae9fe0"
+  },
+  "static_report_sha256": "6cc89b732ea0877174c8f776ea6f6c59edaaf8b3f7a6431c83e35c4a42679040",
+  "status": "PREFREEZE_REVIEW_ONLY_NO_TRAIN_AUTHORIZATION",
+  "study": "EXP-101",
+  "training_authorized": false
+}
