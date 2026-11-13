@@ -146,7 +146,7 @@ def protected_inference_after_authorization(*,root:Path,device:str='cpu'):
         for arm in ARMS:
             model,optim,gb,gd=rt.init_state(seed,make_model,device=device)
             chk=root/f'results/exp101/seed_{seed}/{arm}/state.pt'
-            datahash=release['data_manifest_sha256']
+            datahash=release['dataset_manifest_sha256']
             step=rt.load_state(chk,model=model,optimizer=optim,gbase=gb,gdose=gd,
                 seed=seed,arm=arm,device=device,
                 release_fingerprint=release['fingerprint'],data_hash=datahash)
