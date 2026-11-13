@@ -25,6 +25,7 @@ SOURCE_PATHS=(
     'paper/exp101_position_amendment_RC2.md',
     'paper/exp101_grammar_review_RC2.md',
     'scripts/exp101_hardware_fixture.py',
+    'paper/exp101_mps_determinism_RC3.md',
 )
 CONFIG={
     'architecture':{'layers':3,'width':96,'heads':4,'max_tokens':64,
@@ -37,7 +38,9 @@ CONFIG={
         'paired_initialization':True,'paired_shared_batch_rng':True,
         'position_offset_cycle':[0,1,2,3,4,5,6,7,8],
         'position_offset_schedule':'offset_for_zero_based_update_index = update_index % 9',
-        'position_offset_inference':0},
+        'position_offset_inference':0,
+        'determinism_policy':{'cpu':'strict_error','mps':'warn_only_with_measured_tolerance',
+            'mps_bitwise_reproducibility_claimed':False}},
     'scoring':{'primary':'C_voice target_second L+I',
        'choice':'native four event-participant name logits',
        'bootstrap':'paired seeds 20000 reps RNG 101101',
@@ -161,6 +164,12 @@ def require_approved_release(path:Path):
     hardware=json.loads(report_path.read_text())
     if (hardware.get('fingerprint')!=candidate['fingerprint']
         or hardware.get('status')!='PASSED_ON_INTENDED_HARDWARE'
+        or hardware.get('device')!='mps'
+        or hardware.get('determinism_policy',{}).get('mode')!='mps_warn_only'
+        or hardware.get('resume_optimizer_within_tolerance') is not True
+        or hardware.get('paired_first_step_batch_indices_equal') is not True
+        or hardware.get('experiment_training_started') is not False
+        or hardware.get('protected_accessed') is not False
         or approved.get('intended_hardware_review')!='PASSED'
         or approved.get('intended_hardware_report_sha256')!=hash_bytes(report_path.read_bytes())):
         raise PermissionError('Hardware integration review is absent or mismatched')
