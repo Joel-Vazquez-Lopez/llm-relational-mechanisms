@@ -73,6 +73,25 @@ class TestHFScorer(unittest.TestCase):
             self.assertAlmostEqual(a.logprob_distractor, b.logprob_distractor, places=4)
             self.assertEqual(a.answer_is_top1, b.answer_is_top1)
 
+    def test_chat_template_mode(self):
+        from relational_lab.instrumentation.hf_scoring import HFScorer, _prompt_ids
+
+        tok = self.tok
+        old = getattr(tok, "chat_template", None)
+        tok.chat_template = (
+            "{% for m in messages %}[UNK] {{ m['content'] }} [UNK]{% endfor %}"
+            "{% if add_generation_prompt %} [PAD]{% endif %}"
+        )
+        try:
+            ids = _prompt_ids(tok, self.items[0].prompt, True)
+            self.assertIsInstance(ids, list)
+            self.assertTrue(all(isinstance(i, int) for i in ids))
+            scores = HFScorer(self.model, tok, batch_size=4, use_chat_template=True)(self.items[:8])
+            self.assertEqual(len(scores), 8)
+            self.assertTrue(all(math.isfinite(s.logprob_answer) for s in scores))
+        finally:
+            tok.chat_template = old
+
     def test_end_to_end_summary(self):
         from relational_lab.experiments import order_role_behavior as beh
         from relational_lab.experiments import order_role_stimuli as ors

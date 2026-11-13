@@ -31,9 +31,15 @@ def single_token_checker(tokenizer, leading_space: bool = True):
 
 def _prompt_ids(tokenizer, prompt: str, use_chat_template: bool) -> list[int]:
     if use_chat_template:
-        return tokenizer.apply_chat_template(
+        out = tokenizer.apply_chat_template(
             [{"role": "user", "content": prompt}], add_generation_prompt=True, tokenize=True
         )
+        # transformers >= 5 returns a BatchEncoding (dict-like); older versions a list.
+        if not isinstance(out, list):
+            out = out["input_ids"]
+        if out and isinstance(out[0], list):  # batched form [[...]]
+            out = out[0]
+        return list(out)
     return tokenizer.encode(prompt, add_special_tokens=True)
 
 
