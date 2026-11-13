@@ -18,6 +18,23 @@ from relational_lab.experiments.order_role_behavior import Score
 from relational_lab.experiments.order_role_stimuli import Item
 
 
+def load_lm(model_id: str, revision=None, dtype=None):
+    """Load a decoder LM for text-only scoring. Multimodal checkpoints (e.g. Gemma 3/4,
+    tagged image-text-to-text) are not always registered for AutoModelForCausalLM;
+    fall back to AutoModelForImageTextToText, which accepts input_ids alone and
+    returns .logits over the text vocabulary."""
+    from transformers import AutoModelForCausalLM
+
+    try:
+        return AutoModelForCausalLM.from_pretrained(model_id, revision=revision, dtype=dtype)
+    except (ValueError, KeyError) as err:
+        from transformers import AutoModelForImageTextToText
+
+        print(f"AutoModelForCausalLM refused {model_id} ({type(err).__name__}); "
+              "loading with AutoModelForImageTextToText", flush=True)
+        return AutoModelForImageTextToText.from_pretrained(model_id, revision=revision, dtype=dtype)
+
+
 def name_token_ids(tokenizer, name: str, leading_space: bool = True) -> list[int]:
     """Raw prompts end in "Answer:", so the answer follows a space. After a chat
     template's assistant tag the answer starts a fresh line, with no space."""

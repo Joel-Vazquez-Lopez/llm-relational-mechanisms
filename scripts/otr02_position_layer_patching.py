@@ -82,9 +82,9 @@ def main(argv=None):
 
     import torch
     import transformers
-    from transformers import AutoModelForCausalLM, AutoTokenizer
+    from transformers import AutoTokenizer
 
-    from relational_lab.instrumentation.hf_scoring import single_token_checker
+    from relational_lab.instrumentation.hf_scoring import load_lm, single_token_checker
 
     tok = AutoTokenizer.from_pretrained(args.model, revision=args.revision)
     if not tok.is_fast:
@@ -94,7 +94,7 @@ def main(argv=None):
     if multi:
         raise SystemExit(f"Names not single-token for {args.model}: {multi}")
     device = args.device or ("cuda" if torch.cuda.is_available() else "cpu")
-    model = AutoModelForCausalLM.from_pretrained(args.model, revision=args.revision, dtype=getattr(torch, args.dtype))
+    model = load_lm(args.model, revision=args.revision, dtype=getattr(torch, args.dtype))
     model.to(device).eval()
 
     items = select(ors.generate_items(seed=args.seed), args.split, set(args.constructions), args.n_events, args.seed)

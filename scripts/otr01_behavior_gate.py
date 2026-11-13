@@ -70,9 +70,9 @@ def main(argv=None):
 
     import torch
     import transformers
-    from transformers import AutoModelForCausalLM, AutoTokenizer
+    from transformers import AutoTokenizer
 
-    from relational_lab.instrumentation.hf_scoring import HFScorer, single_token_checker
+    from relational_lab.instrumentation.hf_scoring import HFScorer, load_lm, single_token_checker
 
     tok = AutoTokenizer.from_pretrained(args.model, revision=args.revision)
     check = single_token_checker(tok, leading_space=not args.chat_template)
@@ -90,7 +90,7 @@ def main(argv=None):
 
     dtype = getattr(torch, args.dtype)
     device = args.device or ("cuda" if torch.cuda.is_available() else "cpu")
-    model = AutoModelForCausalLM.from_pretrained(args.model, revision=args.revision, dtype=dtype)
+    model = load_lm(args.model, revision=args.revision, dtype=dtype)
     model.to(device).eval()
 
     items = select_items(ors.generate_items(seed=args.seed), args.split, args.test_set, args.limit)
