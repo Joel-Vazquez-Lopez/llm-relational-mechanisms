@@ -66,16 +66,21 @@ def render_event(ev: Event, cond: str) -> str:
 
 def case_events(anchor: int, reverse: int, target_voice: str,
                 other_voice: str, by_swap: int, lay_target: int,
-                lay_other: int, other_swap: int) -> tuple[Event, Event, tuple[str, ...]]:
+                lay_other: int, other_swap: int, other_reverse: int) -> tuple[Event, Event, tuple[str, ...]]:
     # Development-only deterministic groups, not frozen heldout pair IDs.
-    start = ((anchor // 6) % 4) * 4
-    names = NAMES[start:start + 4]
+    base_anchor = anchor % 24
+    start = (base_anchor // 6) * 4
+    base_names = NAMES[start:start + 4]
+    # Both unordered pairs appear as the queried event across the fixed
+    # development universe. This breaks an A/B-vs-C/D lexical status cue.
+    names = (base_names[2:] + base_names[:2]) if anchor >= 24 else base_names
     a,p,c,d = names
     if reverse: a,p = p,a
     if by_swap: c,d = d,c
-    target = Event(a,p,VERBS[anchor%6],c,d,target_voice,lay_target)
-    # Keep other event roles invariant under target role reversal.
-    other = Event(names[2],names[3],VERBS[(anchor+2)%6],
+    target = Event(a,p,VERBS[base_anchor%6],c,d,target_voice,lay_target)
+    # Independent distractor role direction (not tied to locative assignment).
+    oc, od = (names[3], names[2]) if other_reverse else (names[2], names[3])
+    other = Event(oc,od,VERBS[(base_anchor+2)%6],
                   names[other_swap],names[1-other_swap],other_voice,lay_other)
     return target,other,names
 
@@ -89,10 +94,10 @@ def render_packet(target: Event, other: Event, names: tuple[str,...],
 
 
 def development_cases(cond: str):
-    for anchor,rev,tv,ov,by,lt,lo,otherswap,pos in itertools.product(
-        range(24), (0,1), VOICES, VOICES, (0,1), LAYOUTS, LAYOUTS, (0,1), (False,True)
+    for anchor,rev,tv,ov,by,lt,lo,otherswap,otherrev,pos in itertools.product(
+        range(48), (0,1), VOICES, VOICES, (0,1), LAYOUTS, LAYOUTS, (0,1), (0,1), (False,True)
     ):
-        target,other,names=case_events(anchor,rev,tv,ov,by,lt,lo,otherswap)
+        target,other,names=case_events(anchor,rev,tv,ov,by,lt,lo,otherswap,otherrev)
         yield render_packet(target,other,names,cond,pos)
 
 
@@ -204,10 +209,10 @@ def validate_case(p: Packet):
 
 def check_transformations():
     n=0
-    for anchor,ov,by,lt,lo,otherswap in itertools.product(range(24),VOICES,(0,1),LAYOUTS,LAYOUTS,(0,1)):
+    for anchor,ov,by,lt,lo,otherswap,otherrev in itertools.product(range(48),VOICES,(0,1),LAYOUTS,LAYOUTS,(0,1),(0,1)):
         packets={}
         for voice,rev,pos in itertools.product(VOICES,(0,1),(False,True)):
-            target,other,names=case_events(anchor,rev,voice,ov,by,lt,lo,otherswap)
+            target,other,names=case_events(anchor,rev,voice,ov,by,lt,lo,otherswap,otherrev)
             p=render_packet(target,other,names,"LI",pos)
             packets[(voice,rev,pos)]=p
             validate_case(p)
@@ -231,7 +236,7 @@ def old_packet_attack_demo():
     # Same four people/verb; other event is bare; eight transformation cells.
     n=0
     for voice,rev,pos in itertools.product(VOICES,(0,1),(False,True)):
-        t,o,names=case_events(0,rev,voice,"active",0,0,0,0)
+        t,o,names=case_events(0,rev,voice,"active",0,0,0,0,0)
         clauses=[render_event(t,"LI"),render_event(o,"bare")]
         text=" ; ".join(clauses if pos else clauses[::-1])+"."
         p=Packet(text,0 if pos else 1,names,t.agent,t.patient,t,"LI",pos)
@@ -244,6 +249,15 @@ def run():
     assert len(NAMES)==16 and len(set(NAMES))==16
     assert len(set(VERBS))==6
     assert old_packet_attack_demo()==8
+    role_counts=Counter()
+    for anchor, target_rev, other_rev in itertools.product(range(48),(0,1),(0,1)):
+        target,other,nn=case_events(anchor,target_rev,"active","active",0,0,0,0,other_rev)
+        for e,status in ((target,"target"),(other,"distractor")):
+            role_counts[(e.agent,status,"agent")]+=1
+            role_counts[(e.patient,status,"patient")]+=1
+    for n in NAMES:
+        if len({role_counts[(n,event,role)] for event in ("target","distractor") for role in ("agent","patient")}) != 1:
+            raise AssertionError(f"Core participant {n} not balanced over event and role: {role_counts}")
     trans=check_transformations()
     results={}
     for cond in CONDS:
@@ -251,8 +265,11 @@ def run():
         for p in cases:validate_case(p)
         # Counterbalance target/distractor location, target role direction,
         # order of locative components, and every event participant mention.
-        for a in range(24):
-            rows=[p for p in cases if p.names==tuple(NAMES[((a//6)%4)*4:((a//6)%4)*4+4]) and p.event.verb==VERBS[a%6]]
+        for a in range(48):
+            start = ((a%24)//6)*4
+            quartet=tuple(NAMES[start:start+4])
+            oriented = (quartet[2:]+quartet[:2]) if a >= 24 else quartet
+            rows=[p for p in cases if p.names==oriented and p.event.verb==VERBS[(a%24)%6]]
             if not rows:raise AssertionError("Missing anchor balance block")
             mentions=Counter(n for p in rows for n in names_in(p.text,p.names))
             if len(set(mentions.values()))!=1:
@@ -269,8 +286,8 @@ def run():
             # In this static check, primary is voice-paired correctness.
             # Score on all paired active/passive identities using same other voice.
             valid=0;total=0;valid_second=0;total_second=0
-            for anch,rev,ov,by,lt,lo,otherswap,pos in itertools.product(range(24),(0,1),VOICES,(0,1),LAYOUTS,LAYOUTS,(0,1),(False,True)):
-                t,o,names=case_events(anch,rev,"active",ov,by,lt,lo,otherswap)
+            for anch,rev,ov,by,lt,lo,otherswap,otherrev,pos in itertools.product(range(48),(0,1),VOICES,(0,1),LAYOUTS,LAYOUTS,(0,1),(0,1),(False,True)):
+                t,o,names=case_events(anch,rev,"active",ov,by,lt,lo,otherswap,otherrev)
                 a=render_packet(t,o,names,cond,pos)
                 t2=replace(t,voice="passive")
                 b=render_packet(t2,o,names,cond,pos)
@@ -292,10 +309,10 @@ def run():
             if cond=="LI":
                 if valid==total:
                     raise AssertionError(f"Shallow shortcut {name} solves primary LI voice test")
-                for anch,ov,by,lt,lo,otherswap in itertools.product(range(24),VOICES,(0,1),LAYOUTS,LAYOUTS,(0,1)):
+                for anch,ov,by,lt,lo,otherswap,otherrev in itertools.product(range(48),VOICES,(0,1),LAYOUTS,LAYOUTS,(0,1),(0,1)):
                     full=[]
                     for tv,rv,pos2 in itertools.product(VOICES,(0,1),(False,True)):
-                        tt,oo,nn=case_events(anch,rv,tv,ov,by,lt,lo,otherswap)
+                        tt,oo,nn=case_events(anch,rv,tv,ov,by,lt,lo,otherswap,otherrev)
                         pp=render_packet(tt,oo,nn,cond,pos2)
                         full.append(fn(pp)==(pp.correct_agent,pp.correct_patient))
                     if all(full):raise AssertionError(f"Shallow shortcut {name} passes all 8")
