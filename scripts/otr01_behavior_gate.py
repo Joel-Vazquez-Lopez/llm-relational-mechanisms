@@ -77,11 +77,16 @@ def main(argv=None):
     tok = AutoTokenizer.from_pretrained(args.model, revision=args.revision)
     check = single_token_checker(tok, leading_space=not args.chat_template)
     multi = [n for n in ors.NAMES if not check(n)]
-    if multi:
+    if multi and not args.chat_template:
         raise SystemExit(
             f"These names are not single tokens for {args.model}: {multi}. "
             "Agree on one name list that is single-token for every model before running."
         )
+    if multi:
+        # After a chat template the answer has no leading space, so a few names split into
+        # two tokens. Scoring sums log-probabilities over all tokens of the name, so the item
+        # set stays identical to the base-model runs; top-1 checks use the first token only.
+        print(f"Note: multi-token names in chat mode (scored by summed log-prob): {multi}", flush=True)
 
     dtype = getattr(torch, args.dtype)
     device = args.device or ("cuda" if torch.cuda.is_available() else "cpu")
@@ -102,6 +107,7 @@ def main(argv=None):
         "dtype": args.dtype,
         "device": device,
         "chat_template": args.chat_template,
+        "multi_token_names": multi,
         "split": args.split,
         "test_set": args.test_set,
         "generator_version": ors.GENERATOR_VERSION,
