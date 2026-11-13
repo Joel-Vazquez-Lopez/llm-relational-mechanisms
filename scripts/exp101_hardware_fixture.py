@@ -6,7 +6,7 @@ artificial training arrays and familiar DEVELOPMENT-only sentences. The output
 is a diagnostic report, NOT a human sign-off or study release authorization.
 """
 from __future__ import annotations
-import argparse, json, platform, tempfile
+import argparse, json, platform, tempfile, warnings
 from pathlib import Path
 import torch
 from torch.nn import functional as F
@@ -44,12 +44,11 @@ def _optimizer_equal(a,b):
     return True
 
 
-def run_fixture(device: str):
+def _run_fixture_impl(device: str):
     if device not in ('cpu','mps'):raise ValueError('Only local CPU and Mac MPS engineering fixtures permitted')
     if device=='mps' and not torch.backends.mps.is_available():
         raise RuntimeError('MPS unavailable on this machine; no MPS validation claimed')
     torch.set_num_threads(min(2,torch.get_num_threads()))
-    torch.use_deterministic_algorithms(True)
     torch.manual_seed(606060)
     names=prod.NAMES
     v=len(prod.VOCAB_WORDS)
@@ -130,6 +129,25 @@ def run_fixture(device: str):
                 'position_gradient_norms_34_through_38':grad_norms,
                 'gradient_minimum':GRAD_EPS,'protected_accessed':False,
                 'experiment_training_started':False}
+
+def run_fixture(device: str):
+    """RC3: quantifies actual fixture parity with backend limitations visible.
+
+    MPS warn_only allows kernels lacking deterministic implementations to run;
+    any reproducibility mismatch still fails the frozen numerical comparisons.
+    """
+    policy=rt.configure_determinism(device)
+    with warnings.catch_warnings(record=True) as raised:
+        warnings.simplefilter('always')
+        report=_run_fixture_impl(device)
+    backend_warnings=[str(item.message) for item in raised
+                      if 'deterministic' in str(item.message).lower() or
+                         'nondeterministic' in str(item.message).lower()]
+    report['determinism_policy']=policy
+    report['known_backend_nondeterminism_warnings']=len(backend_warnings)
+    report['nondeterminism_warning_examples']=sorted(set(backend_warnings))[:5]
+    report['exact_mps_reproducibility_claimed']=False
+    return report
 
 if __name__=='__main__':
     ap=argparse.ArgumentParser(description=__doc__)
