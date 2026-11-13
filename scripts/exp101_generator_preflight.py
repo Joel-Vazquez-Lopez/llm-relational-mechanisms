@@ -40,6 +40,7 @@ class Packet:
     correct_agent: str
     correct_patient: str
     event: Event
+    other_event: Event
     condition: str
     target_first: bool
     questions: tuple[str, str]
@@ -94,7 +95,22 @@ def render_packet(target: Event, other: Event, names: tuple[str,...],
     questions=tuple(f"In the {ordinal} event, who was the {role}?"
                     for role in ("agent","patient"))
     return Packet(text,0 if target_first else 1,names,
-                  target.agent,target.patient,target,condition,target_first,questions)
+                  target.agent,target.patient,target,other,condition,target_first,questions)
+
+
+def other_event_query(p: Packet) -> Packet:
+    """Same exact source, ask about the OTHER event, no source rewriting.
+
+    This is essential: moving a marked target event and updating the ordinal
+    question alone does not prove that the model reads the ordinal question.
+    """
+    otherpos = 1 - p.query_event
+    ordinal = "first" if otherpos == 0 else "second"
+    qs = tuple(f"In the {ordinal} event, who was the {r}?"
+               for r in ("agent","patient"))
+    return Packet(p.text, otherpos, p.names, p.other_event.agent,
+                  p.other_event.patient, p.other_event,p.event,p.condition,
+                  not p.target_first,qs)
 
 
 def development_cases(cond: str):
@@ -180,6 +196,11 @@ def byrule(pkt,which):
 def eventblind(pkt):
     return shallow_core(pkt.text[:-1].split(" ; ")[0],pkt.names)
 
+def eventblind_second(pkt):
+    # Strongest reviewer-proposed baseline: grammatical clause extractor, but
+    # ALWAYS choose physical clause two regardless of the event question.
+    return shallow_core(pkt.text[:-1].split(" ; ")[1], pkt.names)
+
 
 BASELINES={
     "adjunct_singleton_voice_order":adversarial_adjunct_singleton,
@@ -189,11 +210,28 @@ BASELINES={
     "first_by":lambda p:byrule(p,"first"),
     "last_by":lambda p:byrule(p,"last"),
     "event_blind_first":eventblind,
+    "event_blind_second":eventblind_second,
 }
 
 
 def validate_case(p: Packet):
+    """Compare independently decoded *both* clauses, roles, adjunct slots and query.
+
+    The parser consumes rendered strings only; expected roles/slots are read
+    separately from the packet metadata. Comparing the union of locative
+    people is insufficient: swapping gate-owner and near-person is a bug.
+    """
     a,b=parse_sentence(p.text,p.names)
+    intended=(p.event,p.other_event) if p.target_first else (p.other_event,p.event)
+    for actual, expected in zip((a,b), intended):
+        want_gate = expected.by_name if p.condition in ("L","LI") else None
+        want_near = expected.near_name if p.condition in ("I","LI") else None
+        observed=(actual.agent,actual.patient,actual.verb,actual.voice,
+                  actual.gate_owner,actual.near_person)
+        original=(expected.agent,expected.patient,expected.verb,expected.voice,
+                  want_gate,want_near)
+        if observed!=original:
+            raise AssertionError(f"Rendered clause vs metadata mismatch: {observed} != {original}")
     for expected_role,question in zip(("agent","patient"),p.questions):
         pos,role=parse_query(question)
         if (pos,role)!=(p.query_event,expected_role):
@@ -202,23 +240,58 @@ def validate_case(p: Packet):
         expected_answer=p.correct_agent if role=="agent" else p.correct_patient
         if getattr(interpreted,role)!=expected_answer:
             raise AssertionError(f"Rendered question/answer mismatch: {question!r} {p}")
-    parsed=(a,b)[p.query_event]
-    if (parsed.agent,parsed.patient,parsed.verb,parsed.voice)!=(
-            p.correct_agent,p.correct_patient,p.event.verb,p.event.voice):
-        raise AssertionError(f"Independent rendered parser mismatch: {p}")
+    if p.query_event!=(0 if p.target_first else 1):
+        raise AssertionError("Packet query metadata disagrees with target position")
     if a.agent==b.agent or a.patient==b.patient or len({a.agent,a.patient,b.agent,b.patient})!=4:
         raise AssertionError("Two events must have four distinct participants")
     if p.condition=="LI":
         assert sorted(names_in(p.text,p.names))==sorted(list(p.names)*2),p
         assert sorted(a.locative_names+b.locative_names)==sorted(p.names),p
-        # Both clauses have both adjunct families; no unique adjunct target.
         assert p.text.count("gate")==2 and p.text.lower().count("near")==2
     else:
-        # Bare/single component conditions are reference cells and are
-        # balanced at source/role across the full development factorial.
         assert p.text.count("gate")== (0 if p.condition in ("bare","I") else 2)
         assert p.text.lower().count("near")== (0 if p.condition in ("bare","L") else 2)
     return (a,b)
+
+
+def check_deliberate_corruptions() -> int:
+    """Negative controls: mutations to text must be rejected vs original labels."""
+    target, other, names = case_events(0, 0, "active", "passive", 0, 0, 1, 0, 0)
+    packet = render_packet(target, other, names, "LI", True)
+    validate_case(packet)
+    clauses = packet.text[:-1].split(" ; ")
+    assert len(clauses)==2
+    attempts = []
+    # Swap same two locative names in target clause; aggregate locative-set
+    # checks in R2 failed to detect exactly this corruption.
+    swapped_target = clauses[0].replace(
+        f"By {target.by_name}'s gate, ", f"By {target.near_name}'s gate, ")
+    swapped_target = swapped_target.replace(
+        f"near {target.near_name}", f"near {target.by_name}")
+    attempts.append(replace(packet, text=" ; ".join((swapped_target,clauses[1]))+"."))
+    # Swap same two locative people in the other event, not the queried one.
+    loc = f" by {other.by_name}'s gate"
+    assert loc in clauses[1]
+    swapped_other = clauses[1].replace(loc,f" by {other.near_name}'s gate")
+    swapped_other = swapped_other.replace(
+        f"near {other.near_name}",f"near {other.by_name}")
+    attempts.append(replace(packet, text=" ; ".join((clauses[0],swapped_other))+"."))
+    # Relabel source predicate while retaining metadata.
+    attempts.append(replace(packet,text=packet.text.replace(target.verb,"praised",1)))
+    # Swap the core answer labels while keeping the rendered string unchanged.
+    attempts.append(replace(packet,correct_agent=target.patient,correct_patient=target.agent))
+    # Wrong ordinal in natural-language query (metadata unchanged).
+    attempts.append(replace(packet,questions=tuple(q.replace("first","second") for q in packet.questions)))
+    # Wrong syntactic role in natural-language query (metadata unchanged).
+    attempts.append(replace(packet,questions=(packet.questions[1],packet.questions[0])))
+    for idx,corrupted in enumerate(attempts):
+        try:
+            validate_case(corrupted)
+        except (AssertionError,ValueError):
+            pass
+        else:
+            raise AssertionError(f"Corruption #{idx} not rejected")
+    return len(attempts)
 
 
 def check_transformations():
@@ -258,7 +331,7 @@ def old_packet_attack_demo():
         ordinal="first" if pos else "second"
         qs=tuple(f"In the {ordinal} event, who was the {r}?"
                  for r in ("agent","patient"))
-        p=Packet(text,0 if pos else 1,names,t.agent,t.patient,t,"LI",pos,qs)
+        p=Packet(text,0 if pos else 1,names,t.agent,t.patient,t,o,"LI",pos,qs)
         if adversarial_adjunct_singleton(p)==(p.correct_agent,p.correct_patient):
             n+=1
     return n
@@ -277,6 +350,7 @@ def run():
     for n in NAMES:
         if len({role_counts[(n,event,role)] for event in ("target","distractor") for role in ("agent","patient")}) != 1:
             raise AssertionError(f"Core participant {n} not balanced over event and role: {role_counts}")
+    corruptions=check_deliberate_corruptions()
     trans=check_transformations()
     results={}
     for cond in CONDS:
@@ -300,8 +374,41 @@ def run():
         else:
             assert all(sorted(Counter(names_in(p.text,p.names)).values())==[1,1,1,1] for p in cases)
         report={"n_cells":len(cases),"baseline_accuracy":{}}
+        if cond=="LI":
+            # Verify the same rendered source supports *both* event queries,
+            # each with agent and patient answers: four gold-distinct names.
+            for p in cases:
+                other = other_event_query(p)
+                assert other.text == p.text
+                assert len({p.correct_agent,p.correct_patient,
+                            other.correct_agent,other.correct_patient})==4
+                validate_case(other)
         for name,fn in BASELINES.items():
             right=sum(fn(p)==(p.correct_agent,p.correct_patient) for p in cases)
+            # Event-query diagnostic: BOTH different role/event questions on
+            # the identical input sentence must be answered correctly.
+            # The fixed-second-clause baseline scores perfectly on the
+            # target-second primary yet necessarily fails this measure.
+            four_correct = sum(
+                fn(p)==(p.correct_agent,p.correct_patient) and
+                fn(other_event_query(p)) ==
+                   (p.other_event.agent,p.other_event.patient)
+                for p in cases
+            ) if cond == "LI" else None
+            # Count complete 8-cell packets, including in BARE references.
+            # This cannot be hard-coded: a positional shortcut may truly
+            # solve all eight cells in a simpler grammar.
+            perfect_eight=0
+            total_eight=0
+            for anch,ov,by,lt,lo,otherswap,otherrev in itertools.product(
+                    range(48),VOICES,(0,1),LAYOUTS,LAYOUTS,(0,1),(0,1)):
+                full=[]
+                for tv,rv,pos2 in itertools.product(VOICES,(0,1),(False,True)):
+                    tt,oo,nn=case_events(anch,rv,tv,ov,by,lt,lo,otherswap,otherrev)
+                    pp=render_packet(tt,oo,nn,cond,pos2)
+                    full.append(fn(pp)==(pp.correct_agent,pp.correct_patient))
+                total_eight += 1
+                perfect_eight += int(all(full))
             # In this static check, primary is voice-paired correctness.
             # Score on all paired active/passive identities using same other voice.
             valid=0;total=0;valid_second=0;total_second=0
@@ -323,22 +430,23 @@ def run():
                 "second_event_voice_pair_correct":valid_second,
                 "second_event_voice_pairs":total_second,
                 "second_event_voice_pair_rate":valid_second/total_second,
-                "all_eight_perfect":False, # asserted below explicitly for each group
+                "same_source_four_query_correct": four_correct,
+                "same_source_four_query_total":len(cases) if cond=="LI" else None,
+                "all_eight_perfect":perfect_eight>0,  # any complete 8-cell packet
+                "all_eight_perfect_packet_count":perfect_eight,
+                "all_eight_packet_count":total_eight,
             }
             if cond=="LI":
                 if valid==total:
                     raise AssertionError(f"Shallow shortcut {name} solves primary LI voice test")
-                for anch,ov,by,lt,lo,otherswap,otherrev in itertools.product(range(48),VOICES,(0,1),LAYOUTS,LAYOUTS,(0,1),(0,1)):
-                    full=[]
-                    for tv,rv,pos2 in itertools.product(VOICES,(0,1),(False,True)):
-                        tt,oo,nn=case_events(anch,rv,tv,ov,by,lt,lo,otherswap,otherrev)
-                        pp=render_packet(tt,oo,nn,cond,pos2)
-                        full.append(fn(pp)==(pp.correct_agent,pp.correct_patient))
-                    if all(full):raise AssertionError(f"Shallow shortcut {name} passes all 8")
+                if perfect_eight:
+                    raise AssertionError(f"Shallow shortcut {name} passes {perfect_eight} complete L+I packets")
+                if name == "event_blind_second" and four_correct != 0:
+                    raise AssertionError("Query-blind second-clause parser should fail same-source questions")
         results[cond]=report
     full=results["LI"]
     print("EXP-101 GENERATOR-ONLY PREFLIGHT PASS")
-    print("Independent rendered-text parser: PASS")
+    print("Independent rendered-text parser: PASS, deliberate corruptions rejected:",corruptions)
     print("Legacy attack baseline gets 8/8 on one-adjunct-bearing-clause packet: PASS")
     print("Voice / direction / physical-event-order semantic invariants: PASS",trans)
     print("Composed LI: both clauses adjunct-bearing, all four names appear twice: PASS")
@@ -348,7 +456,7 @@ def run():
               f"voice-pair {vals['voice_pair_correct']}/{vals['voice_pairs']}, "
               f"target-second {vals['second_event_voice_pair_correct']}/{vals['second_event_voice_pairs']}")
     result={"study":"EXP-101", "status":"STATIC_DEV_ONLY_NOT_FROZEN", "legacy_attack_eight_of_eight":8,
-            "independent_parser_validated":True,"transformation_packets_checked":trans,
+            "independent_parser_validated":True,"deliberate_corruptions_rejected":corruptions,"transformation_packets_checked":trans,
             "conditions":results}
     return result
 
