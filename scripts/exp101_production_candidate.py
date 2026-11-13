@@ -253,66 +253,97 @@ def make_model():
     return Model()
 
 
-def train_one(seed:int,arm:str,approved_manifest_hash:str,
-              device:str="cpu",root:Path=Path("results/exp101_candidate")):
-    """IMPLEMENTED, NOT CLI-EXPOSED. NEVER invoke before external freeze approval.
+def train_one(seed:int,arm:str,device:str="cpu",
+              root:Path=Path("results/exp101"),
+              approved_release_path:Path=Path("reports/exp101/frozen_release.json")):
+    """STUDY TRAINING: NOT CLI-EXPOSED; refuses without approved source freeze.
 
-    Reuses ML-080 AdamW, learning rate, weight decay and fixed 12,800 updates.
-    Both paired arms use identical initializations and base minibatch streams.
-    All seed/arm outcomes are retained; no best-checkpoint selection.
+    This is the *same* one_optimizer_step/save_state/load_state path covered
+    by synthetic CPU unit tests. DO NOT invoke prior to explicit authorization.
     """
-    import os
+    from exp101_release import require_approved_release
+    import exp101_runtime as runtime
     import torch
-    from torch.nn import functional as F
-    manifest,base,dev,dose=dataset_manifest()
-    h=stable_hash(manifest)
-    if approved_manifest_hash!=h:
-        raise PermissionError("Manifest is not approved/frozen; no training permitted")
+    release=require_approved_release(approved_release_path)
     if seed not in SEEDS or arm not in ARMS:raise ValueError("Unregistered arm/seed")
-    torch.manual_seed(seed)
-    model=make_model().to(device)
-    optimizer=torch.optim.AdamW(model.parameters(),lr=0.002,weight_decay=0.01)
-    flat_base=[(p,r) for p in base for r in ("agent","patient")]
-    base_data=encode(flat_base)
+    data,base,dev,dose=dataset_manifest()
+    h=stable_hash(data)
+    if h!=release["data_manifest_sha256"]:
+        raise PermissionError("Training data manifest differs from frozen release")
+    if not torch.are_deterministic_algorithms_enabled():
+        torch.use_deterministic_algorithms(True)
+    model,optimizer,rg_base,rg_dose=runtime.init_state(seed,make_model,device=device)
+    base_data=encode([(p,r) for p in base for r in ("agent","patient")])
     dose_data=encode(dose[arm])
-    rg_base=torch.Generator().manual_seed(seed+800000)
-    rg_dose=torch.Generator().manual_seed(seed+810000)
-    folder=root/f"seed_{seed}"/arm
-    folder.mkdir(parents=True,exist_ok=True)
-    state=folder/"state.pt"
+    state=Path(root)/f"seed_{seed}"/arm/"state.pt"
     step=0
     if state.exists():
-        checkpoint=torch.load(state,map_location="cpu",weights_only=True)
-        if checkpoint["manifest"]!=h or checkpoint["seed"]!=seed or checkpoint["arm"]!=arm:
-            raise AssertionError("Checkpoint does not match frozen run")
-        model.load_state_dict(checkpoint["model"])
-        optimizer.load_state_dict(checkpoint["optimizer"])
-        rg_base.set_state(checkpoint["base_rng"])
-        rg_dose.set_state(checkpoint["dose_rng"])
-        step=checkpoint["step"]
-    def save():
-        obj=dict(manifest=h,seed=seed,arm=arm,step=step,
-                 model=model.state_dict(),optimizer=optimizer.state_dict(),
-                 base_rng=rg_base.get_state(),dose_rng=rg_dose.get_state())
-        tmp=state.with_suffix(".tmp")
-        torch.save(obj,tmp)
-        os.replace(tmp,state)
+        step=runtime.load_state(state,model=model,optimizer=optimizer,
+            gbase=rg_base,gdose=rg_dose,seed=seed,arm=arm,
+            data_hash=h,release_fingerprint=release["fingerprint"],device=device)
+    if step>STEPS: raise AssertionError("Checkpoint past budget")
     while step<STEPS:
-        model.train()
-        ib=torch.randint(len(flat_base),(SHARED_BATCH,),generator=rg_base)
-        idose=torch.randint(len(dose[arm]),(DOSE_BATCH,),generator=rg_dose)
-        bx,br,bg,_=base_data; dx,dr,dg,_=dose_data
-        a,b=bx[ib],dx[idose];n=max(a.shape[1],b.shape[1])
-        ids=torch.cat((F.pad(a,(0,n-a.shape[1]),value=VOCAB["<pad>"]),
-                       F.pad(b,(0,n-b.shape[1]),value=VOCAB["<pad>"]))).to(device)
-        readout=torch.cat((br[ib],dr[idose])).to(device)
-        gold=torch.cat((bg[ib],dg[idose])).to(device)
-        optimizer.zero_grad(set_to_none=True)
-        loss=F.cross_entropy(model(ids,readout),gold)
-        loss.backward();optimizer.step();step+=1
-        if step%800==0 or step in (3200,STEPS):save()
-    return {"seed":seed,"arm":arm,"step":step,"manifest":h}
+        runtime.one_optimizer_step(model,optimizer,base_data,dose_data,
+            rg_base,rg_dose,base_batch=SHARED_BATCH,dose_batch=DOSE_BATCH,
+            pad_id=VOCAB["<pad>"],device=device)
+        step+=1
+        if step%800==0 or step==STEPS:
+            runtime.save_state(state,model=model,optimizer=optimizer,
+                gbase=rg_base,gdose=rg_dose,seed=seed,arm=arm,step=step,
+                release_fingerprint=release["fingerprint"],data_hash=h,device=device)
+    return {"seed":seed,"arm":arm,"step":step,"release_fingerprint":release["fingerprint"]}
 
+
+def score_development_model(model,dev,device='cpu',batch_packets=48):
+    """Actual model logits -> nine-cell dev metrics; never samples protected LI.
+
+    Also supports an untrained random-model, two-packet *shape smoke test*.
+    """
+    from exp101_scoring import development_cell_scores
+    import torch
+    model.eval();rows=[]
+    with torch.inference_mode():
+        for i in range(0,len(dev),batch_packets):
+            group=dev[i:i+batch_packets]
+            data_items=[(p,role) for p in group for role in ('agent','patient')]
+            ids,readout,labels,choices=encode(data_items)
+            logits=model(ids.to(device),readout.to(device)).float()
+            if logits.shape!=(len(data_items),len(VOCAB)):
+                raise AssertionError('Model output tensor shape differs from vocab')
+            c=choices.to(device)
+            picks=c.gather(1,logits.gather(1,c).argmax(1,keepdim=True)).flatten().cpu().tolist()
+            for j,p in enumerate(group):
+                rows.append({'source':p.text,'condition':p.condition,
+                   'target_first':p.target_first,'voice':p.event.voice,
+                   'correct_agent':p.correct_agent,'correct_patient':p.correct_patient,
+                   'pred_agent':VOCAB_WORDS[picks[2*j]],
+                   'pred_patient':VOCAB_WORDS[picks[2*j+1]]})
+    return development_cell_scores(rows)
+
+
+def development_checkpoint_scores(seed:int,arm:str,device:str="cpu",
+          root:Path=Path("results/exp101"),
+          approved_release_path:Path=Path("reports/exp101/frozen_release.json")):
+    """Checkpoint -> per-cell measured scores, NOT run until freeze/approval.
+
+    Uses *only* the nine familiar development cells. No protected cases.
+    """
+    from exp101_release import require_approved_release
+    from exp101_scoring import development_cell_scores
+    import exp101_runtime as runtime
+    import torch
+    release=require_approved_release(approved_release_path)
+    data,base,dev,dose=dataset_manifest()
+    h=stable_hash(data)
+    if h!=release['data_manifest_sha256']:
+        raise PermissionError('Data manifest differs from frozen release')
+    model,optim,rg_base,rg_dose=runtime.init_state(seed,make_model,device=device)
+    state=Path(root)/f"seed_{seed}"/arm/"state.pt"
+    step=runtime.load_state(state,model=model,optimizer=optim,
+        gbase=rg_base,gdose=rg_dose,seed=seed,arm=arm,
+        release_fingerprint=release['fingerprint'],data_hash=h,device=device)
+    if step!=STEPS:raise PermissionError('Only final step-12800 checkpoint is eligible')
+    return score_development_model(model,dev,device=device)
 
 def competence_gate(seed_arm_scores):
     """Pure-data gate on nine dev cells, using all eight paired seeds.
