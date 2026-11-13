@@ -1,0 +1,174 @@
+{
+  "config": {
+    "architecture": {
+      "attention": "torch.nn.MultiheadAttention, causal bool upper triangular",
+      "heads": 4,
+      "layers": 3,
+      "max_tokens": 64,
+      "positional_embedding": "learned_absolute_with_deterministic_training_index_offset",
+      "width": 96
+    },
+    "conditions": [
+      "bare",
+      "L",
+      "I",
+      "LI"
+    ],
+    "optimizer": {
+      "learning_rate": 0.002,
+      "name": "AdamW",
+      "scheduler": "constant",
+      "steps": 12800,
+      "weight_decay": 0.01
+    },
+    "protected": {
+      "additional_LI_opposite_questions": 4608,
+      "anchors": 288,
+      "models": 16,
+      "packets_per_condition": 2304,
+      "target_questions_per_condition": 4608,
+      "total_inferences_per_model": 23040
+    },
+    "scoring": {
+      "bootstrap": "paired seeds 20000 reps RNG 101101",
+      "choice": "native four event-participant name logits",
+      "cquery": "4 different people, same source 2 events x 2 roles",
+      "gate": "9 familiar cells >=95% individual and >=90% both, >=6 joint seed pairs",
+      "primary": "C_voice target_second L+I"
+    },
+    "training": {
+      "arms": [
+        "familiar",
+        "target"
+      ],
+      "checkpoint_interval": 800,
+      "determinism_policy": {
+        "cpu": "strict_error",
+        "mps": "warn_only_with_measured_tolerance",
+        "mps_bitwise_reproducibility_claimed": false
+      },
+      "dose_batch": 8,
+      "paired_initialization": true,
+      "paired_shared_batch_rng": true,
+      "position_offset_cycle": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "position_offset_inference": 0,
+      "position_offset_schedule": "offset_for_zero_based_update_index = update_index % 9",
+      "seeds": [
+        907,
+        911,
+        919,
+        929,
+        937,
+        941,
+        947,
+        953
+      ],
+      "shared_batch": 56
+    }
+  },
+  "config_sha256": "383b25a90f3cb505a78ac048819c45265a59c512c32c5d020395e0c5eae5ccc5",
+  "cpu_engineering_fixture_sha256": "9b69524d5f5ab8d90aeccf0a751447465fea171c5b8e36fb4c33c47a33a7afd8",
+  "dataset_manifest_sha256": "1ebeb2327c243a95793895ea0105fab7b0d8eb53bbca53c70c8d3095c3db9b67",
+  "dataset_provenance_sha256": null,
+  "fingerprint": "7ee59f50f928f0b995b2df1d942b2aa6bca0dc274840951c0995a3a73452b123",
+  "human_grammatical_review": "AUTHOR_SELF_REVIEW_ACCEPTED_INDEPENDENT_WAIVED",
+  "independent_grammar_review_waived": true,
+  "intended_hardware_runtime_review": "USER_REPORTED_TWO_MPS_PASSES_PENDING_RAW_ARCHIVE",
+  "position_coverage": {
+    "LI_development_static_max_tokens": 39,
+    "LI_within_arch_embedding_capacity": true,
+    "all_LI_eval_positions_covered": true,
+    "augmentation_changes_training_regime": true,
+    "fixed_offset_zero_for_dev_and_future_test": true,
+    "measured_gradient_fixture_status": "SEE_SEPARATE_OFFLINE_VALIDATION",
+    "nonpad_token_opportunities_per_index": {
+      "34": 359424,
+      "35": 276480,
+      "36": 193536,
+      "37": 110592,
+      "38": 69120
+    },
+    "position_offsets": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8
+    ],
+    "question_token_opportunities_per_index": {
+      "34": 359424,
+      "35": 276480,
+      "36": 193536,
+      "37": 110592,
+      "38": 69120
+    },
+    "training_max_tokens": 34,
+    "unshifted_training_uncovered_indices": [
+      34,
+      35,
+      36,
+      37,
+      38
+    ]
+  },
+  "protected_evaluation_authorized": false,
+  "protected_plan": {
+    "anchor_metadata_sha256": "ae0e3906efc81508cc99df2b1765bf6bb24afbf802738c4c87eebd643d1e9bb0",
+    "anchors": 288,
+    "conditions": [
+      "bare",
+      "L",
+      "I",
+      "LI"
+    ],
+    "extra_LI_other_event_queries_per_variant": 2,
+    "extra_LI_questions_per_model": 4608,
+    "models": 16,
+    "no_protected_text_generated": true,
+    "target_queries_per_variant": 2,
+    "target_role_questions_per_model": 18432,
+    "total_questions_across_models": 368640,
+    "total_questions_per_model": 23040,
+    "variants_per_anchor_condition": 8
+  },
+  "sources_sha256": {
+    "paper/exp101_author_waiver_RC5.md": "a30834a17c9e0bb90f4283c51d6f72312966adba9b9fbc09ad7809732ca47c6d",
+    "paper/exp101_counterfactual_generalization_protocol.md": "ee644b2bfda92390e234372243810e8c0329e6fe5a74c164a3369cc322663865",
+    "paper/exp101_grammar_review_RC2.md": "b4e0aff5ccacf26d9c27912da8a71e8a9f895d8ce507612f3733296804a55422",
+    "paper/exp101_mps_determinism_RC3.md": "2050d6c8620dca030a484ef641077a889b5bc76a6380599f9ff1d47ebe0380b6",
+    "paper/exp101_mps_fixture_same_origin_RC4.md": "0aa056e4641907b7f2a56755873e656cf7d3689df08b6bd3b40b7ba0f708ef64",
+    "paper/exp101_position_amendment_RC2.md": "6398574d3c21a528d0ea73cafdce847e41527b1862704187102a6280b26d7ac9",
+    "paper/exp101_release_candidate_review.md": "b139e233b29096721a0a0b4ce42ba6d19f4d8a020fb128334d0d068c5567def1",
+    "paper/exp101_training_freeze_notes_RC6.md": "b087019384b6673b0d6cd1d8f7292d52274a3a8de3f869d469fdb19902173362",
+    "scripts/exp101_generator_preflight.py": "5dfb9822240f84412eeaa243768da0ae8c9fbd797ef0c68aa5e57a339022b899",
+    "scripts/exp101_hardware_fixture.py": "5d92ebb94b103ff121ef4ad215af4d75be588a41620390de4833f8544eb2685b",
+    "scripts/exp101_production_candidate.py": "522a1ece3025b495c1845b42b9fcbd450801f0add2852e2218b2a585147b843b",
+    "scripts/exp101_protected_candidate.py": "794e785cdc551d9226b5f7beb28367144f3449ab3f430405f80a0a0c2e2c5984",
+    "scripts/exp101_release.py": "89ba06d6611020e5b49df5a19f416f869afea94ca3f4e0f7e683982109019939",
+    "scripts/exp101_render_validator.py": "cbfc22156dd33acb24a5ddd0c087a27e891ed0eb332c13fc07a11159cf2da297",
+    "scripts/exp101_run_authorized.py": "d985be332e5f0f8bd36a23de0dd303bf71f5684e0988db95db10db9dd0b7ed21",
+    "scripts/exp101_runtime.py": "1cac5f30e2e24fc92bdfc433f3523bd400b6e3c088b5c2e48556106947bd66e6",
+    "scripts/exp101_scoring.py": "e05f21552929bd6bb76c120ad641bb951fe4ca707cb92d498e5d2ac4cfda017e",
+    "scripts/exp101_seal_local_release.py": "154bb5f41fd92dff91421ce2061b9cbd373a254cb12685f3ccb7ade2e5685c82",
+    "scripts/test_exp101_offline.py": "9f1c91f1e3c75ee11a4dc3f492149224e2d4de582233409fb08c8bf21836b249",
+    "scripts/test_exp101_release_offline.py": "9270ba17160ee71b08a37f14ac3d0700a71b42b163d4e67128de5a54415a0ba6"
+  },
+  "static_report_sha256": "9f11adafc046146ff9dda2410a3c5c908c42ca79a0e453ee46806b3ea8a7b0e7",
+  "status": "PREFREEZE_REVIEW_ONLY_NO_TRAIN_AUTHORIZATION",
+  "study": "EXP-101",
+  "training_authorized": false
+}
