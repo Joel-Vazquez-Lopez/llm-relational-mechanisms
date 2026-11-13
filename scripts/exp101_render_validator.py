@@ -81,3 +81,14 @@ def parse_sentence(text: str, names: tuple[str, ...]) -> tuple[ParsedClause, Par
     if parsed[0].verb == parsed[1].verb:
         raise ValueError("Events must have distinct verbs")
     return parsed
+
+
+def parse_query(question: str) -> tuple[int, str]:
+    """Independent text-only parser for the actually rendered event/role query."""
+    m = re.fullmatch(
+        r"In the (first|second) event, who was the (agent|patient)\?",
+        question,
+    )
+    if not m:
+        raise ValueError(f"Unparsable role query: {question!r}")
+    return (0 if m.group(1) == "first" else 1, m.group(2))
