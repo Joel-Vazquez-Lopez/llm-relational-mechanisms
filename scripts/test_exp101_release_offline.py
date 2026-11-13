@@ -26,7 +26,9 @@ class ReleaseOfflineTests(unittest.TestCase):
         self.assertGreater(candidate['position_coverage']['LI_development_static_max_tokens'],34)
         self.assertEqual(len(candidate['sources_sha256']),len(release.SOURCE_PATHS))
         self.assertEqual(release.validate_candidate(root/'reports/exp101/release_manifest_candidate.json'),candidate)
-        self.assertEqual(candidate['intended_hardware_runtime_review'],'PENDING_MAC_MPS_ENGINEERING_FIXTURE')
+        self.assertEqual(candidate['intended_hardware_runtime_review'],'USER_REPORTED_TWO_MPS_PASSES_PENDING_RAW_ARCHIVE')
+        self.assertEqual(candidate['human_grammatical_review'],'AUTHOR_SELF_REVIEW_ACCEPTED_INDEPENDENT_WAIVED')
+        self.assertTrue(candidate['independent_grammar_review_waived'])
         with self.assertRaises(PermissionError):
             release.require_approved_release(root/'reports/exp101/frozen_release.json')
 
@@ -231,6 +233,45 @@ class ReleaseOfflineTests(unittest.TestCase):
         self.assertEqual(result['resume_origin'],'same_model_a_checkpoint_after_step_1')
         self.assertTrue(result['independent_first_step_optimizer_within_tolerance'])
         self.assertTrue(all(x>1e-12 for x in result['position_gradient_norms_34_through_38'].values()))
+
+
+    def test_rc5_release_waiver_and_raw_hardware_evidence_required(self):
+        from exp101_seal_local_release import check_run
+        import json
+        with tempfile.TemporaryDirectory() as td:
+            folder=Path(td)
+            with self.assertRaises(FileNotFoundError):
+                check_run(folder/'missing.json', folder/'missing.log')
+            good={
+                'status':'ENGINEERING_FIXTURE_PASS_NOT_APPROVAL',
+                'device':'mps','resume_origin':'same_model_a_checkpoint_after_step_1',
+                'same_origin_checkpoint_roundtrip_max_abs_difference':0.0,
+                'same_origin_checkpoint_optimizer_exact':True,
+                'resume_optimizer_within_tolerance':True,
+                'paired_first_step_batch_indices_equal':True,
+                'experiment_training_started':False,'protected_accessed':False,
+                'study_seed_used':False,'fixture_seed':101999,
+                'fixture_steps':3,'dev_only_smoke_events':2,
+                'resume_param_abs_tol':1e-5,'resume_param_rel_tol':1e-4,
+                'determinism_policy':{'mode':'mps_warn_only','warn_only':True},
+                'known_backend_nondeterminism_warnings':21,
+                'resume_parameter_max_abs_difference':1e-8,
+                'independent_first_step_optimizer_within_tolerance':True,
+                'position_gradient_norms_34_through_38':{str(i):0.005 for i in range(34,39)},
+                'torch':'fixture-only','platform':'fixture-only',
+            }
+            jf=folder/'synthetic.json';lf=folder/'synthetic.log'
+            lf.write_text('SYNTHETIC FIXTURE TEST ONLY\n'*10)
+            jf.write_text(json.dumps(good))
+            x=check_run(jf,lf)
+            self.assertEqual(len(x['raw_sha256']),64)
+            good['same_origin_checkpoint_optimizer_exact']=False
+            jf.write_text(json.dumps(good))
+            with self.assertRaises(PermissionError):check_run(jf,lf)
+            good['same_origin_checkpoint_optimizer_exact']=True
+            good['position_gradient_norms_34_through_38']['38']=0.0
+            jf.write_text(json.dumps(good))
+            with self.assertRaises(PermissionError):check_run(jf,lf)
 
     def test_checkpoint_schedule_identifier_guard(self):
         import torch, tempfile
