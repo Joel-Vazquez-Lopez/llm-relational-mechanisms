@@ -55,6 +55,18 @@ class R3OfflineTests(unittest.TestCase):
         self.assertNotIn("LI",set(p.condition for p in train+dev))
         self.assertEqual(manifest["protected_pair_count"],24)
         self.assertNotIn("protected_text",manifest)
+        self.assertEqual(manifest["train_examples"],62208)
+        self.assertEqual(manifest["dev_examples"],20736)
+        # Catch the R3 implementation bug discovered during production audit:
+        # querying-event balance alone must not hide uneven distractor roles
+        # or adjunct owner/near-person identity frequencies.
+        for rows in (train,dev):
+            for attr in ("agent","patient","by_name","near_name"):
+                for ev in ("event","other_event"):
+                    counts=__import__("collections").Counter(
+                        getattr(getattr(pkt,ev),attr) for pkt in rows)
+                    self.assertEqual(set(counts),set(prod.NAMES))
+                    self.assertEqual(len(set(counts.values())),1)
 
     def test_competence_gate_joints_not_separate_arm_marginals(self):
         _,_,_,_=prod.dataset_manifest()
