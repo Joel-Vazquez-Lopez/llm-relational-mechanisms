@@ -44,6 +44,19 @@ def _optimizer_equal(a,b):
     return True
 
 
+
+def _optimizer_state_exact(a,b):
+    asd=a.state_dict();bsd=b.state_dict()
+    if asd['param_groups']!=bsd['param_groups'] or asd['state'].keys()!=bsd['state'].keys():return False
+    for key in asd['state']:
+        if asd['state'][key].keys()!=bsd['state'][key].keys():return False
+        for name,v in asd['state'][key].items():
+            w=bsd['state'][key][name]
+            if isinstance(v,torch.Tensor):
+                if not isinstance(w,torch.Tensor) or not torch.equal(v.detach().cpu(),w.detach().cpu()):return False
+            elif v!=w:return False
+    return True
+
 def _run_fixture_impl(device: str):
     if device not in ('cpu','mps'):raise ValueError('Only local CPU and Mac MPS engineering fixtures permitted')
     if device=='mps' and not torch.backends.mps.is_available():
@@ -69,10 +82,18 @@ def _run_fixture_impl(device: str):
                 dose_batch=2,pad_id=prod.VOCAB['<pad>'],device=device,position_offset=0)
     if a_idxs!=b_idxs:raise AssertionError('Paired batches differ on same seed')
     if abs(a_loss-b_loss)>1e-5:raise AssertionError('Paired first-step losses differ')
-    # Use uninterrupted a; saved one-step b; resume b for offsets 1,2.
+    # Independent run parity is a separate check from same-origin resume.
+    n_first, independent_first_delta, independent_first_bad = _compare_state(a,b)
+    independent_optimizer_matches = _optimizer_equal(ao,bo)
+    if independent_first_bad or not independent_optimizer_matches:
+        raise AssertionError('Independent first step outside frozen tolerances')
+    # The uninterrupted trajectory and its resumed continuation MUST originate
+    # from the *same* exact checkpoint. Saving B here confounds two independent
+    # MPS executions (as discovered in the RC3 hardware audit).
+
     with tempfile.TemporaryDirectory(prefix='exp101_engineering_') as folder:
         ckpt=Path(folder)/'state.pt'
-        rt.save_state(ckpt,model=b,optimizer=bo,gbase=bb,gdose=bd,
+        rt.save_state(ckpt,model=a,optimizer=ao,gbase=ab,gdose=ad,
             seed=FIXTURE_SEED,arm='fixture',step=1,
             release_fingerprint='NONSTUDY_FIXTURE_ONLY',data_hash='ARTIFICIAL',device=device)
         c,co,cb,cd=init()
@@ -80,6 +101,13 @@ def _run_fixture_impl(device: str):
             seed=FIXTURE_SEED,arm='fixture',
             release_fingerprint='NONSTUDY_FIXTURE_ONLY',data_hash='ARTIFICIAL',device=device)
         if step!=1:raise AssertionError('Failed fixture resume step')
+        _, roundtrip_delta, roundtrip_bad = _compare_state(a,c)
+        if roundtrip_bad or roundtrip_delta!=0.0:
+            raise AssertionError('Same-origin save/reload changed model weights')
+        if not _optimizer_state_exact(ao,co):
+            raise AssertionError('Same-origin save/reload changed optimizer')
+        if not torch.equal(ab.get_state(),cb.get_state()) or not torch.equal(ad.get_state(),cd.get_state()):
+            raise AssertionError('Same-origin save/reload changed sampler RNG')
         for ix in (1,2):
             off=prod.POSITION_OFFSETS[ix % len(prod.POSITION_OFFSETS)]
             al,ai=rt.one_optimizer_step(a,ao,base,dose,ab,ad,base_batch=3,
@@ -119,6 +147,11 @@ def _run_fixture_impl(device: str):
                 'deterministic_algorithms':torch.are_deterministic_algorithms_enabled(),
                 'fixture_seed':FIXTURE_SEED,'study_seed_used':False,
                 'initial_parameter_difference':initial_difference,
+                'independent_first_step_max_abs_difference':independent_first_delta,
+                'independent_first_step_optimizer_within_tolerance':independent_optimizer_matches,
+                'same_origin_checkpoint_roundtrip_max_abs_difference':roundtrip_delta,
+                'same_origin_checkpoint_optimizer_exact':True,
+                'resume_origin':'same_model_a_checkpoint_after_step_1',
                 'paired_first_step_batch_indices_equal':a_idxs==b_idxs,
                 'resume_parameter_max_abs_difference':delta,
                 'resume_param_abs_tol':PARAM_ATOL,'resume_param_rel_tol':PARAM_RTOL,
@@ -131,7 +164,7 @@ def _run_fixture_impl(device: str):
                 'experiment_training_started':False}
 
 def run_fixture(device: str):
-    """RC3: quantifies actual fixture parity with backend limitations visible.
+    """RC4: same-origin resume parity with backend limitations visible.
 
     MPS warn_only allows kernels lacking deterministic implementations to run;
     any reproducibility mismatch still fails the frozen numerical comparisons.
