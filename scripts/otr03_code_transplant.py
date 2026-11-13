@@ -114,6 +114,7 @@ def main(argv=None):
         raise SystemExit(f"No transplants analysed (skipped: {skipped}). The model may fail the task; "
                          "try --include-incorrect for a diagnostic run.")
     profile = otr.fit_profile(records, n_boot=args.n_boot, seed=args.seed)
+    null = otr.left_context_null(records)
 
     slug = args.model.replace("/", "__")
     stamp = time.strftime("%Y%m%dT%H%M%S")
@@ -134,6 +135,7 @@ def main(argv=None):
                      "transformers": transformers.__version__},
         "seconds": round(time.time() - t0, 1),
         "profile": profile,
+        "left_context_null_role_slope": null,
         "records": [r.__dict__ for r in records],
     }))
     print(f"Wrote {out}  ({len(records)} analysed, skipped {skipped})")
@@ -142,6 +144,8 @@ def main(argv=None):
         plot(profile, png, f"{args.model}: code profile (n={len(records)} transplants)")
         print(f"Wrote {png}")
 
+    worst = max((abs(v) for v in null[:-1]), default=float("nan"))
+    print(f"\nValidity check (must be ~0): max |role slope| for identical-left-context sources = {worst:.3f}")
     print("\nCode profile: coefficient [95% CI] at selected layers")
     for li in sorted({0, len(layers) // 4, len(layers) // 2, 3 * len(layers) // 4, len(layers) - 2}):
         cells = []

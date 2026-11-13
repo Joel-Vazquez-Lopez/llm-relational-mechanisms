@@ -91,18 +91,37 @@ def make_transplants(
     seed: int = 0,
     names: Sequence[str] = NAMES,
 ) -> list[Transplant]:
-    """For every base, both base slots x every source construction x both source
-    slots. Each base gets one foreign name pair (same verb) shared by its sources."""
+    """For every base: both base slots x every source construction x both source
+    slots x BOTH assignments of one foreign name pair (U as agent and V as
+    patient, then V as agent and U as patient). The counterbalancing makes each
+    foreign name contribute equally to every role, order and function value, so
+    name identity cancels exactly instead of only in expectation."""
     rng = random.Random(seed)
     out: list[Transplant] = []
     for base in bases:
-        fa, fp = _foreign_pair(base, rng, names)
-        for cs in source_constructions:
-            source = build_item(fa, fp, base.lemma, base.verb, cs, base.role_asked, base.question_voice,
-                                family_id=base.family_id, split=base.split, test_set=base.test_set)
-            for k in SLOTS:
-                for j in SLOTS:
-                    out.append(Transplant(base, source, k, j))
+        u, v = _foreign_pair(base, rng, names)
+        for fa, fp in ((u, v), (v, u)):
+            for cs in source_constructions:
+                source = build_item(fa, fp, base.lemma, base.verb, cs, base.role_asked, base.question_voice,
+                                    family_id=base.family_id, split=base.split, test_set=base.test_set)
+                for k in SLOTS:
+                    for j in SLOTS:
+                        out.append(Transplant(base, source, k, j))
+    return out
+
+
+def left_context_null(records: Sequence[TransplantRecord]) -> list[float]:
+    """Validity check, per layer: the role slope among first-name sources from
+    active vs passive sentences. Their left context ("Sentence: X") is identical,
+    so a causal model's state cannot differ by role there, and with counterbalanced
+    names the slope must be ~0. A clearly non-zero value flags a design problem."""
+    sub = [r for r in records if r.j == "first_name" and r.source_construction in ("active", "passive")]
+    if not sub:
+        return []
+    out = []
+    for li in range(len(sub[0].y)):
+        rows = [([r.x["role"]], r.y[li]) for r in sub if not math.isnan(r.y[li])]
+        out.append(ols(rows)[1])
     return out
 
 

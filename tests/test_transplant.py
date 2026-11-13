@@ -21,6 +21,35 @@ class TestDesign(unittest.TestCase):
             self.assertFalse({t.source.agent, t.source.patient} & {t.base.agent, t.base.patient})
             self.assertEqual(t.source.verb, t.base.verb)
 
+    def test_foreign_names_are_counterbalanced(self):
+        from collections import Counter
+        tr = otr.make_transplants(_bases(60))
+        by_base = {}
+        for t in tr:
+            by_base.setdefault(t.base.item_id, []).append(t)
+        for bid, ts in by_base.items():
+            as_agent = Counter(t.source.agent for t in ts)
+            as_patient = Counter(t.source.patient for t in ts)
+            self.assertEqual(as_agent, as_patient, bid)
+            self.assertEqual(len(as_agent), 2, bid)
+            self.assertEqual(len(ts), 2 * len(ors.MAIN_CONSTRUCTIONS) * 4)
+
+    def test_left_context_null_is_zero_for_identity_only_effects(self):
+        # y depends only on the foreign name's identity, never on role:
+        # counterbalancing must drive the active/passive first-name role slope to exactly 0.
+        tr = otr.make_transplants(_bases(120))
+        bias = {n: (hash(n) % 7) - 3.0 for n in ors.NAMES}
+        recs = []
+        for t in tr:
+            slot_name = t.source.names[0].name if t.j == "first_name" else t.source.names[1].name
+            recs.append(otr.TransplantRecord(t.base.item_id, t.base.family_id, t.base.construction,
+                                             t.source.construction, t.k, t.j, t.base.role_asked, t.x, 0.0,
+                                             [bias[slot_name]]))
+        self.assertAlmostEqual(otr.left_context_null(recs)[0], 0.0, places=9)
+        prof = otr.fit_profile(recs, n_boot=0)
+        for c in otr.CODES:
+            self.assertAlmostEqual(prof[c]["coef"][0], 0.0, places=9)
+
     def test_predictors_are_uncorrelated(self):
         tr = otr.make_transplants(_bases(400))
         for key, r in otr.predictor_correlations(tr).items():
@@ -74,8 +103,10 @@ class TestDesign(unittest.TestCase):
         self.assertAlmostEqual(prof["role"]["coef"][2], 2.0, places=1)
         self.assertAlmostEqual(prof["order"]["coef"][2], 0.0, places=1)
         lo, hi = prof["role"]["ci95"][2]
-        self.assertLess(lo, 2.0)
-        self.assertGreater(hi, 2.0)
+        self.assertLessEqual(lo, prof["role"]["coef"][2] + 1e-9)
+        self.assertGreaterEqual(hi, prof["role"]["coef"][2] - 1e-9)
+        self.assertLess(abs(lo - 2.0), 0.1)
+        self.assertLess(abs(hi - 2.0), 0.1)
 
 
 @unittest.skipUnless(HAVE_TORCH, "torch/transformers not installed")
