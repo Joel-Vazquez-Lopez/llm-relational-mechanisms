@@ -27,6 +27,8 @@ SOURCE_PATHS=(
     'scripts/exp101_hardware_fixture.py',
     'paper/exp101_mps_determinism_RC3.md',
     'paper/exp101_mps_fixture_same_origin_RC4.md',
+    'paper/exp101_author_waiver_RC5.md',
+    'scripts/exp101_seal_local_release.py',
 )
 CONFIG={
     'architecture':{'layers':3,'width':96,'heads':4,'max_tokens':64,
@@ -127,8 +129,9 @@ def build_candidate(root:Path):
          'static_report_sha256':hash_bytes((root/'reports/exp101/static_preflight_RC2.json').read_bytes()),
          'cpu_engineering_fixture_sha256':hash_bytes((root/'reports/exp101/engineering_fixture_cpu_RC4.json').read_bytes()),
          'protected_plan':meta,'position_coverage':length_issue,
-         'human_grammatical_review':'PENDING_EXTERNAL_REVIEW',
-         'intended_hardware_runtime_review':'PENDING_MAC_MPS_ENGINEERING_FIXTURE',
+         'human_grammatical_review':'AUTHOR_SELF_REVIEW_ACCEPTED_INDEPENDENT_WAIVED',
+         'independent_grammar_review_waived':True,
+         'intended_hardware_runtime_review':'USER_REPORTED_TWO_MPS_PASSES_PENDING_RAW_ARCHIVE',
          'training_authorized':False,
          'protected_evaluation_authorized':False}
     obj['fingerprint']=hash_bytes(canonical(obj))
@@ -151,14 +154,17 @@ def require_approved_release(path:Path):
     root=path.parents[2]
     approved=json.loads(path.read_text())
     candidate=validate_candidate(root/'reports/exp101/release_manifest_candidate.json')
-    if (approved.get('status')!='FROZEN_APPROVED_AFTER_INDEPENDENT_REVIEW'
+    if (approved.get('status')!='FROZEN_APPROVED_AFTER_DISCLOSED_AUTHOR_WAIVER'
         or approved.get('fingerprint')!=candidate['fingerprint']
         or not approved.get('training_authorized')
         or approved.get('authorized_by') is None
-        or approved.get('human_grammatical_review')!='PASSED'
+        or approved.get('human_grammatical_review')!='AUTHOR_SELF_REVIEW_ACCEPTED_INDEPENDENT_WAIVED'
+        or approved.get('independent_grammar_review_waived') is not True
+        or candidate.get('independent_grammar_review_waived') is not True
+        or approved.get('protected_evaluation_authorized') is not False
         or not candidate['position_coverage']['all_LI_eval_positions_covered']):
         raise PermissionError('Source, grammar or length issue unresolved; release not approved')
-    # Independently generated Mac MPS engineering fixture report must be signed
+    # Raw Mac MPS engineering reports must be checked locally and attested
     # against the approved exact fingerprint, without any study seed training.
     report_path=root/'reports/exp101/intended_hardware_fixture_approved.json'
     if not report_path.exists():raise PermissionError('Mac MPS fixture not reviewed')
@@ -177,6 +183,9 @@ def require_approved_release(path:Path):
         or approved.get('intended_hardware_review')!='PASSED'
         or approved.get('intended_hardware_report_sha256')!=hash_bytes(report_path.read_bytes())):
         raise PermissionError('Hardware integration review is absent or mismatched')
+    if not all(hardware.get('run_'+str(i)+'_raw_sha256') and
+               hardware.get('run_'+str(i)+'_log_sha256') for i in (1,2)):
+        raise PermissionError('Both original raw MPS JSON/log SHA-256 records required')
     return candidate
 
 if __name__=='__main__':
