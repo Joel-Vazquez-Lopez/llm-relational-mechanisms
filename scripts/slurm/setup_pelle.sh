@@ -64,7 +64,7 @@ if [[ "$DOWNLOAD_MODELS" == 1 ]]; then
 from huggingface_hub import snapshot_download
 
 for repo in ("Qwen/Qwen2.5-1.5B", "Qwen/Qwen2.5-7B"):
-    path = snapshot_download(repo, allow_patterns=["*.json", "*.safetensors", "tokenizer*", "*.txt", "*.model"])
+    path = snapshot_download(repo, allow_patterns=["*.json", "*.safetensors", "tokenizer*", "*.txt", "*.model", "*.jinja"])
     print(repo, "->", path)
 EOF
 fi
