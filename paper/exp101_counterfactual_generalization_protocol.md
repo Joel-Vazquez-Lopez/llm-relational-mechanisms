@@ -120,3 +120,9 @@ Compute the *identical C_voice target-second outcome* on **BARE, L-only and I-on
 ## RC3 execution reproducibility addendum (review only)
 
 RC2's disposable MPS fixture failed before the first optimizer update because `index_put_with_accumulate_mps` has no deterministic implementation under strict PyTorch mode. RC3 proposes strict CPU determinism and warn-only Mac MPS execution, with unchanged training contrast and a bounded tolerance-based engineering test. MPS warning-only does **not** imply exact run reproducibility, and this backend compromise must be explicitly reviewed before training approval. See `paper/exp101_mps_determinism_RC3.md`.
+
+## Pre-training RC5 administrative amendment — disclosed independent grammar waiver (13 November 2026)
+
+The author reports having checked the synthetic sentence templates and finding them acceptable, and explicitly asks to omit the previously required **independent human grammar sign-off** before training. This author decision is a **prospective protocol deviation**, not an assertion that an independent review occurred. The existing independent-review sheet remains retained with its row-level external decisions marked PENDING for historical transparency. See `paper/exp101_author_waiver_RC5.md`.
+
+The source-bound release manager now records `AUTHOR_SELF_REVIEW_ACCEPTED_INDEPENDENT_WAIVED` and requires actual two-run Mac MPS fixture JSON/log records to be locally hashed and attested before an explicit **training-only** author freeze. No experimental model has been trained; no protected cases have been opened. Scientific outcomes, thresholds, exposure comparisons, budget, seed allocation and later protected one-time approval are unchanged. The limitations of absent independent linguistic review must be reported in the paper.
