@@ -1,0 +1,92 @@
+{
+  "study": "EXP-101",
+  "phase": "R3_PREEFREEZE_IMPLEMENTATION_REVIEW",
+  "result": "OFFLINE_CHECKS_PASSED_BUT_NOT_APPROVABLE",
+  "release_fingerprint": "e28cb3f0a2efcd4b8b0f5185fa5a6041b2d8a66f895db54b8f49763cf2ae90f9",
+  "date": "2026-11-13",
+  "tested_environment": {
+    "os": "Linux x86_64",
+    "python": "3.13.5",
+    "torch": "2.10.0+cpu"
+  },
+  "test_results": {
+    "R3_existing_offline": {
+      "passed": 7,
+      "failed": 0
+    },
+    "release_offline": {
+      "passed": 8,
+      "failed": 0
+    },
+    "total_passed": 15,
+    "total_failed": 0
+  },
+  "optimizer_resume": {
+    "test": "two tiny steps on artificial tensor inputs using real three-block model; compare uninterrupted 2-step and saved/resumed 1+1",
+    "paired_initial_weights_identical": true,
+    "paired_base_and_dose_indices_identical": true,
+    "model_parameters_equal": true,
+    "optimizer_tensors_equal": true,
+    "losses_equal": true,
+    "checkpoint_tamper_rejected": true,
+    "experimental_training_invoked": false,
+    "apple_mps_determinism_tested": false
+  },
+  "scoring": {
+    "development_checkpoint_path_implemented": true,
+    "untrained_model_logits_smoke_passed": true,
+    "same_source_four_queries_synthetic_correct_oracle": 1,
+    "same_source_four_queries_fixed_second": 0,
+    "second_event_voice_fixed_second": 1,
+    "correctness_separated_from_equivariance": true,
+    "paired_seed_bootstrap_tested_with_synthetic_values": true,
+    "saturation_not_mislabeled_nontransfer": true
+  },
+  "static_checks": {
+    "conditions": [
+      "bare",
+      "L",
+      "I",
+      "LI"
+    ],
+    "packets_per_condition": 24576,
+    "total_static_packets": 98304,
+    "semantic_corruptions_rejected": 6,
+    "protected_sentences_generated": 0,
+    "training_max_token_length": 34,
+    "LI_static_length_histogram": {
+      "37": 6144,
+      "38": 12288,
+      "39": 6144
+    },
+    "untrained_learned_position_indices_zero_based": [
+      34,
+      35,
+      36,
+      37,
+      38
+    ]
+  },
+  "protected_metadata_only": {
+    "anchor_ids": 288,
+    "expected_total_future_prompts": 368640,
+    "source_text_generated": false,
+    "checkpoints_loaded": false
+  },
+  "binding": {
+    "source_files_hashed": 11,
+    "source_data_config_analysis_codes_bound": true,
+    "source_bound_candidate_not_training_approval": true,
+    "git_branch": "protocol/exp101-anti-shortcut"
+  },
+  "blockers": [
+    "Untrained absolute position embeddings at indices 34-38; remedy must be prespecified, reviewed, code/data rehashed before training",
+    "Independent human grammatical acceptability/meaning review for repeated-by passive forms pending",
+    "Full actual-device checkpoint-to-gate and resumed 800-step integration not executed; CPU synthetic microtest only"
+  ],
+  "safety": {
+    "any_of_16_study_runs_started": false,
+    "protected_evaluation_accessed": false,
+    "freeze_approval_created": false
+  }
+}
