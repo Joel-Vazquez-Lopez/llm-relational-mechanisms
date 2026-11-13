@@ -8,16 +8,8 @@
 # For models above ~20B parameters use an H100 instead:
 #   sbatch -A <your-project> --gpus=h100:1 scripts/slurm/ml101_pelle.sbatch <model>
 #
-# One-time setup on a login node (login nodes have internet; download weights there).
-# Keep everything large in the PROJECT folder, never in $HOME (64 GB quota on Pelle):
-#   P=/proj/<your-project>
-#   python3 -m venv $P/venvs/order-role && source $P/venvs/order-role/bin/activate
-#   pip install --no-cache-dir torch transformers accelerate matplotlib
-#   export HF_HOME=$P/hf_cache            # add to ~/.bashrc; outside $P/backup, so not backed up
-#   huggingface-cli login                 # only for gated models such as Llama or Gemma
-#   huggingface-cli download Qwen/Qwen2.5-7B --include "*.json" "*.safetensors" "tokenizer*" "*.txt"
-#     (the --include filter skips duplicate weight formats, e.g. Llama's original/ folder)
-#   uquota                                # check usage before and after each download
+# One-time setup first (login node, from the repository root):
+#   bash scripts/slurm/setup_pelle.sh <your-project>
 #
 #SBATCH -J ml101
 #SBATCH -p gpu
@@ -29,6 +21,7 @@ set -euo pipefail
 MODEL="${1:?usage: sbatch -A <project> scripts/slurm/ml101_pelle.sbatch <hf-model-id> [extra args]}"
 shift
 
+# shellcheck disable=SC1091
 source "${ORDER_ROLE_VENV:-/proj/${SLURM_JOB_ACCOUNT}/venvs/order-role}/bin/activate"
 export HF_HOME="${HF_HOME:-/proj/${SLURM_JOB_ACCOUNT}/hf_cache}"
 export HF_HUB_OFFLINE=1   # compute nodes read the cache populated on the login node
