@@ -13,7 +13,7 @@ import re
 from collections import Counter
 from dataclasses import dataclass, replace
 
-from exp101_render_validator import parse_sentence, VERBS
+from exp101_render_validator import parse_sentence, parse_query, VERBS
 
 NAMES = ("Aven", "Bero", "Cira", "Dovan", "Eris", "Falen", "Goran", "Hali",
          "Iven", "Jara", "Korin", "Lessa", "Maren", "Nero", "Orin", "Pela")
@@ -42,6 +42,7 @@ class Packet:
     event: Event
     condition: str
     target_first: bool
+    questions: tuple[str, str]
 
 
 def render_event(ev: Event, cond: str) -> str:
@@ -89,8 +90,11 @@ def render_packet(target: Event, other: Event, names: tuple[str,...],
                   condition: str, target_first: bool) -> Packet:
     clauses=(target, other) if target_first else (other, target)
     text=" ; ".join(render_event(e, condition) for e in clauses)+"."
+    ordinal="first" if target_first else "second"
+    questions=tuple(f"In the {ordinal} event, who was the {role}?"
+                    for role in ("agent","patient"))
     return Packet(text,0 if target_first else 1,names,
-                  target.agent,target.patient,target,condition,target_first)
+                  target.agent,target.patient,target,condition,target_first,questions)
 
 
 def development_cases(cond: str):
@@ -110,7 +114,9 @@ def names_in(s: str, candidates: tuple[str,...]) -> list[str]:
 
 
 def chosen_clause(pkt: Packet) -> str:
-    return pkt.text[:-1].split(" ; ")[pkt.query_event]
+    pos, role=parse_query(pkt.questions[0])
+    assert role=="agent"
+    return pkt.text[:-1].split(" ; ")[pos]
 
 
 def shallow_core(clause: str, names: tuple[str,...]):
@@ -188,6 +194,14 @@ BASELINES={
 
 def validate_case(p: Packet):
     a,b=parse_sentence(p.text,p.names)
+    for expected_role,question in zip(("agent","patient"),p.questions):
+        pos,role=parse_query(question)
+        if (pos,role)!=(p.query_event,expected_role):
+            raise AssertionError(f"Rendered question mismatch: {question!r} {p}")
+        interpreted=(a,b)[pos]
+        expected_answer=p.correct_agent if role=="agent" else p.correct_patient
+        if getattr(interpreted,role)!=expected_answer:
+            raise AssertionError(f"Rendered question/answer mismatch: {question!r} {p}")
     parsed=(a,b)[p.query_event]
     if (parsed.agent,parsed.patient,parsed.verb,parsed.voice)!=(
             p.correct_agent,p.correct_patient,p.event.verb,p.event.voice):
@@ -227,6 +241,8 @@ def check_transformations():
         for voice,rev in itertools.product(VOICES,(0,1)):
             a=packets[(voice,rev,True)];b=packets[(voice,rev,False)]
             assert a.text[:-1].split(" ; ")==b.text[:-1].split(" ; ")[::-1]
+            assert all(parse_query(q)[0] == 0 for q in a.questions)
+            assert all(parse_query(q)[0] == 1 for q in b.questions)
             assert (a.correct_agent,a.correct_patient)==(b.correct_agent,b.correct_patient)
     return n
 
@@ -239,7 +255,10 @@ def old_packet_attack_demo():
         t,o,names=case_events(0,rev,voice,"active",0,0,0,0,0)
         clauses=[render_event(t,"LI"),render_event(o,"bare")]
         text=" ; ".join(clauses if pos else clauses[::-1])+"."
-        p=Packet(text,0 if pos else 1,names,t.agent,t.patient,t,"LI",pos)
+        ordinal="first" if pos else "second"
+        qs=tuple(f"In the {ordinal} event, who was the {r}?"
+                 for r in ("agent","patient"))
+        p=Packet(text,0 if pos else 1,names,t.agent,t.patient,t,"LI",pos,qs)
         if adversarial_adjunct_singleton(p)==(p.correct_agent,p.correct_patient):
             n+=1
     return n
