@@ -296,6 +296,7 @@ def train_one(seed:int,arm:str,device:str="cpu",
             runtime.save_state(state,model=model,optimizer=optimizer,
                 gbase=rg_base,gdose=rg_dose,seed=seed,arm=arm,step=step,
                 release_fingerprint=release["fingerprint"],data_hash=h,device=device)
+            print(f"EXP-101 CHECKPOINT seed={seed} arm={arm} step={step}/{STEPS}", flush=True)
     return {"seed":seed,"arm":arm,"step":step,"release_fingerprint":release["fingerprint"]}
 
 
