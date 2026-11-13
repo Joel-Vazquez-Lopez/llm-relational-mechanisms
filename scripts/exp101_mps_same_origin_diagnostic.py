@@ -196,6 +196,8 @@ def run(device: str) -> dict:
                 sl,si=step(same_origin,idx)
                 report[f'same_origin_replay_after_step_{idx+1}']={
                     'loss_replay':sl,
+                    'loss_difference_vs_uninterrupted':abs(
+                        sl-report[f'uninterrupted_a_vs_resumed_c_after_step_{idx+1}']['loss_a']),
                     'sampled_indices_equal_to_uninterrupted':
                     si==report[f'uninterrupted_a_vs_resumed_c_after_step_{idx+1}']['a_indices']}
             report['same_origin_a_vs_replay_step3']=compare(a,same_origin)
@@ -214,7 +216,10 @@ def run(device: str) -> dict:
             and original['base_rng_equal'] and original['dose_rng_equal']),
         'same_origin_uninterrupted_vs_resumed_within_tolerance': (
             same['model']['all_within_tolerance'] and same['optimizer']['all_within_tolerance']
-            and same['base_rng_equal'] and same['dose_rng_equal']),
+            and same['base_rng_equal'] and same['dose_rng_equal']
+            and all(report[f'same_origin_replay_after_step_{i+1}']['sampled_indices_equal_to_uninterrupted']
+                    and report[f'same_origin_replay_after_step_{i+1}']['loss_difference_vs_uninterrupted']<=1e-5
+                    for i in (1,2))),
         'independent_first_steps_within_tolerance':pre['model']['all_within_tolerance'] and pre['optimizer']['all_within_tolerance'],
         'saved_and_reloaded_step1_exact':loaded['model']['all_exact'] and loaded['optimizer']['all_exact'] and loaded['base_rng_equal'] and loaded['dose_rng_equal'],
         'a_vs_c_step3_within_tolerance':final['model']['all_within_tolerance'] and final['optimizer']['all_within_tolerance'],
