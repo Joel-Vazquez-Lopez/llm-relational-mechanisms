@@ -273,7 +273,7 @@ def train_one(seed:int,arm:str,device:str="cpu",
     if seed not in SEEDS or arm not in ARMS:raise ValueError("Unregistered arm/seed")
     data,base,dev,dose=dataset_manifest()
     h=stable_hash(data)
-    if h!=release["data_manifest_sha256"]:
+    if h!=release["dataset_manifest_sha256"]:
         raise PermissionError("Training data manifest differs from frozen release")
     runtime.configure_determinism(device)  # RC3 shared CPU/MPS backend policy
     model,optimizer,rg_base,rg_dose=runtime.init_state(seed,make_model,device=device)
@@ -341,7 +341,7 @@ def development_checkpoint_scores(seed:int,arm:str,device:str="cpu",
     release=require_approved_release(approved_release_path)
     data,base,dev,dose=dataset_manifest()
     h=stable_hash(data)
-    if h!=release['data_manifest_sha256']:
+    if h!=release['dataset_manifest_sha256']:
         raise PermissionError('Data manifest differs from frozen release')
     model,optim,rg_base,rg_dose=runtime.init_state(seed,make_model,device=device)
     state=Path(root)/f"seed_{seed}"/arm/"state.pt"
