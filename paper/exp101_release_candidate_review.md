@@ -24,3 +24,17 @@ Only two arms, eight paired seeds, exactly 12,800 updates/model, nine familiar d
 ## RC3 Mac MPS reproducibility amendment (13 November 2026)
 
 The RC2 hardware fixture aborted before its first backward update on the intended Mac because strict deterministic mode rejects `index_put_with_accumulate_mps`. This is a backend implementation limitation, not proof of any trained-model failure. The RC3 candidate introduces a shared, explicit backend policy: CPU strict, MPS warn-only, with unchanged parameter/loss tolerances in the disposable fixture and warning counts recorded. Because warning-only permits nondeterministic kernels, the study's reproducibility assumption is weaker on MPS than CPU. RC3 remains blocked until the actual intended-hardware MPS fixture, external grammatical sign-off and final authorization are independently reviewed. See `paper/exp101_mps_determinism_RC3.md`. The RC2 validation report remains a historical record; `reports/exp101/release_validation_RC3.json` documents the new candidate.
+
+
+## RC4 same-origin fixture amendment (13 November 2026)
+
+The RC3 intended-Mac failure compared an uninterrupted A model against a
+resumed B model that had undergone an *independent* first MPS update. A later
+user-reported diagnostic demonstrated an exact checkpoint round-trip and
+same-origin resume within existing tolerances (max difference ~2.98e-08);
+the MPS execution reported 30 nondeterministic warnings. RC4 corrects the
+**fixture only**: save/restore A's own checkpoint and compare its resumed
+continuation to uninterrupted A. Independent-run first-step parity is checked
+separately. Full local MPS JSON has not been inspected here; RC4 Mac validation
+and an independent human grammar review remain mandatory. No experimental
+model training or protected evaluation is authorized by this candidate.
