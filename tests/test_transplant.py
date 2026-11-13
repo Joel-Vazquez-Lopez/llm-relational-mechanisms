@@ -34,6 +34,21 @@ class TestDesign(unittest.TestCase):
             self.assertEqual(len(as_agent), 2, bid)
             self.assertEqual(len(ts), 2 * len(ors.MAIN_CONSTRUCTIONS) * 4)
 
+    def test_answer_slot_identity_effect_does_not_masquerade_as_role(self):
+        # y depends only on whether the base slot holds the answer (a big identity effect),
+        # never on the source state: every code coefficient must be zero.
+        tr = otr.make_transplants(_bases(120))
+        recs = []
+        for t in tr:
+            name_k = t.base.names[0].name if t.k == "first_name" else t.base.names[1].name
+            y = -10.0 if name_k == t.base.answer else -8.8
+            recs.append(otr.TransplantRecord(t.base.item_id, t.base.family_id, t.base.construction,
+                                             t.source.construction, t.k, t.j, t.base.role_asked, t.x, 0.0, [y]))
+        prof = otr.fit_profile(recs, n_boot=0)
+        for c in otr.CODES:
+            self.assertAlmostEqual(prof[c]["coef"][0], 0.0, places=9, msg=c)
+        self.assertAlmostEqual(otr.left_context_null(recs)[0], 0.0, places=9)
+
     def test_left_context_null_is_zero_for_identity_only_effects(self):
         # y depends only on the foreign name's identity, never on role:
         # counterbalancing must drive the active/passive first-name role slope to exactly 0.

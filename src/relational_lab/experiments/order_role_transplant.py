@@ -120,8 +120,8 @@ def left_context_null(records: Sequence[TransplantRecord]) -> list[float]:
         return []
     out = []
     for li in range(len(sub[0].y)):
-        rows = [([r.x["role"]], r.y[li]) for r in sub if not math.isnan(r.y[li])]
-        out.append(ols(rows)[1])
+        rows = _within_rows(sub, li, codes=("role",))
+        out.append(ols(rows)[1] if rows else float("nan"))
     return out
 
 
@@ -187,8 +187,29 @@ class TransplantRecord:
     y: list[float] = field(default_factory=list)  # per layer: patched - unpatched
 
 
+def _within_rows(recs, li, codes=CODES):
+    """Rows for a within-(base sentence, base slot) regression: y and x are centred
+    inside each group, so everything that is constant for a base slot (its own
+    labels, whether it holds the answer, the size of the identity effect) drops out
+    and only the source state varies."""
+    groups: dict[tuple[str, str], list] = defaultdict(list)
+    for r in recs:
+        if not math.isnan(r.y[li]):
+            groups[(r.base_id, r.k)].append(r)
+    rows = []
+    for g in groups.values():
+        if len(g) < 2:
+            continue
+        my = sum(r.y[li] for r in g) / len(g)
+        mx = {c: sum(r.x[c] for r in g) / len(g) for c in codes}
+        rows.extend(([r.x[c] - mx[c] for c in codes], r.y[li] - my) for r in g)
+    return rows
+
+
 def fit_profile(records: Sequence[TransplantRecord], n_boot: int = 200, seed: int = 0) -> dict:
-    """Per layer: OLS coefficients for each code, with a family-bootstrap 95% interval."""
+    """Per layer: within-(base, slot) OLS coefficients for each code, with a
+    family-bootstrap 95% interval. Also reports the mean identity effect (the
+    average y, i.e. how much any foreign-name transplant moves the answer)."""
     n_layers = len(records[0].y)
     by_family: dict[str, list[TransplantRecord]] = defaultdict(list)
     for r in records:
@@ -203,14 +224,14 @@ def fit_profile(records: Sequence[TransplantRecord], n_boot: int = 200, seed: in
         boots.append(sample)
 
     def coefs(recs, li):
-        rows = [([r.x[c] for c in CODES], r.y[li]) for r in recs if not math.isnan(r.y[li])]
-        return ols(rows)
+        return ols(_within_rows(recs, li))
 
     out: dict[str, dict] = {c: {"coef": [], "ci95": []} for c in CODES}
-    out["intercept"] = {"coef": []}
+    out["mean_identity_effect"] = []
     for li in range(n_layers):
         b = coefs(records, li)
-        out["intercept"]["coef"].append(b[0])
+        vals = [r.y[li] for r in records if not math.isnan(r.y[li])]
+        out["mean_identity_effect"].append(sum(vals) / len(vals))
         bs = [coefs(s, li) for s in boots] if n_boot else []
         for ci, c in enumerate(CODES, start=1):
             out[c]["coef"].append(b[ci])
