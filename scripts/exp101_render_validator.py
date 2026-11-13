@@ -20,37 +20,49 @@ class ParsedClause:
     patient: str
     verb: str
     voice: str
-    locative_names: tuple[str, ...]
+    gate_owner: str | None
+    near_person: str | None
+
+    @property
+    def locative_names(self) -> tuple[str, ...]:
+        return tuple(x for x in (self.gate_owner, self.near_person) if x is not None)
 
 
 def parse_clause(clause: str, names: tuple[str, ...]) -> ParsedClause:
     """Parse only the rendered words; never consume metadata or a gold label."""
     s = clause.strip()
-    refs: list[str] = []
+    gate_owner: str | None = None
+    near_person: str | None = None
     # By-prefixed gate locative (possessive owner, not passive agent).
     m = re.match(rf"^By {NAME}'s gate, ", s)
     if m:
-        refs.append(m.group(1))
+        gate_owner = m.group(1)
         s = s[m.end():]
     # Near-prefixed locative.
     m = re.match(rf"^Near {NAME}, ", s)
     if m:
-        refs.append(m.group(1))
+        near_person = m.group(1)
         s = s[m.end():]
     # Postposed gate locative. Must be stripped before role parsing.
     m = re.search(rf" by {NAME}'s gate$", s)
     if m:
-        refs.append(m.group(1))
+        if gate_owner is not None:
+            raise ValueError("Two gate owners")
+        gate_owner = m.group(1)
         s = s[:m.start()]
     # Parenthetical near modifier before active verb.
     m = re.search(rf", near {NAME}, ", s)
     if m:
-        refs.append(m.group(1))
+        if near_person is not None:
+            raise ValueError("Two near people")
+        near_person = m.group(1)
         s = s[:m.start()] + " " + s[m.end():]
     # Passive verb-adjacent near modifier.
     m = re.search(rf" near {NAME} by ", s)
     if m:
-        refs.append(m.group(1))
+        if near_person is not None:
+            raise ValueError("Two near people")
+        near_person = m.group(1)
         s = s[:m.start()] + " by " + s[m.end():]
     s = re.sub(r"\s+", " ", s).strip()
     mp = re.fullmatch(rf"{NAME} was ({VREG}) by {NAME}", s)
@@ -65,9 +77,12 @@ def parse_clause(clause: str, names: tuple[str, ...]) -> ParsedClause:
         voice = "active"
     if agent not in names or patient not in names or agent == patient:
         raise ValueError("Invalid or duplicate arguments")
+    refs = tuple(x for x in (gate_owner, near_person) if x is not None)
     if len(refs) != len(set(refs)) or any(x not in names for x in refs):
         raise ValueError("Invalid locative identities")
-    return ParsedClause(agent, patient, verb, voice, tuple(refs))
+    if agent in refs or patient in refs:
+        raise ValueError("Locative person cannot be a core argument")
+    return ParsedClause(agent, patient, verb, voice, gate_owner, near_person)
 
 
 def parse_sentence(text: str, names: tuple[str, ...]) -> tuple[ParsedClause, ParsedClause]:
