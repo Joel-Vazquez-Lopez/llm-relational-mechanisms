@@ -24,7 +24,7 @@ if [[ ! -d "$P" ]]; then
   echo "ERROR: $P does not exist. Check the project name with: projinfo" >&2
   exit 1
 fi
-if [[ ! -f scripts/ml101_order_role_behavior.py ]]; then
+if [[ ! -f scripts/otr01_behavior_gate.py ]]; then
   echo "ERROR: run this from the repository root." >&2
   exit 1
 fi
@@ -75,9 +75,9 @@ uquota || true
 cat <<EOF
 
 Setup done. Submit the first jobs from the repository root:
-  sbatch -A ${PROJECT} scripts/slurm/ml101_pelle.sbatch Qwen/Qwen2.5-1.5B
-  sbatch -A ${PROJECT} scripts/slurm/ml101_pelle.sbatch Qwen/Qwen2.5-7B
-  sbatch -A ${PROJECT} scripts/slurm/ml102_pelle.sbatch Qwen/Qwen2.5-7B
+  sbatch -A ${PROJECT} scripts/slurm/otr01_pelle.sbatch Qwen/Qwen2.5-1.5B
+  sbatch -A ${PROJECT} scripts/slurm/otr01_pelle.sbatch Qwen/Qwen2.5-7B
+  sbatch -A ${PROJECT} scripts/slurm/otr02_pelle.sbatch Qwen/Qwen2.5-7B
 Watch them with:  squeue -u \$USER
 Logs and results: results/
 EOF

@@ -1,4 +1,4 @@
-"""ML-101: behavioral gate for the order-to-role study.
+"""OTR-01: behavioral gate for the order-to-role study.
 
 Scores every prompt with one Hugging Face causal LM and reports accuracy by
 construction x role x question voice, both-roles-correct per event,
@@ -7,8 +7,8 @@ pre-registered gate (candidate-restricted accuracy >= 0.90 for every
 construction x role among the four main constructions).
 
 Examples:
-    python scripts/ml101_order_role_behavior.py --model Qwen/Qwen2.5-1.5B --split dev
-    python scripts/ml101_order_role_behavior.py --model Qwen/Qwen2.5-1.5B --split dev --limit 200
+    python scripts/otr01_behavior_gate.py --model Qwen/Qwen2.5-1.5B --split dev
+    python scripts/otr01_behavior_gate.py --model Qwen/Qwen2.5-1.5B --split dev --limit 200
 
 Run the dev split to settle the prompt format; open a test set only once the
 protocol is frozen. Exploratory until then.
@@ -54,7 +54,7 @@ def items_digest(items) -> str:
 
 
 def main(argv=None):
-    p = argparse.ArgumentParser(description="ML-101 behavioral gate")
+    p = argparse.ArgumentParser(description="OTR-01 behavioral gate")
     p.add_argument("--model", required=True)
     p.add_argument("--revision", default=None, help="pin a commit hash before any frozen run")
     p.add_argument("--dtype", default="bfloat16", choices=["bfloat16", "float16", "float32"])
@@ -95,7 +95,7 @@ def main(argv=None):
     summary = beh.summarize(items, scores, seed=args.seed)
 
     record = {
-        "experiment": "ML-101",
+        "experiment": "OTR-01",
         "status": "EXPLORATORY" if args.split == "dev" else "TEST_SET_OPENED",
         "model": args.model,
         "revision": args.revision,
@@ -120,7 +120,7 @@ def main(argv=None):
     args.out_dir.mkdir(parents=True, exist_ok=True)
     slug = args.model.replace("/", "__")
     stamp = time.strftime("%Y%m%dT%H%M%S")
-    out = args.out_dir / f"ml101_{slug}_{args.split}_{stamp}.json"
+    out = args.out_dir / f"otr01_{slug}_{args.split}_{stamp}.json"
     out.write_text(json.dumps(record, indent=1))
 
     print(f"\nWrote {out}")

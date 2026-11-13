@@ -1,4 +1,4 @@
-"""E2 (ML-102): where is the answer decided? Position x layer patching.
+"""E2 (OTR-02): where is the answer decided? Position x layer patching.
 
 For each base prompt, the source is its role-swapped twin: same verb,
 construction and question, agent and patient exchanged, so the correct answer

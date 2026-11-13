@@ -1,4 +1,4 @@
-"""ML-102 (E2): position x layer patching map — where is the answer decided?
+"""OTR-02 (E2): position x layer patching map — where is the answer decided?
 
 For every base prompt the source is its role-swapped twin; the residual stream
 at one (position, layer) is copied from source to base and the change in the
@@ -6,7 +6,7 @@ answer logit difference is recorded. Only pairs the model gets right in both
 directions are analysed (counts of the rest are reported).
 
 Example:
-    python scripts/ml102_position_layer_patching.py --model Qwen/Qwen2.5-7B --n-events 48 --plot
+    python scripts/otr02_position_layer_patching.py --model Qwen/Qwen2.5-7B --n-events 48 --plot
 
 Exploratory (dev split) until the protocol is frozen.
 """
@@ -64,7 +64,7 @@ def plot(agg, out_png, metric="ratio_of_means"):
 
 
 def main(argv=None):
-    p = argparse.ArgumentParser(description="ML-102 position x layer patching")
+    p = argparse.ArgumentParser(description="OTR-02 position x layer patching")
     p.add_argument("--model", required=True)
     p.add_argument("--revision", default=None)
     p.add_argument("--dtype", default="bfloat16", choices=["bfloat16", "float16", "float32"])
@@ -107,9 +107,9 @@ def main(argv=None):
     slug = args.model.replace("/", "__")
     stamp = time.strftime("%Y%m%dT%H%M%S")
     args.out_dir.mkdir(parents=True, exist_ok=True)
-    out = args.out_dir / f"ml102_{slug}_{args.split}_{stamp}.json"
+    out = args.out_dir / f"otr02_{slug}_{args.split}_{stamp}.json"
     out.write_text(json.dumps({
-        "experiment": "ML-102",
+        "experiment": "OTR-02",
         "status": "EXPLORATORY" if args.split == "dev" else "TEST_SET_OPENED",
         "model": args.model, "revision": args.revision, "dtype": args.dtype, "device": device,
         "generator_version": ors.GENERATOR_VERSION, "seed": args.seed,

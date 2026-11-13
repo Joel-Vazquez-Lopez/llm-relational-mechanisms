@@ -1,24 +1,24 @@
 #!/bin/bash
-# ML-102 position x layer patching map on UPPMAX Pelle (one L40s, 48 GB).
+# OTR-02 position x layer patching map on UPPMAX Pelle (one L40s, 48 GB).
 #
 # Usage (from the repository root, after the one-time setup below):
-#   sbatch -A <your-project> scripts/slurm/ml102_pelle.sbatch Qwen/Qwen2.5-1.5B
-#   sbatch -A <your-project> scripts/slurm/ml102_pelle.sbatch meta-llama/Llama-3.2-3B
-#   sbatch -A <your-project> scripts/slurm/ml102_pelle.sbatch Qwen/Qwen2.5-7B
+#   sbatch -A <your-project> scripts/slurm/otr02_pelle.sbatch Qwen/Qwen2.5-1.5B
+#   sbatch -A <your-project> scripts/slurm/otr02_pelle.sbatch meta-llama/Llama-3.2-3B
+#   sbatch -A <your-project> scripts/slurm/otr02_pelle.sbatch Qwen/Qwen2.5-7B
 # For models above ~20B parameters use an H100 instead:
-#   sbatch -A <your-project> --gpus=h100:1 scripts/slurm/ml102_pelle.sbatch <model>
+#   sbatch -A <your-project> --gpus=h100:1 scripts/slurm/otr02_pelle.sbatch <model>
 #
 # One-time setup first (login node, from the repository root):
 #   bash scripts/slurm/setup_pelle.sh <your-project>
 #
-#SBATCH -J ml102
+#SBATCH -J otr02
 #SBATCH -p gpu
 #SBATCH --gpus=l40s:1
 #SBATCH -t 04:00:00
-#SBATCH -o results/slurm-ml102-%j.out
+#SBATCH -o results/slurm-otr02-%j.out
 
 set -euo pipefail
-MODEL="${1:?usage: sbatch -A <project> scripts/slurm/ml102_pelle.sbatch <hf-model-id> [extra args]}"
+MODEL="${1:?usage: sbatch -A <project> scripts/slurm/otr02_pelle.sbatch <hf-model-id> [extra args]}"
 shift
 
 # shellcheck disable=SC1091
@@ -28,4 +28,4 @@ export HF_HUB_OFFLINE=1   # compute nodes read the cache populated on the login 
 
 mkdir -p results
 nvidia-smi --query-gpu=name,memory.total --format=csv
-python scripts/ml102_position_layer_patching.py --model "$MODEL" --split dev --plot "$@"
+python scripts/otr02_position_layer_patching.py --model "$MODEL" --split dev --plot "$@"
