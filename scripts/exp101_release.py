@@ -26,6 +26,7 @@ SOURCE_PATHS=(
     'paper/exp101_grammar_review_RC2.md',
     'scripts/exp101_hardware_fixture.py',
     'paper/exp101_mps_determinism_RC3.md',
+    'paper/exp101_mps_fixture_same_origin_RC4.md',
 )
 CONFIG={
     'architecture':{'layers':3,'width':96,'heads':4,'max_tokens':64,
@@ -124,7 +125,7 @@ def build_candidate(root:Path):
          'dataset_manifest_sha256':data_hash,
          'dataset_provenance_sha256':dm.get('provenance_sha256'),
          'static_report_sha256':hash_bytes((root/'reports/exp101/static_preflight_RC2.json').read_bytes()),
-         'cpu_engineering_fixture_sha256':hash_bytes((root/'reports/exp101/engineering_fixture_cpu_RC2.json').read_bytes()),
+         'cpu_engineering_fixture_sha256':hash_bytes((root/'reports/exp101/engineering_fixture_cpu_RC4.json').read_bytes()),
          'protected_plan':meta,'position_coverage':length_issue,
          'human_grammatical_review':'PENDING_EXTERNAL_REVIEW',
          'intended_hardware_runtime_review':'PENDING_MAC_MPS_ENGINEERING_FIXTURE',
@@ -167,6 +168,9 @@ def require_approved_release(path:Path):
         or hardware.get('device')!='mps'
         or hardware.get('determinism_policy',{}).get('mode')!='mps_warn_only'
         or hardware.get('resume_optimizer_within_tolerance') is not True
+        or hardware.get('same_origin_checkpoint_optimizer_exact') is not True
+        or hardware.get('same_origin_checkpoint_roundtrip_max_abs_difference') != 0.0
+        or hardware.get('resume_origin')!='same_model_a_checkpoint_after_step_1'
         or hardware.get('paired_first_step_batch_indices_equal') is not True
         or hardware.get('experiment_training_started') is not False
         or hardware.get('protected_accessed') is not False
