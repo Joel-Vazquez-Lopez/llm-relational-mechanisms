@@ -13,6 +13,26 @@ import exp101_scoring as scoring
 
 
 class ReleaseOfflineTests(unittest.TestCase):
+    def test_data_manifest_key_contract_in_all_checkpoint_paths(self):
+        """Regression for RC6 pre-update crash: train/dev/protected use one manifest key.
+
+        Inspect code and the immutable candidate; no checkpoint, study training,
+        or protected evaluation is accessed by this test.
+        """
+        from pathlib import Path
+        import exp101_protected_candidate as future
+        root = Path(__file__).resolve().parents[1]
+        manifest = release.validate_candidate(
+            root / 'reports/exp101/release_manifest_candidate.json')
+        memo, _, _, _ = prod.dataset_manifest()
+        self.assertEqual(manifest['dataset_manifest_sha256'], prod.stable_hash(memo))
+        self.assertNotIn('data_manifest_sha256', manifest)
+        for fn in ('exp101_production_candidate.py','exp101_protected_candidate.py'):
+            source = (root/'scripts'/fn).read_text()
+            self.assertNotIn('data_manifest_sha256', source, fn)
+            self.assertIn("release['dataset_manifest_sha256']" if fn.endswith('protected_candidate.py')
+                          else 'release["dataset_manifest_sha256"]', source)
+
     def test_source_manifest_complete_and_locked(self):
         root=Path(__file__).resolve().parents[1]
         candidate=release.build_candidate(root)
