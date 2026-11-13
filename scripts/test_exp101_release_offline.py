@@ -201,6 +201,22 @@ class ReleaseOfflineTests(unittest.TestCase):
         self.assertFalse(torch.equal(zero,shifted))
         with self.assertRaises(ValueError):model(x,r,position_offset=9)
 
+    def test_determinism_policy_is_explicit_and_strict_on_cpu(self):
+        import torch
+        cpu = rt.configure_determinism('cpu')
+        self.assertEqual(cpu['mode'], 'cpu_strict')
+        self.assertFalse(cpu['warn_only'])
+        self.assertTrue(torch.are_deterministic_algorithms_enabled())
+        if hasattr(torch, 'is_deterministic_algorithms_warn_only_enabled'):
+            self.assertFalse(torch.is_deterministic_algorithms_warn_only_enabled())
+        if torch.backends.mps.is_available():
+            mps = rt.configure_determinism('mps')
+            self.assertEqual(mps['mode'], 'mps_warn_only')
+            self.assertTrue(mps['warn_only'])
+            if hasattr(torch, 'is_deterministic_algorithms_warn_only_enabled'):
+                self.assertTrue(torch.is_deterministic_algorithms_warn_only_enabled())
+            rt.configure_determinism('cpu')
+
     def test_disposable_cpu_hardware_fixture(self):
         # Three engineering optimizer steps, not study training; uses seed 101999.
         from exp101_hardware_fixture import run_fixture,FIXTURE_SEED
