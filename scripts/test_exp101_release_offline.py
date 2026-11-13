@@ -226,6 +226,10 @@ class ReleaseOfflineTests(unittest.TestCase):
         self.assertFalse(result['experiment_training_started'])
         self.assertEqual(result['resume_parameter_max_abs_difference'],0)
         self.assertTrue(result['resume_optimizer_within_tolerance'])
+        self.assertEqual(result['same_origin_checkpoint_roundtrip_max_abs_difference'],0)
+        self.assertTrue(result['same_origin_checkpoint_optimizer_exact'])
+        self.assertEqual(result['resume_origin'],'same_model_a_checkpoint_after_step_1')
+        self.assertTrue(result['independent_first_step_optimizer_within_tolerance'])
         self.assertTrue(all(x>1e-12 for x in result['position_gradient_norms_34_through_38'].values()))
 
     def test_checkpoint_schedule_identifier_guard(self):
