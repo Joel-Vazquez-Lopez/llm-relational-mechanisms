@@ -10,7 +10,7 @@ The source/protocol audit covered the ML-072–100 series. ML-072–074 studied 
 
 ## 2. Balanced two-event generator and reference conditions
 
-The primary held-out composition is **L+I**, where L is a non-agent locative phrase introduced by *By X's gate* and I is an intervening *near Y* phrase. The same role-relevant participants, agent A and patient P, appear once as core arguments; distractor event participants C,D appear as nonargument locative references, and vice versa. **Both clauses carry the same adjunct condition**, so “pick the adjunct-bearing clause” cannot identify the target event. Two independent referent-swap bits determine which opposite-event person fills the L versus I slot; the target and distractor L prefix/suffix placements are independently balanced. Target event position, voice, role direction, distractor voice and target/distractor verb identities are counterbalanced.
+The primary held-out composition is **L+I**, where L is a non-agent locative phrase introduced by *By X's gate* and I is an intervening *near Y* phrase. The same role-relevant participants, agent A and patient P, appear once as core arguments; distractor event participants C,D appear as nonargument locative references, and vice versa. **Both clauses carry the same adjunct condition**, so “pick the adjunct-bearing clause” cannot identify the target event. Two independent referent-swap bits determine which opposite-event person fills the L versus I slot; the target and distractor L prefix/suffix placements are independently balanced. Target event position, voice, role direction, distractor voice, **distractor role direction**, target/distractor event identity and target/distractor verb identities are counterbalanced. The dry-run also swaps the two event-participant pairs across target/distractor status, so no name is permanently a queried-event person.
 
 A fully composed example:
 
@@ -35,20 +35,20 @@ Two executable, stdlib-only files accompany R2:
 - `scripts/exp101_generator_preflight.py`: **development-only** synthetic packets, controlled counterfactual transformations, explicit heuristic baselines, mention/role/position balance assertions. `--phase preflight` is the **only** allowed phase; no model imports, training, test access or checkpoint loading.
 - `scripts/exp101_render_validator.py`: separate regex-based **rendered-text parser**, importing no generator metadata. It recovers both event predicates, agents, patients, voices and locative owners from the realized text, then cross-checks gold labels. This is a structural positive control, not a negative baseline. A human acceptability/meaning audit is **still mandatory** before freeze.
 
-**Development dry-run actually executed locally, no models:** 24 development-only lexical/verb anchors × 2 role directions × 2 target voices × 2 distractor voices × 2 target reference assignments × 2 distractor reference assignments × 2 target L placements × 2 distractor L placements × 2 target-event positions = **6,144 packets per condition**, 24,576 total. The independent parser and gold semantic invariants pass; every L+I packet has both clauses adjunct-bearing and two appearances of each of four people. Reference cells meet the declared (1,1,1,1) or (1,1,2,2) mention-count patterns. The original attack is reproduced at **8/8** when only the target clause bears adjuncts, then fails the redesigned test.
+**Development dry-run actually executed locally, no models:** 48 development-only lexical/verb/target-status anchors (four quartets × six verbs × two target/distractor pair orientations) × 2 target role directions × 2 target voices × 2 distractor voices × 2 distractor role directions × 2 target reference assignments × 2 distractor reference assignments × 2 target L placements × 2 distractor L placements × 2 target-event positions = **24,576 packets per condition**, 98,304 total. The independent parser and gold semantic invariants pass; every L+I packet has both clauses adjunct-bearing and two appearances of each of four people. Each pseudoname has equal enumerated frequencies as a target/distractor agent and patient. Reference cells meet the declared (1,1,1,1) or (1,1,2,2) mention-count patterns. The original attack is reproduced at **8/8** when only the target clause bears adjuncts, then fails the redesigned test.
 
-| Non-oracle baseline on R2 L+I | Exact agent+patient / 6,144 individual packets | Voice-paired correct / 1,536 packets with target event SECOND |
+| Non-oracle baseline on R2 L+I | Exact agent+patient / 24,576 individual packets | Voice-paired correct / 6,144 packets with target event SECOND |
 |---|---:|---:|
-| **Adjunct-clause + global singletons + voice order, ignores event cue** | 3,072 | **0** |
-| Fixed global alphabetical names | 3,072 | 768 |
+| **Adjunct-clause + global singletons + voice order, ignores event cue** | 12,288 | **0** |
+| Fixed global alphabetical names | 6,144 | 1,536 |
 | First/last name in queried clause | 0 | 0 |
 | Nearest name left/right of verb, voice-conditioned | 0 | 0 |
-| First-*by* heuristic | 1,536 | 0 |
-| Last-*by* heuristic | 1,536 | 0 |
-| Event-blind first-clause parser | 3,072 | 0 |
-| Independent structural oracle | 6,144 | 1,536 |
+| First-*by* heuristic | 6,144 | 0 |
+| Last-*by* heuristic | 6,144 | 0 |
+| Event-blind first-clause parser | 12,288 | 0 |
+| Independent structural oracle | 24,576 | 6,144 |
 
-These are **deterministic generator-only checks**, not observed Transformer outcomes. The strongest listed shortcut still achieves 50% on the primary task, so absolute model correctness and its margin over these baselines must be checked. The script tests that none of these baselines solves a whole eight-cell packet or the full target-second voice-paired diagnostic. If another concrete shortcut achieves full correctness, **stop and redesign before training**. A sufficiently sophisticated symbolic parser may succeed legitimately; this design rejects specified shallow heuristics, not every imaginable algorithm.
+These are **deterministic generator-only checks**, not observed Transformer outcomes. The strongest listed shortcut still achieves 25% on the primary task, so absolute model correctness and its margin over these baselines must be checked. The script tests that none of these baselines solves a whole eight-cell packet or the full target-second voice-paired diagnostic. If another concrete shortcut achieves full correctness, **stop and redesign before training**. A sufficiently sophisticated symbolic parser may succeed legitimately; this design rejects specified shallow heuristics, not every imaginable algorithm.
 
 The generator-only dry-run does **not** yet certify the unimplemented production split/seal and training sampler. Formal freeze requires independent rendered-text-to-gold checks on the full *training/development generator* (without generating protected examples), component-leakage checks, duplicate detection, output-vocabulary tests and human review of all syntax templates. Protected cases will only be generated on a separately authorized one-time unlock after training gates.
 
