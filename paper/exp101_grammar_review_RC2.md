@@ -28,3 +28,7 @@ The only surface correction in RC2 is postposed `by X's gate` → `beside X's ga
 **Interpretation restriction:** role-preservation is the modeled semantic invariant. Voice and event-order changes can change focus, information structure, discourse chronology and attachment preferences; therefore do not claim strict entire-sentence equivalence.
 
 **Human reviewer requirements before release:** record reviewer identity/date, ACCEPT/REVISE on each of the 16 entries, optional example corrections and whether the semantic-task interpretation remains stable. A machine-generated assessment or a language model cannot be counted as independent human approval. The current release is locked until this record is completed.
+
+## Later administrative disposition (RC5; 13 November 2026)
+
+The above **PENDING** column is retained as the original independent-review plan. The author subsequently reported that the sentences were personally checked and accepted and elected to waive external sign-off before training; see `paper/exp101_author_waiver_RC5.md`. This is author acceptance, **not** independently adjudicated template approval. No additional role or voice definition has been changed, and no individual external decisions are imputed.
