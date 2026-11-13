@@ -275,8 +275,7 @@ def train_one(seed:int,arm:str,device:str="cpu",
     h=stable_hash(data)
     if h!=release["data_manifest_sha256"]:
         raise PermissionError("Training data manifest differs from frozen release")
-    if not torch.are_deterministic_algorithms_enabled():
-        torch.use_deterministic_algorithms(True)
+    runtime.configure_determinism(device)  # RC3 shared CPU/MPS backend policy
     model,optimizer,rg_base,rg_dose=runtime.init_state(seed,make_model,device=device)
     base_data=encode([(p,r) for p in base for r in ("agent","patient")])
     dose_data=encode(dose[arm])
