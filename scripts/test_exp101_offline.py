@@ -90,7 +90,10 @@ class R3OfflineTests(unittest.TestCase):
         self.assertFalse(gate["eligible"])
 
     def test_static_report_counts_are_computed(self):
-        r=json.loads((Path(__file__).parent/"static_preflight_R3.json").read_text())
+        report = Path(__file__).resolve().parent.parent / "reports/exp101/static_preflight_R3.json"
+        if not report.exists():
+            report = Path(__file__).resolve().parent / "static_preflight_R3.json"
+        r=json.loads(report.read_text())
         self.assertEqual(r["deliberate_corruptions_rejected"],6)
         for cond in g.CONDS:
             for row in r["conditions"][cond]["baseline_accuracy"].values():
