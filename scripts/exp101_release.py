@@ -18,6 +18,8 @@ SOURCE_PATHS=(
     'scripts/exp101_scoring.py',
     'scripts/exp101_protected_candidate.py',
     'scripts/exp101_release.py',
+    'scripts/exp101_run_authorized.py',
+    'paper/exp101_training_freeze_notes_RC6.md',
     'scripts/test_exp101_offline.py',
     'scripts/test_exp101_release_offline.py',
     'paper/exp101_counterfactual_generalization_protocol.md',
