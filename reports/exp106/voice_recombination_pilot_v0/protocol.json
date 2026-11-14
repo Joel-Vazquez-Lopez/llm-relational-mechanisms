@@ -1,0 +1,68 @@
+{
+  "LI_scoring": false,
+  "arms": [
+    "pa_only",
+    "indirect_pp_aa",
+    "direct_pa_ap"
+  ],
+  "caveats": [
+    "Direct exposure to AP predictably helps AP; this is a competence/upper anchor, not transfer evidence.",
+    "If indirect beats PA-only, difference includes presence of second-position passive: does not isolate abstract binding.",
+    "Matching marginal tokens does not match sequence lengths, within-source voice clustering, or positional token contexts.",
+    "MPS has proven non-bitwise reproducible for EXP105; independent seeds and repeated runs are needed for inference.",
+    "The familiar development AP/PP conditions use new name combinations but the same synthetic grammar family."
+  ],
+  "code_sha256": {
+    "exp105_development_pilot_v0.py": "d8e2c48ce7c5c73a3c1a3c68b8dc29e0822e357aaa202c62b9000070b9c757ad",
+    "exp105_generator_preflight.py": "b9bd315ed46e365a96c1d7fc2fffdccbd2e9db0bdaf182d4a9a63f68462022ba",
+    "exp105_position_control_preflight_v1.py": "a9eb006832336de5dbe265557fdb9346ac832bfabe7acb31b6cb39cef5b60903",
+    "exp105_training_schedule_preflight_v3.py": "b4ae05e76d0d8eeb2051583969d60d6697a8d36e2db19c2b4a472533174a96e6",
+    "exp106_voice_recombination_pilot_v0.py": "35c1a3a3734e3bd243434350106bc0327cef5c9d05097c55b74aeff091681bd2"
+  },
+  "confirmatory_seeds_untouched": [
+    10701,
+    10703,
+    10709,
+    10713,
+    10721,
+    10727,
+    10729,
+    10733
+  ],
+  "control": "2 PA; never AP or PP; matched passive dose count but not passive position",
+  "development_digest": "a8514424de56617a71f224ac8cff893fb0058256f1da3b912e0a720430ab970c",
+  "device_not_frozen": true,
+  "dose_count": "2 sources, 8 questions, 2 passive events per update in each arm",
+  "evaluation": "288 development-only familiar-modifier AA/PA/AP/PP sources; candidate-restricted four name C_query, accuracy4, error types; no LI",
+  "matching": "identical core IDs, same gold, modifiers, frame, total passives, event-slot A/P marginals and exact per-update bag of source tokens for indirect/direct",
+  "milestones": [
+    800,
+    1600,
+    2400,
+    3200,
+    4000,
+    4800,
+    5600,
+    6400
+  ],
+  "not_confirmatory": true,
+  "primary_matched_contrast": "1 PP + 1 AA vs 1 PA + 1 AP on same two cores",
+  "protected_access": false,
+  "purpose": "Does PP+AA evidence without AP transfer to unseen AP?",
+  "seeds": [
+    10811,
+    10817
+  ],
+  "selection": "fixed step 6400; no best checkpoint selection",
+  "shared_base": "7 AA + 7 PA sources; 56 questions per update",
+  "source_count_common": 54000,
+  "source_count_dose": 13500,
+  "stage": "UNFROZEN_EXPLORATORY_VOICE_RECOMBINATION_PILOT_V0",
+  "steps": 6400,
+  "study": "EXP-106",
+  "train_partition_digest": "c32a26bc777f92373ce3584938074d24a1ddd583b4ab3eee467c2de36f05cd03",
+  "training": "AdamW lr=.002 wd=.01; original EXP105 model; cross entropy over full vocabulary",
+  "unmatched": "source-length histograms and within-source cooccurrence (the intended composition); PA-only position distribution",
+  "vocab_digest": "8ad05a3a8a5e47d7977909fd364f3d4449e465d11abd0d07d599be11ae7aff4e",
+  "vocab_size": 50
+}
