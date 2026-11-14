@@ -1,0 +1,60 @@
+{
+  "base_dependency_sha256": {
+    "exp102_split_integration_audit.py": "c5582e7c54b917068128580fa1e691813e8baadc90cdc3e6d6de5459d6cea098",
+    "exp102_split_preflight_v2.py": "b401c01ca5fb131cef7e958d6b0949127a12f9aa356da1e649a5d6b001798c62",
+    "exp102_syntax_preflight.py": "3617b92bd7808da7d0fa64554497183f9e22818d9ca1ae44491bb88316bb4853"
+  },
+  "base_runner_sha256": "f1db0f459f35f7e42590cfb4a4543d11b4ed94ffb0c82463038dca9b929d2783",
+  "batch": "64 labels/update, 16/query; 64 distinct sources per 4-step window",
+  "controlled": "Exact identical 256 source-question examples per four-update window for both policies, paired initializations",
+  "data_sha256": "f9219ad953a1d8bb9df267b624916851dbb7f57a232e20f4d099663ddba7dc54",
+  "development_sentences": 288,
+  "endpoint_selection": "Final step3200 only; no early stopping; no seed exclusion",
+  "gate": "Descriptive familiar competence: >=6/8 per policy with C_query>=0.90 and accuracy4>=0.95 on dev at final step; gate does not unlock evaluation",
+  "milestones": [
+    400,
+    800,
+    1200,
+    1600,
+    2000,
+    2400,
+    2800,
+    3200
+  ],
+  "model": "Unchanged EXP-102-v2 3-layer, 4-head, width-96 Transformer",
+  "optimization": "AdamW lr=0.002 weight_decay=0.01, full-vocabulary CE",
+  "policies": [
+    "quartet",
+    "distributed"
+  ],
+  "primary": "Difference in 3200-step dev C_query (quartet minus distributed), paired across eight fresh seeds",
+  "prior_discovery": "EXP-102-v2 original study and extension analyzed before this protocol; this is NOT an independent confirmatory test",
+  "remaining_difference": "Within-update source diversity, order, gradient composition and optimizer trajectory still differ by design",
+  "restricted": "Only familiar bare/L/I syntax, reserved identifiers read for separation only; no L+I or reserved examples generated",
+  "runner_sha256": "22e69aaa80cf8ea5638187679b5661f908aa4811ee934ebdeafdbf88a7c9ce74",
+  "schedule": "Quartet 16 sources each x 4 query types / update; distributed 64 sources each x 1 question rotated / update",
+  "secondary": [
+    "C_query trajectory",
+    "accuracy4",
+    "wrong_event_rate",
+    "wrong_role_rate",
+    "same_answer_rate",
+    "per_event_both_correct",
+    "per_cell_C_query"
+  ],
+  "seeds": [
+    10601,
+    10603,
+    10609,
+    10613,
+    10621,
+    10627,
+    10629,
+    10633
+  ],
+  "split_partition_sha256": "2f9ba0c6f44c67094f9fa2786853ade1c8c662fd0afd74295af98384b17dd287",
+  "status": "EXPLORATORY_FAMILIAR_DEVELOPMENT_ONLY",
+  "steps": 3200,
+  "study": "EXP-104-source-matched-schedule",
+  "train_sentences": 2304
+}
