@@ -46,6 +46,22 @@ def single_token_checker(tokenizer, leading_space: bool = True):
     return lambda name: len(name_token_ids(tokenizer, name, leading_space)) == 1
 
 
+def check_names_for_patching(tokenizer, names, chat_template: bool = False) -> list[str]:
+    """Problems that make patching invalid for these names (empty list = fine).
+    Names inside the sentence follow a space and must be single tokens, so one
+    position holds the whole name. The answer is scored by its first token
+    (" Name" raw; "Name" in chat mode), so first tokens must be distinct."""
+    problems = [f"{n!r} is not a single token after a space" for n in names
+                if len(name_token_ids(tokenizer, n, True)) != 1]
+    firsts: dict[int, str] = {}
+    for n in names:
+        t = name_token_ids(tokenizer, n, not chat_template)[0]
+        if t in firsts:
+            problems.append(f"{firsts[t]!r} and {n!r} share their first answer token")
+        firsts[t] = n
+    return problems
+
+
 def _prompt_ids(tokenizer, prompt: str, use_chat_template: bool) -> list[int]:
     if use_chat_template:
         out = tokenizer.apply_chat_template(

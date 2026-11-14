@@ -245,13 +245,6 @@ def fit_profile(records: Sequence[TransplantRecord], n_boot: int = 200, seed: in
 
 # ---------------------------------------------------------------- the sweep (torch)
 
-def _single_token(tokenizer, name: str) -> int:
-    ids = tokenizer.encode(" " + name, add_special_tokens=False)
-    if len(ids) != 1:
-        raise ValueError(f"name {name!r} is not a single token")
-    return ids[0]
-
-
 def sweep(
     model,
     tokenizer,
@@ -259,11 +252,13 @@ def sweep(
     layers: Sequence[int] | None = None,
     batch_size: int = 32,
     require_base_correct: bool = True,
+    chat_template: bool = False,
 ) -> tuple[list[TransplantRecord], dict[str, int]]:
-    """Run every transplant at every layer. Returns records and skip counts."""
+    """Run every transplant at every layer. Returns records and skip counts.
+    ``chat_template`` as in ``order_role_patching.sweep``."""
     import torch
 
-    from relational_lab.instrumentation.patching import ResidualPatcher, encode_batch, token_index
+    from relational_lab.instrumentation.patching import ResidualPatcher, answer_token, encode_batch, token_index
 
     patcher = ResidualPatcher(model)
     layer_list = list(range(patcher.n_layers)) if layers is None else list(layers)
@@ -273,8 +268,8 @@ def sweep(
 
     for start in range(0, len(transplants), batch_size):
         batch = list(transplants[start : start + batch_size])
-        b_ids, b_mask, b_len, b_off = encode_batch(tokenizer, [t.base.prompt for t in batch], pad)
-        s_ids, s_mask, _, s_off = encode_batch(tokenizer, [t.source.prompt for t in batch], pad)
+        b_ids, b_mask, b_len, b_off = encode_batch(tokenizer, [t.base.prompt for t in batch], pad, chat_template)
+        s_ids, s_mask, _, s_off = encode_batch(tokenizer, [t.source.prompt for t in batch], pad, chat_template)
         src_store, _ = patcher.capture(s_ids, s_mask)
         with torch.no_grad():
             base_logits = model(input_ids=b_ids.to(patcher.device), attention_mask=b_mask.to(patcher.device)).logits
@@ -282,13 +277,14 @@ def sweep(
         rows, k_pos, j_pos, toks = [], [], [], []
         for r, t in enumerate(batch):
             last = b_len[r] - 1
-            ans, dis = _single_token(tokenizer, t.base.answer), _single_token(tokenizer, t.base.distractor)
+            space = not chat_template
+            ans, dis = answer_token(tokenizer, t.base.answer, space), answer_token(tokenizer, t.base.distractor, space)
             if require_base_correct and not base_logits[r, last, ans] > base_logits[r, last, dis]:
                 skipped["model_wrong_on_base"] += 1
                 continue
             name_k = t.base.names[0].name if t.k == "first_name" else t.base.names[1].name
             other = t.base.agent if name_k == t.base.patient else t.base.patient
-            nk, no = _single_token(tokenizer, name_k), _single_token(tokenizer, other)
+            nk, no = answer_token(tokenizer, name_k, space), answer_token(tokenizer, other, space)
             rows.append(r)
             k_pos.append(token_index(b_off[r], *t.base.span(t.k)))
             j_pos.append(token_index(s_off[r], *t.source.span(t.j)))

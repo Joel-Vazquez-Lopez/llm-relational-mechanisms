@@ -75,6 +75,8 @@ def main(argv=None):
     p.add_argument("--batch-size", type=int, default=32)
     p.add_argument("--seed", type=int, default=2026)
     p.add_argument("--plot", action="store_true")
+    p.add_argument("--chat-template", action="store_true",
+                   help="wrap prompts in the tokenizer's chat template (Instruct/-it models), as in OTR-01")
     p.add_argument("--include-incorrect", action="store_true",
                    help="diagnostic only: also analyse pairs the model gets wrong")
     p.add_argument("--out-dir", type=Path, default=ROOT / "results")
@@ -84,15 +86,16 @@ def main(argv=None):
     import transformers
     from transformers import AutoTokenizer
 
-    from relational_lab.instrumentation.hf_scoring import load_lm, single_token_checker
+    from relational_lab.instrumentation.hf_scoring import check_names_for_patching, load_lm
 
     tok = AutoTokenizer.from_pretrained(args.model, revision=args.revision)
     if not tok.is_fast:
         raise SystemExit("A fast tokenizer is required for offset mappings.")
-    check = single_token_checker(tok)
-    multi = [n for n in ors.NAMES if not check(n)]
-    if multi:
-        raise SystemExit(f"Names not single-token for {args.model}: {multi}")
+    if args.chat_template and tok.chat_template is None:
+        raise SystemExit(f"{args.model} has no chat template.")
+    problems = check_names_for_patching(tok, ors.NAMES, args.chat_template)
+    if problems:
+        raise SystemExit(f"Name list unusable for {args.model}: " + "; ".join(problems))
     device = args.device or ("cuda" if torch.cuda.is_available() else "cpu")
     model = load_lm(args.model, revision=args.revision, dtype=getattr(torch, args.dtype))
     model.to(device).eval()
@@ -101,7 +104,8 @@ def main(argv=None):
     print(f"{len(items)} base prompts, {args.model}", flush=True)
     t0 = time.time()
     records, skipped = orp.sweep(model, tok, items, batch_size=args.batch_size,
-                                 require_correct=not args.include_incorrect)
+                                 require_correct=not args.include_incorrect,
+                                 chat_template=args.chat_template)
     agg = orp.aggregate(records)
 
     slug = args.model.replace("/", "__")
@@ -114,7 +118,7 @@ def main(argv=None):
         "model": args.model, "revision": args.revision, "dtype": args.dtype, "device": device,
         "generator_version": ors.GENERATOR_VERSION, "seed": args.seed,
         "constructions": args.constructions, "n_events": args.n_events,
-        "include_incorrect": args.include_incorrect,
+        "include_incorrect": args.include_incorrect, "chat_template": args.chat_template,
         "n_base_prompts": len(items), "n_analysed": len(records), "skipped": skipped,
         "script_sha256": hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
         "versions": {"python": platform.python_version(), "torch": torch.__version__,
