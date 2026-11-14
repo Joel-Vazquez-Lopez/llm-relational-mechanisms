@@ -73,7 +73,8 @@ def main(argv=None):
     p.add_argument("--device", default=None)
     p.add_argument("--split", default="dev", choices=["dev", "test"])
     p.add_argument("--constructions", nargs="+", default=list(ors.MAIN_CONSTRUCTIONS))
-    p.add_argument("--modes", nargs="+", default=list(orq.MODES), choices=list(orq.MODES))
+    p.add_argument("--modes", nargs="+", default=list(orq.MODES), choices=list(orq.ALL_MODES),
+                   help="flip repair (same sentence); repair_x control_x flip_x (cross-sentence sources)")
     p.add_argument("--n-events", type=int, default=32)
     p.add_argument("--layer-stride", type=int, default=1)
     p.add_argument("--batch-size", type=int, default=32)
@@ -153,7 +154,10 @@ def main(argv=None):
             eff = agg[g][lab]["ratio_of_means"]
             vals = [(e, i) for i, e in enumerate(eff) if not math.isnan(e)]
             e, i = max(vals) if vals else (float("nan"), -1)
-            print(f"    {lab:8s} peak {e:5.2f} at layer {layers[i] if i >= 0 else '-'}   flip {max(agg[g][lab]['flip_rate']):.2f}")
+            fr = agg[g][lab]["flip_rate"]
+            j = max(range(len(fr)), key=lambda k: fr[k])
+            print(f"    {lab:8s} effect peak {e:5.2f} at layer {layers[i] if i >= 0 else '-'}"
+                  f"   flip peak {fr[j]:.2f} at layer {layers[j]}")
 
 
 if __name__ == "__main__":
