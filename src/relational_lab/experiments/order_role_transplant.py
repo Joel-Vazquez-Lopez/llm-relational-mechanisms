@@ -53,6 +53,12 @@ from relational_lab.experiments.order_role_stimuli import (
 
 CODES: tuple[str, ...] = ("order", "function", "role")
 SLOTS: tuple[str, ...] = ("first_name", "second_name")
+# Nuisance regressor in the profile fit: the transplanted state comes from a
+# second-name position. On dev, such states pushed toward their name whatever
+# the question (Gemma 4 31B ~5 logits). The balanced design already cancels this
+# from the three codes; fitting it explicitly reports it and guards against
+# imbalance after base-correctness filtering.
+NUISANCE: tuple[str, ...] = ("source_slot",)
 
 
 def _slot_labels(item: Item, slot: str) -> dict[str, bool]:
@@ -187,6 +193,12 @@ class TransplantRecord:
     y: list[float] = field(default_factory=list)  # per layer: patched - unpatched
 
 
+def _regressor(r, c: str) -> float:
+    if c == "source_slot":
+        return float(r.j == "second_name")
+    return float(r.x[c])
+
+
 def _within_rows(recs, li, codes=CODES):
     """Rows for a within-(base sentence, base slot) regression: y and x are centred
     inside each group, so everything that is constant for a base slot (its own
@@ -201,8 +213,8 @@ def _within_rows(recs, li, codes=CODES):
         if len(g) < 2:
             continue
         my = sum(r.y[li] for r in g) / len(g)
-        mx = {c: sum(r.x[c] for r in g) / len(g) for c in codes}
-        rows.extend(([r.x[c] - mx[c] for c in codes], r.y[li] - my) for r in g)
+        mx = {c: sum(_regressor(r, c) for r in g) / len(g) for c in codes}
+        rows.extend(([_regressor(r, c) - mx[c] for c in codes], r.y[li] - my) for r in g)
     return rows
 
 
@@ -224,16 +236,16 @@ def fit_profile(records: Sequence[TransplantRecord], n_boot: int = 200, seed: in
         boots.append(sample)
 
     def coefs(recs, li):
-        return ols(_within_rows(recs, li))
+        return ols(_within_rows(recs, li, codes=CODES + NUISANCE))
 
-    out: dict[str, dict] = {c: {"coef": [], "ci95": []} for c in CODES}
+    out: dict[str, dict] = {c: {"coef": [], "ci95": []} for c in CODES + NUISANCE}
     out["mean_identity_effect"] = []
     for li in range(n_layers):
         b = coefs(records, li)
         vals = [r.y[li] for r in records if not math.isnan(r.y[li])]
         out["mean_identity_effect"].append(sum(vals) / len(vals))
         bs = [coefs(s, li) for s in boots] if n_boot else []
-        for ci, c in enumerate(CODES, start=1):
+        for ci, c in enumerate(CODES + NUISANCE, start=1):
             out[c]["coef"].append(b[ci])
             if bs:
                 vals = sorted(v[ci] for v in bs)
