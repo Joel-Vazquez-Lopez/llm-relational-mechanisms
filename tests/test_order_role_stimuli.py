@@ -29,7 +29,7 @@ class TestTemplates(unittest.TestCase):
     def test_questions_never_name_a_participant(self):
         expected = {
             ("agent", "active"): "Who praised someone?",
-            ("agent", "passive"): "Who was someone praised by?",
+            ("agent", "passive"): "By whom was someone praised?",
             ("patient", "active"): "Who did someone praise?",
             ("patient", "passive"): "Who was praised by someone?",
         }

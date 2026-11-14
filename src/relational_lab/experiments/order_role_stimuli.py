@@ -41,7 +41,12 @@ from dataclasses import asdict, dataclass
 from itertools import combinations
 from pathlib import Path
 
-GENERATOR_VERSION = "1.2.0"
+GENERATOR_VERSION = "1.3.0"
+# 1.3.0: the passive-voice agent question is "By whom was someone {past}?".
+#   1.2.0 used "Who was someone {past} by?"; the stranded preposition was
+#   read as "who was {past}" (a patient question) by Gemma 4 31B-it on dev,
+#   so that wording measured parsing of the question, not the sentence.
+#   Names, verbs, items per family and splits are unchanged.
 
 # Gender-balanced, common English first names. Single-token status depends on
 # the tokenizer; use ``filter_names`` with a real tokenizer before freezing.
@@ -118,7 +123,7 @@ def render_question(role: str, question_voice: str, lemma: str, past: str) -> st
         if question_voice == "active":
             return f"Who {past} someone?"
         if question_voice == "passive":
-            return f"Who was someone {past} by?"
+            return f"By whom was someone {past}?"
     if role == "patient":
         if question_voice == "active":
             return f"Who did someone {lemma}?"
