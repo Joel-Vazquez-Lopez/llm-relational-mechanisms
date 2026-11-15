@@ -82,10 +82,14 @@ def main(argv=None):
     p.add_argument("--plot", action="store_true")
     p.add_argument("--chat-template", action="store_true",
                    help="wrap prompts in the tokenizer's chat template (Instruct/-it models), as in OTR-01")
+    p.add_argument("--no-thinking", action="store_true",
+                   help="pass enable_thinking=False to the chat template (Qwen3-type / OLMo-3 Think models)")
     p.add_argument("--include-unselected", action="store_true",
                    help="diagnostic only: analyse every pair regardless of which ones the model gets right")
     p.add_argument("--out-dir", type=Path, default=ROOT / "results")
     args = p.parse_args(argv)
+    from relational_lab.instrumentation import chat as _chat
+    chat_kwargs = _chat.configure(no_thinking=args.no_thinking)
 
     import torch
     import transformers
@@ -132,7 +136,7 @@ def main(argv=None):
         "model": args.model, "revision": args.revision, "dtype": args.dtype, "device": device,
         "generator_version": ors.GENERATOR_VERSION, "seed": args.seed,
         "constructions": args.constructions, "modes": args.modes, "n_events": args.n_events,
-        "layers": layers, "include_unselected": args.include_unselected, "chat_template": args.chat_template,
+        "layers": layers, "include_unselected": args.include_unselected, "chat_template": args.chat_template, "chat_template_kwargs": chat_kwargs,
         "n_base_prompts": len(items), "n_analysed": len(records), "skipped": skipped,
         "script_sha256": hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
         "versions": {"python": platform.python_version(), "torch": torch.__version__,

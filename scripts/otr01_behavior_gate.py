@@ -64,9 +64,13 @@ def main(argv=None):
     p.add_argument("--limit", type=int, default=None, help="approximate number of prompts, whole events kept")
     p.add_argument("--batch-size", type=int, default=16)
     p.add_argument("--chat-template", action="store_true")
+    p.add_argument("--no-thinking", action="store_true",
+                   help="pass enable_thinking=False to the chat template (Qwen3-type / OLMo-3 Think models)")
     p.add_argument("--seed", type=int, default=2026)
     p.add_argument("--out-dir", type=Path, default=ROOT / "results")
     args = p.parse_args(argv)
+    from relational_lab.instrumentation import chat as _chat
+    chat_kwargs = _chat.configure(no_thinking=args.no_thinking)
 
     import torch
     import transformers
@@ -106,7 +110,7 @@ def main(argv=None):
         "revision": args.revision,
         "dtype": args.dtype,
         "device": device,
-        "chat_template": args.chat_template,
+        "chat_template": args.chat_template, "chat_template_kwargs": chat_kwargs,
         "multi_token_names": multi,
         "split": args.split,
         "test_set": args.test_set,

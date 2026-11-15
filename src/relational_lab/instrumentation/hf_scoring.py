@@ -15,6 +15,7 @@ from __future__ import annotations
 from collections.abc import Sequence
 
 from relational_lab.experiments.order_role_behavior import Score
+from relational_lab.instrumentation import chat
 from relational_lab.experiments.order_role_stimuli import Item
 
 
@@ -28,11 +29,24 @@ def load_lm(model_id: str, revision=None, dtype=None):
     try:
         return AutoModelForCausalLM.from_pretrained(model_id, revision=revision, dtype=dtype)
     except (ValueError, KeyError) as err:
-        from transformers import AutoModelForImageTextToText
+        print(f"AutoModelForCausalLM refused {model_id} ({type(err).__name__}); trying multimodal classes",
+              flush=True)
+    import transformers
 
-        print(f"AutoModelForCausalLM refused {model_id} ({type(err).__name__}); "
-              "loading with AutoModelForImageTextToText", flush=True)
-        return AutoModelForImageTextToText.from_pretrained(model_id, revision=revision, dtype=dtype)
+    last = None
+    # Newer multimodal checkpoints (e.g. Muse Glimmer, Qwen3.8) register under
+    # AutoModelForMultimodalLM; older ones (Gemma 3/4) under AutoModelForImageTextToText.
+    for cls_name in ("AutoModelForImageTextToText", "AutoModelForMultimodalLM"):
+        cls = getattr(transformers, cls_name, None)
+        if cls is None:
+            continue
+        try:
+            model = cls.from_pretrained(model_id, revision=revision, dtype=dtype)
+            print(f"Loaded {model_id} with {cls_name}", flush=True)
+            return model
+        except (ValueError, KeyError) as err:
+            last = err
+    raise ValueError(f"could not load {model_id} as a text LM") from last
 
 
 def name_token_ids(tokenizer, name: str, leading_space: bool = True) -> list[int]:
@@ -65,7 +79,8 @@ def check_names_for_patching(tokenizer, names, chat_template: bool = False) -> l
 def _prompt_ids(tokenizer, prompt: str, use_chat_template: bool) -> list[int]:
     if use_chat_template:
         out = tokenizer.apply_chat_template(
-            [{"role": "user", "content": prompt}], add_generation_prompt=True, tokenize=True
+            [{"role": "user", "content": prompt}], add_generation_prompt=True, tokenize=True,
+            **chat.CHAT_TEMPLATE_KWARGS,
         )
         # transformers >= 5 returns a BatchEncoding (dict-like); older versions a list.
         if not isinstance(out, list):

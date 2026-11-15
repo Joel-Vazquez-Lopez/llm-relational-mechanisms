@@ -53,8 +53,11 @@ def chat_text(tokenizer, prompt: str) -> tuple[str, int]:
     """The prompt wrapped in the tokenizer's chat template as one user turn, with the
     generation prompt appended, plus the character offset of ``prompt`` inside it.
     The same text that ``HFScorer`` scores in chat-template mode."""
+    from relational_lab.instrumentation import chat
+
     text = tokenizer.apply_chat_template(
-        [{"role": "user", "content": prompt}], add_generation_prompt=True, tokenize=False
+        [{"role": "user", "content": prompt}], add_generation_prompt=True, tokenize=False,
+        **chat.CHAT_TEMPLATE_KWARGS,
     )
     at = text.find(prompt)
     if at < 0 or text.find(prompt, at + 1) >= 0:
@@ -72,8 +75,11 @@ def _encode_one(tokenizer, prompt: str, chat_template: bool):
     # The template already contains BOS and turn markers: add no special tokens.
     e = tokenizer(text, add_special_tokens=False, return_offsets_mapping=True)
     ids = list(e["input_ids"])
+    from relational_lab.instrumentation import chat
+
     ref = tokenizer.apply_chat_template(
-        [{"role": "user", "content": prompt}], add_generation_prompt=True, tokenize=True
+        [{"role": "user", "content": prompt}], add_generation_prompt=True, tokenize=True,
+        **chat.CHAT_TEMPLATE_KWARGS,
     )
     if not isinstance(ref, list):  # transformers >= 5: BatchEncoding
         ref = ref["input_ids"]

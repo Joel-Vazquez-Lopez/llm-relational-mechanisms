@@ -81,8 +81,12 @@ def main(argv=None):
     p.add_argument("--plot", action="store_true")
     p.add_argument("--chat-template", action="store_true",
                    help="wrap prompts in the tokenizer's chat template (Instruct/-it models), as in OTR-01")
+    p.add_argument("--no-thinking", action="store_true",
+                   help="pass enable_thinking=False to the chat template (Qwen3-type / OLMo-3 Think models)")
     p.add_argument("--out-dir", type=Path, default=ROOT / "results")
     args = p.parse_args(argv)
+    from relational_lab.instrumentation import chat as _chat
+    chat_kwargs = _chat.configure(no_thinking=args.no_thinking)
 
     import torch
     import transformers
@@ -130,7 +134,7 @@ def main(argv=None):
         "model": args.model, "revision": args.revision, "dtype": args.dtype, "device": device,
         "generator_version": ors.GENERATOR_VERSION, "seed": args.seed, "layers": layers,
         "n_events": args.n_events, "question_voices": args.question_voices,
-        "include_incorrect": args.include_incorrect, "chat_template": args.chat_template,
+        "include_incorrect": args.include_incorrect, "chat_template": args.chat_template, "chat_template_kwargs": chat_kwargs,
         "n_bases": len(bases), "n_transplants": len(transplants), "n_analysed": len(records),
         "skipped": skipped,
         "predictor_correlations": otr.predictor_correlations([t for t in transplants]),
