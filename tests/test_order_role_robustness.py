@@ -64,6 +64,42 @@ class TestChatKwargs(unittest.TestCase):
     def tearDown(self):
         chat.configure(no_thinking=False)
 
+    def test_template_kwargs_and_prefix(self):
+        out = chat.configure(template_kwargs=["reasoning_strength=low", "flag=true"], assistant_prefix=" to=user")
+        self.assertEqual(chat.CHAT_TEMPLATE_KWARGS, {"reasoning_strength": "low", "flag": True})
+        self.assertEqual(chat.assistant_prefix(), " to=user")
+        self.assertEqual(out["_assistant_prefix"], " to=user")
+        with self.assertRaises(ValueError):
+            chat.configure(template_kwargs=["novalue"])
+        chat.configure()
+        self.assertEqual(chat.assistant_prefix(), "")
+
+    @unittest.skipUnless(HAVE_TORCH, "torch/transformers not installed")
+    def test_assistant_prefix_in_both_code_paths(self):
+        from test_chat_template_patching import tiny_chat_model_and_tokenizer
+
+        from relational_lab.instrumentation.hf_scoring import _prompt_ids
+        from relational_lab.instrumentation.patching import chat_text, encode_batch, token_index
+
+        items = ors.generate_items(names=ors.NAMES[:4])[:6]
+        _, tok = tiny_chat_model_and_tokenizer(items)
+        tok.add_tokens(["FINAL"])
+        fin = tok.convert_tokens_to_ids("FINAL")
+        chat.configure()
+        base_ids = _prompt_ids(tok, items[0].prompt, True)
+        chat.configure(assistant_prefix=" FINAL")
+        text, at = chat_text(tok, items[0].prompt)
+        self.assertTrue(text.endswith(" FINAL"))
+        ids = _prompt_ids(tok, items[0].prompt, True)
+        self.assertEqual(ids[-1], fin)
+        self.assertEqual(ids[:-1], base_ids)
+        b_ids, _, lens, offs = encode_batch(tok, [it.prompt for it in items], tok.pad_token_id, chat_template=True)
+        for r, it in enumerate(items):
+            self.assertEqual(b_ids[r, :lens[r]].tolist(), _prompt_ids(tok, it.prompt, True))
+            n = it.names[0]
+            i = token_index(offs[r], n.prompt_char_start, n.prompt_char_end)
+            self.assertEqual(tok.decode([int(b_ids[r, i])]).strip(), n.name)
+
     def test_configure(self):
         self.assertEqual(chat.configure(no_thinking=False), {})
         self.assertEqual(chat.configure(no_thinking=True), {"enable_thinking": False})

@@ -24,14 +24,16 @@ def main(argv=None):
     p = argparse.ArgumentParser()
     p.add_argument("model")
     p.add_argument("--no-thinking", action="store_true")
+    p.add_argument("--template-kwarg", action="append", default=[], metavar="KEY=VALUE")
+    p.add_argument("--assistant-prefix", default="")
     args = p.parse_args(argv)
-    chat.configure(no_thinking=args.no_thinking)
-    from transformers import AutoTokenizer
+    chat.configure(no_thinking=args.no_thinking, template_kwargs=args.template_kwarg,
+                   assistant_prefix=args.assistant_prefix)
 
-    from relational_lab.instrumentation.hf_scoring import check_names_for_patching
+    from relational_lab.instrumentation.hf_scoring import check_names_for_patching, load_tokenizer
     from relational_lab.instrumentation.patching import chat_text
 
-    tok = AutoTokenizer.from_pretrained(args.model)
+    tok = load_tokenizer(args.model)
     item = ors.build_item("Leon", "Mira", "praise", "praised", "object_cleft", "patient", "active")
     text, _ = chat_text(tok, item.prompt)
     print("=== templated prompt (repr of the last 300 characters) ===")

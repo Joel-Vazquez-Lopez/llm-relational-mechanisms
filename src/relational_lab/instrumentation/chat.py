@@ -11,11 +11,29 @@ templates that do not use the variable ignore it.
 from __future__ import annotations
 
 CHAT_TEMPLATE_KWARGS: dict = {}
+# Text appended after the template's generation prompt, e.g. " to=user<|message|>"
+# so that a model with a reasoning channel (Muse Glimmer) starts its final answer
+# directly. Empty by default.
+ASSISTANT_PREFIX: list[str] = [""]
 
 
-def configure(no_thinking: bool = False) -> dict:
-    """Set the shared kwargs from runner flags; returns them for the result JSON."""
+def assistant_prefix() -> str:
+    return ASSISTANT_PREFIX[0]
+
+
+def configure(no_thinking: bool = False, template_kwargs=(), assistant_prefix: str = "") -> dict:
+    """Set the shared settings from runner flags; returns them for the result JSON.
+    ``template_kwargs``: strings "key=value" passed to apply_chat_template."""
     CHAT_TEMPLATE_KWARGS.clear()
     if no_thinking:
         CHAT_TEMPLATE_KWARGS["enable_thinking"] = False
-    return dict(CHAT_TEMPLATE_KWARGS)
+    for kv in template_kwargs or ():
+        if "=" not in kv:
+            raise ValueError(f"--template-kwarg expects key=value, got {kv!r}")
+        k, v = kv.split("=", 1)
+        CHAT_TEMPLATE_KWARGS[k] = {"true": True, "false": False}.get(v.lower(), v)
+    ASSISTANT_PREFIX[0] = assistant_prefix or ""
+    out = dict(CHAT_TEMPLATE_KWARGS)
+    if ASSISTANT_PREFIX[0]:
+        out["_assistant_prefix"] = ASSISTANT_PREFIX[0]
+    return out

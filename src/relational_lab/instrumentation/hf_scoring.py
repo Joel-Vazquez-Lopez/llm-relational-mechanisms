@@ -76,7 +76,26 @@ def check_names_for_patching(tokenizer, names, chat_template: bool = False) -> l
     return problems
 
 
+def load_tokenizer(model_id: str, revision=None):
+    """AutoTokenizer, plus the regex fix that Transformers asks for on Mistral
+    tokenizers (without it, pre-tokenization splits words incorrectly)."""
+    from transformers import AutoTokenizer
+
+    if "mistral" in model_id.lower():
+        try:
+            return AutoTokenizer.from_pretrained(model_id, revision=revision, fix_mistral_regex=True)
+        except TypeError:
+            pass
+    return AutoTokenizer.from_pretrained(model_id, revision=revision)
+
+
 def _prompt_ids(tokenizer, prompt: str, use_chat_template: bool) -> list[int]:
+    if use_chat_template and chat.assistant_prefix():
+        # Same text and tokenization as patching.chat_text / encode_batch.
+        from relational_lab.instrumentation.patching import chat_text
+
+        text, _ = chat_text(tokenizer, prompt)
+        return list(tokenizer(text, add_special_tokens=False)["input_ids"])
     if use_chat_template:
         out = tokenizer.apply_chat_template(
             [{"role": "user", "content": prompt}], add_generation_prompt=True, tokenize=True,

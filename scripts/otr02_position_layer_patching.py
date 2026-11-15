@@ -79,20 +79,25 @@ def main(argv=None):
                    help="wrap prompts in the tokenizer's chat template (Instruct/-it models), as in OTR-01")
     p.add_argument("--no-thinking", action="store_true",
                    help="pass enable_thinking=False to the chat template (Qwen3-type / OLMo-3 Think models)")
+    p.add_argument("--template-kwarg", action="append", default=[], metavar="KEY=VALUE",
+                   help="extra chat-template variable, e.g. reasoning_strength=low (repeatable)")
+    p.add_argument("--assistant-prefix", default="",
+                   help="text appended after the generation prompt, e.g. ' to=user<|message|>' (Muse Glimmer)")
     p.add_argument("--include-incorrect", action="store_true",
                    help="diagnostic only: also analyse pairs the model gets wrong")
     p.add_argument("--out-dir", type=Path, default=ROOT / "results")
     args = p.parse_args(argv)
     from relational_lab.instrumentation import chat as _chat
-    chat_kwargs = _chat.configure(no_thinking=args.no_thinking)
+    chat_kwargs = _chat.configure(no_thinking=args.no_thinking, template_kwargs=args.template_kwarg,
+                                  assistant_prefix=args.assistant_prefix)
 
     import torch
     import transformers
     from transformers import AutoTokenizer
 
-    from relational_lab.instrumentation.hf_scoring import check_names_for_patching, load_lm
+    from relational_lab.instrumentation.hf_scoring import check_names_for_patching, load_lm, load_tokenizer
 
-    tok = AutoTokenizer.from_pretrained(args.model, revision=args.revision)
+    tok = load_tokenizer(args.model, revision=args.revision)
     if not tok.is_fast:
         raise SystemExit("A fast tokenizer is required for offset mappings.")
     if args.chat_template and tok.chat_template is None:

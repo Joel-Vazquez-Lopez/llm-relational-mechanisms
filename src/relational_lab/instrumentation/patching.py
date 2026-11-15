@@ -58,7 +58,7 @@ def chat_text(tokenizer, prompt: str) -> tuple[str, int]:
     text = tokenizer.apply_chat_template(
         [{"role": "user", "content": prompt}], add_generation_prompt=True, tokenize=False,
         **chat.CHAT_TEMPLATE_KWARGS,
-    )
+    ) + chat.assistant_prefix()
     at = text.find(prompt)
     if at < 0 or text.find(prompt, at + 1) >= 0:
         raise ValueError("prompt must occur exactly once, verbatim, in the chat-templated text")
@@ -85,7 +85,9 @@ def _encode_one(tokenizer, prompt: str, chat_template: bool):
         ref = ref["input_ids"]
     if ref and isinstance(ref[0], list):
         ref = ref[0]
-    if ids != list(ref):
+    ref = list(ref)
+    # With an assistant prefix the templated ids must be a prefix of the full sequence.
+    if ids[: len(ref)] != ref or (not chat.assistant_prefix() and len(ids) != len(ref)):
         raise ValueError("re-tokenizing the templated text does not reproduce apply_chat_template's ids")
     offsets = [(a - at, b - at) if b > a else (a, b) for a, b in e["offset_mapping"]]
     return ids, offsets
