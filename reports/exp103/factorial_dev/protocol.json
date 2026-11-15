@@ -1,0 +1,74 @@
+{
+  "batch": {
+    "four_updates_exact_multiset_matched": true,
+    "labels_per_update": 64,
+    "query_counts": [
+      16,
+      16,
+      16,
+      16
+    ]
+  },
+  "checkpoint_selection": "Fixed final step, no seed exclusion, no early stopping",
+  "competence_gate": "For generalization claims, >=6/8 seeds in EACH of four arms must reach AA and PA development per-question accuracy >=0.95 and average per-event both-correct >=0.90; this study NEVER opens reserved data regardless.",
+  "data_sha256": "5b3f1fc490ef478db9d48573090ea91c498df8d0eec10572f6bc970bb50bbcd3",
+  "dependency_sha256": {
+    "exp102_split_integration_audit.py": "c5582e7c54b917068128580fa1e691813e8baadc90cdc3e6d6de5459d6cea098",
+    "exp102_split_preflight_v2.py": "b401c01ca5fb131cef7e958d6b0949127a12f9aa356da1e649a5d6b001798c62",
+    "exp102_syntax_preflight.py": "3617b92bd7808da7d0fa64554497183f9e22818d9ca1ae44491bb88316bb4853",
+    "exp102_v2_familiar_training.py": "f1db0f459f35f7e42590cfb4a4543d11b4ed94ffb0c82463038dca9b929d2783"
+  },
+  "evidence_status": "NEW_EXPLORATORY_DEVELOPMENT_ONLY",
+  "existing_reserved_split": "Identifiers read only; zero reserved examples generated",
+  "factors": {
+    "exposure": [
+      "familiar",
+      "target"
+    ],
+    "policy": [
+      "quartet",
+      "distributed"
+    ]
+  },
+  "known_limits": "Matched source-question multiset per four updates, not matching per-update source diversity or Adam parameter trajectory; historical studies have different distributions.",
+  "milestones": [
+    800,
+    1600,
+    2400,
+    3200
+  ],
+  "primary_development": "AP (first active / second passive) C_query at final step 3200: 2x2 exposure \u00d7 batching interaction",
+  "script_sha256": "6c16dda13aeb2ab6f68c3138ece4860ccb2511c11b044fc94ebc120336491b7d",
+  "secondary_development": [
+    "AP per-question accuracy",
+    "AP wrong-event",
+    "AP wrong-role",
+    "AP role-copy",
+    "AP per-event both-correct",
+    "AA/PA familiar competence",
+    "trajectory"
+  ],
+  "seeds": [
+    10501,
+    10503,
+    10509,
+    10513,
+    10521,
+    10527,
+    10529,
+    10533
+  ],
+  "sources": {
+    "base": 1152,
+    "base_per_window": 56,
+    "dose_per_window": 8,
+    "familiar_dose": 72,
+    "per_window": 64,
+    "target_dose": 72
+  },
+  "split_hash": "2f9ba0c6f44c67094f9fa2786853ade1c8c662fd0afd74295af98384b17dd287",
+  "steps": 3200,
+  "study": "EXP-103-factorial-development",
+  "syntax": "Only familiar bare/L/I cells; L+I composition NEVER generated",
+  "training": "3-layer 4-head width96, AdamW lr0.002 wd0.01, full-vocabulary CE, MPS/CPU"
+}
