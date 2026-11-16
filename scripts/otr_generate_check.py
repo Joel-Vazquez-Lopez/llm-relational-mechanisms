@@ -51,19 +51,57 @@ def first_name(text: str, names) -> str | None:
 _QUOTED = re.compile(r'"[^"]*"|\u201c[^\u201d]*\u201d|\'[^\']{8,}\'')
 
 
-def extract_answer(text: str, names, sentence: str = "", question: str = ""):
+def event_statement(text: str, agent: str, patient: str):
+    """If the first sentence of ``text`` is a bare event statement about the two names,
+    return (doer, undergoer) as the statement asserts them, else None.
+
+    Recognised (whole first sentence, quoted spans removed first, any verb):
+      "P was/were/got V-ed by A."   -> (A, P)
+      "A V-ed P."                    -> (A, P)
+      "It was A who/that V-ed P."    -> (A, P)
+      "It was P that/whom A V-ed."   -> (A, P)
+      "It was by A that P was V-ed." -> (A, P)
+    The same patterns with the names swapped return the reversed reading. Statements
+    embedded in longer explanations are not matched (they fall through to "inferred").
+    """
+    s = _QUOTED.sub(" ", text).strip().split("\n")[0].strip()
+    s = re.split(r"(?<=[.!?])\s", s)[0].strip().rstrip(".!").strip().strip("*").strip()
+    for x, y in ((agent, patient), (patient, agent)):  # x = doer, y = undergoer as asserted
+        X, Y = re.escape(x), re.escape(y)
+        pats = (
+            rf"{Y} (?:was|were|got) (?:\w+ )?\w+ by {X}",
+            rf"{X} \w+ {Y}",
+            rf"It was {X} (?:who|that) \w+ {Y}",
+            rf"It was {Y} (?:that|whom|who) {X} \w+",
+            rf"It was by {X} that {Y} was \w+",
+        )
+        if any(re.fullmatch(p, s) for p in pats):
+            return x, y
+    return None
+
+
+def extract_answer(text: str, names, sentence: str = "", question: str = "",
+                   agent: str | None = None, patient: str | None = None, role: str | None = None):
     """Classify a generated answer. Returns (kind, name).
 
     kind = "direct"    the first line is just one candidate name (punctuation allowed);
+           "statement" (only when agent, patient and role are given) the first sentence is an
+                       event statement such as "Frank was watched by Daniel."; the answer is
+                       the name the statement puts in the asked role. A verbatim copy of the
+                       sentence also counts (``is_copy`` in the rows says so);
            "inferred"  after removing quoted spans and copies of the sentence and question,
                        exactly one candidate name is left;
-           "ambiguous" both names are left (e.g. "Daniel was warned by Kate.");
+           "ambiguous" both names are left;
            "none"      no candidate name.
     """
     first = text.strip().split("\n")[0].strip()
     bare = re.sub(r"[^A-Za-z]", "", first)
     if bare in names:
         return "direct", bare
+    if agent and patient and role:
+        st = event_statement(text, agent, patient)
+        if st is not None:
+            return "statement", (st[0] if role == "agent" else st[1])
     rest = text
     for chunk in (sentence, sentence.rstrip("."), question):
         if chunk:
@@ -136,12 +174,14 @@ def main(argv=None):
                                  do_sample=False, pad_token_id=tok.pad_token_id or tok.eos_token_id)
         text = tok.decode(out[0, len(ids):], skip_special_tokens=True)
         said = first_name(text, [it.answer, it.distractor])
-        kind, name = extract_answer(text, [it.answer, it.distractor], it.sentence, it.question)
+        kind, name = extract_answer(text, [it.answer, it.distractor], it.sentence, it.question,
+                                    agent=it.agent, patient=it.patient, role=it.role_asked)
         rows.append({"item_id": it.item_id, "construction": it.construction, "role": it.role_asked,
                      "voice": it.question_voice, "question": it.question, "prompt": prompt,
                      "answer": it.answer, "output": text,
                      "named": said is not None, "correct_first_name": said == it.answer,
-                     "kind": kind, "extracted": name, "correct": name == it.answer})
+                     "kind": kind, "extracted": name,
+                     "is_copy": text.strip().rstrip(".") == it.sentence.rstrip("."), "correct": name == it.answer})
     n = len(rows)
     summ = defaultdict(list)
     for r in rows:
@@ -151,7 +191,7 @@ def main(argv=None):
         "instruction": args.instruction, "question_template": args.question_template or None,
         "question_role": args.question_role, "max_new_tokens": args.max_new_tokens,
         "n": n, "named_rate": sum(r["named"] for r in rows) / n,
-        "kinds": {k: sum(r["kind"] == k for r in rows) / n for k in ("direct", "inferred", "ambiguous", "none")},
+        "kinds": {k: sum(r["kind"] == k for r in rows) / n for k in ("direct", "statement", "inferred", "ambiguous", "none")},
         "generation_accuracy": sum(r["correct"] for r in rows) / n,
         "accuracy_direct_only": (sum(r["correct"] for r in rows if r["kind"] == "direct")
                                  / max(1, sum(r["kind"] == "direct" for r in rows))),
