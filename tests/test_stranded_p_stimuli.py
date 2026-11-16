@@ -30,9 +30,9 @@ def test_same_families_and_splits_as_otr():
 
 def test_counts_and_balance():
     c = Counter((i.construction, i.question_voice) for i in DEV)
-    assert len(c) == 4 * 3 + 4 * 3 + 3 * 3
+    assert len(c) == 6 * 7 + 6 * 7 + 4 * 6
     assert len(set(c.values())) == 1  # every cell the same size
-    assert len(DEV) == 33 * next(iter(c.values()))
+    assert len(DEV) == 108 * next(iter(c.values()))
     assert "from_do" not in {i.construction for i in ITEMS}
 
 
@@ -46,3 +46,24 @@ def test_names_once_in_sentence_never_in_question():
 
 def test_ids_unique():
     assert len({i.item_id for i in ITEMS}) == len(ITEMS)
+
+
+def test_passive_forms():
+    b = lambda form, q: sp.build_item("Leon", "Mira", "to", "give", "gave", "the book", form, q)
+    assert b("pass_theme", "pass_agent_stranded").sentence == "The book was given to Mira by Leon."
+    assert b("pass_recip", "agent").sentence == "Mira was given the book by Leon."
+    assert b("po", "pass_agent_stranded").question == "Who was the book given to someone by?"
+    assert b("po", "pass_agent_piped").question == "By whom was the book given to someone?"
+    assert b("po", "pass_obl_stranded").question == "Who was the book given to by someone?"
+    assert b("po", "pass_obl_subject").question == "Who was given the book by someone?"
+    assert b("po", "pass_agent_piped").answer == "Leon" and b("po", "pass_obl_subject").answer == "Mira"
+    f = sp.build_item("Leon", "Mira", "for", "cook", "cooked", "dinner", "pass_theme", "pass_obl_stranded")
+    assert f.sentence == "Dinner was cooked for Mira by Leon."
+    assert not [i for i in ITEMS if i.frame == "from" and (i.form == "pass_recip" or i.question_voice == "pass_obl_subject")]
+
+
+def test_v1_0_items_unchanged():
+    """1.0.0 items (forms po/do/clefts x questions stranded/piped/agent) keep ids and text."""
+    old = sp.build_item("Leon", "Mira", "to", "give", "gave", "the book", "do", "stranded")
+    assert old.item_id == "Leon>Mira:give:to:do:oblique:stranded"
+    assert old.sentence == "Leon gave Mira the book."
