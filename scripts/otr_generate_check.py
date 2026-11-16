@@ -12,12 +12,22 @@ quoted text and copies of the sentence or question are ignored, so "In the sente
 one name only."`` adds a line before "Answer:" to ask for a bare name (a prompt change:
 report it as a separate condition).
 
+``--question-template`` replaces the question with any wording ({past}, {lemma} are filled
+from the item); ``--question-role`` says which role it asks for (the gold answer). The
+sample is then balanced over the four main constructions only, e.g. the stranded agent
+question and its patient permutation (same five words):
+
+    python scripts/otr_generate_check.py --model google/gemma-4-31B-it --chat-template \
+        --instruction "Reply with one name only." \
+        --question-template "Who was someone {past} by?" --question-role agent
+
     python scripts/otr_generate_check.py --model unsloth/Mistral-Small-3.2-24B-Instruct-2506 --chat-template
 """
 
 from __future__ import annotations
 
 import argparse
+import dataclasses
 import json
 import random
 import re
@@ -72,6 +82,10 @@ def main(argv=None):
     p.add_argument("--max-new-tokens", type=int, default=40)
     p.add_argument("--instruction", default="",
                    help='text inserted on its own line before "Answer:", e.g. "Reply with one name only."')
+    p.add_argument("--question-template", default="",
+                   help='custom question, e.g. "Who was someone {past} by?" ({past}, {lemma} filled per item)')
+    p.add_argument("--question-role", choices=("agent", "patient"), default=None,
+                   help="role the custom question asks for (required with --question-template)")
     p.add_argument("--chat-template", action="store_true")
     p.add_argument("--no-thinking", action="store_true")
     p.add_argument("--template-kwarg", action="append", default=[], metavar="KEY=VALUE")
@@ -80,6 +94,8 @@ def main(argv=None):
     p.add_argument("--seed", type=int, default=2026)
     p.add_argument("--out-dir", type=Path, default=ROOT / "results")
     args = p.parse_args(argv)
+    if bool(args.question_template) != bool(args.question_role):
+        p.error("--question-template and --question-role go together")
     from relational_lab.instrumentation import chat as _chat
     chat_kwargs = _chat.configure(no_thinking=args.no_thinking, template_kwargs=args.template_kwarg,
                                   assistant_prefix=args.assistant_prefix)
@@ -92,6 +108,9 @@ def main(argv=None):
     dev = next(model.parameters()).device
     items = [i for i in ors.generate_items(seed=args.seed)
              if i.split == "dev" and i.construction in ors.MAIN_CONSTRUCTIONS]
+    if args.question_template:
+        # one item per event and role: keep the active-voice question slot, then rewrite it
+        items = [i for i in items if i.role_asked == args.question_role and i.question_voice == "active"]
     random.Random(args.seed).shuffle(items)
     cells = defaultdict(list)
     for it in items:
@@ -102,6 +121,13 @@ def main(argv=None):
     t0 = time.time()
     rows = []
     for it in sample:
+        question = it.question
+        if args.question_template:
+            question = args.question_template.format(past=it.verb, lemma=it.lemma)
+            it = dataclasses.replace(it, question=question, question_voice="custom",
+                                     prompt=it.prompt.replace(f"\nQuestion: {it.question}\n",
+                                                              f"\nQuestion: {question}\n"))
+            assert it.prompt.count(question) == 1, it.prompt
         prompt = it.prompt.replace("\nAnswer:", f"\n{args.instruction}\nAnswer:") if args.instruction else it.prompt
         ids = _prompt_ids(tok, prompt, args.chat_template)
         x = torch.tensor([ids], device=dev)
@@ -112,7 +138,8 @@ def main(argv=None):
         said = first_name(text, [it.answer, it.distractor])
         kind, name = extract_answer(text, [it.answer, it.distractor], it.sentence, it.question)
         rows.append({"item_id": it.item_id, "construction": it.construction, "role": it.role_asked,
-                     "voice": it.question_voice, "answer": it.answer, "output": text,
+                     "voice": it.question_voice, "question": it.question, "prompt": prompt,
+                     "answer": it.answer, "output": text,
                      "named": said is not None, "correct_first_name": said == it.answer,
                      "kind": kind, "extracted": name, "correct": name == it.answer})
     n = len(rows)
@@ -121,7 +148,8 @@ def main(argv=None):
         summ[f"{r['construction']}/{r['role']}/{r['voice']}"].append(r["correct"])
     report = {
         "model": args.model, "chat_template": args.chat_template, "chat_template_kwargs": chat_kwargs,
-        "instruction": args.instruction, "max_new_tokens": args.max_new_tokens,
+        "instruction": args.instruction, "question_template": args.question_template or None,
+        "question_role": args.question_role, "max_new_tokens": args.max_new_tokens,
         "n": n, "named_rate": sum(r["named"] for r in rows) / n,
         "kinds": {k: sum(r["kind"] == k for r in rows) / n for k in ("direct", "inferred", "ambiguous", "none")},
         "generation_accuracy": sum(r["correct"] for r in rows) / n,
@@ -132,7 +160,10 @@ def main(argv=None):
         "seconds": round(time.time() - t0, 1), "rows": rows,
     }
     args.out_dir.mkdir(parents=True, exist_ok=True)
-    out = args.out_dir / f"otrgen_{args.model.replace('/', '__')}_dev_{time.strftime('%Y%m%dT%H%M%S')}.json"
+    tag = ""
+    if args.question_template:
+        tag = "_q-" + re.sub(r"[^a-z]+", "-", args.question_template.lower()).strip("-")
+    out = args.out_dir / f"otrgen_{args.model.replace('/', '__')}_dev{tag}_{time.strftime('%Y%m%dT%H%M%S')}.json"
     out.write_text(json.dumps(report, indent=1))
     print(f"Wrote {out}")
     print(f"answer kinds: {report['kinds']}")
