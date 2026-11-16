@@ -10,7 +10,7 @@ Joel's working style: he gives a broad mandate ("get me the paper"). He wants pl
 
 ## 0. Resume here (first actions for a new chat)
 
-1. **Patch 0021 is written, not yet pushed.** It is `order-role-patches/0021-Generation-check-for-chat-models-scripts-otr_generat.patch` on the Mac and adds `scripts/otr_generate_check.py` and `scripts/slurm/otrgen_pelle.sbatch`. Patch 0022 adds this README, and 0023 adds the novelty list and the figures. Apply all three on the Mac (see §7).
+1. **Patch 0021 is written, not yet pushed.** It is `order-role-patches/0021-Generation-check-for-chat-models-scripts-otr_generat.patch` on the Mac and adds `scripts/otr_generate_check.py` and `scripts/slurm/otrgen_pelle.sbatch`. Patch 0022 adds this README, and 0023 adds the novelty list and figures, and 0024 adds the layer investigation and its figures. Apply all four on the Mac (see §7).
 2. **Run the generation check** (commands in §7). Glimmer and Mistral produced a name as their top-1 first token only 48% and 0% of the time. That makes their forced-choice scores unreliable, so analyse `results/otrgen_*.json` before interpreting those two models. Gemma, Qwen3.8 and Qwen2.5-14B are the comparison models: their generated answers should agree with their forced-choice accuracy.
 3. **Do not open any test set yet.** First add a `--test-set` flag to OTR-02/03/04/05 and the generation check (§9).
    - **Only OTR-01 has this flag now.** In the other scripts, `--split test` would load **all four test sets at once**.
@@ -72,7 +72,7 @@ What is not new: question-time retrieval at ":" itself. See the framing constrai
    - **Where the state is.** OTR-04 finds the step at the "?" or at the ":" of "Answer:".
    - **The repair.** Copying it from a *different sentence with disjoint names* (repair_x) fixes 21–50% of natural errors in every Instruct model. The control (period position) fixes only 1–7%.
    - **Selection check.** A half-split check confirms this is not a cherry-picked position or layer.
-3. **The order of processing is the same in every model.** Role information peaks on the name tokens first. Then the question is read. Then the answer forms at the last position. OTR-02 found no answer information at the verb, *was*, *by* or the period in any model.
+3. **The order of processing is the same in every Instruct model.** Role information peaks on the name tokens first, or at the same layer. Then the question state is strongest. Then the answer forms at the last position. Details and the exceptions are in "Layer investigation" below. OTR-02 found no answer information at the verb, *was*, *by* or the period in any model.
 4. **Generation shift (new, 16 Nov).**
    - **Where the question is read.** Qwen2.5 reads it late, at ":" (67–73% depth). Qwen3.8 reads it at "?" (54%), like Gemma (57%). These two are the only models without the object-question error.
    - **Status: hypothesis.** OLMo-13B reads at ":" but early (45%) and is fairly accurate (0.89), so the real variable may be *how early* the question is bound rather than *which token* carries it. More models are needed.
@@ -173,6 +173,41 @@ Notes:
 - **OTR-02 (Qwen 1.5B/7B base, Qwen-14B-I, OLMo-13B/32B-I, Gemma):** no answer information at verb, aux, *by* or period.
 - **Figures:** see §2b.
 
+### 2a. Layer investigation (OTR-02/03/04 by depth; `layer_summary.csv`)
+
+Depth is layer / n_layers. The role peak comes from OTR-03. The question peak is the larger of the OTR-04 flip effects at "?" and at ":".
+
+| Model | Role peak depth (% of identity) | "?" peak (depth) | ":" peak (depth) | Strongest question state |
+|---|---|---|---|---|
+| Qwen2.5-7B base | 75% (0.6%) | 0.13 (54%) | final token, not usable | "?" 54% |
+| Qwen2.5-1.5B-I | 54% (2.2%) | 0.40 (54%) | 0.12 (64%) | "?" 54% |
+| Qwen2.5-7B-I | 54% (4.2%) | 0.23 (54%) | 0.38 (71%) | ":" 71% |
+| Qwen2.5-14B-I | 46% (10.1%) | 0.22 (54%) | 0.37 (67%) | ":" 67% |
+| Qwen2.5-32B-I | 59% (11.3%) | 0.12 (63%) | 0.54 (73%) | ":" 73% |
+| OLMo-2-7B-I | 25% (0.8%) | 0.40 (44%) | 0.24 (59%) | "?" 44% |
+| OLMo-2-13B-I | 33% (2.0%) | 0.25 (38%) | 0.30 (45%) | ":" 45% |
+| OLMo-2-32B-I | 52% (1.6%) | 0.14 (52%) | 0.57 (69%) | ":" 69% |
+| Qwen3.8-27B | 45% (5.1%) | 0.47 (55%) | 0.21 (69%) | "?" 55% |
+| Gemma 4 31B-it | 47% (5.9%) | 0.54 (57%) | 0.14 (65%) | "?" 57% |
+
+What the layer curves show (dev, exploratory):
+- **The sequence.** In all 9 Instruct models, the role code on names peaks at or before the strongest question state.
+  - It ties with the "?" peak in Qwen2.5-1.5B-I and 7B-I, and in OLMo-32B.
+  - It is clearly earlier in the others.
+  - **Exception:** Qwen2.5-7B base. Its role code is tiny (0.6%) and peaks late (75%), after its weak "?" state (54%). Don't claim the sequence for base models.
+- **Two stages in the question.** Where both tokens carry the question, "?" rises first and ":" takes over later: the state moves from the question mark to the answer cue. Models differ in which stage is strongest:
+  - Qwen2.5-7B-I and larger, and OLMo-13B/32B: ":" dominates, late.
+  - Qwen3.8, Gemma, OLMo-7B and Qwen2.5-1.5B-I: "?" dominates.
+- **Control.** The sentence period stays at ≈0 at every layer in every model (max 0.003). The question-side effect is not generic patching.
+- **Gemma and Qwen3.8 look alike.**
+  - Their role code appears at 40–47% depth, about 5–6% of identity.
+  - Their "?" peak is sharp at 55–57%.
+  - Their ":" effect is small.
+  - Qwen2.5 has a larger role code but reads the question late at ":".
+- **Related figures.**
+  - The OTR-02 heat maps (per-run PNGs) back the "no answer information at verb / *was* / *by* / period" claim.
+  - OLMo-32B's reliance on the second name is visible in its OTR-02 map.
+
 ### 2b. Figures
 
 **Cross-model summaries** are in `docs/order_to_role/figures/` and are regenerated by `python make_cross_model_figures.py`. The numbers are hard-coded from the tables above; update them when new models arrive.
@@ -180,6 +215,8 @@ Notes:
 - **`cross_model_otr.png`**
   - Panel A: role code on names vs accuracy. A strong role code doesn't predict success.
   - Panel B: cross-sentence repair vs control, for each model.
+- **`layer_role_code.png`**: OTR-03 role code (% of identity, 95% CI) by relative depth. Three panels: Qwen2.5 sizes, OLMo-2 sizes, and Qwen3.8 + Gemma. Made by `python make_layer_figures.py <results-dir>`, which reads the JSONs directly and also writes `layer_summary.csv`.
+- **`layer_question_side.png`**: OTR-04 flip by relative depth, one panel per model, with "?" (blue), ":" (orange), the period control (gray) and the OTR-03 role peak (dotted). This is the main layer figure.
 - **`question_binding_depth.png`**: the depth where the question-side state is strongest vs accuracy on "Who did someone V?". Filled markers read the question at "?"; hollow markers read it at ":". This is the Qwen2.5→3.8 / Gemma hypothesis figure.
 
 **Per-run figures** are on branch `order-to-role/results-dev`, next to each JSON:
@@ -191,7 +228,6 @@ OTR-01 and OTR-05 have JSON only. The tables in §2 are made from those files.
 
 **Not yet made (paper figures):**
 - OTR-05 bar chart: original wording vs cloze, per model.
-- Pooled OTR-04 layer curves on a relative-depth axis.
 - An example-sentence schematic of the design.
 
 ### Confounds already caught (do not reintroduce)
@@ -252,6 +288,7 @@ OTR-01 and OTR-05 have JSON only. The tables in §2 are made from those files.
 - 0021: generation check, written to the Mac, not applied.
 - 0022: this README.
 - 0023: novelty list, figures section and `docs/order_to_role/figures/`.
+- 0024: layer investigation section, layer figures and `make_layer_figures.py`.
 - A new chat whose sessions *can* push (check whether the Claude GitHub App is linked now) can push directly instead.
 
 **Results:** branch `order-to-role/results-dev`. Files are added with `git add -f`, because `results/` is gitignored. Existing OTR results:
@@ -317,6 +354,7 @@ cd ~/Research/llm-relational-mechanisms
 git am order-role-patches/0021-Generation-check-for-chat-models-scripts-otr_generat.patch
 git am order-role-patches/0022-Add-order-to-role-handoff-README.patch
 git am order-role-patches/0023-Handoff-novelty-list-and-cross-model-figures.patch
+git am order-role-patches/0024-Handoff-layer-investigation-section-and-layer-figure.patch
 git push origin order-to-role/stimuli
 ```
 
