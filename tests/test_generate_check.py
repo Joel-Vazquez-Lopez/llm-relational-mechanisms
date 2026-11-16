@@ -46,3 +46,17 @@ def test_active_and_cleft_statements():
 def test_embedded_quote_not_a_statement():
     out = 'In the sentence "Lisa chased Julia," someone chased Julia.'
     assert gc.extract_answer(out, N, "Lisa chased Julia.", "Who did someone chase?", role="patient", **R) == ("inferred", "Julia")
+
+
+D = dict(agent="Leon", patient="Mira")
+NM = ["Leon", "Mira"]
+
+
+def test_three_place_statements():
+    for out in ("Leon gave the book to Mira.", "Leon gave Mira the book.", "Mira was given the book by Leon.",
+                "The book was given to Mira by Leon.", "It was Mira that Leon gave the book to.",
+                "It was to Mira that Leon gave the book.", "Leon baked dinner for Mira.",
+                "Leon borrowed the bike from Mira."):
+        assert gc.extract_answer(out, NM, role="oblique", **D) == ("statement", "Mira"), out
+        assert gc.extract_answer(out, NM, role="agent", **D) == ("statement", "Leon"), out
+    assert gc.extract_answer("Mira gave Leon the book.", NM, role="oblique", **D) == ("statement", "Leon")

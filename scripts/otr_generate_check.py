@@ -22,6 +22,10 @@ question and its patient permutation (same five words):
         --question-template "Who was someone {past} by?" --question-role agent
 
     python scripts/otr_generate_check.py --model unsloth/Mistral-Small-3.2-24B-Instruct-2506 --chat-template
+
+``--stimuli sp`` uses the stranded-preposition frames instead (to/for/from; see
+``relational_lab.experiments.stranded_p_stimuli``); cells are then
+<frame>_<form>/<role>/<question form>. ``--n 5412`` covers every dev item.
 """
 
 from __future__ import annotations
@@ -68,8 +72,16 @@ def event_statement(text: str, agent: str, patient: str):
     s = re.split(r"(?<=[.!?])\s", s)[0].strip().rstrip(".!").strip().strip("*").strip()
     for x, y in ((agent, patient), (patient, agent)):  # x = doer, y = undergoer as asserted
         X, Y = re.escape(x), re.escape(y)
+        D = r"(?:the |a |an )?\w+"  # a direct object such as "the book" or "dinner"
         pats = (
             rf"{Y} (?:was|were|got) (?:\w+ )?\w+ by {X}",
+            # three-place frames (stranded-preposition stimuli): X = doer, Y = to/for/from object
+            rf"{X} \w+ {D} (?:to|for|from) {Y}",
+            rf"{X} \w+ {Y} {D}",
+            rf"{Y} was \w+ {D} by {X}",
+            rf"(?:The|A|An) \w+ was \w+ (?:to|for|from) {Y} by {X}",
+            rf"It was {Y} (?:that|whom|who) {X} \w+ {D} (?:to|for|from)",
+            rf"It was (?:to|for|from) {Y} that {X} \w+ {D}",
             rf"{X} \w+ {Y}",
             rf"It was {X} (?:who|that) \w+ {Y}",
             rf"It was {Y} (?:that|whom|who) {X} \w+",
@@ -120,6 +132,8 @@ def main(argv=None):
     p.add_argument("--max-new-tokens", type=int, default=40)
     p.add_argument("--instruction", default="",
                    help='text inserted on its own line before "Answer:", e.g. "Reply with one name only."')
+    p.add_argument("--stimuli", choices=("otr", "sp"), default="otr",
+                   help="otr = order-to-role constructions; sp = stranded-preposition frames (to/for/from)")
     p.add_argument("--question-template", default="",
                    help='custom question, e.g. "Who was someone {past} by?" ({past}, {lemma} filled per item)')
     p.add_argument("--question-role", choices=("agent", "patient"), default=None,
@@ -144,8 +158,14 @@ def main(argv=None):
     tok = load_tokenizer(args.model)
     model = load_lm(args.model, dtype=getattr(torch, args.dtype)).to("cuda" if torch.cuda.is_available() else "cpu").eval()
     dev = next(model.parameters()).device
-    items = [i for i in ors.generate_items(seed=args.seed)
-             if i.split == "dev" and i.construction in ors.MAIN_CONSTRUCTIONS]
+    if args.stimuli == "sp":
+        if args.question_template:
+            p.error("--question-template applies to the OTR stimuli only")
+        from relational_lab.experiments import stranded_p_stimuli as sp
+        items = [i for i in sp.generate_items(seed=args.seed) if i.split == "dev"]
+    else:
+        items = [i for i in ors.generate_items(seed=args.seed)
+                 if i.split == "dev" and i.construction in ors.MAIN_CONSTRUCTIONS]
     if args.question_template:
         # one item per event and role: keep the active-voice question slot, then rewrite it
         items = [i for i in items if i.role_asked == args.question_role and i.question_voice == "active"]
@@ -188,7 +208,7 @@ def main(argv=None):
         summ[f"{r['construction']}/{r['role']}/{r['voice']}"].append(r["correct"])
     report = {
         "model": args.model, "chat_template": args.chat_template, "chat_template_kwargs": chat_kwargs,
-        "instruction": args.instruction, "question_template": args.question_template or None,
+        "stimuli": args.stimuli, "instruction": args.instruction, "question_template": args.question_template or None,
         "question_role": args.question_role, "max_new_tokens": args.max_new_tokens,
         "n": n, "named_rate": sum(r["named"] for r in rows) / n,
         "kinds": {k: sum(r["kind"] == k for r in rows) / n for k in ("direct", "statement", "inferred", "ambiguous", "none")},
@@ -200,7 +220,7 @@ def main(argv=None):
         "seconds": round(time.time() - t0, 1), "rows": rows,
     }
     args.out_dir.mkdir(parents=True, exist_ok=True)
-    tag = ""
+    tag = "_sp" if args.stimuli == "sp" else ""
     if args.question_template:
         tag = "_q-" + re.sub(r"[^a-z]+", "-", args.question_template.lower()).strip("-")
     out = args.out_dir / f"otrgen_{args.model.replace('/', '__')}_dev{tag}_{time.strftime('%Y%m%dT%H%M%S')}.json"

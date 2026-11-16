@@ -75,7 +75,9 @@ def main(argv=None):
     p.add_argument("--out", type=Path, default=None)
     p.add_argument("--seed", type=int, default=2026)
     args = p.parse_args(argv)
+    from relational_lab.experiments import stranded_p_stimuli as sp
     items = {i.item_id: i for i in ors.generate_items(seed=args.seed)}
+    items.update({i.item_id: i for i in sp.generate_items(seed=args.seed)})
     report = {}
     for f in sorted(args.runs):
         res = rescore(json.loads(f.read_text()), items)

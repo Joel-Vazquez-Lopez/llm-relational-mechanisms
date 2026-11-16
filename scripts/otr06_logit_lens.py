@@ -65,8 +65,26 @@ def softcap(model) -> float | None:
     return None
 
 
-def build_prompts(seed: int, conditions, instruction: str, n_per: int | None):
-    """One prompt per (dev event in the four main constructions, condition)."""
+def build_prompts(seed: int, conditions, instruction: str, n_per: int | None, stimuli: str = "otr"):
+    """One prompt per (dev event in the four main constructions, condition).
+
+    With ``stimuli="sp"`` each condition is (role, question form) on the stranded-preposition
+    frames, e.g. ("oblique", "stranded"); every SP construction is included."""
+    if stimuli == "sp":
+        from relational_lab.experiments import stranded_p_stimuli as sp
+        dev = [i for i in sp.generate_items(seed=seed) if i.split == "dev"]
+        out = []
+        for ci, (role, qform) in enumerate(conditions):
+            if qform not in sp.QUESTION_FORMS or sp.QUESTION_FORMS[qform] != role:
+                raise ValueError(f"SP condition must be one of {sp.QUESTION_FORMS} as ROLE FORM, got {role} {qform}")
+            per = defaultdict(int)
+            for it in dev:
+                if it.question_voice != qform or (n_per and per[it.construction] >= n_per):
+                    continue
+                per[it.construction] += 1
+                prompt = it.prompt.replace("\nAnswer:", f"\n{instruction}\nAnswer:") if instruction else it.prompt
+                out.append((ci, dataclasses.replace(it, prompt=prompt)))
+        return out
     items = [i for i in ors.generate_items(seed=seed)
              if i.split == "dev" and i.construction in ors.MAIN_CONSTRUCTIONS
              and i.question_voice == "active"]
@@ -94,6 +112,8 @@ def main(argv=None):
     p.add_argument("--condition", nargs=2, action="append", metavar=("ROLE", "TEMPLATE"), required=True,
                    help='role asked (agent|patient) and question template with {past}/{lemma}')
     p.add_argument("--instruction", default="", help='line before "Answer:", e.g. "Reply with one name only."')
+    p.add_argument("--stimuli", choices=("otr", "sp"), default="otr",
+                   help='sp: stranded-preposition frames; conditions are ROLE FORM, e.g. --condition oblique stranded')
     p.add_argument("--n-per-construction", type=int, default=None, help="default: all dev events")
     p.add_argument("--chat-template", action="store_true")
     p.add_argument("--no-thinking", action="store_true")
@@ -104,7 +124,7 @@ def main(argv=None):
     p.add_argument("--out-dir", type=Path, default=ROOT / "results")
     args = p.parse_args(argv)
     for role, _ in args.condition:
-        if role not in ("agent", "patient"):
+        if role not in (("agent", "oblique") if args.stimuli == "sp" else ("agent", "patient")):
             p.error(f"role must be agent or patient, got {role!r}")
 
     from relational_lab.instrumentation import chat as _chat
@@ -122,7 +142,7 @@ def main(argv=None):
     norm, head, cap = final_norm(model), model.get_output_embeddings(), softcap(model)
     lead = not args.chat_template
 
-    prompts = build_prompts(args.seed, args.condition, args.instruction, args.n_per_construction)
+    prompts = build_prompts(args.seed, args.condition, args.instruction, args.n_per_construction, args.stimuli)
     t0 = time.time()
     records, worst_check = [], 0.0
     for ci, it in prompts:
@@ -143,9 +163,10 @@ def main(argv=None):
                         "ld": [round(x, 3) for x in ld], "ld_model": round(true_ld, 3)})
 
     n_layers = patcher.n_layers
+    constructions = sorted({r["construction"] for r in records}, key=lambda c: (c.split("_")[0], c))
     agg = {}
     for ci, (role, template) in enumerate(args.condition):
-        for cons in ors.MAIN_CONSTRUCTIONS:
+        for cons in constructions:
             rs = [r for r in records if r["condition"] == ci and r["construction"] == cons]
             if not rs:
                 continue
@@ -159,14 +180,14 @@ def main(argv=None):
             }
     report = {
         "experiment": "OTR-06", "status": "EXPLORATORY", "lens_version": LENS_VERSION,
-        "generator_version": ors.GENERATOR_VERSION, "model": args.model, "chat_template": args.chat_template,
+        "generator_version": ors.GENERATOR_VERSION, "stimuli": args.stimuli, "model": args.model, "chat_template": args.chat_template,
         "chat_template_kwargs": chat_kwargs, "instruction": args.instruction,
         "conditions": [{"role": r, "template": t} for r, t in args.condition], "n_layers": n_layers,
         "softcap": cap, "final_layer_check_max_abs": round(worst_check, 4),
         "seconds": round(time.time() - t0, 1), "aggregate": agg, "records": records,
     }
     args.out_dir.mkdir(parents=True, exist_ok=True)
-    tag = "_instr" if args.instruction else ""
+    tag = ("_sp" if args.stimuli == "sp" else "") + ("_instr" if args.instruction else "")
     stamp = time.strftime("%Y%m%dT%H%M%S")
     out = args.out_dir / f"otr06_{args.model.replace('/', '__')}_dev{tag}_{stamp}.json"
     out.write_text(json.dumps(report))
@@ -182,10 +203,12 @@ def main(argv=None):
         import matplotlib.pyplot as plt
 
         conds = list(enumerate(args.condition))
-        fig, axes = plt.subplots(1, len(ors.MAIN_CONSTRUCTIONS), figsize=(4.2 * len(ors.MAIN_CONSTRUCTIONS), 3.4),
-                                 sharey=True)
+        ncol = min(4, len(constructions))
+        nrow = -(-len(constructions) // ncol)
+        fig, axes = plt.subplots(nrow, ncol, figsize=(4.2 * ncol, 3.2 * nrow), sharey=True, squeeze=False)
+        axes = axes.ravel()
         depth = [l / max(1, n_layers - 1) for l in range(n_layers)]
-        for ax, cons in zip(axes, ors.MAIN_CONSTRUCTIONS):
+        for ax, cons in zip(axes, constructions):
             for ci, (role, template) in conds:
                 key = f"{ci}|{role}|{template}|{cons}"
                 if key in agg:
@@ -194,7 +217,9 @@ def main(argv=None):
             ax.set_title(cons)
             ax.set_xlabel("relative depth")
         axes[0].set_ylabel("logit diff (correct - other)")
-        axes[-1].legend(fontsize=7)
+        axes[len(constructions) - 1].legend(fontsize=7)
+        for ax in axes[len(constructions):]:
+            ax.axis("off")
         fig.suptitle(f"OTR-06 logit lens: {args.model}{' + instruction' if args.instruction else ''}", fontsize=9)
         fig.tight_layout()
         fig.savefig(out.with_suffix(".png"), dpi=130)
