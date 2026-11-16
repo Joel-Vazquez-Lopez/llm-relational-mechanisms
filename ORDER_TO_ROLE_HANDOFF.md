@@ -10,9 +10,14 @@ Joel's working style: he gives a broad mandate ("get me the paper"). He wants pl
 
 ## 0. Resume here (first actions for a new chat)
 
-1. **Patch 0021 is written, not yet pushed.** It is `order-role-patches/0021-Generation-check-for-chat-models-scripts-otr_generat.patch` on the Mac and adds `scripts/otr_generate_check.py` and `scripts/slurm/otrgen_pelle.sbatch`. Patch 0022 adds this README, and 0023 adds the novelty list and figures, and 0024 adds the layer investigation and its figures. Apply all four on the Mac (see §7).
-2. **Run the generation check** (commands in §7). Glimmer and Mistral produced a name as their top-1 first token only 48% and 0% of the time. That makes their forced-choice scores unreliable, so analyse `results/otrgen_*.json` before interpreting those two models. Gemma, Qwen3.8 and Qwen2.5-14B are the comparison models: their generated answers should agree with their forced-choice accuracy.
-3. **Do not open any test set yet.** First add a `--test-set` flag to OTR-02/03/04/05 and the generation check (§9).
+1. **Patches 0021–0025** (generation check, this README, figures, layer section, better answer extraction) are in `order-role-patches/` on the Mac. Apply and push them in order (§7). Check `git log --oneline -6` first: some may already be applied.
+2. **Generation check, round 1 (16 Nov; 12 tokens; `results/otrgen_*_20261116T09*.json`).** It validated forced choice for two models and raised a **validity question** for the others (§2c):
+   - **Gemma and Qwen3.8 answer with a bare name every time.** Generation accuracy (1.00 and 0.87) matches forced choice, so their scores are valid.
+   - **Qwen2.5-14B-Instruct never answers with a bare name.** It writes "In the sentence "…," the person who was…", so 12 tokens was too short to judge. The main storyline rests on Qwen2.5-Instruct's forced-choice failure, so **round 2 must check that the failure also shows up in what the model generates**.
+   - **Glimmer** is verbose. Where an answer could be extracted, it got "Who did someone V?" right (51/51), unlike its forced-choice 0.18. Its forced-choice failure is probably a scoring artefact.
+   - **Mistral** mostly restates the question. Undecided.
+3. **Run round 2** (commands in §7): 40 tokens, both with and without the instruction "Reply with one name only.", on Qwen2.5-14B-I, Qwen2.5-7B-I, OLMo-13B-I, OLMo-32B-I, Glimmer and Mistral.
+4. **Do not open any test set yet.** First add a `--test-set` flag to OTR-02/03/04/05 and the generation check (§9).
    - **Only OTR-01 has this flag now.** In the other scripts, `--split test` would load **all four test sets at once**.
    - Then write the freeze document (§9).
 
@@ -173,6 +178,31 @@ Notes:
 - **OTR-02 (Qwen 1.5B/7B base, Qwen-14B-I, OLMo-13B/32B-I, Gemma):** no answer information at verb, aux, *by* or period.
 - **Figures:** see §2b.
 
+### 2c. Generation check: does forced choice fit each model? (round 1, 16 Nov)
+
+Each model greedy-generated 12 tokens for 256 balanced dev prompts (16 per construction × role × question-voice cell). Answers are classified by `extract_answer`, which ignores quoted text and copies of the sentence or question:
+- **direct**: a bare name;
+- **inferred**: exactly one name left;
+- **ambiguous**: both names left;
+- **none**: no name.
+
+| Model | Direct | Inferred | Ambiguous / none | Generation accuracy | Forced choice (OTR-01) | "Who did someone V?" among decided answers |
+|---|---|---|---|---|---|---|
+| Gemma 4 31B-it | 100% | – | – | 1.00 | 0.98 | 64/64 |
+| Qwen3.8-27B (no thinking) | 100% | – | – | 0.87 | 0.90 | active 16/16, passive 15/16, obj-cleft 16/16, by-cleft 13/16 |
+| Qwen2.5-14B-Instruct | 0% | 35% | 39% / 27% | 0.27 (truncated) | 0.76 | too few decided (16) |
+| Muse Glimmer 30B | 3% | 69% | 14% / 14% | 0.70 (truncated) | 0.76 | 51/51 correct |
+| Mistral Small 3.2 24B | 0% | 39% | 14% / 47% | 0.38 (truncated) | 0.88 | 12 decided |
+
+What this means:
+- Forced choice is **validated for Gemma and Qwen3.8**.
+- For **Qwen2.5-Instruct** (and probably OLMo-Instruct, not yet checked), forced choice scores a continuation the model would not produce on its own. Two things support the failure being real:
+  - the base model Qwen2.5-7B also fails ("Who did someone V?" on actives 0.33), and for a base model a name after "Answer:" is the natural continuation;
+  - the cloze version is near-perfect under the same scoring.
+
+  But **reviewers will ask**, so round 2 must show the failure in generated answers. If it does not, the paper's behavioural claim moves to base models plus instructed generation.
+- **Glimmer:** its forced-choice failure on object questions looks like a scoring artefact. Its generated answers are right.
+
 ### 2a. Layer investigation (OTR-02/03/04 by depth; `layer_summary.csv`)
 
 Depth is layer / n_layers. The role peak comes from OTR-03. The question peak is the larger of the OTR-04 flip effects at "?" and at ":".
@@ -268,7 +298,7 @@ OTR-01 and OTR-05 have JSON only. The tables in §2 are made from those files.
 | `src/relational_lab/instrumentation/patching.py` | Hooks; `chat_text` (template plus assistant prefix, with offset), `encode_batch(..., chat_template)`, `answer_token(..., leading_space)`. |
 | `src/relational_lab/instrumentation/chat.py` | `configure(no_thinking, template_kwargs, assistant_prefix)`; global template kwargs and assistant prefix, recorded in result JSON. |
 | `scripts/otr01_behavior_gate.py` … `otr05_robustness.py` | Runners. Shared flags: `--chat-template --no-thinking --template-kwarg K=V --assistant-prefix S`. Each writes `results/otr0X_<org>__<model>_<split>_<stamp>.json` with hashes and versions. Only OTR-01 has `--test-set`. |
-| `scripts/otr_generate_check.py` (patch 0021) | Greedy 12-token generation on a balanced dev sample (`--n 256`). Reports `named_rate`, `generation_accuracy`, per-cell accuracy and examples. Writes `results/otrgen_<model>_dev_<stamp>.json`. |
+| `scripts/otr_generate_check.py` (patches 0021, 0025) | Greedy generation (default 40 tokens) on a balanced dev sample (`--n 256`). `extract_answer` classifies each answer as direct / inferred / ambiguous / none; `--instruction` adds a line before "Answer:". Reports answer kinds, generation accuracy, direct-only accuracy, per-cell accuracy and examples. Writes `results/otrgen_<model>_dev_<stamp>.json`. |
 | `scripts/show_chat_prompt.py` | Prints the exact templated prompt for a model, to verify chat settings. |
 | `scripts/slurm/` | `setup_pelle.sh`, `otr01–05_pelle.sbatch`, `otrgen_pelle.sbatch`, `otr_download.sbatch`. GPU jobs set `HF_HUB_OFFLINE=1`, so download first. |
 | `tests/` | 96 tests pass: exact patching identities, planted-code recovery, decorrelation, counterbalancing, cross modes, robustness variants. |
@@ -289,6 +319,7 @@ OTR-01 and OTR-05 have JSON only. The tables in §2 are made from those files.
 - 0022: this README.
 - 0023: novelty list, figures section and `docs/order_to_role/figures/`.
 - 0024: layer investigation section, layer figures and `make_layer_figures.py`.
+- 0025: `extract_answer` (direct / inferred / ambiguous / none), `--instruction`, default 40 tokens, tests, round-1 findings.
 - A new chat whose sessions *can* push (check whether the Claude GitHub App is linked now) can push directly instead.
 
 **Results:** branch `order-to-role/results-dev`. Files are added with `git add -f`, because `results/` is gitignored. Existing OTR results:
@@ -355,6 +386,7 @@ git am order-role-patches/0021-Generation-check-for-chat-models-scripts-otr_gene
 git am order-role-patches/0022-Add-order-to-role-handoff-README.patch
 git am order-role-patches/0023-Handoff-novelty-list-and-cross-model-figures.patch
 git am order-role-patches/0024-Handoff-layer-investigation-section-and-layer-figure.patch
+git am order-role-patches/0025-Generation-check-answer-extraction-instruction-flag.patch
 git push origin order-to-role/stimuli
 ```
 
@@ -371,12 +403,19 @@ sbatch -A uppmax2026-1-225 --gpus=h100:1 scripts/slurm/otrgen_pelle.sbatch googl
 sbatch -A uppmax2026-1-225 --gpus=h100:1 scripts/slurm/otrgen_pelle.sbatch Qwen/Qwen2.5-14B-Instruct --chat-template
 ```
 
+**Pelle: generation check, round 2** (after `git pull`; Glimmer's flags are as in the chat-settings table):
+```
+for M in Qwen/Qwen2.5-14B-Instruct Qwen/Qwen2.5-7B-Instruct allenai/OLMo-2-1124-13B-Instruct allenai/OLMo-2-0325-32B-Instruct unsloth/Mistral-Small-3.2-24B-Instruct-2506; do sbatch -A uppmax2026-1-225 --gpus=h100:1 scripts/slurm/otrgen_pelle.sbatch $M --chat-template; sbatch -A uppmax2026-1-225 --gpus=h100:1 scripts/slurm/otrgen_pelle.sbatch $M --chat-template --instruction "Reply with one name only."; done
+sbatch -A uppmax2026-1-225 --gpus=h100:1 scripts/slurm/otrgen_pelle.sbatch meta-models/Muse-Glimmer-30B --chat-template --template-kwarg reasoning_strength=low --assistant-prefix ' to=user<|message|>'
+sbatch -A uppmax2026-1-225 --gpus=h100:1 scripts/slurm/otrgen_pelle.sbatch meta-models/Muse-Glimmer-30B --chat-template --template-kwarg reasoning_strength=low --assistant-prefix ' to=user<|message|>' --instruction "Reply with one name only."
+```
+
 **Pelle: send results up** (the worktree avoids checkouts in the main clone):
 ```
 cp ~/private/llm_relation/results/otrgen_*.json ~/private/results-wt/results/
 cd ~/private/results-wt
 git add -f results/otrgen_*.json
-git commit -m "Generation check: Mistral, Glimmer, Qwen3.8, Gemma, Qwen2.5-14B"
+git commit -m "Generation check round 2"
 git push origin order-to-role/results-dev
 ```
 
@@ -395,7 +434,7 @@ git push origin order-to-role/results-dev
 
 ## 9. Next steps (in order)
 
-1. **Generation check** (above). Then decide whether Glimmer and Mistral stay in the paper.
+1. **Generation check, round 2** (§0, §2c). This decides whether the Qwen2.5/OLMo behavioural failure holds in generated answers, and whether Glimmer and Mistral stay in the paper. If the instruction gives bare names, consider adding it as an OTR-05 forced-choice variant as well.
 2. **Add in-situ and yes/no variants to OTR-05** (English movement test). Run them on the cached models.
 3. **Add `--test-set N` to OTR-02/03/04/05 and the generation check**, mirroring `select_items` in `otr01_behavior_gate.py`. Add tests that fail if more than one test set is selected.
 4. **Freeze document** (`docs/order_to_role/FREEZE.md`):

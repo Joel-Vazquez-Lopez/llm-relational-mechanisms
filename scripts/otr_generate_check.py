@@ -6,6 +6,12 @@ that start with one of the two candidate names, (b) generation-based accuracy,
 (c) per construction x role accuracy, and (d) example outputs. Use it to check
 that forced-choice scoring fits a model (top-1 token often not a name).
 
+Answers are classified by ``extract_answer`` (direct / inferred / ambiguous / none);
+quoted text and copies of the sentence or question are ignored, so "In the sentence
+"Lisa chased Julia," someone chased Julia." counts as Julia. ``--instruction "Reply with
+one name only."`` adds a line before "Answer:" to ask for a bare name (a prompt change:
+report it as a separate condition).
+
     python scripts/otr_generate_check.py --model unsloth/Mistral-Small-3.2-24B-Instruct-2506 --chat-template
 """
 
@@ -32,11 +38,40 @@ def first_name(text: str, names) -> str | None:
     return min(hits)[1] if hits else None
 
 
+_QUOTED = re.compile(r'"[^"]*"|\u201c[^\u201d]*\u201d|\'[^\']{8,}\'')
+
+
+def extract_answer(text: str, names, sentence: str = "", question: str = ""):
+    """Classify a generated answer. Returns (kind, name).
+
+    kind = "direct"    the first line is just one candidate name (punctuation allowed);
+           "inferred"  after removing quoted spans and copies of the sentence and question,
+                       exactly one candidate name is left;
+           "ambiguous" both names are left (e.g. "Daniel was warned by Kate.");
+           "none"      no candidate name.
+    """
+    first = text.strip().split("\n")[0].strip()
+    bare = re.sub(r"[^A-Za-z]", "", first)
+    if bare in names:
+        return "direct", bare
+    rest = text
+    for chunk in (sentence, sentence.rstrip("."), question):
+        if chunk:
+            rest = rest.replace(chunk, " ")
+    rest = _QUOTED.sub(" ", rest)
+    left = [n for n in names if re.search(rf"\b{re.escape(n)}\b", rest)]
+    if len(left) == 1:
+        return "inferred", left[0]
+    return ("ambiguous" if left else "none"), None
+
+
 def main(argv=None):
     p = argparse.ArgumentParser()
     p.add_argument("--model", required=True)
     p.add_argument("--n", type=int, default=256, help="number of prompts (balanced sample)")
-    p.add_argument("--max-new-tokens", type=int, default=12)
+    p.add_argument("--max-new-tokens", type=int, default=40)
+    p.add_argument("--instruction", default="",
+                   help='text inserted on its own line before "Answer:", e.g. "Reply with one name only."')
     p.add_argument("--chat-template", action="store_true")
     p.add_argument("--no-thinking", action="store_true")
     p.add_argument("--template-kwarg", action="append", default=[], metavar="KEY=VALUE")
@@ -67,24 +102,32 @@ def main(argv=None):
     t0 = time.time()
     rows = []
     for it in sample:
-        ids = _prompt_ids(tok, it.prompt, args.chat_template)
+        prompt = it.prompt.replace("\nAnswer:", f"\n{args.instruction}\nAnswer:") if args.instruction else it.prompt
+        ids = _prompt_ids(tok, prompt, args.chat_template)
         x = torch.tensor([ids], device=dev)
         with torch.no_grad():
             out = model.generate(x, attention_mask=torch.ones_like(x), max_new_tokens=args.max_new_tokens,
                                  do_sample=False, pad_token_id=tok.pad_token_id or tok.eos_token_id)
         text = tok.decode(out[0, len(ids):], skip_special_tokens=True)
         said = first_name(text, [it.answer, it.distractor])
+        kind, name = extract_answer(text, [it.answer, it.distractor], it.sentence, it.question)
         rows.append({"item_id": it.item_id, "construction": it.construction, "role": it.role_asked,
                      "voice": it.question_voice, "answer": it.answer, "output": text,
-                     "named": said is not None, "correct": said == it.answer})
+                     "named": said is not None, "correct_first_name": said == it.answer,
+                     "kind": kind, "extracted": name, "correct": name == it.answer})
     n = len(rows)
     summ = defaultdict(list)
     for r in rows:
         summ[f"{r['construction']}/{r['role']}/{r['voice']}"].append(r["correct"])
     report = {
         "model": args.model, "chat_template": args.chat_template, "chat_template_kwargs": chat_kwargs,
+        "instruction": args.instruction, "max_new_tokens": args.max_new_tokens,
         "n": n, "named_rate": sum(r["named"] for r in rows) / n,
+        "kinds": {k: sum(r["kind"] == k for r in rows) / n for k in ("direct", "inferred", "ambiguous", "none")},
         "generation_accuracy": sum(r["correct"] for r in rows) / n,
+        "accuracy_direct_only": (sum(r["correct"] for r in rows if r["kind"] == "direct")
+                                 / max(1, sum(r["kind"] == "direct" for r in rows))),
+        "accuracy_first_name_rule": sum(r["correct_first_name"] for r in rows) / n,
         "cells": {k: sum(v) / len(v) for k, v in sorted(summ.items())},
         "seconds": round(time.time() - t0, 1), "rows": rows,
     }
@@ -92,7 +135,9 @@ def main(argv=None):
     out = args.out_dir / f"otrgen_{args.model.replace('/', '__')}_dev_{time.strftime('%Y%m%dT%H%M%S')}.json"
     out.write_text(json.dumps(report, indent=1))
     print(f"Wrote {out}")
-    print(f"named a candidate: {report['named_rate']:.2f}   generation accuracy: {report['generation_accuracy']:.2f}")
+    print(f"answer kinds: {report['kinds']}")
+    print(f"generation accuracy (ambiguous/none = wrong): {report['generation_accuracy']:.2f}   "
+          f"direct answers only: {report['accuracy_direct_only']:.2f}")
     for k, v in report["cells"].items():
         print(f"  {k:32s} {v:.2f}")
     print("examples:")
