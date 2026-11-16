@@ -63,6 +63,12 @@ otherwise Findings / BlackboxNLP / CoNLL). Everything so far is dev split; no te
     tests per model are the minimum for a credible claim?
 13. Is the plan in README §4 the right priority order? What would you cut, and what is missing?
 
+## How to answer
+
+Answer section by section (A1–A5, B6–B10, C11–C13). Start with A1–A2: check `extract_answer`
+and `make_review_figures.py` against stored outputs in the result JSONs, with concrete item
+ids. General research advice is welcome only after the specific questions are answered.
+
 ## Deliverable
 
 A short report with: (1) bugs or mis-scorings found, with file/line and a concrete example;

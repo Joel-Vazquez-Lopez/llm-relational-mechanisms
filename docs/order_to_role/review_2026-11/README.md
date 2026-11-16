@@ -194,14 +194,44 @@ Qwen3.8 0.44 / 0.05. "Who was it that someone was V-ed by?": Gemma 0.20 / 0.69, 
    gpt-oss-20b (reasoning on/off), Granite, Phi, Nemotron, Llama 3.x 8B; via API (no disk):
    GLM, DeepSeek or Kimi. Battery: stranded "by" + patient permutation (name only, full
    sentence), SP 1.1.0 passive agent questions, OTR-06 lens, inclusion check.
-3. **Causal mechanism:** question-state curves across question tokens; probe the asked role at
-   "?"; patch the "?" state from the matched question into the failing one, layer by layer,
-   and test whether the bare answer is repaired.
+3. **Causal mechanism (standards adopted 16 Nov from external feedback):**
+   - **Keep decodability and causal use separate.** Report held-out decoding (role, position,
+     answer identity) and counterfactual patching side by side across depth, with uncertainty;
+     a failed probe is not evidence of absence.
+   - **Cross-construction probes:** train on actives, test on passives (and reverse), with
+     held-out names and verbs.
+   - **Donor controls** that separate answer identity from relation: same answer / different
+     relation, different answer / same role; self-patches; both interchange directions;
+     perturbation-magnitude checks; justify metric choices.
+   - **Component split:** attention-output vs MLP-output interventions; exact head
+     interventions; path patching between candidate sender and receiver sites (query / key /
+     value where justified).
+   - **Mechanism tests:** disruption, restoration, specificity (no general damage), and
+     prediction of intervention outcomes on new names, verbs, paraphrases and constructions,
+     with the account frozen before confirmation.
+   - **Target:** the natural error (C2/C7) gives a built-in repair target: does restoring the
+     identified pathway turn the bare-name error into the correct answer?
+   - **Cross-model:** align models by tested function, not layer number.
+   - **Order:** only after step 1 has pinned down the behavioural account.
 4. **Cross-linguistic predictions** (second paper unless cheap), re-derived under whichever
    account survives step 1.
 5. **Human study at the end** on frozen stimuli.
 6. **Freeze and confirm:** `--test-set N` everywhere, FREEZE.md with claims, metrics and
-   hashes; open test set 0 once.
+   hashes; open test set 0 once. Report uncertainty over independent name-pair families
+   (family-clustered bootstrap), not over correlated prompt variants.
+
+### Related work to engage (added 16 Nov)
+- Aljaafari, Carvalho & Freitas, *Emergence and Localisation of Semantic Role Circuits in LLMs*,
+  Findings of ACL 2026 (arXiv 2511.20910): role-cross minimal pairs, edge-attribution circuit
+  discovery and training-time tracking in Pythia (14M–1B) and LLaMA-1B; reports compact role
+  circuits. Closest mechanistic work. Our proposed distinction (to verify by reading in full):
+  ~30B instruction-tuned models, question-conditioned answering rather than role binding, and a
+  natural error with a within-item understanding/answering dissociation.
+- QA-SRL probing of semantic-role emergence in decoder-only models (2026; emergentmind 2605.09187).
+- Activation-patching methodology: Heimersheim & Nanda (arXiv 2404.15255); Zhang & Nanda,
+  ICLR 2024 (metrics and methods).
+- Earlier list: Denning et al. 2025; Boguraev et al. EMNLP 2025; Prakash et al. ICLR 2026
+  (lookback); Wilcox et al. (filler-gap); Emura & Sugawara ACL 2026; Wang et al. Findings 2024.
 
 ## 5. Files
 
