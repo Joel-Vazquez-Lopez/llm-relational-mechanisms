@@ -73,13 +73,16 @@ def event_statement(text: str, agent: str, patient: str):
     for x, y in ((agent, patient), (patient, agent)):  # x = doer, y = undergoer as asserted
         X, Y = re.escape(x), re.escape(y)
         D = r"(?:the |a |an )?\w+"  # a direct object such as "the book" or "dinner"
+        AUX = r"(?:was|were|got|is|has been|had been|have been|was being|got)"
+        IND = r"(?:(?:a person|somebody|someone|the person|the (?:person|one) who (?:was|got)) )?"  # echoes / relatives
         pats = (
-            rf"{Y} (?:was|were|got) (?:\w+ )?\w+ by {X}",
+            rf"{Y} {AUX} {IND}(?:\w+ )?\w+ by {X}",
             # three-place frames (stranded-preposition stimuli): X = doer, Y = to/for/from object
             rf"{X} \w+ {D} (?:to|for|from) {Y}",
             rf"{X} \w+ {Y} {D}",
             rf"{Y} was \w+ {D} by {X}",
-            rf"(?:The|A|An) \w+ was \w+ (?:to|for|from) {Y} by {X}",
+            rf"(?:(?:The|A|An) )?\w+ (?:was|were) \w+ (?:to|for|from) {Y} by {X}",
+            rf"(?:(?:The|A|An) )?\w+ (?:was|were) \w+ by {X} (?:to|for|from) {Y}",
             rf"It was {Y} (?:that|whom|who) {X} \w+ {D} (?:to|for|from)",
             rf"It was (?:to|for|from) {Y} that {X} \w+ {D}",
             rf"{X} \w+ {Y}",
@@ -97,6 +100,8 @@ def extract_answer(text: str, names, sentence: str = "", question: str = "",
     """Classify a generated answer. Returns (kind, name).
 
     kind = "direct"    the first line is just one candidate name (punctuation allowed);
+           "frame"     the question with its wh-word replaced by one name ("Daniel had someone
+                       been thanked by."); the answer is that name;
            "statement" (only when agent, patient and role are given) the first sentence is an
                        event statement such as "Frank was watched by Daniel."; the answer is
                        the name the statement puts in the asked role. A verbatim copy of the
@@ -110,6 +115,14 @@ def extract_answer(text: str, names, sentence: str = "", question: str = "",
     bare = re.sub(r"[^A-Za-z]", "", first)
     if bare in names:
         return "direct", bare
+    if question:
+        # question-frame answer: the wh-word replaced by a name, e.g.
+        # "Daniel had someone been thanked by." for "Who had someone been thanked by?"
+        body = re.escape(re.sub(r"^\s*(?:Who|whom)\b", "", question).rstrip("?").strip())
+        if body:
+            m = re.fullmatch(rf"\s*(\w+) {body}[.!]?\s*", _QUOTED.sub(" ", first))
+            if m and m.group(1) in names:
+                return "frame", m.group(1)
     if agent and patient and role:
         st = event_statement(text, agent, patient)
         if st is not None:
@@ -211,7 +224,7 @@ def main(argv=None):
         "stimuli": args.stimuli, "instruction": args.instruction, "question_template": args.question_template or None,
         "question_role": args.question_role, "max_new_tokens": args.max_new_tokens,
         "n": n, "named_rate": sum(r["named"] for r in rows) / n,
-        "kinds": {k: sum(r["kind"] == k for r in rows) / n for k in ("direct", "statement", "inferred", "ambiguous", "none")},
+        "kinds": {k: sum(r["kind"] == k for r in rows) / n for k in ("direct", "frame", "statement", "inferred", "ambiguous", "none")},
         "generation_accuracy": sum(r["correct"] for r in rows) / n,
         "accuracy_direct_only": (sum(r["correct"] for r in rows if r["kind"] == "direct")
                                  / max(1, sum(r["kind"] == "direct" for r in rows))),

@@ -60,3 +60,32 @@ def test_three_place_statements():
         assert gc.extract_answer(out, NM, role="oblique", **D) == ("statement", "Mira"), out
         assert gc.extract_answer(out, NM, role="agent", **D) == ("statement", "Leon"), out
     assert gc.extract_answer("Mira gave Leon the book.", NM, role="oblique", **D) == ("statement", "Leon")
+
+
+def test_perfect_and_indefinite_statements():
+    q = "Who has someone been chased by?"
+    assert gc.extract_answer("Julia has been chased by Lisa.", N, "Lisa chased Julia.", q, role="agent", **R) == ("statement", "Lisa")
+    assert gc.extract_answer("Julia had been chased by Lisa.", N, role="agent", **R) == ("statement", "Lisa")
+    assert gc.extract_answer("Julia was a person chased by Lisa.", N, role="agent", **R) == ("statement", "Lisa")
+    assert gc.extract_answer("Lisa has been chased by Julia.", N, role="agent", **R) == ("statement", "Julia")
+
+
+def test_question_frame_answer():
+    q = "Who had someone been chased by?"
+    assert gc.extract_answer("Lisa had someone been chased by.", N, "Lisa chased Julia.", q, role="agent", **R) == ("frame", "Lisa")
+    assert gc.extract_answer("Julia had someone been chased by.", N, "Lisa chased Julia.", q, role="agent", **R) == ("frame", "Julia")
+    # not a frame answer when the rest differs
+    assert gc.extract_answer("Lisa had been chased by someone.", N, "Lisa chased Julia.", q, role="agent", **R)[0] != "frame"
+
+
+def test_relative_statement():
+    assert gc.extract_answer("Julia was the person who was chased by Lisa.", N, role="agent", **R) == ("statement", "Lisa")
+    assert gc.extract_answer("Julia was the one who got chased by Lisa.", N, role="agent", **R) == ("statement", "Lisa")
+    assert gc.extract_answer("Lisa had someone been chased by Julia.", N, role="agent", **R)[0] == "ambiguous"
+
+
+def test_theme_passive_variants():
+    for out in ("The keys were taken from Mira by Leon.", "Dinner was cooked for Mira by Leon.",
+                "A letter was received by Leon from Mira.", "The song was learned by Leon from Mira."):
+        assert gc.extract_answer(out, NM, role="agent", **D) == ("statement", "Leon"), out
+    assert gc.extract_answer("The photo was shown to Leon by Mira.", NM, role="agent", **D) == ("statement", "Mira")
