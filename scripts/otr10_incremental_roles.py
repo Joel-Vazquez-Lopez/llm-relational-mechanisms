@@ -24,9 +24,12 @@ state carries the agent's identity as such, not "identity of the first name" plu
 construction this is".
 
 Identity confound: a state AT a name is dominated by that name's identity, so any probe
-would "pick" the current name. Before probing, each name's mean state over all name
-positions (where it is agent and patient equally often) is subtracted from the states at
-that name. Recency: where the role is not encoded, a probe trained on a role-balanced
+would "pick" the current name. Before probing, the states at a name are centred within
+their slot: for each (language, construction, word position) the mean state of each name
+is replaced by the slot's mean over names. What is left at a name is what the state says
+BEYOND the current token's identity (e.g. about the other, earlier name). v1.0.0 used one
+mean per name over all slots; identity strength differs between slots, so that over- or
+under-corrected and produced spurious name columns. Recency: where the role is not encoded, a probe trained on a role-balanced
 mixture can still lean towards the most recent name; compare with the "recent" row. The
 cleanest test is mode "active": at its training positions the recent name is always the
 patient and the agent is always first, so an active-trained agent probe that picks the
@@ -70,7 +73,7 @@ sys.path.insert(0, str(ROOT / "src"))
 
 from relational_lab.experiments import order_role_stimuli as ors  # noqa: E402
 
-OTR10_VERSION = "1.0.0"
+OTR10_VERSION = "1.1.0"
 TARGETS = ("first", "subject", "agent", "patient", "recent")
 MODES = ("main", "active")
 _WORD = re.compile(r"\w+|[^\w\s]")
@@ -153,6 +156,19 @@ def ridge_scores(Xtr, Ytr, Xte, lam_rel=1.0):
     lam = lam_rel * G.diagonal().mean()
     W = torch.linalg.solve(G + lam * torch.eye(G.shape[0], device=G.device, dtype=G.dtype), Xc.T @ (Ytr - my))
     return (Xte - mx) @ W + my
+
+
+def center_name_slots(X, name_groups):
+    """In place: within each slot, replace each name's mean state by the slot mean."""
+    for at, groups in name_groups:
+        if not len(at):
+            continue
+        grand = X[at.to(X.device)].mean(0)
+        for g in groups:
+            if len(g):
+                gd = g.to(X.device)
+                X[gd] -= X[gd].mean(0) - grand
+    return X
 
 
 def pick_store_device(n_bytes: int, want: str, margin_gib: float = 8.0) -> str:
@@ -279,13 +295,13 @@ def main(argv=None):
     # States AT a name are dominated by that name's identity, which would make every probe
     # "pick" the current name. Remove it: subtract each name's mean state over all name
     # positions (roles are balanced there), add back the grand mean of name positions.
-    # Done separately per language (the context around a name differs between languages).
-    cur = torch.tensor([nidx[m[3]] if m[3] is not None else -1 for m in meta])
-    name_groups = []
-    for lg in langs:
-        in_lg = torch.tensor([s == lg for s in s_lang])
-        at = ((cur >= 0) & in_lg).nonzero().squeeze(1)
-        name_groups.append((at, [((cur == j) & in_lg).nonzero().squeeze(1) for j in range(nN)]))
+    # Done within each slot = (language, construction, word position).
+    slots: dict = {}
+    for r, m in enumerate(meta):
+        if m[3] is not None:
+            slots.setdefault((s_lang[r], s_cons[r], s_lab[r]), {}).setdefault(m[3], []).append(r)
+    name_groups = [(torch.tensor([r for g in by_name.values() for r in g]),
+                    [torch.tensor(g) for g in by_name.values()]) for by_name in slots.values()]
 
     pdev = "cuda" if torch.cuda.is_available() else "cpu"
     Y = Y.to(pdev)
@@ -296,14 +312,7 @@ def main(argv=None):
     t1 = time.time()
     for k in range(len(use_layers)):
         X = feats[k].to(pdev).float()
-        for at, groups in name_groups:
-            if not len(at):
-                continue
-            grand = X[at.to(pdev)].mean(0)
-            for g in groups:
-                if len(g):
-                    gd = g.to(pdev)
-                    X[gd] -= X[gd].mean(0) - grand
+        center_name_slots(X, name_groups)
         for mode in MODES:
             splits = []
             for f in range(5):  # primary language: held-out family fold AND other verb half

@@ -101,3 +101,23 @@ def test_smoke_tiny_crosslingual(tiny, tmp_path):
     assert "ovs_clitic" in gl and all(v is not None for row in gl["ovs_clitic"] for v in row)
     assert r["labels"]["es"]["ovs_clitic"][0] == "A" and r["labels"]["es"]["ovs_clitic"][1] == "P"
     assert (tmp_path / (next(tmp_path.glob("otr10_*.json")).stem + "_active_transfer.png")).exists()
+
+
+def test_center_name_slots_removes_slot_dependent_identity():
+    torch = pytest.importorskip("torch")
+    o10 = _o10()
+    torch.manual_seed(0)
+    E = torch.randn(6, 16)
+    rows, groups = [], []
+    for strength in (0.5, 3.0):  # identity is encoded more strongly in the second slot
+        slot = {}
+        for _ in range(60):
+            n = int(torch.randint(0, 6, (1,)))
+            slot.setdefault(n, []).append(len(rows))
+            rows.append(strength * E[n] + 0.01 * torch.randn(16))
+        groups.append((torch.tensor([r for g in slot.values() for r in g]), [torch.tensor(g) for g in slot.values()]))
+    X = torch.stack(rows)
+    o10.center_name_slots(X, groups)
+    for at, gs in groups:
+        means = torch.stack([X[g].mean(0) for g in gs])
+        assert (means - means.mean(0)).abs().max() < 1e-4
