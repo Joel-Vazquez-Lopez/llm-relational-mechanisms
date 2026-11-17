@@ -111,6 +111,16 @@ def choose(pred, emb_a, emb_b):
     return F.cosine_similarity(pred, emb_a, dim=-1) > F.cosine_similarity(pred, emb_b, dim=-1)
 
 
+def _release_cpu_memory():
+    import gc
+    gc.collect()
+    try:
+        import ctypes
+        ctypes.CDLL("libc.so.6").malloc_trim(0)
+    except Exception:
+        pass
+
+
 def main(argv=None):
     p = argparse.ArgumentParser()
     p.add_argument("--model", required=True)
@@ -140,6 +150,7 @@ def main(argv=None):
     model = load_lm(args.model, dtype=getattr(torch, args.dtype))
     device = "cuda" if torch.cuda.is_available() else "cpu"
     model = model.to(device).eval()
+    _release_cpu_memory()  # weights were staged in CPU RAM; hand that memory back before collecting features
     layers = decoder_layers(model)
     L = len(layers)
     use_layers = sorted(set(list(range(0, L, args.layer_stride)) + [L - 1]))
@@ -158,18 +169,23 @@ def main(argv=None):
     items = [it for lg in langs for it in items_by_lang[lg]]
     lang_of = [lg for lg in langs for _ in items_by_lang[lg]]
     idx_now: dict = {}
-    store = {}
+    # One preallocated fp16 CPU tensor [N, P, L', D]: no per-item tensors, no stacked copies
+    # (the 17 Nov en+es+gl run was OOM-killed holding ~25k small tensors plus stacked copies).
+    D = int(emb.shape[1])
+    lay_k = {li: k for k, li in enumerate(use_layers)}
+    FEAT = torch.empty((len(items), len(positions), len(use_layers), D), dtype=torch.float16)
+    print(f"feature buffer {FEAT.numel() * 2 / 1e9:.1f} GB ({len(items)} items x {len(positions)} pos x "
+          f"{len(use_layers)} layers x {D})", flush=True)
     handles = []
     for li, layer in enumerate(layers):
         if li in use_layers:
             def hook(_m, _i, out, li=li):
                 h = _hidden(out)
-                store[li] = h[0, idx_now["ix"]].detach().to(torch.float16).cpu()
+                FEAT[idx_now["n"], :, lay_k[li]] = h[0, idx_now["ix"]].detach().to(torch.float16).cpu()
             handles.append(layer.register_forward_hook(hook))
-    feats = {pos: [] for pos in positions}
     t0 = time.time()
     try:
-        for it in items:
+        for n_it, it in enumerate(items):
             ids, offsets = _encode_one(tok, it.prompt, args.chat_template)
             spans = dict((lab, (a, b)) for lab, a, b in it.spans)
             ix = []
@@ -180,20 +196,20 @@ def main(argv=None):
                     raise RuntimeError(f"position {pos} not found for {it.item_id}")
                 ix.append(tix[-1])
             idx_now["ix"] = ix
+            idx_now["n"] = n_it
             with torch.no_grad():
                 model(input_ids=torch.tensor([ids], device=device))
-            for k, pos in enumerate(positions):
-                feats[pos].append(torch.stack([store[li][k] for li in use_layers]))  # [L', D]
     finally:
         for h in handles:
             h.remove()
     fwd_seconds = time.time() - t0
 
-    all_items, all_feats, all_lang = items, feats, lang_of
+    all_items, all_lang = items, lang_of
     prim = langs[0]
     keep = [i for i, lg in enumerate(all_lang) if lg == prim]
+    assert keep == list(range(len(keep))), "primary language items must come first"
     items = [all_items[i] for i in keep]
-    feats = {pos: [all_feats[pos][i] for i in keep] for pos in positions}
+    pos_k = {pos: k for k, pos in enumerate(positions)}
     PROBE_CONS = constructions_for(prim)
     fam_ids = sorted({it.family_id for it in items})
     fold = torch.tensor([fam_ids.index(it.family_id) % 5 for it in items])
@@ -207,7 +223,7 @@ def main(argv=None):
 
     results = {}
     for pos in positions:
-        F = torch.stack(feats[pos])  # [N, L', D] fp16 cpu
+        F = FEAT[: len(items), pos_k[pos]]  # view [N, L', D] fp16 cpu, no copy
         res_pos = {"E1": {t: {c: [] for c in PROBE_CONS} for t in TARGETS},
                    "E2": {tr: {c: [] for c in PROBE_CONS} for tr in ors.MAIN_CONSTRUCTIONS}}
         for k, li in enumerate(use_layers):
@@ -260,8 +276,9 @@ def main(argv=None):
         tp = torch.stack([name_emb[it.patient] for it in t_items]).to(device)
         out_t = {}
         for pos in positions:
-            Fp = torch.stack(feats[pos])
-            Ft = torch.stack([all_feats[pos][i] for i in ti])
+            Fp = FEAT[: len(items), pos_k[pos]]
+            Ft = FEAT[ti[0]: ti[-1] + 1, pos_k[pos]]  # each language is one contiguous block
+            assert ti == list(range(ti[0], ti[-1] + 1))
             res = {"all_trained": {c: [] for c in constructions_for(tgt)},
                    "active_trained": {c: [] for c in constructions_for(tgt)}}
             for k, li in enumerate(use_layers):

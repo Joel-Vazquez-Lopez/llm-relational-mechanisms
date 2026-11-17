@@ -137,6 +137,7 @@ def main(argv=None):
     records = []
     feats = defaultdict(list)  # (condition, layer) -> list of bare-position vectors (fp16)
     H = None
+    attn_layers = None  # decoder-layer index of each returned attention map (hybrid models return fewer)
     attn_sum = defaultdict(lambda: None)  # (cond, construction, correct, pos, who) -> [L, H] sums
     attn_n = defaultdict(int)
     t0 = time.time()
@@ -157,7 +158,11 @@ def main(argv=None):
                 out = model(input_ids=full, output_attentions=True)
             att = out.attentions  # L x [1, H, T, T]
             if H is None:
+                att = tuple(a for a in att if a is not None)
                 H = att[0].shape[1]
+                attn_layers = _attention_layers(model, L, len(att))
+            else:
+                att = tuple(a for a in att if a is not None)
             lead_bare = not args.chat_template
             ids_bare = (answer_token(tok, it.agent, lead_bare), answer_token(tok, it.patient, lead_bare))
             ids_by = (answer_token(tok, it.agent, True), answer_token(tok, it.patient, True))
@@ -226,12 +231,13 @@ def main(argv=None):
                 key = f"{ci}|{role}|{template}|{cons}|{'correct' if corr else 'wrong'}"
                 entry = {"n": len(rs)}
                 for f in ("lens_bare", "lens_by", "attn_agent_bare", "attn_patient_bare", "attn_agent_by", "attn_patient_by"):
-                    entry[f] = [round(sum(r[f][l] for r in rs) / len(rs), 4) for l in range(L)]
+                    n_f = len(rs[0][f])
+                    entry[f] = [round(sum(r[f][l] for r in rs) / len(rs), 4) for l in range(n_f)]
                 for pname in ("bare", "by"):
                     k2 = (ci, cons, corr, pname)
                     if attn_n[k2]:
                         diff = (attn_sum[k2 + ("agent",)] - attn_sum[k2 + ("patient",)]) / attn_n[k2]
-                        flat = [(float(diff[l, h]), l, h) for l in range(L) for h in range(H)]
+                        flat = [(float(diff[k, h]), attn_layers[k], h) for k in range(diff.shape[0]) for h in range(H)]
                         flat.sort()
                         entry[f"top_agent_heads_{pname}"] = [(l, h, round(v, 3)) for v, l, h in flat[::-1][:10]]
                         entry[f"top_patient_heads_{pname}"] = [(l, h, round(v, 3)) for v, l, h in flat[:10]]
@@ -241,6 +247,7 @@ def main(argv=None):
         "generator_version": ors.GENERATOR_VERSION, "model": args.model, "chat_template": args.chat_template,
         "chat_template_kwargs": chat_kwargs, "instruction": args.instruction,
         "conditions": [{"role": r, "template": t} for r, t in args.condition], "n_layers": L, "n_heads": H,
+        "attn_layers": attn_layers,
         "probe_layers": probe_layers, "seconds": round(time.time() - t0, 1),
         "aggregate": agg, "probes": probes, "records": records,
     }
@@ -262,6 +269,26 @@ def main(argv=None):
         print(f"(no plot: {exc})")
 
 
+def _attention_layers(model, n_layers, n_maps):
+    """Decoder-layer indices of the attention maps a forward pass returns.
+
+    Full-attention models return one map per layer.  Hybrid models (e.g. Qwen3.8 with
+    gated-delta linear-attention layers) return maps only for their softmax-attention
+    layers; config.layer_types says which those are.
+    """
+    if n_maps == n_layers:
+        return list(range(n_layers))
+    cfg = model.config
+    types = getattr(cfg, "layer_types", None) or getattr(getattr(cfg, "text_config", None), "layer_types", None)
+    if types and len(types) == n_layers:
+        full = [i for i, t in enumerate(types) if "linear" not in str(t) and "mamba" not in str(t)
+                and "conv" not in str(t)]
+        if len(full) == n_maps:
+            return full
+    raise RuntimeError(f"model returned {n_maps} attention maps for {n_layers} layers and its "
+                       f"config.layer_types does not say which layers they belong to: {types}")
+
+
 def _plot(report, path):
     import matplotlib
     matplotlib.use("Agg")
@@ -269,6 +296,7 @@ def _plot(report, path):
 
     L = report["n_layers"]
     depth = [l / max(1, L - 1) for l in range(L)]
+    adepth = [l / max(1, L - 1) for l in (report.get("attn_layers") or range(L))]
     conds = report["conditions"]
     fig, axes = plt.subplots(3, len(conds), figsize=(4.4 * len(conds), 9.0), squeeze=False, sharex=True)
     for ci, c in enumerate(conds):
@@ -279,8 +307,8 @@ def _plot(report, path):
                 continue
             axes[0][ci].plot(depth, e["lens_bare"], ls, color="#2a78d6", label=f"bare answer ({corr}, n={e['n']})")
             axes[0][ci].plot(depth, e["lens_by"], ls, color="#eb6834", label=f"'… by' slot ({corr})")
-            axes[1][ci].plot(depth, e["attn_agent_bare"], ls, color="#1baf7a", label=f"→ agent ({corr})")
-            axes[1][ci].plot(depth, e["attn_patient_bare"], ls, color="#e34948", label=f"→ patient ({corr})")
+            axes[1][ci].plot(adepth, e["attn_agent_bare"], ls, color="#1baf7a", label=f"→ agent ({corr})")
+            axes[1][ci].plot(adepth, e["attn_patient_bare"], ls, color="#e34948", label=f"→ patient ({corr})")
         pr = report["probes"].get(f"{ci}|{c['role']}|{c['template']}")
         if pr:
             ls_ = sorted(int(k) for k in pr["layers"])
