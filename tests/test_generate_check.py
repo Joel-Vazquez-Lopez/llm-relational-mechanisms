@@ -112,3 +112,15 @@ def test_prepared_prompts_spanish():
     pp = gc.prepared_prompts("es", 2026, 40, "", None, "Responde con un solo nombre.")
     assert pp and all(p.startswith("Oración: ") and "Responde con un solo nombre.\nRespuesta:" in p for _, p in pp)
     assert {it.construction for it, _ in pp} <= {"active", "passive", "object_cleft", "by_cleft", "ovs_clitic"}
+
+
+def test_xl_question_template_in_situ():
+    import otr_generate_check as g
+    for lang, tmpl, needle in (("es", "¿Alguien fue {stem}o por quién?", "por quién?"),
+                               ("gl", "Alguén foi {stem}o por quen?", "por quen?")):
+        ps = g.prepared_prompts(lang, 2026, 100, tmpl, "agent", "X.")
+        assert ps
+        for it, prompt in ps:
+            assert it.question.endswith(needle) and it.question_voice == "custom"
+            assert prompt.count(it.question) == 1 and it.role_asked == "agent"
+            assert "\nX.\n" in prompt

@@ -151,6 +151,14 @@ def extract_answer(text: str, names, sentence: str = "", question: str = "",
     return ("ambiguous" if left else "none"), None
 
 
+def fill_xl_template(lang: str, template: str, pret: str, lemma: str) -> str:
+    """Spanish/Galician question template: {pret} = preterite 3sg, {stem} = participle stem
+    (add o/a), {lemma} = infinitive.  E.g. "¿Alguien fue {stem}o por quién?"."""
+    from relational_lab.experiments import multilingual_stimuli as xl
+    stems = {lm: st for lm, _pr, st in xl.VERBS[lang]}
+    return template.format(pret=pret, stem=stems[lemma], lemma=lemma)
+
+
 def prepared_prompts(stimuli="otr", seed=2026, n=256, question_template="", question_role=None, instruction=""):
     """The balanced dev sample and final prompts used by every generation run (local or API).
     Returns [(item, prompt)]; with a question template the item's question is rewritten."""
@@ -176,10 +184,13 @@ def prepared_prompts(stimuli="otr", seed=2026, n=256, question_template="", ques
     for c in sorted(cells):
         for it in cells[c][:per]:
             if question_template:
-                question = fill_template(question_template, it.verb, it.lemma)
+                if stimuli in ("es", "gl"):
+                    question = fill_xl_template(stimuli, question_template, it.verb, it.lemma)
+                else:
+                    question = fill_template(question_template, it.verb, it.lemma)
+                assert it.prompt.count(f" {it.question}\n") == 1, it.prompt
                 it = dataclasses.replace(it, question=question, question_voice="custom",
-                                         prompt=it.prompt.replace(f"\nQuestion: {it.question}\n",
-                                                                  f"\nQuestion: {question}\n"))
+                                         prompt=it.prompt.replace(f" {it.question}\n", f" {question}\n"))
                 assert it.prompt.count(question) == 1, it.prompt
             head, cue = it.prompt.rsplit("\n", 1)  # cue = "Answer:" / "Respuesta:" / "Resposta:"
             prompt = f"{head}\n{instruction}\n{cue}" if instruction else it.prompt
@@ -250,8 +261,8 @@ def main(argv=None):
     tok = load_tokenizer(args.model)
     model = load_lm(args.model, dtype=getattr(torch, args.dtype)).to("cuda" if torch.cuda.is_available() else "cpu").eval()
     dev = next(model.parameters()).device
-    if args.stimuli != "otr" and args.question_template:
-        p.error("--question-template applies to the English OTR stimuli only")
+    if args.stimuli == "sp" and args.question_template:
+        p.error("--question-template applies to the otr, es and gl stimuli")
     t0 = time.time()
     rows = []
     for it, prompt in prepared_prompts(args.stimuli, args.seed, args.n, args.question_template,
@@ -271,7 +282,7 @@ def main(argv=None):
     args.out_dir.mkdir(parents=True, exist_ok=True)
     tag = "" if args.stimuli == "otr" else f"_{args.stimuli}"
     if args.question_template:
-        tag = "_q-" + re.sub(r"[^a-z]+", "-", args.question_template.lower()).strip("-")
+        tag += "_q-" + re.sub(r"[^a-z]+", "-", args.question_template.lower()).strip("-")
     out = args.out_dir / f"otrgen_{args.model.replace('/', '__')}_dev{tag}_{time.strftime('%Y%m%dT%H%M%S')}.json"
     out.write_text(json.dumps(report, indent=1))
     print(f"Wrote {out}")
