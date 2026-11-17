@@ -1,0 +1,27 @@
+name, memory.total [MiB]
+NVIDIA H100 NVL, 95830 MiB
+Loading weights:   0%|          | 0/851 [00:00<?, ?it/s]Loading weights:  18%|█▊        | 149/851 [00:00<00:01, 391.76it/s]Loading weights:  22%|██▏       | 189/851 [00:01<00:04, 138.77it/s]Loading weights:  25%|██▍       | 209/851 [00:01<00:06, 103.39it/s]Loading weights:  26%|██▌       | 223/851 [00:01<00:06, 93.73it/s] Loading weights:  27%|██▋       | 234/851 [00:02<00:07, 82.05it/s]Loading weights:  29%|██▊       | 243/851 [00:02<00:08, 70.28it/s]Loading weights:  29%|██▉       | 250/851 [00:02<00:10, 55.58it/s]Loading weights:  30%|███       | 259/851 [00:02<00:11, 53.38it/s]Loading weights:  31%|███       | 264/851 [00:03<00:14, 41.05it/s]Loading weights:  33%|███▎      | 280/851 [00:03<00:10, 56.64it/s]Loading weights:  34%|███▍      | 289/851 [00:03<00:09, 60.25it/s]Loading weights:  35%|███▍      | 297/851 [00:03<00:08, 62.93it/s]Loading weights:  36%|███▌      | 305/851 [00:03<00:08, 66.04it/s]Loading weights: 100%|██████████| 851/851 [00:03<00:00, 234.07it/s]
+[transformers] `causal_conv1d_fn` is falling back to its reference PyTorch implementation because `causal_conv1d` is not installed. This is correct but much slower; install `causal_conv1d` for the optimized kernel.
+[transformers] `chunk_gated_delta_rule` is falling back to its reference PyTorch implementation because `flash-linear-attention` is not installed. This is correct but much slower; install `flash-linear-attention` for the optimized kernel.
+[transformers] `causal_conv1d_update` is falling back to its reference PyTorch implementation because `causal_conv1d` is not installed. This is correct but much slower; install `causal_conv1d` for the optimized kernel.
+[transformers] `fused_recurrent_gated_delta_rule` is falling back to its reference PyTorch implementation because `flash-linear-attention` is not installed. This is correct but much slower; install `flash-linear-attention` for the optimized kernel.
+Wrote /gorilla/home/jova3528/private/llm_relation/results/otrgen_Qwen__Qwen3.8-27B_dev_q-who-was-the-ing-done-to_20261117T113036.json
+answer kinds: {'direct': 0.0, 'frame': 0.0, 'statement': 0.009146341463414634, 'inferred': 0.9908536585365854, 'ambiguous': 0.0, 'none': 0.0}
+generation accuracy (ambiguous/none = wrong): 0.98   direct answers only: 0.00
+  active/patient/custom            1.00
+  by_cleft/patient/custom          0.94
+  object_cleft/patient/custom      0.99
+  passive/patient/custom           1.00
+examples:
+  [active/patient/custom] answer='Frank' -> 'Frank was the one who was watched.'
+  [active/patient/custom] answer='Sarah' -> 'The pushing was done to Sarah.'
+  [active/patient/custom] answer='James' -> 'James was the one who was watched.'
+  [active/patient/custom] answer='John' -> 'The visiting was done to John.'
+  [by_cleft/patient/custom] answer='Helen' -> 'Helen was the one who was praised.'
+  [by_cleft/patient/custom] answer='John' -> 'John was the one who was visited.'
+  [by_cleft/patient/custom] answer='Alice' -> 'Alice was the one who was chased.'
+  [object_cleft/patient/custom] answer='Michael' -> 'The pushing was done to Michael.'
+  [object_cleft/patient/custom] answer='Rose' -> 'The pushing was done to Rose.'
+  [object_cleft/patient/custom] answer='Frank' -> 'The helping was done to Frank.'
+  [passive/patient/custom] answer='David' -> 'The rescuing was done to David.'
+  [passive/patient/custom] answer='Paul' -> 'The thanking was done to Paul.'
