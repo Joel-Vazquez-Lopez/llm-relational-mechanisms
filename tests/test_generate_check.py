@@ -89,3 +89,11 @@ def test_theme_passive_variants():
                 "A letter was received by Leon from Mira.", "The song was learned by Leon from Mira."):
         assert gc.extract_answer(out, NM, role="agent", **D) == ("statement", "Leon"), out
     assert gc.extract_answer("The photo was shown to Leon by Mira.", NM, role="agent", **D) == ("statement", "Mira")
+
+
+def test_other_person_statements():
+    for out in ("Julia was the other person chased by Lisa.", "The other person chased by Lisa was Julia.",
+                "The other person, Julia, was chased by Lisa.", "Lisa was the other person who chased Julia.",
+                "Lisa was the one who chased Julia."):
+        assert gc.extract_answer(out, N, role="agent", **R) == ("statement", "Lisa"), out
+    assert gc.extract_answer("Lisa was the other person chased by Julia.", N, role="agent", **R) == ("statement", "Julia")

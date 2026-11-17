@@ -75,7 +75,8 @@ def event_statement(text: str, agent: str, patient: str):
         X, Y = re.escape(x), re.escape(y)
         D = r"(?:the |a |an )?\w+"  # a direct object such as "the book" or "dinner"
         AUX = r"(?:was|were|got|is|has been|had been|have been|was being|got)"
-        IND = r"(?:(?:a person|somebody|someone|the person|the (?:person|one) who (?:was|got)) )?"  # echoes / relatives
+        IND = (r"(?:(?:a person|somebody|someone|the person|the other person|"
+               r"the (?:other )?(?:person|one) who (?:was|got)) )?")  # echoes of the question / relatives
         pats = (
             rf"{Y} {AUX} {IND}(?:\w+ )?\w+ by {X}",
             # three-place frames (stranded-preposition stimuli): X = doer, Y = to/for/from object
@@ -87,6 +88,9 @@ def event_statement(text: str, agent: str, patient: str):
             rf"It was {Y} (?:that|whom|who) {X} \w+ {D} (?:to|for|from)",
             rf"It was (?:to|for|from) {Y} that {X} \w+ {D}",
             rf"{X} \w+ {Y}",
+            rf"{X} was the (?:other )?(?:person|one) who \w+ {Y}",
+            rf"The (?:other )?(?:person|one), {Y}, was \w+ by {X}",
+            rf"The (?:other )?(?:person|one) \w+ by {X} was {Y}",
             rf"It was {X} (?:who|that) \w+ {Y}",
             rf"It was {Y} (?:that|whom|who) {X} \w+",
             rf"It was by {X} that {Y} was \w+",

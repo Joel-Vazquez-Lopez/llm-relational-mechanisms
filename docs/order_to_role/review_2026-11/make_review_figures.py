@@ -98,7 +98,7 @@ def bar_group(ax, cats, series, labels, colors, ylim=(0, 1.08), fmt="{:.2f}"):
 def write_csv(path, header, rows):
     path.parent.mkdir(parents=True, exist_ok=True)
     with path.open("w", newline="") as fh:
-        w = csv.writer(fh)
+        w = csv.writer(fh, lineterminator="\n")
         w.writerow(header)
         w.writerows(rows)
 
@@ -260,7 +260,9 @@ def main(argv=None):
             role = sp.QUESTION_FORMS[q]
             M.append([g["cells"].get(f"{c}/{role}/{q}") for c in col_order])
             rows.append([short, q] + [("" if x is None else round(x, 3)) for x in M[-1]])
-        ax.imshow([[1.0 if x is None else x for x in r] for r in M], cmap=SEQ.reversed(), vmin=0, vmax=1, aspect="auto")
+        cm = SEQ.reversed().copy()
+        cm.set_bad("#f0efea")
+        ax.imshow([[float("nan") if x is None else x for x in r] for r in M], cmap=cm, vmin=0, vmax=1, aspect="auto")
         for i, r in enumerate(M):
             for j, x in enumerate(r):
                 ax.text(j, i, "–" if x is None else f"{x:.2f}", ha="center", va="center", fontsize=6.5,
@@ -314,6 +316,77 @@ def main(argv=None):
     fig.savefig(figs / "f6_passive_agent_by_verb.png", dpi=160)
     plt.close(fig)
     write_csv(tabs / "t6_passive_agent_by_verb.csv", ["model", "frame", "verb", "accuracy", "n"], rows)
+
+    # ---------- F7: question wordings x answer format ----------
+    variants = [
+        ("Who was someone {past} by?", "agent"), ("Who was somebody {past} by?", "agent"),
+        ("Who was a person {past} by?", "agent"), ("Who was the other person {past} by?", "agent"),
+        ("Who had someone been {past} by?", "agent"), ("Who has someone been {past} by?", "agent"),
+        ("Who did someone get {past} by?", "agent"), ("Who was the {ing} done by?", "agent"),
+        ("By whom was the {ing} done?", "agent"), ("Who did the {ing}?", "agent"),
+        ("Who was the {ing} done to?", "patient"), ("Who was {past} by someone?", "patient"),
+    ]
+    rows, present = [], []
+    for model, short in ((GEMMA, "Gemma 4 31B-it"), (QWEN, "Qwen3.8-27B")):
+        for tmpl, role in variants:
+            for instr, lab in ((NAME_ONLY, "name"), (SENTENCE, "sentence")):
+                fg, g = find_gen(runs, items, model, instr, tmpl)
+                if not g:
+                    continue
+                vals = [g["cells"].get(f"{c}/{role}/custom") for c in cons]
+                rows.append([short, tmpl, role, lab] + [("" if v is None else round(v, 3)) for v in vals] + [fg.name])
+                present.append((short, tmpl, role, lab, vals))
+    write_csv(tabs / "t7_question_variants_by_format.csv",
+              ["model", "question", "role", "format"] + cons + ["file"], rows)
+    tmpls = [t for t, _ in variants if any(p[1] == t for p in present)]
+    if tmpls:
+        fig, axes = plt.subplots(1, 2, figsize=(12.0, 0.42 * len(tmpls) + 1.8), sharey=True)
+        for ax, short in zip(axes, ("Gemma 4 31B-it", "Qwen3.8-27B")):
+            M, ylab = [], []
+            for t in tmpls:
+                byfmt = {p[3]: p[4] for p in present if p[0] == short and p[1] == t}
+                M.append([(byfmt.get("name") or [None] * 4)[i] for i in (0, 1)] +
+                         [(byfmt.get("sentence") or [None] * 4)[i] for i in (0, 1)])
+                ylab.append(t.replace("{past}", "V-ed").replace("{ing}", "V-ing"))
+            cm = SEQ.reversed().copy()
+            cm.set_bad("#f0efea")
+            ax.imshow([[float("nan") if x is None else x for x in r] for r in M], cmap=cm, vmin=0, vmax=1,
+                      aspect="auto")
+            for i, r in enumerate(M):
+                for j, x in enumerate(r):
+                    ax.text(j, i, "–" if x is None else f"{x:.2f}", ha="center", va="center", fontsize=7,
+                            color=MUTED if x is None else ("white" if x < 0.55 else INK))
+            ax.set_xticks(range(4))
+            ax.set_xticklabels(["name:\nactive", "name:\nobj. cleft", "sentence:\nactive", "sentence:\nobj. cleft"],
+                               fontsize=7)
+            ax.set_yticks(range(len(tmpls)))
+            ax.set_yticklabels(ylab, fontsize=7.5)
+            ax.axvline(1.5, color="white", lw=3)
+            ax.grid(False)
+            ax.set_title(short, fontsize=9)
+        fig.suptitle("F7. Question wordings × answer format (accuracy; dark = errors; grey = not run). Same 656 items per run.",
+                     fontsize=9, x=0.01, ha="left")
+        fig.tight_layout()
+        fig.savefig(figs / "f7_question_variants_by_format.png", dpi=160)
+        plt.close(fig)
+
+    # ---------- T8: three-place passive-agent pockets, name vs sentence ----------
+    rows = []
+    for model, short in ((GEMMA, "Gemma 4 31B-it"), (QWEN, "Qwen3.8-27B")):
+        for instr, lab in ((NAME_ONLY, "name"), (SENTENCE, "sentence")):
+            fg, g = find_gen(runs, items, model, instr, None, stimuli="sp")
+            if not g:
+                continue
+            acc = defaultdict(list)
+            for r in g["rows"]:
+                it = items[r["item_id"]]
+                if it.question_voice.startswith("pass_agent") and not it.form.startswith("pass"):
+                    key = it.lemma if it.frame == "from" else ("cleft_stranded" if it.form == "cleft_stranded" else "other")
+                    acc[(it.frame, key)].append(r["correct"])
+            for (fr, key), v in sorted(acc.items()):
+                rows.append([short, lab, fr, key, round(sum(v) / len(v), 3), len(v), fg.name])
+    write_csv(tabs / "t8_passive_agent_name_vs_sentence.csv",
+              ["model", "format", "frame", "verb_or_form", "accuracy", "n", "file"], rows)
 
     (HERE / "tables" / "provenance.json").write_text(json.dumps(provenance, indent=1))
     print("figures:", sorted(p.name for p in figs.glob("*.png")))
