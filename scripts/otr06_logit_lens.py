@@ -35,6 +35,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
 from relational_lab.experiments import order_role_stimuli as ors  # noqa: E402
+from relational_lab.experiments.question_templates import fill as fill_template  # noqa: E402
 
 LENS_VERSION = "1.0.0"
 _NORM_PATHS = ("model.norm", "model.language_model.norm", "language_model.model.norm",
@@ -97,7 +98,7 @@ def build_prompts(seed: int, conditions, instruction: str, n_per: int | None, st
             if n_per and per[it.construction] >= n_per:
                 continue
             per[it.construction] += 1
-            q = template.format(past=it.verb, lemma=it.lemma)
+            q = fill_template(template, it.verb, it.lemma)
             prompt = it.prompt.replace(f"\nQuestion: {it.question}\n", f"\nQuestion: {q}\n")
             assert prompt.count(q) == 1, prompt
             if instruction:

@@ -12,7 +12,7 @@ quoted text and copies of the sentence or question are ignored, so "In the sente
 one name only."`` adds a line before "Answer:" to ask for a bare name (a prompt change:
 report it as a separate condition).
 
-``--question-template`` replaces the question with any wording ({past}, {lemma} are filled
+``--question-template`` replaces the question with any wording ({past}, {lemma}, {ing} are filled
 from the item); ``--question-role`` says which role it asks for (the gold answer). The
 sample is then balanced over the four main constructions only, e.g. the stranded agent
 question and its patient permutation (same five words):
@@ -43,7 +43,8 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
-from relational_lab.experiments import order_role_stimuli as ors
+from relational_lab.experiments import order_role_stimuli as ors  # noqa: E402
+from relational_lab.experiments.question_templates import fill as fill_template
 
 
 def first_name(text: str, names) -> str | None:
@@ -148,7 +149,7 @@ def main(argv=None):
     p.add_argument("--stimuli", choices=("otr", "sp"), default="otr",
                    help="otr = order-to-role constructions; sp = stranded-preposition frames (to/for/from)")
     p.add_argument("--question-template", default="",
-                   help='custom question, e.g. "Who was someone {past} by?" ({past}, {lemma} filled per item)')
+                   help='custom question, e.g. "Who was someone {past} by?" ({past}, {lemma}, {ing} filled per item)')
     p.add_argument("--question-role", choices=("agent", "patient"), default=None,
                    help="role the custom question asks for (required with --question-template)")
     p.add_argument("--chat-template", action="store_true")
@@ -194,7 +195,7 @@ def main(argv=None):
     for it in sample:
         question = it.question
         if args.question_template:
-            question = args.question_template.format(past=it.verb, lemma=it.lemma)
+            question = fill_template(args.question_template, it.verb, it.lemma)
             it = dataclasses.replace(it, question=question, question_voice="custom",
                                      prompt=it.prompt.replace(f"\nQuestion: {it.question}\n",
                                                               f"\nQuestion: {question}\n"))
