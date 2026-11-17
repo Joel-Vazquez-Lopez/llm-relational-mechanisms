@@ -28,4 +28,4 @@ export HF_HUB_OFFLINE=1   # compute nodes read the cache populated on the login 
 
 mkdir -p results
 nvidia-smi --query-gpu=name,memory.total --format=csv
-python scripts/otr07_logit_lens.py --model "$MODEL" "$@"
+python scripts/otr07_answer_process.py --model "$MODEL" "$@"
