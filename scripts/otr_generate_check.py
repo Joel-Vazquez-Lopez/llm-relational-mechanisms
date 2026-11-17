@@ -143,6 +143,67 @@ def extract_answer(text: str, names, sentence: str = "", question: str = "",
     return ("ambiguous" if left else "none"), None
 
 
+def prepared_prompts(stimuli="otr", seed=2026, n=256, question_template="", question_role=None, instruction=""):
+    """The balanced dev sample and final prompts used by every generation run (local or API).
+    Returns [(item, prompt)]; with a question template the item's question is rewritten."""
+    if stimuli == "sp":
+        from relational_lab.experiments import stranded_p_stimuli as sp
+        items = [i for i in sp.generate_items(seed=seed) if i.split == "dev"]
+    else:
+        items = [i for i in ors.generate_items(seed=seed)
+                 if i.split == "dev" and i.construction in ors.MAIN_CONSTRUCTIONS]
+    if question_template:
+        # one item per event and role: keep the active-voice question slot, then rewrite it
+        items = [i for i in items if i.role_asked == question_role and i.question_voice == "active"]
+    random.Random(seed).shuffle(items)
+    cells = defaultdict(list)
+    for it in items:
+        cells[(it.construction, it.role_asked, it.question_voice)].append(it)
+    per = max(1, n // len(cells))
+    out = []
+    for c in sorted(cells):
+        for it in cells[c][:per]:
+            if question_template:
+                question = fill_template(question_template, it.verb, it.lemma)
+                it = dataclasses.replace(it, question=question, question_voice="custom",
+                                         prompt=it.prompt.replace(f"\nQuestion: {it.question}\n",
+                                                                  f"\nQuestion: {question}\n"))
+                assert it.prompt.count(question) == 1, it.prompt
+            prompt = it.prompt.replace("\nAnswer:", f"\n{instruction}\nAnswer:") if instruction else it.prompt
+            out.append((it, prompt))
+    return out
+
+
+def make_row(it, prompt: str, text: str) -> dict:
+    said = first_name(text, [it.answer, it.distractor])
+    kind, name = extract_answer(text, [it.answer, it.distractor], it.sentence, it.question,
+                                agent=it.agent, patient=it.patient, role=it.role_asked)
+    return {"item_id": it.item_id, "construction": it.construction, "role": it.role_asked,
+            "voice": it.question_voice, "question": it.question, "prompt": prompt,
+            "answer": it.answer, "output": text,
+            "named": said is not None, "correct_first_name": said == it.answer,
+            "kind": kind, "extracted": name,
+            "is_copy": text.strip().rstrip(".") == it.sentence.rstrip("."), "correct": name == it.answer}
+
+
+def make_report(model: str, rows: list, seconds: float, **meta) -> dict:
+    n = len(rows)
+    summ = defaultdict(list)
+    for r in rows:
+        summ[f"{r['construction']}/{r['role']}/{r['voice']}"].append(r["correct"])
+    return {
+        "model": model, **meta,
+        "n": n, "named_rate": sum(r["named"] for r in rows) / n,
+        "kinds": {k: sum(r["kind"] == k for r in rows) / n for k in ("direct", "frame", "statement", "inferred", "ambiguous", "none")},
+        "generation_accuracy": sum(r["correct"] for r in rows) / n,
+        "accuracy_direct_only": (sum(r["correct"] for r in rows if r["kind"] == "direct")
+                                 / max(1, sum(r["kind"] == "direct" for r in rows))),
+        "accuracy_first_name_rule": sum(r["correct_first_name"] for r in rows) / n,
+        "cells": {k: sum(v) / len(v) for k, v in sorted(summ.items())},
+        "seconds": round(seconds, 1), "rows": rows,
+    }
+
+
 def main(argv=None):
     p = argparse.ArgumentParser()
     p.add_argument("--model", required=True)
@@ -176,67 +237,24 @@ def main(argv=None):
     tok = load_tokenizer(args.model)
     model = load_lm(args.model, dtype=getattr(torch, args.dtype)).to("cuda" if torch.cuda.is_available() else "cpu").eval()
     dev = next(model.parameters()).device
-    if args.stimuli == "sp":
-        if args.question_template:
-            p.error("--question-template applies to the OTR stimuli only")
-        from relational_lab.experiments import stranded_p_stimuli as sp
-        items = [i for i in sp.generate_items(seed=args.seed) if i.split == "dev"]
-    else:
-        items = [i for i in ors.generate_items(seed=args.seed)
-                 if i.split == "dev" and i.construction in ors.MAIN_CONSTRUCTIONS]
-    if args.question_template:
-        # one item per event and role: keep the active-voice question slot, then rewrite it
-        items = [i for i in items if i.role_asked == args.question_role and i.question_voice == "active"]
-    random.Random(args.seed).shuffle(items)
-    cells = defaultdict(list)
-    for it in items:
-        cells[(it.construction, it.role_asked, it.question_voice)].append(it)
-    per = max(1, args.n // len(cells))
-    sample = [it for c in sorted(cells) for it in cells[c][:per]]
-
+    if args.stimuli == "sp" and args.question_template:
+        p.error("--question-template applies to the OTR stimuli only")
     t0 = time.time()
     rows = []
-    for it in sample:
-        question = it.question
-        if args.question_template:
-            question = fill_template(args.question_template, it.verb, it.lemma)
-            it = dataclasses.replace(it, question=question, question_voice="custom",
-                                     prompt=it.prompt.replace(f"\nQuestion: {it.question}\n",
-                                                              f"\nQuestion: {question}\n"))
-            assert it.prompt.count(question) == 1, it.prompt
-        prompt = it.prompt.replace("\nAnswer:", f"\n{args.instruction}\nAnswer:") if args.instruction else it.prompt
+    for it, prompt in prepared_prompts(args.stimuli, args.seed, args.n, args.question_template,
+                                       args.question_role, args.instruction):
         ids = _prompt_ids(tok, prompt, args.chat_template)
         x = torch.tensor([ids], device=dev)
         with torch.no_grad():
             out = model.generate(x, attention_mask=torch.ones_like(x), max_new_tokens=args.max_new_tokens,
                                  do_sample=False, pad_token_id=tok.pad_token_id or tok.eos_token_id)
         text = tok.decode(out[0, len(ids):], skip_special_tokens=True)
-        said = first_name(text, [it.answer, it.distractor])
-        kind, name = extract_answer(text, [it.answer, it.distractor], it.sentence, it.question,
-                                    agent=it.agent, patient=it.patient, role=it.role_asked)
-        rows.append({"item_id": it.item_id, "construction": it.construction, "role": it.role_asked,
-                     "voice": it.question_voice, "question": it.question, "prompt": prompt,
-                     "answer": it.answer, "output": text,
-                     "named": said is not None, "correct_first_name": said == it.answer,
-                     "kind": kind, "extracted": name,
-                     "is_copy": text.strip().rstrip(".") == it.sentence.rstrip("."), "correct": name == it.answer})
+        rows.append(make_row(it, prompt, text))
+    report = make_report(args.model, rows, time.time() - t0, chat_template=args.chat_template,
+                         chat_template_kwargs=chat_kwargs, stimuli=args.stimuli, instruction=args.instruction,
+                         question_template=args.question_template or None, question_role=args.question_role,
+                         max_new_tokens=args.max_new_tokens)
     n = len(rows)
-    summ = defaultdict(list)
-    for r in rows:
-        summ[f"{r['construction']}/{r['role']}/{r['voice']}"].append(r["correct"])
-    report = {
-        "model": args.model, "chat_template": args.chat_template, "chat_template_kwargs": chat_kwargs,
-        "stimuli": args.stimuli, "instruction": args.instruction, "question_template": args.question_template or None,
-        "question_role": args.question_role, "max_new_tokens": args.max_new_tokens,
-        "n": n, "named_rate": sum(r["named"] for r in rows) / n,
-        "kinds": {k: sum(r["kind"] == k for r in rows) / n for k in ("direct", "frame", "statement", "inferred", "ambiguous", "none")},
-        "generation_accuracy": sum(r["correct"] for r in rows) / n,
-        "accuracy_direct_only": (sum(r["correct"] for r in rows if r["kind"] == "direct")
-                                 / max(1, sum(r["kind"] == "direct" for r in rows))),
-        "accuracy_first_name_rule": sum(r["correct_first_name"] for r in rows) / n,
-        "cells": {k: sum(v) / len(v) for k, v in sorted(summ.items())},
-        "seconds": round(time.time() - t0, 1), "rows": rows,
-    }
     args.out_dir.mkdir(parents=True, exist_ok=True)
     tag = "_sp" if args.stimuli == "sp" else ""
     if args.question_template:
