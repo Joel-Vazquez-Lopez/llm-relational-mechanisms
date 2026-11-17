@@ -97,3 +97,18 @@ def test_other_person_statements():
                 "Lisa was the one who chased Julia."):
         assert gc.extract_answer(out, N, role="agent", **R) == ("statement", "Lisa"), out
     assert gc.extract_answer("Lisa was the other person chased by Julia.", N, role="agent", **R) == ("statement", "Julia")
+
+
+def test_spanish_galician_statements():
+    for out in ("Laura fue elogiada por Daniel.", "Daniel elogió a Laura.", "A Laura la elogió Daniel.",
+                "Laura foi eloxiada por Daniel.", "Daniel eloxiou a Laura.", "A Laura eloxiouna Daniel.",
+                "Fue Daniel quien elogió a Laura.", "Foi a Laura a quen eloxiou Daniel."):
+        assert gc.extract_answer(out, ["Daniel", "Laura"], role="agent", agent="Daniel", patient="Laura") == ("statement", "Daniel"), out
+    assert gc.extract_answer("Daniel fue elogiado por Laura.", ["Daniel", "Laura"], role="agent",
+                             agent="Daniel", patient="Laura") == ("statement", "Laura")
+
+
+def test_prepared_prompts_spanish():
+    pp = gc.prepared_prompts("es", 2026, 40, "", None, "Responde con un solo nombre.")
+    assert pp and all(p.startswith("Oración: ") and "Responde con un solo nombre.\nRespuesta:" in p for _, p in pp)
+    assert {it.construction for it, _ in pp} <= {"active", "passive", "object_cleft", "by_cleft", "ovs_clitic"}

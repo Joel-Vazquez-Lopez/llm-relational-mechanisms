@@ -49,20 +49,35 @@ PROBE_CONSTRUCTIONS = ors.MAIN_CONSTRUCTIONS + ors.CONTROL_CONSTRUCTIONS + ors.H
 TARGETS = ("agent", "first", "subject")
 
 
-def build_items(seed: int, verbs_per_event: int):
+def constructions_for(lang: str):
+    if lang == "en":
+        return PROBE_CONSTRUCTIONS
+    from relational_lab.experiments import multilingual_stimuli as xl
+    return xl.XL_CONSTRUCTIONS
+
+
+def build_items(seed: int, verbs_per_event: int, lang: str = "en"):
     """Dev families x both orientations x verbs x constructions (default agent question)."""
     splits = ors.split_families(ors.NAMES, seed, 0.15, 4)
     dev = sorted(f for f, (s, _) in splits.items() if s == "dev")
-    verbs = list(ors.VERBS)
+    if lang == "en":
+        verbs = [(lemma, past, None) for lemma, past in ors.VERBS]
+    else:
+        from relational_lab.experiments import multilingual_stimuli as xl
+        verbs = list(xl.VERBS[lang])
     items = []
     for fi, fam in enumerate(dev):
         x, y = fam.split("|")
         for oi, (a, p) in enumerate(((x, y), (y, x))):
             chosen = [verbs[(fi * 2 * verbs_per_event + oi * verbs_per_event + k) % len(verbs)]
                       for k in range(verbs_per_event)]
-            for lemma, past in chosen:
-                for cons in PROBE_CONSTRUCTIONS:
-                    items.append(ors.build_item(a, p, lemma, past, cons, "agent", "active", family_id=fam))
+            for lemma, past, stem in chosen:
+                for cons in constructions_for(lang):
+                    if lang == "en":
+                        items.append(ors.build_item(a, p, lemma, past, cons, "agent", "active", family_id=fam))
+                    else:
+                        items.append(xl.build_item(lang, a, p, lemma, past, stem, cons, "agent", "active",
+                                                   family_id=fam))
     return items
 
 
@@ -102,6 +117,7 @@ def main(argv=None):
     p.add_argument("--verbs-per-event", type=int, default=8)
     p.add_argument("--layer-stride", type=int, default=2)
     p.add_argument("--positions", default="period", help="comma list from period,question_end,answer_cue")
+    p.add_argument("--langs", default="en", help="comma list, first = primary (E1/E2); others get E3 transfer from it, e.g. en,es,gl")
     p.add_argument("--lam", type=float, default=1.0, help="ridge strength relative to mean kernel diagonal")
     p.add_argument("--chat-template", action="store_true")
     p.add_argument("--no-thinking", action="store_true")
@@ -135,9 +151,12 @@ def main(argv=None):
 
     name_emb = {n: name_vec(n) for n in ors.NAMES}
 
-    items = build_items(args.seed, args.verbs_per_event)
+    langs = [x.strip() for x in args.langs.split(",") if x.strip()]
+    items_by_lang = {lg: build_items(args.seed, args.verbs_per_event, lg) for lg in langs}
     if args.max_items:
-        items = items[: args.max_items]
+        items_by_lang = {lg: v[: args.max_items] for lg, v in items_by_lang.items()}
+    items = [it for lg in langs for it in items_by_lang[lg]]
+    lang_of = [lg for lg in langs for _ in items_by_lang[lg]]
     idx_now: dict = {}
     store = {}
     handles = []
@@ -170,6 +189,12 @@ def main(argv=None):
             h.remove()
     fwd_seconds = time.time() - t0
 
+    all_items, all_feats, all_lang = items, feats, lang_of
+    prim = langs[0]
+    keep = [i for i, lg in enumerate(all_lang) if lg == prim]
+    items = [all_items[i] for i in keep]
+    feats = {pos: [all_feats[pos][i] for i in keep] for pos in positions}
+    PROBE_CONS = constructions_for(prim)
     fam_ids = sorted({it.family_id for it in items})
     fold = torch.tensor([fam_ids.index(it.family_id) % 5 for it in items])
     verb_half = torch.tensor([[v for v, _ in ors.VERBS].index(it.lemma) % 2 for it in items])
@@ -183,8 +208,8 @@ def main(argv=None):
     results = {}
     for pos in positions:
         F = torch.stack(feats[pos])  # [N, L', D] fp16 cpu
-        res_pos = {"E1": {t: {c: [] for c in PROBE_CONSTRUCTIONS} for t in TARGETS},
-                   "E2": {tr: {c: [] for c in PROBE_CONSTRUCTIONS} for tr in ors.MAIN_CONSTRUCTIONS}}
+        res_pos = {"E1": {t: {c: [] for c in PROBE_CONS} for t in TARGETS},
+                   "E2": {tr: {c: [] for c in PROBE_CONS} for tr in ors.MAIN_CONSTRUCTIONS}}
         for k, li in enumerate(use_layers):
             X = F[:, k].to(device).float()
             # E1: all constructions; family fold != f AND verb half 0 -> test fold f, verb half 1 (and swapped)
@@ -201,7 +226,7 @@ def main(argv=None):
                         pred = ridge_fit_predict(X[trd], E[t][trd], X[ted], args.lam)
                         ok[ted] = choose(pred, E[t][ted], other[t][ted])
                         tested[ted] = True
-                for c in PROBE_CONSTRUCTIONS:
+                for c in PROBE_CONS:
                     m = torch.tensor([cc == c for cc in cons_of], device=device) & tested
                     res_pos["E1"][t][c].append(round(float(ok[m].float().mean()), 4) if m.any() else None)
             # E2: agent probe trained on one construction, tested on all (held-out families and verbs)
@@ -219,28 +244,66 @@ def main(argv=None):
                         pred = ridge_fit_predict(X[trd], emb_agent[trd], X[ted], args.lam)
                         agent_hit[ted] = choose(pred, emb_agent[ted], emb_patient[ted])
                         tested[ted] = True
-                for c in PROBE_CONSTRUCTIONS:
+                for c in PROBE_CONS:
                     m = torch.tensor([cc == c for cc in cons_of], device=device) & tested
                     res_pos["E2"][trc][c].append(round(float(agent_hit[m].float().mean()), 4) if m.any() else None)
         results[pos] = res_pos
+
+    # E3: cross-lingual transfer, probes trained on the primary language, tested on each other language
+    transfer = {}
+    for tgt in langs[1:]:
+        ti = [i for i, lg in enumerate(all_lang) if lg == tgt]
+        t_items = [all_items[i] for i in ti]
+        t_cons = [it.construction for it in t_items]
+        t_fold = torch.tensor([fam_ids.index(it.family_id) % 5 if it.family_id in fam_ids else 0 for it in t_items])
+        ta = torch.stack([name_emb[it.agent] for it in t_items]).to(device)
+        tp = torch.stack([name_emb[it.patient] for it in t_items]).to(device)
+        out_t = {}
+        for pos in positions:
+            Fp = torch.stack(feats[pos])
+            Ft = torch.stack([all_feats[pos][i] for i in ti])
+            res = {"all_trained": {c: [] for c in constructions_for(tgt)},
+                   "active_trained": {c: [] for c in constructions_for(tgt)}}
+            for k, li in enumerate(use_layers):
+                Xp, Xt = Fp[:, k].to(device).float(), Ft[:, k].to(device).float()
+                for mode, trmask in (("all_trained", torch.ones(len(items), dtype=torch.bool)),
+                                     ("active_trained", torch.tensor([c == "active" for c in cons_of]))):
+                    hit = torch.zeros(len(t_items), dtype=torch.bool, device=device)
+                    for f in range(5):  # held-out families: train on folds != f, test target-language fold f
+                        tr = (trmask & (fold != f)).to(device)
+                        te = (t_fold == f).to(device)
+                        if tr.sum() < 10 or te.sum() == 0:
+                            continue
+                        pred = ridge_fit_predict(Xp[tr], emb_agent[tr], Xt[te], args.lam)
+                        hit[te] = choose(pred, ta[te], tp[te])
+                    for c in constructions_for(tgt):
+                        m = torch.tensor([cc == c for cc in t_cons], device=device)
+                        res[mode][c].append(round(float(hit[m].float().mean()), 4) if m.any() else None)
+            out_t[pos] = res
+        transfer[f"{prim}->{tgt}"] = out_t
 
     report = {
         "experiment": "OTR-08", "status": "EXPLORATORY", "version": OTR08_VERSION,
         "generator_version": ors.GENERATOR_VERSION, "model": args.model, "chat_template": args.chat_template,
         "chat_template_kwargs": chat_kwargs, "n_items": len(items), "n_families": len(fam_ids),
-        "verbs_per_event": args.verbs_per_event, "constructions": list(PROBE_CONSTRUCTIONS),
+        "verbs_per_event": args.verbs_per_event, "constructions": list(PROBE_CONS), "langs": langs,
+        "n_items_by_lang": {lg: len(v) for lg, v in items_by_lang.items()}, "transfer": transfer,
         "n_layers": L, "layers": use_layers, "positions": positions, "lam_rel": args.lam,
         "forward_seconds": round(fwd_seconds, 1), "seconds": round(time.time() - t0, 1), "results": results,
     }
     args.out_dir.mkdir(parents=True, exist_ok=True)
-    out = args.out_dir / f"otr08_{args.model.replace('/', '__')}_dev_{time.strftime('%Y%m%dT%H%M%S')}.json"
+    ltag = "" if langs == ["en"] else "_" + "-".join(langs)
+    out = args.out_dir / f"otr08_{args.model.replace('/', '__')}_dev{ltag}_{time.strftime('%Y%m%dT%H%M%S')}.json"
     out.write_text(json.dumps(report))
     print(f"Wrote {out}")
     r = results[positions[0]]
     last = -1
     print(f"[{positions[0]}] E1 last layer:", {t: {c[:8]: r['E1'][t][c][last] for c in ors.MAIN_CONSTRUCTIONS} for t in TARGETS})
     print(f"[{positions[0]}] E2 active-trained agent probe, P(agent) at last layer:",
-          {c[:8]: r["E2"]["active"][c][last] for c in PROBE_CONSTRUCTIONS})
+          {c[:8]: r["E2"]["active"][c][last] for c in PROBE_CONS})
+    for k, v in transfer.items():
+        print(f"E3 {k} [{positions[0]}] all-trained agent probe, P(agent) at last layer:",
+              {c[:8]: v[positions[0]]["all_trained"][c][last] for c in v[positions[0]]["all_trained"]})
     try:
         _plot(report, out.with_suffix(".png"))
         print(f"Wrote {out.with_suffix('.png')}")
@@ -258,7 +321,8 @@ def _plot(report, path):
     L = report["n_layers"]
     depth = [l / max(1, L - 1) for l in report["layers"]]
     cols = {"active": "#2a78d6", "passive": "#eb6834", "object_cleft": "#1baf7a", "by_cleft": "#eda100",
-            "subject_cleft": "#6250d6", "relative_active": "#e87ba4", "relative_passive": "#008300"}
+            "subject_cleft": "#6250d6", "relative_active": "#e87ba4", "relative_passive": "#008300",
+            "ovs_clitic": "#e34948"}
     fig, axes = plt.subplots(1, 4, figsize=(17, 3.8), sharey=True)
     for ax, t in zip(axes[:3], TARGETS):
         for c in report["constructions"]:

@@ -78,6 +78,9 @@ def main(argv=None):
     from relational_lab.experiments import stranded_p_stimuli as sp
     items = {i.item_id: i for i in ors.generate_items(seed=args.seed)}
     items.update({i.item_id: i for i in sp.generate_items(seed=args.seed)})
+    from relational_lab.experiments import multilingual_stimuli as xl
+    for lang in xl.LANGS:
+        items.update({i.item_id: i for i in xl.generate_items(lang, seed=args.seed)})
     report = {}
     for f in sorted(args.runs):
         res = rescore(json.loads(f.read_text()), items)

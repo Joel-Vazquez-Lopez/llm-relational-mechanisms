@@ -94,6 +94,14 @@ def event_statement(text: str, agent: str, patient: str):
             rf"It was {X} (?:who|that) \w+ {Y}",
             rf"It was {Y} (?:that|whom|who) {X} \w+",
             rf"It was by {X} that {Y} was \w+",
+            # Spanish / Galician
+            rf"{Y} (?:fue|foi) \w+ por {X}",
+            rf"{X} \w+ a {Y}",
+            rf"A {Y} (?:la|lo) \w+ {X}",
+            rf"A {Y} \w+ {X}",
+            rf"(?:Fue|Foi) {X} (?:quien|quen) \w+ a {Y}",
+            rf"(?:Fue|Foi) a {Y} a (?:quien|quen) \w+ {X}",
+            rf"(?:Fue|Foi) por {X} por (?:quien|quen) {Y} (?:fue|foi) \w+",
         )
         if any(re.fullmatch(p, s) for p in pats):
             return x, y
@@ -149,6 +157,10 @@ def prepared_prompts(stimuli="otr", seed=2026, n=256, question_template="", ques
     if stimuli == "sp":
         from relational_lab.experiments import stranded_p_stimuli as sp
         items = [i for i in sp.generate_items(seed=seed) if i.split == "dev"]
+    elif stimuli in ("es", "gl"):
+        from relational_lab.experiments import multilingual_stimuli as xl
+        items = [i for i in xl.generate_items(stimuli, seed=seed)
+                 if i.split == "dev" and i.construction in xl.XL_MAIN_CONSTRUCTIONS]
     else:
         items = [i for i in ors.generate_items(seed=seed)
                  if i.split == "dev" and i.construction in ors.MAIN_CONSTRUCTIONS]
@@ -169,7 +181,8 @@ def prepared_prompts(stimuli="otr", seed=2026, n=256, question_template="", ques
                                          prompt=it.prompt.replace(f"\nQuestion: {it.question}\n",
                                                                   f"\nQuestion: {question}\n"))
                 assert it.prompt.count(question) == 1, it.prompt
-            prompt = it.prompt.replace("\nAnswer:", f"\n{instruction}\nAnswer:") if instruction else it.prompt
+            head, cue = it.prompt.rsplit("\n", 1)  # cue = "Answer:" / "Respuesta:" / "Resposta:"
+            prompt = f"{head}\n{instruction}\n{cue}" if instruction else it.prompt
             out.append((it, prompt))
     return out
 
@@ -211,8 +224,8 @@ def main(argv=None):
     p.add_argument("--max-new-tokens", type=int, default=40)
     p.add_argument("--instruction", default="",
                    help='text inserted on its own line before "Answer:", e.g. "Reply with one name only."')
-    p.add_argument("--stimuli", choices=("otr", "sp"), default="otr",
-                   help="otr = order-to-role constructions; sp = stranded-preposition frames (to/for/from)")
+    p.add_argument("--stimuli", choices=("otr", "sp", "es", "gl"), default="otr",
+                   help="otr = order-to-role (English); sp = stranded-preposition frames; es / gl = Spanish / Galician OTR")
     p.add_argument("--question-template", default="",
                    help='custom question, e.g. "Who was someone {past} by?" ({past}, {lemma}, {ing} filled per item)')
     p.add_argument("--question-role", choices=("agent", "patient"), default=None,
@@ -237,8 +250,8 @@ def main(argv=None):
     tok = load_tokenizer(args.model)
     model = load_lm(args.model, dtype=getattr(torch, args.dtype)).to("cuda" if torch.cuda.is_available() else "cpu").eval()
     dev = next(model.parameters()).device
-    if args.stimuli == "sp" and args.question_template:
-        p.error("--question-template applies to the OTR stimuli only")
+    if args.stimuli != "otr" and args.question_template:
+        p.error("--question-template applies to the English OTR stimuli only")
     t0 = time.time()
     rows = []
     for it, prompt in prepared_prompts(args.stimuli, args.seed, args.n, args.question_template,
@@ -256,7 +269,7 @@ def main(argv=None):
                          max_new_tokens=args.max_new_tokens)
     n = len(rows)
     args.out_dir.mkdir(parents=True, exist_ok=True)
-    tag = "_sp" if args.stimuli == "sp" else ""
+    tag = "" if args.stimuli == "otr" else f"_{args.stimuli}"
     if args.question_template:
         tag = "_q-" + re.sub(r"[^a-z]+", "-", args.question_template.lower()).strip("-")
     out = args.out_dir / f"otrgen_{args.model.replace('/', '__')}_dev{tag}_{time.strftime('%Y%m%dT%H%M%S')}.json"

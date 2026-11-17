@@ -56,3 +56,24 @@ def test_smoke_tiny(monkeypatch, tmp_path):
     assert r["positions"] == ["period", "answer_cue"] and len(r["layers"]) == r["n_layers"]
     e1 = r["results"]["period"]["E1"]["agent"]["passive"]
     assert len(e1) == len(r["layers"]) and all(v is None or 0 <= v <= 1 for v in e1)
+
+
+def test_smoke_tiny_crosslingual(monkeypatch, tmp_path):
+    pytest.importorskip("transformers")
+    from test_logit_lens import _tiny
+    _tiny(monkeypatch)
+    o8 = _o8()
+    o8.main(["--model", "tiny", "--dtype", "float32", "--verbs-per-event", "2", "--layer-stride", "2",
+             "--langs", "en,es,gl", "--out-dir", str(tmp_path)])
+    r = json.loads(next(tmp_path.glob("otr08_*_en-es-gl_*.json")).read_text())
+    assert r["langs"] == ["en", "es", "gl"] and set(r["transfer"]) == {"en->es", "en->gl"}
+    t = r["transfer"]["en->es"]["period"]
+    assert set(t["all_trained"]) == {"active", "passive", "object_cleft", "by_cleft", "ovs_clitic", "subject_cleft"}
+    assert all(len(v) == len(r["layers"]) for v in t["active_trained"].values())
+
+
+def test_spanish_items_build():
+    o8 = _o8()
+    es = o8.build_items(2026, 2, "es")
+    assert {it.construction for it in es} == set(o8.constructions_for("es"))
+    assert all(it.prompt.startswith("Oración: ") for it in es[:50])
