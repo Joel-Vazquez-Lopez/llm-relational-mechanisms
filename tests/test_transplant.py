@@ -101,6 +101,17 @@ class TestDesign(unittest.TestCase):
         for got, want in zip(b, (0.3, 2.0, -1.0, 0.5)):
             self.assertAlmostEqual(got, want, places=2)
 
+    def test_fit_profile_single_question_role_drops_slot_nuisance(self):
+        tr = [t for t in otr.make_transplants(_bases(240)) if t.base.role_asked == "agent"]
+        rng = random.Random(1)
+        recs = [otr.TransplantRecord(t.base.item_id, t.base.family_id, t.base.construction, t.source.construction,
+                                     t.k, t.j, t.base.role_asked, t.x, 0.0,
+                                     [2.0 * t.x["role"] + rng.gauss(0, 0.05)]) for t in tr]
+        prof = otr.fit_profile(recs, n_boot=20)  # singular with the slot nuisance
+        self.assertEqual(prof["nuisance"], [])
+        self.assertAlmostEqual(prof["role"]["coef"][0], 2.0, places=1)
+        self.assertAlmostEqual(prof["function"]["coef"][0], 0.0, places=1)
+
     def test_fit_profile_recovers_a_planted_role_code(self):
         tr = otr.make_transplants(_bases(240))
         rng = random.Random(0)

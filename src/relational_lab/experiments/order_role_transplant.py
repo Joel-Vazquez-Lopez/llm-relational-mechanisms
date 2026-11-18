@@ -219,10 +219,16 @@ def _within_rows(recs, li, codes=CODES):
     return rows
 
 
-def fit_profile(records: Sequence[TransplantRecord], n_boot: int = 200, seed: int = 0) -> dict:
+def fit_profile(records: Sequence[TransplantRecord], n_boot: int = 200, seed: int = 0,
+                nuisance: Sequence[str] | None = None) -> dict:
     """Per layer: within-(base, slot) OLS coefficients for each code, with a
     family-bootstrap 95% interval. Also reports the mean identity effect (the
     average y, i.e. how much any foreign-name transplant moves the answer)."""
+    if nuisance is None:
+        # With a single question role, "source name was first-mentioned" and "source slot" are the
+        # same variable (x_order = slot indicator), so the slot nuisance cannot be separated from order.
+        nuisance = NUISANCE if len({r.role_asked for r in records}) > 1 else ()
+    nuisance = tuple(nuisance)
     n_layers = len(records[0].y)
     by_family: dict[str, list[TransplantRecord]] = defaultdict(list)
     for r in records:
@@ -237,20 +243,21 @@ def fit_profile(records: Sequence[TransplantRecord], n_boot: int = 200, seed: in
         boots.append(sample)
 
     def coefs(recs, li):
-        return ols(_within_rows(recs, li, codes=CODES + NUISANCE))
+        return ols(_within_rows(recs, li, codes=CODES + nuisance))
 
-    out: dict[str, dict] = {c: {"coef": [], "ci95": []} for c in CODES + NUISANCE}
+    out: dict[str, dict] = {c: {"coef": [], "ci95": []} for c in CODES + nuisance}
     out["mean_identity_effect"] = []
     for li in range(n_layers):
         b = coefs(records, li)
         vals = [r.y[li] for r in records if not math.isnan(r.y[li])]
         out["mean_identity_effect"].append(sum(vals) / len(vals))
         bs = [coefs(s, li) for s in boots] if n_boot else []
-        for ci, c in enumerate(CODES + NUISANCE, start=1):
+        for ci, c in enumerate(CODES + nuisance, start=1):
             out[c]["coef"].append(b[ci])
             if bs:
                 vals = sorted(v[ci] for v in bs)
                 out[c]["ci95"].append([vals[int(0.025 * n_boot)], vals[min(n_boot - 1, int(0.975 * n_boot))]])
+    out["nuisance"] = list(nuisance)
     out["n_records"] = len(records)
     out["n_families"] = len(families)
     return out

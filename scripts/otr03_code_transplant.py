@@ -150,7 +150,12 @@ def main(argv=None):
     if not records:
         raise SystemExit(f"No transplants analysed (skipped: {skipped}). The model may fail the task; "
                          "try --include-incorrect for a diagnostic run.")
-    profile = otr.fit_profile(records, n_boot=args.n_boot, seed=args.seed)
+    fit_error = None
+    try:
+        profile = otr.fit_profile(records, n_boot=args.n_boot, seed=args.seed)
+    except ValueError as exc:  # never lose the forward passes over an analysis problem
+        profile, fit_error = None, str(exc)
+        print(f"!! profile fit failed ({exc}); records are still written")
     null = otr.left_context_null(records)
     # With --include-incorrect: the same profile on bases the model answers correctly vs wrongly.
     by_base = {}
@@ -158,7 +163,11 @@ def main(argv=None):
         for key, keep in (("base_correct", True), ("base_wrong", False)):
             sub = [r for r in records if r.base_correct is keep]
             if len({r.base_id for r in sub}) >= 8:
-                by_base[key] = {"n_records": len(sub), "profile": otr.fit_profile(sub, n_boot=args.n_boot, seed=args.seed)}
+                try:
+                    by_base[key] = {"n_records": len(sub),
+                                    "profile": otr.fit_profile(sub, n_boot=args.n_boot, seed=args.seed)}
+                except ValueError as exc:
+                    by_base[key] = {"n_records": len(sub), "error": str(exc)}
 
     slug = args.model.replace("/", "__")
     stamp = time.strftime("%Y%m%dT%H%M%S")
@@ -181,17 +190,23 @@ def main(argv=None):
                      "transformers": transformers.__version__},
         "seconds": round(time.time() - t0, 1),
         "profile": profile,
+        "profile_fit_error": fit_error,
         "profile_by_base_correctness": by_base,
         "left_context_null_role_slope": null,
         "records": [r.__dict__ for r in records],
     }))
     print(f"Wrote {out}  ({len(records)} analysed, skipped {skipped})")
-    if args.plot:
+    if args.plot and profile is not None:
         png = out.with_suffix(".png")
         plot(profile, png, f"{args.model}: code profile (n={len(records)} transplants)")
         print(f"Wrote {png}")
 
+    if profile is None:
+        return
     for key, v in by_base.items():
+        if "profile" not in v:
+            print(f"{key}: {v['n_records']} records, fit failed: {v['error']}")
+            continue
         rc = v["profile"]["role"]["coef"]
         i = max(range(len(rc)), key=lambda j: rc[j])
         print(f"{key}: {v['n_records']} records, peak role {rc[i]:+.2f} at layer {layers[i]}")
