@@ -18,6 +18,7 @@ import argparse
 import hashlib
 import json
 import platform
+import dataclasses
 import random
 import sys
 import time
@@ -28,6 +29,7 @@ sys.path.insert(0, str(ROOT / "src"))
 
 from relational_lab.experiments import order_role_stimuli as ors
 from relational_lab.experiments import order_role_transplant as otr
+from relational_lab.experiments.question_templates import fill as fill_template
 
 
 def select_bases(items, split, n_events, question_voices, seed):
@@ -37,6 +39,21 @@ def select_bases(items, split, n_events, question_voices, seed):
     random.Random(seed).shuffle(events)
     keep = set(events[:n_events])
     return [i for i in pool if i.event_id in keep]
+
+
+def with_agent_question(items, template):
+    """Replace the question of agent-question items by ``template`` ({past}/{lemma}/{ing}).
+
+    Only the question text changes: the sentence, and so every name position, is untouched."""
+    out = []
+    for it in items:
+        if it.role_asked == "agent":
+            q = fill_template(template, it.verb, it.lemma)
+            prompt = it.prompt.replace(f"\nQuestion: {it.question}\n", f"\nQuestion: {q}\n")
+            assert prompt.count(q) == 1, prompt
+            it = dataclasses.replace(it, question=q, prompt=prompt)
+        out.append(it)
+    return out
 
 
 def plot(profile, out_png, title):
@@ -72,6 +89,10 @@ def main(argv=None):
     p.add_argument("--split", default="dev", choices=["dev", "test"])
     p.add_argument("--n-events", type=int, default=32)
     p.add_argument("--question-voices", nargs="+", default=["active"], choices=list(ors.QUESTION_VOICES))
+    p.add_argument("--roles", nargs="+", default=["agent", "patient"], choices=["agent", "patient"],
+                   help="which base questions to analyse")
+    p.add_argument("--agent-question", default=None, metavar="TEMPLATE",
+                   help='replace the agent question, e.g. "Who was someone {past} by?" (the failing wording)')
     p.add_argument("--batch-size", type=int, default=32)
     p.add_argument("--layer-stride", type=int, default=1)
     p.add_argument("--n-boot", type=int, default=500)
@@ -117,6 +138,9 @@ def main(argv=None):
     layers = list(range(0, n_layers, args.layer_stride))
     bases = select_bases(ors.generate_items(seed=args.seed), args.split, args.n_events,
                          set(args.question_voices), args.seed)
+    bases = [b for b in bases if b.role_asked in args.roles]
+    if args.agent_question:
+        bases = with_agent_question(bases, args.agent_question)
     transplants = otr.make_transplants(bases, seed=args.seed)
     print(f"{len(bases)} bases, {len(transplants)} transplants x {len(layers)} layers, {args.model}", flush=True)
     t0 = time.time()
@@ -128,17 +152,26 @@ def main(argv=None):
                          "try --include-incorrect for a diagnostic run.")
     profile = otr.fit_profile(records, n_boot=args.n_boot, seed=args.seed)
     null = otr.left_context_null(records)
+    # With --include-incorrect: the same profile on bases the model answers correctly vs wrongly.
+    by_base = {}
+    if args.include_incorrect:
+        for key, keep in (("base_correct", True), ("base_wrong", False)):
+            sub = [r for r in records if r.base_correct is keep]
+            if len({r.base_id for r in sub}) >= 8:
+                by_base[key] = {"n_records": len(sub), "profile": otr.fit_profile(sub, n_boot=args.n_boot, seed=args.seed)}
 
     slug = args.model.replace("/", "__")
     stamp = time.strftime("%Y%m%dT%H%M%S")
     args.out_dir.mkdir(parents=True, exist_ok=True)
-    out = args.out_dir / f"otr03_{slug}_{args.split}_{stamp}.json"
+    qtag = "_aq" if args.agent_question else ""
+    out = args.out_dir / f"otr03_{slug}_{args.split}{qtag}_{stamp}.json"
     out.write_text(json.dumps({
         "experiment": "OTR-03",
         "status": "EXPLORATORY" if args.split == "dev" else "TEST_SET_OPENED",
         "model": args.model, "revision": args.revision, "dtype": args.dtype, "device": device,
         "generator_version": ors.GENERATOR_VERSION, "seed": args.seed, "layers": layers,
-        "n_events": args.n_events, "question_voices": args.question_voices,
+        "n_events": args.n_events, "question_voices": args.question_voices, "roles": args.roles,
+        "agent_question": args.agent_question,
         "include_incorrect": args.include_incorrect, "chat_template": args.chat_template, "chat_template_kwargs": chat_kwargs,
         "n_bases": len(bases), "n_transplants": len(transplants), "n_analysed": len(records),
         "skipped": skipped,
@@ -148,6 +181,7 @@ def main(argv=None):
                      "transformers": transformers.__version__},
         "seconds": round(time.time() - t0, 1),
         "profile": profile,
+        "profile_by_base_correctness": by_base,
         "left_context_null_role_slope": null,
         "records": [r.__dict__ for r in records],
     }))
@@ -157,6 +191,10 @@ def main(argv=None):
         plot(profile, png, f"{args.model}: code profile (n={len(records)} transplants)")
         print(f"Wrote {png}")
 
+    for key, v in by_base.items():
+        rc = v["profile"]["role"]["coef"]
+        i = max(range(len(rc)), key=lambda j: rc[j])
+        print(f"{key}: {v['n_records']} records, peak role {rc[i]:+.2f} at layer {layers[i]}")
     worst = max((abs(v) for v in null[:-1]), default=float("nan"))
     print(f"\nValidity check (must be ~0): max |role slope| for identical-left-context sources = {worst:.3f}")
     print("\nCode profile: coefficient [95% CI] at selected layers")

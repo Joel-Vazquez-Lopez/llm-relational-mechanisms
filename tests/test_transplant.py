@@ -166,3 +166,37 @@ class TestTransplantSweep(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+
+def _o3():
+    from pathlib import Path
+    root = Path(__file__).resolve().parents[1]
+    spec = importlib.util.spec_from_file_location("o3", root / "scripts" / "otr03_code_transplant.py")
+    o3 = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(o3)
+    return o3
+
+
+def test_with_agent_question_changes_only_agent_questions():
+    o3 = _o3()
+    items = [i for i in ors.generate_items(seed=2026) if i.construction == "active"][:40]
+    new = o3.with_agent_question(items, "Who was someone {past} by?")
+    for old, it in zip(items, new):
+        assert it.prompt.split("Question:")[0] == old.prompt.split("Question:")[0]  # sentence and name spans untouched
+        assert it.span("first_name") == old.span("first_name") and it.span("second_name") == old.span("second_name")
+        if old.role_asked == "agent":
+            assert it.question == f"Who was someone {old.verb} by?" and it.prompt.count(it.question) == 1
+        else:
+            assert it == old
+
+
+@unittest.skipUnless(HAVE_TORCH, "torch/transformers not installed")
+def test_sweep_records_base_correctness():
+    from test_hf_scoring import tiny_model_and_tokenizer
+    names = ors.NAMES[:6]
+    bases = _o3().with_agent_question(_bases(12, names=names), "Who was someone {past} by?")
+    model, tok = tiny_model_and_tokenizer(ors.generate_items(names=names))
+    recs, _ = otr.sweep(model, tok, otr.make_transplants(bases, names=names)[:16], batch_size=8,
+                        require_base_correct=False)
+    assert recs and all(r.base_correct in (True, False) for r in recs)

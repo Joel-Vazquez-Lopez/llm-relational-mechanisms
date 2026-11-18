@@ -191,6 +191,7 @@ class TransplantRecord:
     x: dict[str, int]
     ld_base: float  # logit(name_k) - logit(other base name), unpatched
     y: list[float] = field(default_factory=list)  # per layer: patched - unpatched
+    base_correct: bool | None = None  # model answered the base question correctly (unpatched)
 
 
 def _regressor(r, c: str) -> float:
@@ -291,7 +292,8 @@ def sweep(
             last = b_len[r] - 1
             space = not chat_template
             ans, dis = answer_token(tokenizer, t.base.answer, space), answer_token(tokenizer, t.base.distractor, space)
-            if require_base_correct and not base_logits[r, last, ans] > base_logits[r, last, dis]:
+            correct = bool(base_logits[r, last, ans] > base_logits[r, last, dis])
+            if require_base_correct and not correct:
                 skipped["model_wrong_on_base"] += 1
                 continue
             name_k = t.base.names[0].name if t.k == "first_name" else t.base.names[1].name
@@ -306,7 +308,7 @@ def sweep(
                 base_construction=t.base.construction, source_construction=t.source.construction,
                 k=t.k, j=t.j, role_asked=t.base.role_asked, x=t.x,
                 ld_base=float(base_logits[r, last, nk] - base_logits[r, last, no]),
-                y=[float("nan")] * len(layer_list),
+                y=[float("nan")] * len(layer_list), base_correct=correct,
             ))
         if not rows:
             continue
