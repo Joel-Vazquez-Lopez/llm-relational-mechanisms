@@ -1,4 +1,6 @@
-![Model Linguistics — How relations are learned. How answers are formed.](papers/assets/research-atlas.svg)
+![Model Linguistics — Experience / Computation / Generalization](assets/model-linguistics-banner.svg)
+
+<h3 align="center">How does a Transformer learn to use a relationship?</h3>
 
 <p align="center">
 <a href="#01--learning-relations">Learning relations</a> &nbsp; / &nbsp;
