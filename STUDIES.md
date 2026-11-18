@@ -1,58 +1,44 @@
-# Research studies
+<div align="center">
 
-This index preserves canonical paths. Shared package code in `src/relational_lab/`
-serves several studies; a shared utility is not evidence of a shared scientific claim.
+![Model Linguistics: learning relations, tracing answers](papers/assets/research-atlas.svg)
 
-## Earlier relational-mechanisms programme — ML-0xx / EXP-101–106
+**[Learning relations](papers/learning-relations/README.md)** · **[Order-to-Role](papers/order-to-role/README.md)** · **[Layer study](papers/order-to-role/LAYERS.md)** · **[Repository map](papers/MAP.md)**
 
-- **Question:** How do training experience, grammatical construction and internal
-  computations affect relational answering and generalisation?
-- **Status:** frozen for integration: existing files, paths and protocol hashes must
-  remain unchanged. This describes preservation, not confirmation of every result.
-- **Paper:** *Targeted Experience, Relational Generalization, and Role-Assignment
-  Errors in Transformers*, working draft `paper/manuscript.md`; manuscript deadline
-  15 December 2026. The programme also includes historical pretrained-LLM work;
-  its exact allocation to a separate manuscript is not established by this index.
-- **Folders:** `investigations/scratch_transformers/`,
-  `investigations/pretrained_llms/`, `investigations/shared/`, `paper/`, `reports/`.
-- **Scripts:** existing `scripts/ml0*.py`, `scripts/ml100*.py`,
-  `scripts/exp101*` through `scripts/exp106*`, and `scripts/paper_*`.
-- **Tests:** `tests/test_counterfactual.py`, `tests/test_cue_interactions.py`,
-  plus historical offline checks in `scripts/test_exp101*.py`.
-- **Docs:** `docs/RESEARCH_CHARTER.md`, `docs/EVIDENCE_POLICY.md`,
-  `docs/PROVENANCE.md`, and the investigation-specific experiment indices.
+</div>
 
-## Order-to-Role — OTR
+# Choose a paper direction
 
-- **Question:** How do word order, semantic roles, question wording and answer
-  format affect participant selection and its layerwise computation in LLMs?
-- **Status:** active; exploratory development work, separate from frozen studies.
-- **Paper:** Order-to-Role pretrained-LLM study; final title and framing remain open.
-  The review brief targets an early-2027 ACL Rolling Review submission.
-- **Package:** `src/relational_lab/experiments/order_role_*.py`,
-  `src/relational_lab/experiments/stranded_p_stimuli.py`, and shared helpers under
-  `src/relational_lab/instrumentation/`.
-- **Scripts:** `scripts/otr*`, `scripts/slurm/otr*`.
-- **Tests:** `tests/test_order_role_*`, `tests/test_stranded_p_stimuli.py`,
-  `tests/test_generate_check.py`, `tests/test_logit_lens.py`,
-  `tests/test_transplant.py`; shared instrumentation tests include
-  `tests/test_chat_template_patching.py`, `tests/test_hf_scoring.py`, and
-  `tests/test_patching.py`.
-- **Docs:** `docs/order_to_role/`, including the review package at
-  `docs/order_to_role/review_2026-11/`.
-- **Results:** `order-to-role/results-dev` is the OTR data store. New result files
-  must not be committed to `main`; `results/` remains ignored, subject to the
-  existing README exception. Historical results already tracked on `main` remain
-  untouched. Archive OTR data in a release or Zenodo at study freeze.
-- **Workflow:** merge the cleaned `order-to-role/stimuli` code PR first. After that
-  merge, develop on `main` or short-lived branches; retain `results-dev` for data.
+| 🟢 01 · Learning relations | 🟣 02 · Order-to-Role |
+|:--|:--|
+| **How does experience teach a Transformer to use a relation?** | **How do LLMs turn grammatical information into an answer?** |
+| Scratch-trained models · controlled exposure · joint-role errors · generalisation | Pretrained LLMs · word order and roles · question and answer format · layerwise computation |
+| **Foundation:** repeated exposure benefits within a synthetic task family; heterogeneous error patterns. | **Foundation:** exploratory behavioral and intervention studies; measurement and causal interpretation remain under review. |
+| Existing assets **frozen for preservation**; paper development active. | **Active**, exploratory OTR programme. |
+| [Enter paper hub →](papers/learning-relations/README.md) | [Enter paper hub →](papers/order-to-role/README.md) |
 
-## Shared resources and unresolved ownership
+## Find what you need
 
-`scripts/show_chat_prompt.py` and `scripts/slurm/setup_pelle.sh` arrive with OTR
-but may be reusable infrastructure; this index does not assign them exclusively.
-Historical reports and general package utilities may serve multiple studies.
-The precise manuscript assignment of every earlier ML/EXP experiment remains an
-author decision; consult the existing indices rather than inferring it from a prefix.
+| I want to… | Start here |
+|:--|:--|
+| Read the scratch-model manuscript | [Working manuscript](paper/manuscript.md) |
+| Understand the scratch evidence | [Evidence checkpoint](investigations/scratch_transformers/CURRENT_FINDINGS.md) |
+| Review the LLM paper direction | [OTR paper hub](papers/order-to-role/README.md) |
+| Explore what happens between layers | [Layer-study map](papers/order-to-role/LAYERS.md) |
+| Find scripts, tests and documentation | [Repository map](papers/MAP.md) |
+| Locate OTR data | [Results branch](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/tree/order-to-role/results-dev/results) |
+| Understand evidence standards | [Evidence policy](docs/EVIDENCE_POLICY.md) |
 
-OTR paths above become available on `main` after the separate code integration PR.
+## Working together without mixing the evidence
+
+The paper hubs are navigation and planning documents, not replacement protocols.
+Existing files stay in their canonical locations, with frozen paths and hashes preserved.
+Shared code in `src/relational_lab/` serves several studies.
+
+OTR code currently lives on `order-to-role/stimuli`; links to that work explicitly use
+that branch until its separate integration PR is merged. After integration, new OTR work
+belongs on `main` or short-lived branches. Raw OTR results stay on
+`order-to-role/results-dev` until release or Zenodo archival at freeze. The historical
+99 results files already tracked on `main` remain untouched. Review figures and tables
+under `docs/order_to_role/` are permitted documentation artifacts.
+
+**Snapshot:** 18 November 2026 · [Ownership and open decisions](papers/MAP.md#ownership-and-open-decisions)
