@@ -1,6 +1,6 @@
-[← OTR paper hub](README.md) · [Research atlas](../../STUDIES.md)
+[← Order-to-Role overview](README.md) · [Research overview](../../STUDIES.md)
 
-# Inside the answer / layer-study map
+# From representations to answers
 
 **Question:** when response conditions change participant selection, which internal
 computations change, and can interventions predictably change the outcome?

@@ -1,48 +1,95 @@
-<div align="center">
+![Model Linguistics — How relations are learned. How answers are formed.](papers/assets/research-atlas.svg)
 
-![Model Linguistics: learning relations, tracing answers](papers/assets/research-atlas.svg)
+<p align="center">
+<a href="#01--learning-relations">Learning relations</a> &nbsp; / &nbsp;
+<a href="#02--order-to-role">Order-to-Role</a> &nbsp; / &nbsp;
+<a href="#materials--reproducibility">Materials &amp; reproducibility</a>
+</p>
 
-**[Learning relations](papers/learning-relations/README.md)** · **[Order-to-Role](papers/order-to-role/README.md)** · **[Layer study](papers/order-to-role/LAYERS.md)** · **[Repository map](papers/MAP.md)**
+Language understanding involves identifying an event, distinguishing its participants,
+and selecting the person a question asks about. This repository investigates how
+Transformers acquire and use those abilities through two complementary studies.
 
-</div>
+One controls **the experience a model learns from**. The other examines **the computations
+that lead a pretrained model to an answer**.
 
-# Research overview
+---
 
-Two complementary studies investigate how Transformers learn linguistic relations and
-how pretrained language models use them when answering questions. This guide connects
-each paper to its evidence, methods, code and current research status.
+## 01 — Learning relations
 
-| 🟢 01 · Learning relations | 🟣 02 · Order-to-Role |
+### Targeted experience and relational generalisation
+
+Small Transformers trained from scratch make it possible to compare controlled learning
+histories. This study examines how grammatical exposure changes generalisation—and why
+improved answer accuracy can coexist with persistent errors across complementary role questions.
+
+**Focus:** controlled exposure · joint-role errors · development across training and layers
+
+The existing manuscript brings together repeated behavioral effects within a synthetic
+task family, contrasting error patterns, and tests of candidate computational explanations.
+Its scripts and frozen protocols retain their original paths and hashes.
+
+**[Read the working manuscript →](paper/manuscript.md)**
+
+[Study overview](papers/learning-relations/README.md) ·
+[Evidence and limitations](investigations/scratch_transformers/CURRENT_FINDINGS.md) ·
+[Experiment index](investigations/scratch_transformers/EXPERIMENT_INDEX.md)
+
+<sub>Working manuscript · ML / EXP programme · Existing experimental assets preserved</sub>
+
+---
+
+## 02 — Order-to-Role
+
+### Grammatical information and answer selection in LLMs
+
+Pretrained language models can respond differently to the same event when the question
+or requested answer format changes. Order-to-Role investigates these differences by
+separating word order, grammatical function and semantic role.
+
+**Focus:** linguistic contrasts · response conditions · layerwise representations and interventions
+
+The layer study connects the behavioral observations to a mechanistic question: where
+is relevant information available, and which computations influence the participant
+selected as the answer? Decoding, logit-lens analysis and causal interventions provide
+different kinds of evidence; their conclusions are kept separate.
+
+**[Read the study overview →](papers/order-to-role/README.md)**
+
+[Review package](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/blob/order-to-role/stimuli/docs/order_to_role/review_2026-11/README.md) ·
+[Layerwise analysis](papers/order-to-role/LAYERS.md) ·
+[Review questions](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/blob/order-to-role/stimuli/docs/order_to_role/review_2026-11/REVIEW_BRIEF.md)
+
+<sub>Active exploratory study · OTR programme · Final manuscript framing remains open</sub>
+
+---
+
+## Materials & reproducibility
+
+| Material | Location |
 |:--|:--|
-| **How does experience teach a Transformer to use a relation?** | **How do LLMs turn grammatical information into an answer?** |
-| Scratch-trained models · controlled exposure · joint-role errors · generalisation | Pretrained LLMs · word order and roles · question and answer format · layerwise computation |
-| **Foundation:** repeated exposure benefits within a synthetic task family; heterogeneous error patterns. | **Foundation:** exploratory behavioral and intervention studies; measurement and causal interpretation remain under review. |
-| Existing assets **frozen for preservation**; paper development active. | **Active**, exploratory OTR programme. |
-| [Paper overview and evidence →](papers/learning-relations/README.md) | [Paper overview and evidence →](papers/order-to-role/README.md) |
+| Code, tests and study ownership | [Repository map](papers/MAP.md) |
+| OTR raw results | [Development data branch](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/tree/order-to-role/results-dev/results) |
+| Evidence and interpretation standards | [Evidence policy](docs/EVIDENCE_POLICY.md) |
+| Research provenance | [Provenance guide](docs/PROVENANCE.md) |
 
-## Reading guide
+The study pages distinguish archived findings, exploratory observations and proposed
+experiments. Shared infrastructure does not imply that findings transfer between studies.
 
-| Topic | Reference |
-|:--|:--|
-| Scratch-model manuscript | [Working manuscript](paper/manuscript.md) |
-| Scratch-model evidence | [Evidence checkpoint](investigations/scratch_transformers/CURRENT_FINDINGS.md) |
-| LLM study overview | [OTR paper hub](papers/order-to-role/README.md) |
-| Layerwise analysis | [Layer-study map](papers/order-to-role/LAYERS.md) |
-| Code, tests and documentation | [Repository map](papers/MAP.md) |
-| OTR result data | [Results branch](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/tree/order-to-role/results-dev/results) |
-| Evidence standards | [Evidence policy](docs/EVIDENCE_POLICY.md) |
+<details>
+<summary><strong>Repository and archival notes</strong></summary>
 
-## Working together without mixing the evidence
+Existing research files remain in their canonical locations. Shared code in
+`src/relational_lab/` serves several studies. OTR code links currently point to
+`order-to-role/stimuli` while its separate integration is pending; after integration,
+new code belongs on `main` or short-lived branches.
 
-The paper hubs are navigation and planning documents, not replacement protocols.
-Existing files stay in their canonical locations, with frozen paths and hashes preserved.
-Shared code in `src/relational_lab/` serves several studies.
+Raw OTR results remain on `order-to-role/results-dev` until release or Zenodo archival
+at freeze. The 99 historical results files already tracked on `main` remain untouched.
+Review figures and tables under `docs/order_to_role/` are permitted documentation artifacts.
 
-OTR code currently lives on `order-to-role/stimuli`; links to that work explicitly use
-that branch until its separate integration PR is merged. After integration, new OTR work
-belongs on `main` or short-lived branches. Raw OTR results stay on
-`order-to-role/results-dev` until release or Zenodo archival at freeze. The historical
-99 results files already tracked on `main` remain untouched. Review figures and tables
-under `docs/order_to_role/` are permitted documentation artifacts.
+[Ownership and open decisions](papers/MAP.md#ownership-and-open-decisions)
 
-**Snapshot:** 18 November 2026 · [Ownership and open decisions](papers/MAP.md#ownership-and-open-decisions)
+</details>
+
+<sub>Research guide · Updated 18 November 2026</sub>

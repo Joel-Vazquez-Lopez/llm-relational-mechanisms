@@ -1,6 +1,6 @@
-[← Research atlas](../../STUDIES.md) · [Other paper →](../learning-relations/README.md)
+[← Research overview](../../STUDIES.md) · [Companion study →](../learning-relations/README.md)
 
-# 02 / Order-to-Role
+# Order-to-Role
 
 > How do word order, grammatical function, semantic role and response conditions shape the answer an LLM selects?
 

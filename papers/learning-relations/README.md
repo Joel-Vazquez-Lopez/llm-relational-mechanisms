@@ -1,6 +1,6 @@
-[← Research atlas](../../STUDIES.md) · [Other paper →](../order-to-role/README.md)
+[← Research overview](../../STUDIES.md) · [Companion study →](../order-to-role/README.md)
 
-# 01 / Learning relations
+# Learning relations
 
 > How does controlled experience change relational generalisation and the errors a Transformer makes?
 

@@ -1,4 +1,4 @@
-[← Research atlas](../STUDIES.md)
+[← Research overview](../STUDIES.md)
 
 # Repository map
 
