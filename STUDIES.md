@@ -6,7 +6,11 @@
 
 </div>
 
-# Choose a paper direction
+# Research overview
+
+Two complementary studies investigate how Transformers learn linguistic relations and
+how pretrained language models use them when answering questions. This guide connects
+each paper to its evidence, methods, code and current research status.
 
 | 🟢 01 · Learning relations | 🟣 02 · Order-to-Role |
 |:--|:--|
@@ -14,19 +18,19 @@
 | Scratch-trained models · controlled exposure · joint-role errors · generalisation | Pretrained LLMs · word order and roles · question and answer format · layerwise computation |
 | **Foundation:** repeated exposure benefits within a synthetic task family; heterogeneous error patterns. | **Foundation:** exploratory behavioral and intervention studies; measurement and causal interpretation remain under review. |
 | Existing assets **frozen for preservation**; paper development active. | **Active**, exploratory OTR programme. |
-| [Enter paper hub →](papers/learning-relations/README.md) | [Enter paper hub →](papers/order-to-role/README.md) |
+| [Paper overview and evidence →](papers/learning-relations/README.md) | [Paper overview and evidence →](papers/order-to-role/README.md) |
 
-## Find what you need
+## Reading guide
 
-| I want to… | Start here |
+| Topic | Reference |
 |:--|:--|
-| Read the scratch-model manuscript | [Working manuscript](paper/manuscript.md) |
-| Understand the scratch evidence | [Evidence checkpoint](investigations/scratch_transformers/CURRENT_FINDINGS.md) |
-| Review the LLM paper direction | [OTR paper hub](papers/order-to-role/README.md) |
-| Explore what happens between layers | [Layer-study map](papers/order-to-role/LAYERS.md) |
-| Find scripts, tests and documentation | [Repository map](papers/MAP.md) |
-| Locate OTR data | [Results branch](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/tree/order-to-role/results-dev/results) |
-| Understand evidence standards | [Evidence policy](docs/EVIDENCE_POLICY.md) |
+| Scratch-model manuscript | [Working manuscript](paper/manuscript.md) |
+| Scratch-model evidence | [Evidence checkpoint](investigations/scratch_transformers/CURRENT_FINDINGS.md) |
+| LLM study overview | [OTR paper hub](papers/order-to-role/README.md) |
+| Layerwise analysis | [Layer-study map](papers/order-to-role/LAYERS.md) |
+| Code, tests and documentation | [Repository map](papers/MAP.md) |
+| OTR result data | [Results branch](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/tree/order-to-role/results-dev/results) |
+| Evidence standards | [Evidence policy](docs/EVIDENCE_POLICY.md) |
 
 ## Working together without mixing the evidence
 
