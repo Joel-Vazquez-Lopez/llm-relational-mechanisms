@@ -102,6 +102,12 @@ def event_statement(text: str, agent: str, patient: str):
             rf"(?:Fue|Foi) {X} (?:quien|quen) \w+ a {Y}",
             rf"(?:Fue|Foi) a {Y} a (?:quien|quen) \w+ {X}",
             rf"(?:Fue|Foi) por {X} por (?:quien|quen) {Y} (?:fue|foi) \w+",
+            # Swedish
+            rf"{Y} (?:blev|blir|har blivit) \w+ av {X}",
+            rf"{Y} \w+s av {X}",
+            rf"Det var {X} som \w+ {Y}",
+            rf"Det var {Y} som {X} \w+",
+            rf"Det var av {X} som {Y} (?:blev \w+|\w+s)",
         )
         if any(re.fullmatch(p, s) for p in pats):
             return x, y
@@ -169,6 +175,10 @@ def prepared_prompts(stimuli="otr", seed=2026, n=256, question_template="", ques
         from relational_lab.experiments import multilingual_stimuli as xl
         items = [i for i in xl.generate_items(stimuli, seed=seed)
                  if i.split == "dev" and i.construction in xl.XL_MAIN_CONSTRUCTIONS]
+    elif stimuli == "sv":
+        from relational_lab.experiments import swedish_stimuli as sv
+        items = [i for i in sv.generate_items(seed=seed)
+                 if i.split == "dev" and i.construction in sv.SV_MAIN_CONSTRUCTIONS]
     else:
         items = [i for i in ors.generate_items(seed=seed)
                  if i.split == "dev" and i.construction in ors.MAIN_CONSTRUCTIONS]
@@ -186,13 +196,16 @@ def prepared_prompts(stimuli="otr", seed=2026, n=256, question_template="", ques
             if question_template:
                 if stimuli in ("es", "gl"):
                     question = fill_xl_template(stimuli, question_template, it.verb, it.lemma)
+                elif stimuli == "sv":
+                    from relational_lab.experiments import swedish_stimuli as sv
+                    question = sv.fill_template(question_template, it.verb, it.lemma)
                 else:
                     question = fill_template(question_template, it.verb, it.lemma)
                 assert it.prompt.count(f" {it.question}\n") == 1, it.prompt
                 it = dataclasses.replace(it, question=question, question_voice="custom",
                                          prompt=it.prompt.replace(f" {it.question}\n", f" {question}\n"))
                 assert it.prompt.count(question) == 1, it.prompt
-            head, cue = it.prompt.rsplit("\n", 1)  # cue = "Answer:" / "Respuesta:" / "Resposta:"
+            head, cue = it.prompt.rsplit("\n", 1)  # cue = "Answer:" / "Respuesta:" / "Resposta:" / "Svar:"
             prompt = f"{head}\n{instruction}\n{cue}" if instruction else it.prompt
             out.append((it, prompt))
     return out
@@ -235,8 +248,9 @@ def main(argv=None):
     p.add_argument("--max-new-tokens", type=int, default=40)
     p.add_argument("--instruction", default="",
                    help='text inserted on its own line before "Answer:", e.g. "Reply with one name only."')
-    p.add_argument("--stimuli", choices=("otr", "sp", "es", "gl"), default="otr",
-                   help="otr = order-to-role (English); sp = stranded-preposition frames; es / gl = Spanish / Galician OTR")
+    p.add_argument("--stimuli", choices=("otr", "sp", "es", "gl", "sv"), default="otr",
+                   help="otr = order-to-role (English); sp = stranded-preposition frames; es / gl = Spanish / "
+                        "Galician OTR; sv = Swedish OTR (NOT YET NATIVE-CHECKED)")
     p.add_argument("--question-template", default="",
                    help='custom question, e.g. "Who was someone {past} by?" ({past}, {lemma}, {ing} filled per item)')
     p.add_argument("--question-role", choices=("agent", "patient"), default=None,
@@ -262,7 +276,7 @@ def main(argv=None):
     model = load_lm(args.model, dtype=getattr(torch, args.dtype)).to("cuda" if torch.cuda.is_available() else "cpu").eval()
     dev = next(model.parameters()).device
     if args.stimuli == "sp" and args.question_template:
-        p.error("--question-template applies to the otr, es and gl stimuli")
+        p.error("--question-template applies to the otr, es, gl and sv stimuli")
     t0 = time.time()
     rows = []
     for it, prompt in prepared_prompts(args.stimuli, args.seed, args.n, args.question_template,
@@ -278,6 +292,9 @@ def main(argv=None):
                          chat_template_kwargs=chat_kwargs, stimuli=args.stimuli, instruction=args.instruction,
                          question_template=args.question_template or None, question_role=args.question_role,
                          max_new_tokens=args.max_new_tokens)
+    if args.stimuli == "sv":
+        from relational_lab.experiments import swedish_stimuli as sv
+        report["sv_generator_version"], report["native_checked"] = sv.SV_GENERATOR_VERSION, sv.NATIVE_CHECKED
     n = len(rows)
     args.out_dir.mkdir(parents=True, exist_ok=True)
     tag = "" if args.stimuli == "otr" else f"_{args.stimuli}"
