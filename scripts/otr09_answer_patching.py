@@ -116,6 +116,7 @@ def main(argv=None):
     p.add_argument("--heads", default="", help='extra head set to test jointly, "layer.head,..."')
     p.add_argument("--chat-template", action="store_true")
     p.add_argument("--no-thinking", action="store_true")
+    p.add_argument("--assistant-prefix", default="", help='forced start of the reply, e.g. gpt-oss "<|channel|>final<|message|>"')
     p.add_argument("--template-kwarg", action="append", default=[], metavar="KEY=VALUE")
     p.add_argument("--dtype", default="bfloat16")
     p.add_argument("--seed", type=int, default=2026)
@@ -123,7 +124,8 @@ def main(argv=None):
     args = p.parse_args(argv)
 
     from relational_lab.instrumentation import chat as _chat
-    chat_kwargs = _chat.configure(no_thinking=args.no_thinking, template_kwargs=args.template_kwarg)
+    chat_kwargs = _chat.configure(no_thinking=args.no_thinking, template_kwargs=args.template_kwarg,
+                                  assistant_prefix=args.assistant_prefix)
     import torch
 
     from relational_lab.instrumentation.hf_scoring import load_lm, load_tokenizer
