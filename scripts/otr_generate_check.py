@@ -175,6 +175,9 @@ def prepared_prompts(stimuli="otr", seed=2026, n=256, question_template="", ques
         from relational_lab.experiments import multilingual_stimuli as xl
         items = [i for i in xl.generate_items(stimuli, seed=seed)
                  if i.split == "dev" and i.construction in xl.XL_MAIN_CONSTRUCTIONS]
+    elif stimuli.startswith("bx-"):
+        from relational_lab.experiments import broad_stimuli as bx
+        items = bx.generate_items(stimuli[3:], split="dev", seed=seed)
     elif stimuli == "sv":
         from relational_lab.experiments import swedish_stimuli as sv
         items = [i for i in sv.generate_items(seed=seed)
@@ -184,7 +187,11 @@ def prepared_prompts(stimuli="otr", seed=2026, n=256, question_template="", ques
                  if i.split == "dev" and i.construction in ors.MAIN_CONSTRUCTIONS]
     if question_template:
         # one item per event and role: keep the active-voice question slot, then rewrite it
-        items = [i for i in items if i.role_asked == question_role and i.question_voice == "active"]
+        if question_role == "by":  # broad stimuli: the role a passive by-phrase expresses for this verb
+            from relational_lab.experiments import broad_stimuli as bx
+            items = [i for i in items if i.role_asked == bx.by_phrase_role(i) and i.question_voice == "active"]
+        else:
+            items = [i for i in items if i.role_asked == question_role and i.question_voice == "active"]
     random.Random(seed).shuffle(items)
     cells = defaultdict(list)
     for it in items:
@@ -199,6 +206,9 @@ def prepared_prompts(stimuli="otr", seed=2026, n=256, question_template="", ques
                 elif stimuli == "sv":
                     from relational_lab.experiments import swedish_stimuli as sv
                     question = sv.fill_template(question_template, it.verb, it.lemma)
+                elif stimuli.startswith("bx-"):
+                    from relational_lab.experiments import broad_stimuli as bx
+                    question = bx.fill_template(question_template, it.lemma, bx.theme_of(it))
                 else:
                     question = fill_template(question_template, it.verb, it.lemma)
                 assert it.prompt.count(f" {it.question}\n") == 1, it.prompt
@@ -248,13 +258,16 @@ def main(argv=None):
     p.add_argument("--max-new-tokens", type=int, default=40)
     p.add_argument("--instruction", default="",
                    help='text inserted on its own line before "Answer:", e.g. "Reply with one name only."')
-    p.add_argument("--stimuli", choices=("otr", "sp", "es", "gl", "sv"), default="otr",
+    p.add_argument("--stimuli", choices=("otr", "sp", "es", "gl", "sv", "bx-transitive", "bx-ditransitive", "bx-psych"),
+                   default="otr",
                    help="otr = order-to-role (English); sp = stranded-preposition frames; es / gl = Spanish / "
-                        "Galician OTR; sv = Swedish OTR (NOT YET NATIVE-CHECKED)")
+                        "Galician OTR; sv = Swedish OTR (NOT YET NATIVE-CHECKED); bx-* = broad English stimuli "
+                        "(new names/verbs, many constructions)")
     p.add_argument("--question-template", default="",
                    help='custom question, e.g. "Who was someone {past} by?" ({past}, {lemma}, {ing} filled per item)')
-    p.add_argument("--question-role", choices=("agent", "patient"), default=None,
-                   help="role the custom question asks for (required with --question-template)")
+    p.add_argument("--question-role", choices=("agent", "patient", "recipient", "stimulus", "experiencer", "by"),
+                   default=None, help="role the custom question asks for (required with --question-template); "
+                   "'by' = the role a passive by-phrase expresses (broad stimuli, e.g. 'Who was someone {pp} by?')")
     p.add_argument("--chat-template", action="store_true")
     p.add_argument("--no-thinking", action="store_true")
     p.add_argument("--template-kwarg", action="append", default=[], metavar="KEY=VALUE")
@@ -276,7 +289,7 @@ def main(argv=None):
     model = load_lm(args.model, dtype=getattr(torch, args.dtype)).to("cuda" if torch.cuda.is_available() else "cpu").eval()
     dev = next(model.parameters()).device
     if args.stimuli == "sp" and args.question_template:
-        p.error("--question-template applies to the otr, es, gl and sv stimuli")
+        p.error("--question-template applies to the otr, es, gl, sv and bx-* stimuli")
     t0 = time.time()
     rows = []
     for it, prompt in prepared_prompts(args.stimuli, args.seed, args.n, args.question_template,
