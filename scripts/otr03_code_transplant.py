@@ -27,6 +27,8 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
+from relational_lab.experiments import bx_adapter as bxa
+from relational_lab.experiments import broad_stimuli as bx
 from relational_lab.experiments import order_role_stimuli as ors
 from relational_lab.experiments import order_role_transplant as otr
 from relational_lab.experiments.question_templates import fill as fill_template
@@ -87,12 +89,18 @@ def main(argv=None):
     p.add_argument("--dtype", default="bfloat16", choices=["bfloat16", "float16", "float32"])
     p.add_argument("--device", default=None)
     p.add_argument("--split", default="dev", choices=["dev", "test"])
+    p.add_argument("--stimuli", default="otr", choices=["otr", *bxa.STIMULI],
+                   help="otr = the original materials; bx-* = broad English blocks (new names, verbs, "
+                        "constructions). For bx, --roles agent/patient mean the block's A/B slot "
+                        "(agent/patient, agent/recipient, stimulus/experiencer)")
     p.add_argument("--n-events", type=int, default=32)
     p.add_argument("--question-voices", nargs="+", default=["active"], choices=list(ors.QUESTION_VOICES))
     p.add_argument("--roles", nargs="+", default=["agent", "patient"], choices=["agent", "patient"],
                    help="which base questions to analyse")
     p.add_argument("--agent-question", default=None, metavar="TEMPLATE",
-                   help='replace the agent question, e.g. "Who was someone {past} by?" (the failing wording)')
+                   help='replace the agent question, e.g. "Who was someone {past} by?" (the failing wording). '
+                        'With bx stimuli: the question for the by-phrase role, e.g. "Who was someone {pp} by?" '
+                        '(only by-phrase-role bases are kept; fear-class psych verbs: the experiencer)')
     p.add_argument("--batch-size", type=int, default=32)
     p.add_argument("--layer-stride", type=int, default=1)
     p.add_argument("--n-boot", type=int, default=500)
@@ -125,7 +133,17 @@ def main(argv=None):
         raise SystemExit("A fast tokenizer is required for offset mappings.")
     if args.chat_template and tok.chat_template is None:
         raise SystemExit(f"{args.model} has no chat template.")
-    problems = check_names_for_patching(tok, ors.NAMES, args.chat_template)
+    is_bx = args.stimuli != "otr"
+    names = bx.NAMES if is_bx else ors.NAMES
+    problems = check_names_for_patching(tok, names, args.chat_template)
+    dropped_names = []
+    if problems and is_bx:
+        # 48 new names: drop the ones this tokenizer cannot patch (multi-token, or a first answer
+        # token shared with another name) rather than abandoning the run; they are recorded.
+        bad = {n for n in names if any(repr(n) in msg for msg in problems)}
+        names = tuple(n for n in names if n not in bad)
+        dropped_names, problems = sorted(bad), check_names_for_patching(tok, names, args.chat_template)
+        print(f"dropping {len(dropped_names)} names this tokenizer cannot patch: {dropped_names}", flush=True)
     if problems:
         raise SystemExit(f"Name list unusable for {args.model}: " + "; ".join(problems))
     device = args.device or ("cuda" if torch.cuda.is_available() else "cpu")
@@ -136,12 +154,23 @@ def main(argv=None):
 
     n_layers = len(decoder_layers(model))
     layers = list(range(0, n_layers, args.layer_stride))
-    bases = select_bases(ors.generate_items(seed=args.seed), args.split, args.n_events,
-                         set(args.question_voices), args.seed)
-    bases = [b for b in bases if b.role_asked in args.roles]
-    if args.agent_question:
-        bases = with_agent_question(bases, args.agent_question)
-    transplants = otr.make_transplants(bases, seed=args.seed)
+    if is_bx:
+        bases = bxa.select_bases(args.stimuli, args.split, args.n_events, args.question_voices, args.seed,
+                                 roles=("agent", "patient") if args.agent_question else args.roles)
+        bases = [b for b in bases if b.agent in names and b.patient in names]
+        if args.agent_question:
+            bases = bxa.with_by_question(bases, args.agent_question)
+        transplants = otr.make_transplants(bases, seed=args.seed, names=names, builder=bxa.builder,
+                                           constructions_for=bxa.source_constructions)
+        null_cons = bxa.NULL_CONSTRUCTIONS[bxa.block_name(args.stimuli)]
+    else:
+        bases = select_bases(ors.generate_items(seed=args.seed), args.split, args.n_events,
+                             set(args.question_voices), args.seed)
+        bases = [b for b in bases if b.role_asked in args.roles]
+        if args.agent_question:
+            bases = with_agent_question(bases, args.agent_question)
+        transplants = otr.make_transplants(bases, seed=args.seed)
+        null_cons = ("active", "passive")
     print(f"{len(bases)} bases, {len(transplants)} transplants x {len(layers)} layers, {args.model}", flush=True)
     t0 = time.time()
     records, skipped = otr.sweep(model, tok, transplants, layers=layers, batch_size=args.batch_size,
@@ -156,7 +185,7 @@ def main(argv=None):
     except ValueError as exc:  # never lose the forward passes over an analysis problem
         profile, fit_error = None, str(exc)
         print(f"!! profile fit failed ({exc}); records are still written")
-    null = otr.left_context_null(records)
+    null = otr.left_context_null(records, null_cons)
     # With --include-incorrect: the same profile on bases the model answers correctly vs wrongly.
     by_base = {}
     if args.include_incorrect:
@@ -169,16 +198,34 @@ def main(argv=None):
                 except ValueError as exc:
                     by_base[key] = {"n_records": len(sub), "error": str(exc)}
 
+    # Psych: frighten-class and fear-class separately (role = stimulus vs experiencer; in fear-class
+    # actives the subject is the experiencer, so "role" and "subject" come apart within the class).
+    by_class = {}
+    if args.stimuli == "bx-psych":
+        for cls in ("se", "es"):
+            sub = [r for r in records if r.base_construction.startswith(cls + "_")]
+            if len({r.base_id for r in sub}) >= 8:
+                try:
+                    by_class[cls] = {"n_records": len(sub),
+                                     "profile": otr.fit_profile(sub, n_boot=args.n_boot, seed=args.seed)}
+                except ValueError as exc:
+                    by_class[cls] = {"n_records": len(sub), "error": str(exc)}
+
     slug = args.model.replace("/", "__")
     stamp = time.strftime("%Y%m%dT%H%M%S")
     args.out_dir.mkdir(parents=True, exist_ok=True)
     qtag = "_aq" if args.agent_question else ""
-    out = args.out_dir / f"otr03_{slug}_{args.split}{qtag}_{stamp}.json"
+    stag = "" if args.stimuli == "otr" else f"_{args.stimuli}"
+    out = args.out_dir / f"otr03_{slug}_{args.split}{stag}{qtag}_{stamp}.json"
     out.write_text(json.dumps({
         "experiment": "OTR-03",
         "status": "EXPLORATORY" if args.split == "dev" else "TEST_SET_OPENED",
         "model": args.model, "revision": args.revision, "dtype": args.dtype, "device": device,
-        "generator_version": ors.GENERATOR_VERSION, "seed": args.seed, "layers": layers,
+        "generator_version": ors.GENERATOR_VERSION, "stimuli": args.stimuli,
+        "bx_generator_version": bx.BX_GENERATOR_VERSION if is_bx else None,
+        "seed": args.seed, "layers": layers,
+        "base_constructions": sorted({b.construction for b in bases}),
+        "dropped_names": dropped_names,
         "n_events": args.n_events, "question_voices": args.question_voices, "roles": args.roles,
         "agent_question": args.agent_question,
         "include_incorrect": args.include_incorrect, "chat_template": args.chat_template, "chat_template_kwargs": chat_kwargs,
@@ -192,8 +239,10 @@ def main(argv=None):
         "profile": profile,
         "profile_fit_error": fit_error,
         "profile_by_base_correctness": by_base,
+        "profile_by_psych_class": by_class,
         "left_context_null_role_slope": null,
         "records": [r.__dict__ for r in records],
+        "base_real_roles": ({b.item_id: bxa.real_role(b) for b in bases} if is_bx else None),
     }))
     print(f"Wrote {out}  ({len(records)} analysed, skipped {skipped})")
     if args.plot and profile is not None:

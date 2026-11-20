@@ -24,6 +24,12 @@ the decision and where name-mover heads fetch a name.
 
 Linear-attention layers of hybrid models (no self_attn.o_proj) are skipped for heads.
 
+Broad English (1.1.0): --stimuli bx-transitive | bx-ditransitive | bx-psych runs the same
+analysis on new names, verbs and constructions (failing question for the by-phrase role,
+defaults "Who was someone {pp} by?" / "Who was someone {pp} {theme} by?"). --rank-from
+OTR09.json takes the head ranking from an earlier run (e.g. on the original materials) and
+tests whether THOSE heads repair the new items ("transfer"), next to the fresh scan.
+
     python scripts/otr09_answer_patching.py --model google/gemma-4-31B-it --chat-template \\
         --instruction "Reply with one name only." --heads 47.17,53.26,53.18,57.7
 """
@@ -42,15 +48,24 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
+from relational_lab.experiments import broad_stimuli as bx  # noqa: E402
+from relational_lab.experiments import bx_adapter as bxa  # noqa: E402
 from relational_lab.experiments import order_role_stimuli as ors  # noqa: E402
 from relational_lab.experiments.question_templates import fill as fill_template  # noqa: E402
 
-OTR09_VERSION = "1.0.0"
+OTR09_VERSION = "1.1.0"
 
 
-def make_pairs(seed: int, base_q: str, source_q: str, instruction: str, constructions, n_per: int):
+def make_pairs(seed: int, base_q: str, source_q: str, instruction: str, constructions, n_per: int,
+               stimuli: str = "otr"):
     """(base item, source item, donor item) triples: same sentence for base/source; donor =
     another dev sentence of the same construction with a disjoint name pair."""
+    if stimuli != "otr":
+        items = bxa.repair_items(stimuli, seed, constructions)
+
+        def ask(it, template):
+            return bxa.ask(it, template, instruction)
+        return _triples(items, constructions, n_per, seed, ask, base_q, source_q)
     items = [i for i in ors.generate_items(seed=seed)
              if i.split == "dev" and i.construction in constructions and i.role_asked == "agent"
              and i.question_voice == "active"]
@@ -63,6 +78,10 @@ def make_pairs(seed: int, base_q: str, source_q: str, instruction: str, construc
             prompt = prompt.replace("\nAnswer:", f"\n{instruction}\nAnswer:")
         return dataclasses.replace(it, question=q, prompt=prompt)
 
+    return _triples(items, constructions, n_per, seed, ask, base_q, source_q)
+
+
+def _triples(items, constructions, n_per, seed, ask, base_q, source_q):
     rng = random.Random(seed)
     by_cons = defaultdict(list)
     for it in items:
@@ -102,10 +121,14 @@ def attn_modules(layers):
 def main(argv=None):
     p = argparse.ArgumentParser()
     p.add_argument("--model", required=True)
-    p.add_argument("--base-question", default="Who was someone {past} by?")
-    p.add_argument("--source-question", default="Who was the {ing} done by?")
+    p.add_argument("--stimuli", default="otr", choices=["otr", *bxa.STIMULI])
+    p.add_argument("--base-question", default=None, help='default "Who was someone {past} by?" (bx: {pp})')
+    p.add_argument("--source-question", default=None, help='default "Who was the {ing} done by?"')
+    p.add_argument("--rank-from", type=Path, default=None,
+                   help="OTR-09 result whose head ranking (top20) is tested on these items (transfer)")
     p.add_argument("--instruction", default="")
-    p.add_argument("--constructions", default="active,object_cleft,passive,by_cleft")
+    p.add_argument("--constructions", default=None,
+                   help="default: the four main constructions (bx-psych: the six of both verb classes)")
     p.add_argument("--n-per", type=int, default=32, help="sentences per construction")
     p.add_argument("--layer-stride", type=int, default=2)
     p.add_argument("--head-from", type=float, default=0.55, help="relative depth from which heads are scanned")
@@ -122,6 +145,17 @@ def main(argv=None):
     p.add_argument("--seed", type=int, default=2026)
     p.add_argument("--out-dir", type=Path, default=ROOT / "results")
     args = p.parse_args(argv)
+    if args.stimuli == "otr":
+        args.base_question = args.base_question or "Who was someone {past} by?"
+        args.constructions = args.constructions or "active,object_cleft,passive,by_cleft"
+    else:
+        block = bxa.block_name(args.stimuli)
+        args.base_question = args.base_question or bxa.DEFAULT_BASE_QUESTION[block]
+        args.constructions = args.constructions or ",".join(bxa.BASE_CONSTRUCTIONS[block])
+    args.source_question = args.source_question or bxa.DEFAULT_SOURCE_QUESTION
+    transfer_heads = []
+    if args.rank_from:
+        transfer_heads = json.loads(args.rank_from.read_text())["head_scan"]["top20"]
 
     from relational_lab.instrumentation import chat as _chat
     chat_kwargs = _chat.configure(no_thinking=args.no_thinking, template_kwargs=args.template_kwarg,
@@ -140,9 +174,18 @@ def main(argv=None):
     res_layers = sorted(set(range(0, L, args.layer_stride)) | {L - 1})
     attn = attn_modules(layers)
     head_layers = [li for li in sorted(attn) if li >= args.head_from * (L - 1)]
+    scan_layers = list(head_layers)
+    transfer_heads = [k for k in transfer_heads if int(k.split(".")[0]) in attn]
+    head_layers = sorted(set(head_layers) | {int(k.split(".")[0]) for k in transfer_heads})
     lead = not args.chat_template
     cons = [c.strip() for c in args.constructions.split(",")]
-    triples = make_pairs(args.seed, args.base_question, args.source_question, args.instruction, cons, args.n_per)
+    triples = make_pairs(args.seed, args.base_question, args.source_question, args.instruction, cons, args.n_per,
+                         stimuli=args.stimuli)
+    # a bare answer is scored by its first token: skip items whose two names share it
+    n_before = len(triples)
+    triples = [t for t in triples
+               if answer_token(tok, t[0].answer, lead) != answer_token(tok, t[0].distractor, lead)]
+    n_shared_first_token = n_before - len(triples)
     fams = sorted({b.family_id for b, _, _ in triples})
 
     def ids_of(it):
@@ -183,7 +226,8 @@ def main(argv=None):
         finally:
             for h in hs:
                 h.remove()
-        a_t, p_t = answer_token(tok, it.agent, lead), answer_token(tok, it.patient, lead)
+        # answer / distractor: the agent / patient for OTR agent questions; for bx, the by-phrase role
+        a_t, p_t = answer_token(tok, it.answer, lead), answer_token(tok, it.distractor, lead)
         return float(lg[a_t] - lg[p_t]), caps
 
     t0 = time.time()
@@ -228,7 +272,7 @@ def main(argv=None):
     item_of = {b.item_id: b for b, _, _ in triples}
     head_scores = {}
     t1 = time.time()
-    for li in head_layers:
+    for li in scan_layers:
         _, nh, hd = attn[li]
         for h in range(nh):
             vals = []
@@ -253,12 +297,27 @@ def main(argv=None):
         return {"repair": mean([x for x, _ in out]), "flip_to_correct": mean([f for _, f in out]), "n": len(out)}
 
     rng = random.Random(args.seed)
-    all_heads = [f"{li}.{h}" for li in head_layers for h in range(attn[li][1])]
+    all_heads = [f"{li}.{h}" for li in scan_layers for h in range(attn[li][1])]
     circuit = {}
     for k in [int(x) for x in args.top_k.split(",")]:
         k = min(k, len(ranked))
         circuit[str(k)] = {"top": joint(ranked[:k], eval_set),
                            "random": joint(rng.sample(all_heads, k), eval_set)}
+    # transfer: heads ranked on another run (e.g. the original materials) tested on these items
+    transfer = None
+    if transfer_heads:
+        all_gap = [r for r in recs if r["ld_source"] - r["ld_base"] > args.min_gap]
+        t_layers = sorted({int(k.split(".")[0]) for k in transfer_heads})
+        t_pool = [f"{li}.{h}" for li in t_layers for h in range(attn[li][1])]
+        transfer = {"from": str(args.rank_from), "heads": transfer_heads,
+                    "overlap_with_fresh_top20": sorted(set(transfer_heads) & set(ranked[:20])),
+                    "by_k": {}}
+        for k in [int(x) for x in args.top_k.split(",")]:
+            k = min(k, len(transfer_heads))
+            transfer["by_k"][str(k)] = {
+                "eval_items": joint(transfer_heads[:k], eval_set),
+                "all_items": joint(transfer_heads[:k], all_gap),
+                "random_same_layers": joint(rng.sample(t_pool, k), all_gap)}
     named = None
     if args.heads:
         keys = [h.strip() for h in args.heads.split(",") if h.strip()]
@@ -267,10 +326,14 @@ def main(argv=None):
 
     report = {
         "experiment": "OTR-09", "status": "EXPLORATORY", "version": OTR09_VERSION,
-        "generator_version": ors.GENERATOR_VERSION, "model": args.model, "chat_template": args.chat_template,
+        "generator_version": ors.GENERATOR_VERSION, "stimuli": args.stimuli,
+        "bx_generator_version": bx.BX_GENERATOR_VERSION if args.stimuli != "otr" else None,
+        "model": args.model, "chat_template": args.chat_template,
         "chat_template_kwargs": chat_kwargs, "instruction": args.instruction,
         "base_question": args.base_question, "source_question": args.source_question, "n_layers": L,
-        "residual_layers": res_layers, "head_layers": head_layers, "n_items": len(recs),
+        "n_skipped_shared_first_token": n_shared_first_token,
+        "residual_layers": res_layers, "head_layers": head_layers, "scan_layers": scan_layers,
+        "n_items": len(recs),
         "baseline": {c: {"n": len(sub), "base_agent_preferred": mean([float(r["ld_base"] > 0) for r in sub]),
                          "source_agent_preferred": mean([float(r["ld_source"] > 0) for r in sub]),
                          "mean_ld_base": mean([r["ld_base"] for r in sub]),
@@ -279,10 +342,12 @@ def main(argv=None):
         "residual": residual,
         "head_scan": {"n_rank_items": len(rank), "scores": head_scores, "top20": ranked[:20]},
         "circuit_eval": {"n_eval_items": len(eval_set), "by_k": circuit, "named_heads": named},
+        "transfer": transfer,
         "seconds": round(time.time() - t0, 1),
     }
     args.out_dir.mkdir(parents=True, exist_ok=True)
-    out = args.out_dir / f"otr09_{args.model.replace('/', '__')}_dev_{time.strftime('%Y%m%dT%H%M%S')}.json"
+    stag = "" if args.stimuli == "otr" else f"_{args.stimuli}"
+    out = args.out_dir / f"otr09_{args.model.replace('/', '__')}_dev{stag}_{time.strftime('%Y%m%dT%H%M%S')}.json"
     out.write_text(json.dumps(report))
     print(f"Wrote {out}")
     print("baseline:", {c: (v["base_agent_preferred"], v["source_agent_preferred"]) for c, v in report["baseline"].items()})
@@ -295,6 +360,10 @@ def main(argv=None):
     print("circuit (held-out):", {k: (v["top"]["repair"], v["random"]["repair"]) for k, v in circuit.items()})
     if named:
         print("named heads:", named)
+    if transfer:
+        print("transfer heads (all items):", {k: (v["all_items"]["repair"], v["random_same_layers"]["repair"])
+                                              for k, v in transfer["by_k"].items()},
+              "overlap with fresh top20:", len(transfer["overlap_with_fresh_top20"]))
     try:
         _plot(report, out.with_suffix(".png"))
         print(f"Wrote {out.with_suffix('.png')}")

@@ -96,32 +96,43 @@ def make_transplants(
     source_constructions: Sequence[str] = MAIN_CONSTRUCTIONS,
     seed: int = 0,
     names: Sequence[str] = NAMES,
+    builder=None,
+    constructions_for=None,
 ) -> list[Transplant]:
     """For every base: both base slots x every source construction x both source
     slots x BOTH assignments of one foreign name pair (U as agent and V as
     patient, then V as agent and U as patient). The counterbalancing makes each
     foreign name contribute equally to every role, order and function value, so
-    name identity cancels exactly instead of only in expectation."""
+    name identity cancels exactly instead of only in expectation.
+
+    ``builder(base, agent_name, patient_name, construction)`` and ``constructions_for(base)``
+    let other stimulus sets (e.g. broad_stimuli via bx_adapter) reuse the design; the
+    defaults reproduce the OTR materials exactly."""
     rng = random.Random(seed)
     out: list[Transplant] = []
     for base in bases:
         u, v = _foreign_pair(base, rng, names)
         for fa, fp in ((u, v), (v, u)):
-            for cs in source_constructions:
-                source = build_item(fa, fp, base.lemma, base.verb, cs, base.role_asked, base.question_voice,
-                                    family_id=base.family_id, split=base.split, test_set=base.test_set)
+            for cs in (constructions_for(base) if constructions_for else source_constructions):
+                if builder is not None:
+                    source = builder(base, fa, fp, cs)
+                else:
+                    source = build_item(fa, fp, base.lemma, base.verb, cs, base.role_asked, base.question_voice,
+                                        family_id=base.family_id, split=base.split, test_set=base.test_set)
                 for k in SLOTS:
                     for j in SLOTS:
                         out.append(Transplant(base, source, k, j))
     return out
 
 
-def left_context_null(records: Sequence[TransplantRecord]) -> list[float]:
+def left_context_null(records: Sequence[TransplantRecord],
+                      constructions: Sequence[str] = ("active", "passive")) -> list[float]:
     """Validity check, per layer: the role slope among first-name sources from
     active vs passive sentences. Their left context ("Sentence: X") is identical,
     so a causal model's state cannot differ by role there, and with counterbalanced
-    names the slope must be ~0. A clearly non-zero value flags a design problem."""
-    sub = [r for r in records if r.j == "first_name" and r.source_construction in ("active", "passive")]
+    names the slope must be ~0. A clearly non-zero value flags a design problem.
+    ``constructions``: source constructions whose first name follows "Sentence: " directly."""
+    sub = [r for r in records if r.j == "first_name" and r.source_construction in tuple(constructions)]
     if not sub:
         return []
     out = []
