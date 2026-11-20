@@ -1,56 +1,40 @@
-[← Research overview](../../STUDIES.md) · [Companion study →](../order-to-role/README.md)
+[← Two studies](../../STUDIES.md) · [Companion study](../order-to-role/README.md)
 
-# Learning relations
+# Learning Relations
 
-> How does controlled experience change relational generalisation and the errors a Transformer makes?
+### Targeted experience, relational generalization and role-assignment errors in Transformers
 
-**Scratch-trained Transformers** · **ML / EXP lineage** · **Existing assets frozen for preservation**
+**Model class:** small scratch-trained Transformers  
+**Stage:** working manuscript; further experiments remain under review  
+**Main question:** how does controlled grammatical exposure change generalization, joint-role errors and the computations that support answers?
 
-| Read | Inspect | Plan |
-|:--|:--|:--|
-| [Working manuscript](../../paper/manuscript.md) | [Evidence checkpoint](../../investigations/scratch_transformers/CURRENT_FINDINGS.md) | [Next-study outline](#next-study-outline) |
-| [Research overview](../../investigations/scratch_transformers/README.md) | [Experiment index](../../investigations/scratch_transformers/EXPERIMENT_INDEX.md) | [Shared repository map](../MAP.md) |
+The core experiments compare matched training histories on a restricted two-event synthetic grammar. Complementary questions ask for an agent or patient in a specified event. This supports precise exposure comparisons, but does **not** establish natural-language generalization or a universal learned role algorithm.
 
-## The paper
+## Read the study
 
-*Targeted Experience, Relational Generalization, and Role-Assignment Errors in Transformers.*
-The existing working manuscript has a 15 December 2026 deadline. This hub does not
-replace its text, protocols or evidence record.
-
-The central behavioral question is how marginal accuracy, joint correctness and
-specific error patterns respond differently to training experience. Cohort replication
-within one synthetic grammar is distinct from transfer to new linguistic structures.
-
-## Evidence → interpretation → next test
-
-| Evidence entry point | Supported scope | Next question |
-|:--|:--|:--|
-| [Cross-cohort audit](../../reports/paper_cross_cohort/archived_error_taxonomy.md) | Repeated exposure benefit and joint-error changes within the studied family | Which properties of experience explain the changes? |
-| [EXP-104 matched-source audit](../../reports/exp104/analysis/source_matched_dev_3200_audit.md) | No consistent final quartet advantage under this control | Is any benefit primarily about learning speed? |
-| [EXP-106 protocol](../../paper/EXP106_voice_recombination_protocol_v0.md) | Exploratory design for direct versus indirect voice exposure | Can the unseen voice combination be solved reliably across seeds? |
-
-The existing manuscript records failed mechanistic predictions and a deferred external
-validation. Those remain part of the paper's evidential limits.
-
-## Next-study outline
-
-**Proposed, not frozen and not an instruction to launch experiments.**
-
-1. Audit execution variability and select one interpretable exposure contrast.
-2. Freeze evaluation, training budget, seed-level analysis and stopping rules.
-3. Track native individual and joint answers, event errors, reversals and duplicate
-   answers at fixed checkpoints. Keep oracle-restricted diagnostics separate.
-4. Map held-out role/position decoding and controlled intervention effects across
-   training time and depth. Decodability does not establish causal use.
-5. Freeze one computational prediction before testing new seeds and held-out structures.
-
-## Paper figure sequence
-
-| Figure | Purpose |
+| Purpose | Document |
 |:--|:--|
-| 1 · Experience and transfer | Show the training contrast and every seed's generalisation outcome |
-| 2 · Errors through learning | Separate accuracy improvement from changes in joint-role errors |
-| 3 · Time × layer | Compare accessible information with intervention sensitivity |
-| 4 · Independent prediction | Test where a proposed explanation transfers or fails |
+| **Paper text** | [Canonical working manuscript](../../paper/manuscript.md) |
+| **What is supported?** | [Evidence and limitations](EVIDENCE.md) |
+| **Where are the experiments?** | [Experiment index](EXPERIMENTS.md) |
+| **How to inspect or rerun?** | [Reproducibility guide](REPRODUCE.md) |
+| **Earlier research narrative** | [Scratch investigation](../../investigations/scratch_transformers/README.md) |
+| **Experimental state** | [Current findings checkpoint](../../investigations/scratch_transformers/CURRENT_FINDINGS.md) |
 
-These are figure plans; no new results or completed mechanism claims are implied.
+## Research questions
+
+**Learning.** Which controlled exposure conditions affect protected recombination performance? How does performance vary over seeds, training steps and lexical splits?
+
+**Error structure.** Do agent and patient queries fail jointly, reverse roles, or select the same participant? What does each metric establish under candidate-restricted versus full-vocabulary scoring?
+
+**Mechanism.** Where is role- or question-related information accessible across time and depth, and which specific pathway hypotheses survive frozen tests?
+
+**Transfer.** Which observed patterns persist when grammatical structure, vocabulary or evaluation material changes? A development-only external benchmark pilot is not a protected transfer result.
+
+## Reading the evidence responsibly
+
+The manuscript records repeated within-family exposure effects, unresolved same-participant errors, and unsuccessful or inconclusive mechanistic predictions. Those negative results are part of the research contribution.
+
+The newer [EXP-109–116 and PHASE2 work](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/tree/experiments/exp102-clean-design) is not yet integrated into `main` and should not be silently interpreted as a revision to the manuscript's frozen evidence base.
+
+**Next:** [Evidence](EVIDENCE.md) · [Experiments](EXPERIMENTS.md) · [Reproduce](REPRODUCE.md)
