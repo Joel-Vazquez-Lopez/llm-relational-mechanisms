@@ -1,55 +1,38 @@
-[← Research overview](../../STUDIES.md) · [Companion study →](../learning-relations/README.md)
+[← Two studies](../../STUDIES.md) · [Companion study](../learning-relations/README.md)
 
 # Order-to-Role
 
-> How do word order, grammatical function, semantic role and response conditions shape the answer an LLM selects?
+### Grammatical roles, response conditions and answer selection in pretrained language models
 
-**Pretrained LLMs** · **OTR** · **Active / exploratory**
+**Model class:** pretrained LLMs  
+**Stage:** exploratory, development-stage investigation  
+**Core question:** how do models distinguish linear order, grammatical function and semantic role—and what computations influence which participant becomes the answer?
 
-| Read | Inspect | Explore |
-|:--|:--|:--|
-| [Review package](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/blob/order-to-role/stimuli/docs/order_to_role/review_2026-11/README.md) | [Reviewer questions](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/blob/order-to-role/stimuli/docs/order_to_role/review_2026-11/REVIEW_BRIEF.md) | [Layer study →](LAYERS.md) |
-| [Historical pretrained track](../../investigations/pretrained_llms/README.md) | [Data branch](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/tree/order-to-role/results-dev/results) | [Code and tests](../MAP.md) |
+The controlled stimuli deliberately separate first-mentioned position, syntactic subjecthood and thematic role. The project compares answer formats and question constructions, then examines representations and causal interventions across model layers.
 
-## The paper
+## Read the study
 
-Working direction: **relational answering across questions, response formats and model layers**.
-The final title and claim remain open. The review package targets early-2027 ARR;
-this is a research direction, not a publication-readiness assessment.
+| Purpose | Document |
+|:--|:--|
+| **What is actually supported?** | [Evidence and limitations](EVIDENCE.md) |
+| **What was tested?** | [OTR-01–12 experiment index](EXPERIMENTS.md) |
+| **What happens across layers?** | [Representations to answers](LAYERS.md) |
+| **How to inspect code and outputs?** | [Reproducibility and data guide](REPRODUCE.md) |
+| **External November review** | [Review package](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/blob/order-to-role/stimuli/docs/order_to_role/review_2026-11/README.md) |
+| **Critical questions** | [Reviewer brief](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/blob/order-to-role/stimuli/docs/order_to_role/review_2026-11/REVIEW_BRIEF.md) |
 
-The core puzzle is a within-item difference between response conditions. Correct
-sentence responses alongside wrong bare-name responses may reflect different question
-interpretations, extra computation, or different use of relational information.
-“Knows the relation but cannot retrieve it” remains a hypothesis requiring controls.
+## Three questions, three kinds of evidence
 
-## Three connected parts
+**Behavioral measurement.** Does first-token candidate scoring measure the same response as generated names or full sentences? Are apparent errors affected by instruction wording and answer format?
 
-| Part | Question | Evidence requirement |
-|:--|:--|:--|
-| Measurement | Are forced-choice and generated answers measuring the same behavior? | Matched items, validated extraction and explicit answer-format controls |
-| Linguistic behavior | Which constructions and questions change participant selection? | Lexical and template holdouts, family-level uncertainty, counterexamples |
-| Layerwise explanation | Which internal changes cause the response difference? | Controlled interventions and independent prediction; see the [layer plan](LAYERS.md) |
+**Linguistic structure.** Which effects persist across actives, passives, clefts and newer vocabulary or grammatical families? Unusual questions and templated forms must not be silently treated as natural-language competence tests.
 
-## Existing tools, not automatically established findings
+**Internal computation.** Where is participant/role information accessible? Which changes influence the final selected participant? Probes, logit lenses, attention and MLP interventions answer related but **distinct** questions.
 
-The branch contains OTR-01–06 behavior, patching, transplant, question, robustness and
-logit-lens tools. Newer OTR-07–11 cover answer processing, role probes, answer patching,
-incremental roles and steering. Their existence does not establish that the associated
-hypotheses passed; inspect each version and its data provenance.
+## Status and scope
 
-## Next decisions
+The November development-only review reports both positive observations and important corrections. Several broad forced-choice error claims were dropped after generation checks exposed scoring artifacts. Within-item response differences are interesting, but do not by themselves prove that role knowledge is present and merely fails to be retrieved. The held-out test sets described in that review were unopened at the time of the review; inspect later experiment provenance before making any newer claim.
 
-1. Audit response extraction and reproduce matched-item behavioral contrasts.
-2. Separate instruction, answer position and generated intermediate-content effects.
-3. Use a discovery split to identify candidate layer/site pathways.
-4. Freeze the primary contrast and intervention controls before independent confirmation.
-5. Compare model families without treating equal layer numbers as functional alignment.
+**Current work is split across branches:** [code/stimuli](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/tree/order-to-role/stimuli) and [development results](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/tree/order-to-role/results-dev/results). These are **not yet integrated into `main`**.
 
-## Paper figure sequence
-
-1. Controlled constructions and matched-item response differences.
-2. Behavioral effects by question, construction and response condition.
-3. Layerwise information and intervention maps.
-4. Selective disruption/repair and held-out predictions, including failures.
-
-All new figures above are plans. Existing review figures retain their original provenance.
+**Next:** [Evidence](EVIDENCE.md) · [Experiments](EXPERIMENTS.md) · [Layer study](LAYERS.md) · [Reproduce](REPRODUCE.md).

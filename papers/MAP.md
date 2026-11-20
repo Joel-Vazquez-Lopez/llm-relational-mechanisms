@@ -1,62 +1,51 @@
-[← Research overview](../STUDIES.md)
+[← Research guide](../STUDIES.md)
 
-# Repository map
+# Repository map and research ownership
 
-A navigation layer over canonical files: no source files are relocated or duplicated.
+The repository has **two paper-facing paths** under `papers/` and one shared technical codebase. This is a navigation layer: canonical scripts, protected protocols and existing result paths are not moved by this documentation change.
 
-| Location | Purpose / ownership |
+| Entry point | Purpose |
 |:--|:--|
-| `STUDIES.md` | Front door to the two paper directions |
-| `papers/learning-relations/` | Scratch-paper navigation and proposed development plan |
-| `papers/order-to-role/` | LLM-paper navigation and layer-study plan |
-| `paper/manuscript.md` | Existing scratch working manuscript, preserved |
-| `paper/` | Historical protocols and manuscript material; retain exact paths |
-| `investigations/scratch_transformers/` | Scratch evidence and canonical experiment index |
-| `investigations/pretrained_llms/` | Earlier pretrained ML studies, background to the LLM direction |
-| `scripts/ml*.py`, `scripts/exp*.py`, `scripts/paper_*` | Existing research scripts; consult indices for assignment |
-| `scripts/otr*`, `scripts/slurm/otr*` | Active OTR scripts and cluster entry points, currently on stimuli branch |
-| `src/relational_lab/experiments/order_role_*.py` | OTR experiment implementations |
-| `src/relational_lab/experiments/stranded_p_stimuli.py` | Stranded-preposition stimuli |
-| `src/relational_lab/instrumentation/` | Shared instrumentation, also used by OTR |
-| `docs/order_to_role/review_2026-11/` | OTR review package, figures and tables |
-| `reports/` | Archived earlier evidence, protocols and audits |
-| `results/` on `order-to-role/results-dev` | OTR raw data store; archive at freeze |
+| [Learning Relations](learning-relations/README.md) | Scratch-trained paper, evidence, experiment index, reproducibility |
+| [Order-to-Role](order-to-role/README.md) | Pretrained-LLM paper, evidence, experiment index, layer plan and reproducibility |
+| [Scratch manuscript](../paper/manuscript.md) | Canonical editable working manuscript |
+| [Scratch investigation](../investigations/scratch_transformers/README.md) | Historical research narrative and checkpoints |
+| [Earlier pretrained investigations](../investigations/pretrained_llms/README.md) | Related ML studies, not an automatic part of OTR |
+| [Reports](../reports/README.md) | Protocols, summaries, analyses and references to underlying data |
+| [Shared standards](../docs/EVIDENCE_POLICY.md) | Evidence classification, data stewardship and scientific provenance |
 
-## Tests
+## Where files actually live
 
-Earlier lightweight checks: `tests/test_counterfactual.py`, `tests/test_cue_interactions.py`.
-Historical EXP offline checks: `scripts/test_exp101*.py`.
+| Canonical path | Responsibility / note |
+|:--|:--|
+| `paper/` | Scratch manuscript and historical ML/EXP protocols; preserve frozen paths |
+| `scripts/ml*.py`, `scripts/exp*.py` | Existing experiment entrypoints; **prefix alone does not decide paper ownership** |
+| `scripts/otr*.py` | Order-to-Role entrypoints, currently on the [stimuli branch](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/tree/order-to-role/stimuli/scripts) |
+| `src/relational_lab/` | Shared package and instrumentation; OTR implementations live on its code branch |
+| `investigations/` | Historical track-level overviews and indexes |
+| `reports/` | Archived experiments, protocols, evidence and analysis summaries |
+| `results/` | Often local/gitignored outputs; some historical tracked outputs and a separate OTR archive |
+| `docs/` | Shared reproducibility policies; OTR review figures currently on the stimuli branch |
+| `tests/` | Root tests and branch-specific OTR tests |
 
-OTR: `tests/test_order_role_*`, `tests/test_stranded_p_stimuli.py`,
-`tests/test_generate_check.py`, `tests/test_logit_lens.py`, `tests/test_transplant.py`.
-Shared instrumentation coverage includes `tests/test_chat_template_patching.py`,
-`tests/test_hf_scoring.py` and `tests/test_patching.py`. The OTR branch may add further tests.
+## Current branches and integration boundaries
 
-Full suite from a checkout containing the code and its dependencies:
+| Source | Intended treatment |
+|:--|:--|
+| `main` | Public navigation and established canonical material |
+| [`experiments/exp102-clean-design`](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/tree/experiments/exp102-clean-design) | Review post-merge EXP-109–116 and PHASE2 additions independently |
+| [`order-to-role/stimuli`](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/tree/order-to-role/stimuli) | Integrate OTR implementations, lightweight tests and documentation selectively |
+| [`order-to-role/results-dev`](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/tree/order-to-role/results-dev) | Preserve development results for provenance; do not blindly copy all outputs to `main` |
+| Other historical branches | Inspect whether they contain unique work before closing or archiving |
 
-```sh
-PYTHONPATH=src python -m pytest -q tests
-```
+Use the [integration plan](../docs/INTEGRATION_PLAN.md) for sequencing and preservation checks.
 
-## Preservation and data workflow
+## Principles
 
-Existing `main` files, including frozen ML/EXP scripts, protocols and historical
-tracked results, are unchanged by this navigation PR. The shared package serves several
-studies. New raw OTR results belong only on `order-to-role/results-dev`; generated review
-figures/tables under `docs/order_to_role/` are explicitly permitted.
+1. Do not change frozen script bytes, paths, evaluation splits or protocol hashes merely to make folders look symmetrical.
+2. Keep manuscript claims separate from exploratory observations, selected interventions and independent replications.
+3. Record model revisions, generator versions, seed and split provenance, scoring rules and rights status when publishing results.
+4. Keep branch-only files explicitly labeled until code and reports are actually integrated.
+5. Do not automatically assign historical `ML-` studies to either paper based on a filename prefix.
 
-After the separate OTR integration, use `main` or short-lived code branches. Retain the
-data branch until a release or Zenodo archive is made at freeze. Documentation links to
-the stimuli branch are intentional while integration remains pending.
-
-## Ownership and open decisions
-
-- Earlier pretrained ML studies are related background, not automatic replication of OTR.
-- Exact manuscript allocation of each historical ML/EXP study is not inferred from its prefix.
-- `scripts/show_chat_prompt.py` and `scripts/slurm/setup_pelle.sh` are reusable helpers;
-  exclusive study ownership is unspecified.
-- Final OTR title, confirmatory protocol and publication venue remain open.
-- New branch-only EXP work is not silently added to the frozen manuscript or this PR.
-
-**Reviewed navigation snapshot:** 18 November 2026. Research plans are proposals,
-not completed experiments or authorizations to access protected evaluations.
+**Documentation map, not a certification that all archived results are reproducible from `main`.**
