@@ -1,0 +1,51 @@
+name, memory.total [MiB]
+NVIDIA H100 NVL, 95830 MiB
+Loading weights:   0%|          | 0/851 [00:00<?, ?it/s]Loading weights:  68%|██████▊   | 579/851 [00:00<00:00, 1445.57it/s]Loading weights:  85%|████████▌ | 724/851 [00:05<00:01, 99.42it/s]  Loading weights:  92%|█████████▏| 786/851 [00:08<00:01, 62.50it/s]Loading weights:  96%|█████████▋| 821/851 [00:11<00:00, 49.05it/s]Loading weights:  99%|█████████▉| 843/851 [00:11<00:00, 46.72it/s]Loading weights: 100%|██████████| 851/851 [00:11<00:00, 72.47it/s]
+[transformers] `causal_conv1d_fn` is falling back to its reference PyTorch implementation because `causal_conv1d` is not installed. This is correct but much slower; install `causal_conv1d` for the optimized kernel.
+[transformers] `chunk_gated_delta_rule` is falling back to its reference PyTorch implementation because `flash-linear-attention` is not installed. This is correct but much slower; install `flash-linear-attention` for the optimized kernel.
+[transformers] `causal_conv1d_update` is falling back to its reference PyTorch implementation because `causal_conv1d` is not installed. This is correct but much slower; install `causal_conv1d` for the optimized kernel.
+[transformers] `fused_recurrent_gated_delta_rule` is falling back to its reference PyTorch implementation because `flash-linear-attention` is not installed. This is correct but much slower; install `flash-linear-attention` for the optimized kernel.
+Wrote /gorilla/home/jova3528/private/llm_relation/results/otrgen_Qwen__Qwen3.8-27B_dev_bx-ditransitive_20261120T043020.json
+answer kinds: {'direct': 1.0, 'frame': 0.0, 'statement': 0.0, 'inferred': 0.0, 'ambiguous': 0.0, 'none': 0.0}
+generation accuracy (ambiguous/none = wrong): 0.94   direct answers only: 0.94
+  by_cleft/agent/active            0.78
+  by_cleft/agent/passive           1.00
+  by_cleft/recipient/active        0.95
+  by_cleft/recipient/passive       1.00
+  do_active/agent/active           1.00
+  do_active/agent/passive          0.95
+  do_active/recipient/active       1.00
+  do_active/recipient/passive      1.00
+  pd_active/agent/active           1.00
+  pd_active/agent/passive          0.68
+  pd_active/recipient/active       1.00
+  pd_active/recipient/passive      1.00
+  recipient_passive/agent/active   1.00
+  recipient_passive/agent/passive  1.00
+  recipient_passive/recipient/active 1.00
+  recipient_passive/recipient/passive 1.00
+  stranded_cleft/agent/active      0.93
+  stranded_cleft/agent/passive     0.38
+  stranded_cleft/recipient/active  1.00
+  stranded_cleft/recipient/passive 0.90
+  theme_passive/agent/active       1.00
+  theme_passive/agent/passive      1.00
+  theme_passive/recipient/active   1.00
+  theme_passive/recipient/passive  1.00
+  to_cleft/agent/active            1.00
+  to_cleft/agent/passive           0.65
+  to_cleft/recipient/active        1.00
+  to_cleft/recipient/passive       1.00
+examples:
+  [by_cleft/agent/active] answer='Olivia' -> ' Simon'
+  [by_cleft/recipient/active] answer='Hannah' -> 'Hannah'
+  [do_active/agent/active] answer='Walter' -> 'Walter'
+  [do_active/recipient/active] answer='Henry' -> 'Henry'
+  [pd_active/agent/passive] answer='Bruce' -> 'Derek'
+  [pd_active/recipient/passive] answer='Fiona' -> 'Fiona'
+  [recipient_passive/agent/passive] answer='Paula' -> ' Paula'
+  [stranded_cleft/agent/active] answer='Tina' -> 'Tina'
+  [stranded_cleft/recipient/active] answer='Clara' -> 'Clara'
+  [theme_passive/agent/active] answer='Neil' -> 'Neil'
+  [theme_passive/recipient/passive] answer='Amy' -> 'Amy'
+  [to_cleft/agent/passive] answer='Colin' -> 'Colin'
