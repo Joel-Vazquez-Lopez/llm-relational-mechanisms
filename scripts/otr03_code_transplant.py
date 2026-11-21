@@ -30,6 +30,8 @@ sys.path.insert(0, str(ROOT / "src"))
 from relational_lab.experiments import bx_adapter as bxa
 from relational_lab.experiments import broad_stimuli as bx
 from relational_lab.experiments import order_role_stimuli as ors
+from relational_lab.experiments import multilingual_stimuli as xl
+from relational_lab.experiments import xl_adapter as xla
 from relational_lab.experiments import order_role_transplant as otr
 from relational_lab.experiments.question_templates import fill as fill_template
 
@@ -89,10 +91,11 @@ def main(argv=None):
     p.add_argument("--dtype", default="bfloat16", choices=["bfloat16", "float16", "float32"])
     p.add_argument("--device", default=None)
     p.add_argument("--split", default="dev", choices=["dev", "test"])
-    p.add_argument("--stimuli", default="otr", choices=["otr", *bxa.STIMULI],
+    p.add_argument("--stimuli", default="otr", choices=["otr", *bxa.STIMULI, *xla.STIMULI],
                    help="otr = the original materials; bx-* = broad English blocks (new names, verbs, "
                         "constructions). For bx, --roles agent/patient mean the block's A/B slot "
-                        "(agent/patient, agent/recipient, stimulus/experiencer)")
+                        "(agent/patient, agent/recipient, stimulus/experiencer). es/gl = Spanish/Galician (XL); "
+                        "their passive agent question (--question-voices passive --roles agent) is the failing one")
     p.add_argument("--n-events", type=int, default=32)
     p.add_argument("--question-voices", nargs="+", default=["active"], choices=list(ors.QUESTION_VOICES))
     p.add_argument("--roles", nargs="+", default=["agent", "patient"], choices=["agent", "patient"],
@@ -133,7 +136,8 @@ def main(argv=None):
         raise SystemExit("A fast tokenizer is required for offset mappings.")
     if args.chat_template and tok.chat_template is None:
         raise SystemExit(f"{args.model} has no chat template.")
-    is_bx = args.stimuli != "otr"
+    is_bx = args.stimuli in bxa.STIMULI
+    is_xl = args.stimuli in xla.STIMULI
     names = bx.NAMES if is_bx else ors.NAMES
     problems = check_names_for_patching(tok, names, args.chat_template)
     dropped_names = []
@@ -154,7 +158,13 @@ def main(argv=None):
 
     n_layers = len(decoder_layers(model))
     layers = list(range(0, n_layers, args.layer_stride))
-    if is_bx:
+    if is_xl:
+        if args.agent_question:
+            raise SystemExit("es/gl: use --question-voices passive --roles agent for the failing question")
+        bases = xla.select_bases(args.stimuli, args.split, args.n_events, args.question_voices, args.roles, args.seed)
+        transplants = otr.make_transplants(bases, xla.TRANSPLANT_CONSTRUCTIONS, seed=args.seed, builder=xla.builder)
+        null_cons = ("active", "passive")
+    elif is_bx:
         bases = bxa.select_bases(args.stimuli, args.split, args.n_events, args.question_voices, args.seed,
                                  roles=("agent", "patient") if args.agent_question else args.roles)
         bases = [b for b in bases if b.agent in names and b.patient in names]
@@ -223,6 +233,7 @@ def main(argv=None):
         "model": args.model, "revision": args.revision, "dtype": args.dtype, "device": device,
         "generator_version": ors.GENERATOR_VERSION, "stimuli": args.stimuli,
         "bx_generator_version": bx.BX_GENERATOR_VERSION if is_bx else None,
+        "xl_generator_version": xl.XL_GENERATOR_VERSION if is_xl else None,
         "seed": args.seed, "layers": layers,
         "base_constructions": sorted({b.construction for b in bases}),
         "dropped_names": dropped_names,

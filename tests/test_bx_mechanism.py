@@ -91,7 +91,7 @@ def test_left_context_null_constructions_exist():
 
 # ------------------------------------------------------------------ tiny-model smoke runs
 
-def _tiny_bx(monkeypatch):
+def _tiny_bx(monkeypatch, extra_texts=()):
     import torch
     from tokenizers import Tokenizer, decoders, models, pre_tokenizers, trainers
     from transformers import LlamaConfig, LlamaForCausalLM, PreTrainedTokenizerFast
@@ -103,6 +103,7 @@ def _tiny_bx(monkeypatch):
         texts += [i.prompt for i in bx.generate_items(block, split="dev")[:3000]]
     texts += [f"Who was the {g} done by? Who was someone {pp} by?" for _l, _p, pp, g in bx.FORMS.values()]
     texts += [" " + n for n in bx.NAMES] * 50
+    texts += list(extra_texts)
     tk = Tokenizer(models.BPE(unk_token="[UNK]"))
     tk.pre_tokenizer = pre_tokenizers.ByteLevel(add_prefix_space=False)
     tk.decoder = decoders.ByteLevel()
@@ -145,3 +146,50 @@ def test_smoke_otr09_bx_transfer(monkeypatch, tmp_path):
     assert abs(r["residual"]["all"]["repair"][-1] - 1.0) < 1e-3
     # all 12 transferred heads patched jointly = the whole attention output of every layer: exact repair
     assert abs(r["transfer"]["by_k"]["12"]["all_items"]["repair"] - 1.0) < 1e-3
+
+
+# ------------------------------------------------------------------ Spanish / Galician (xl_adapter)
+
+def test_xl_transplants_decorrelate_and_share_verb():
+    from relational_lab.experiments import xl_adapter as xla
+    for lang in ("es", "gl"):
+        bases = xla.select_bases(lang, "dev", 6, ["passive"], ["agent"], 2026)
+        assert bases and all(b.question.startswith(("¿Por quién", "Por quen")) for b in bases)
+        ts = otr.make_transplants(bases, xla.TRANSPLANT_CONSTRUCTIONS, seed=1, builder=xla.builder)
+        assert len(ts) == len(bases) * 2 * 4 * 4
+        for t in ts:
+            assert t.source.lemma == t.base.lemma and t.source.event_id.startswith(lang + ":")
+        assert all(abs(v) < 1e-9 for v in otr.predictor_correlations(ts).values())
+
+
+def test_xl_repair_pairs():
+    o9 = _script("otr09_answer_patching")
+    tr = o9.make_pairs(2026, None, None, "Responde con un solo nombre.", ["active", "passive", "object_cleft"], 3,
+                       stimuli="es")
+    assert len(tr) == 9
+    for b, s, d in tr:
+        assert b.sentence == s.sentence and b.question.startswith("¿Por quién") and s.question.startswith("¿Quién")
+        assert d.question.startswith("¿Quién") and b.construction == d.construction
+        assert b.prompt.endswith("Responde con un solo nombre.\nRespuesta:") and b.answer == b.agent
+
+
+def test_smoke_otr03_and_otr09_spanish(monkeypatch, tmp_path):
+    pytest.importorskip("transformers")
+    from relational_lab.experiments import multilingual_stimuli as xl
+    from relational_lab.experiments import order_role_stimuli as ors
+    extra = [i.prompt + " Responde con un solo nombre." for i in xl.generate_items("es")[:4000]]
+    extra += [" " + n for n in ors.NAMES] * 50
+    _tiny_bx(monkeypatch, extra)
+    o3 = _script("otr03_code_transplant")
+    o3.main(["--model", "tiny", "--dtype", "float32", "--device", "cpu", "--stimuli", "es", "--n-events", "6",
+             "--question-voices", "passive", "--roles", "agent", "--include-incorrect", "--n-boot", "0",
+             "--out-dir", str(tmp_path)])
+    r = json.loads(next(tmp_path.glob("otr03_*_es_*.json")).read_text())
+    assert r["xl_generator_version"] and r["n_analysed"] > 0
+    assert max(abs(v) for v in r["left_context_null_role_slope"][:-1]) < 1e-3
+    o9 = _script("otr09_answer_patching")
+    o9.main(["--model", "tiny", "--dtype", "float32", "--stimuli", "es", "--n-per", "3", "--layer-stride", "1",
+             "--head-from", "0.6", "--n-rank", "2", "--top-k", "1", "--min-gap", "1e-4",
+             "--instruction", "Responde con un solo nombre.", "--out-dir", str(tmp_path)])
+    r9 = json.loads(next(tmp_path.glob("otr09_*_es_*.json")).read_text())
+    assert abs(r9["residual"]["all"]["repair"][-1] - 1.0) < 1e-3
