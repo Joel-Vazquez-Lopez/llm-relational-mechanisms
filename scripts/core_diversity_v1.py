@@ -14,8 +14,119 @@ from pathlib import Path
 from random import Random
 from statistics import mean,stdev
 import torch
+from torch import nn
+from torch.nn import functional as F
 import core_diversity_v1_preflight as pf
-import position_counterbalance_v0 as cb
+
+# Byte-for-byte architecture design and readout conventions of
+# exp105_development_pilot_v0, reimplemented locally to avoid a legacy import
+# chain that is incomplete in the public repository checkout.
+WIDTH,HEADS,LAYERS,MAX_TOKENS=96,4,3,48
+LR,WD=0.002,0.01
+
+class Block(nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.n1=nn.LayerNorm(WIDTH)
+        self.attn=nn.MultiheadAttention(WIDTH,HEADS,dropout=0.0,batch_first=True)
+        self.n2=nn.LayerNorm(WIDTH)
+        self.mlp=nn.Sequential(nn.Linear(WIDTH,WIDTH*4),
+                               nn.GELU(),nn.Linear(WIDTH*4,WIDTH))
+    def forward(self,x,mask):
+        z=self.n1(x)
+        x=x+self.attn(z,z,z,attn_mask=mask,need_weights=False)[0]
+        return x+self.mlp(self.n2(x))
+
+class Model(nn.Module):
+    def __init__(self,vocab_size):
+        super().__init__()
+        self.embed=nn.Embedding(vocab_size,WIDTH)
+        self.pos=nn.Embedding(MAX_TOKENS,WIDTH)
+        self.blocks=nn.ModuleList(Block() for _ in range(LAYERS))
+        self.norm=nn.LayerNorm(WIDTH)
+        self.out=nn.Linear(WIDTH,vocab_size)
+    def forward(self,ids,readout):
+        bs,n=ids.shape
+        assert n<=MAX_TOKENS
+        positions=torch.arange(n,device=ids.device)
+        x=self.embed(ids)+self.pos(positions)
+        mask=torch.ones(n,n,dtype=torch.bool,device=ids.device).triu(1)
+        for block in self.blocks:x=block(x,mask)
+        return self.out(self.norm(x[torch.arange(bs,device=ids.device),readout]))
+
+def encode_sources(sources,vocab,check=True):
+    """Faithfully reproduces EXP-105's four-query restricted-choice encoding."""
+    seqs,labels,choices,lens=[],[],[],[]
+    for source in sources:
+        if check:
+            assert pf.gen.parse_independent(source.text)==source.gold
+            assert len(set(source.gold))==4 and source.mods==pf.BARE
+        candidates=tuple(sorted(source.gold))
+        for question,answer in zip(pf.gen.Q,source.gold):
+            toks=["<bos>"]+pf.gen.tokens(source.text)+["<sep>"]+pf.gen.tokens(question)+["<answer>"]
+            assert set(toks)<=set(vocab) and len(toks)<=MAX_TOKENS
+            seqs.append([vocab[t] for t in toks])
+            labels.append(vocab[answer])
+            choices.append([vocab[name] for name in candidates])
+            lens.append(len(toks))
+    assert len(seqs)==len(sources)*4
+    matrix=torch.full((len(seqs),max(lens)),vocab["<pad>"],dtype=torch.long)
+    for ix,row in enumerate(seqs):matrix[ix,:len(row)]=torch.tensor(row,dtype=torch.long)
+    return (matrix,torch.tensor([n-1 for n in lens],dtype=torch.long),
+            torch.tensor(labels),torch.tensor(choices))
+
+def one_update(model,optimizer,encoded,device):
+    model.train()
+    ids,readout,labels,_=encoded
+    logits=model(ids.to(device),readout.to(device))
+    loss=F.cross_entropy(logits,labels.to(device))
+    if not torch.isfinite(loss):raise FloatingPointError("Nonfinite loss")
+    optimizer.zero_grad(set_to_none=True)
+    loss.backward()
+    assert all(p.grad is not None and torch.isfinite(p.grad).all()
+               for p in model.parameters())
+    optimizer.step()
+    return float(loss.item())
+
+@torch.inference_mode()
+def score_native(model,encoded_by_voice,device,chunk_size=128):
+    """Native restricted-answer C_query plus full-vocab and pair taxonomy."""
+    model.eval()
+    result={}
+    for voice,encoded in encoded_by_voice.items():
+        ids,readout,labels,candidates=encoded
+        predictions=[];vocab_preds=[]
+        for start in range(0,len(ids),chunk_size):
+            end=start+chunk_size
+            logits=model(ids[start:end].to(device),
+                         readout[start:end].to(device)).float().cpu()
+            c=candidates[start:end]
+            pred=c.gather(1,logits.gather(1,c).argmax(
+                dim=1,keepdim=True)).flatten()
+            predictions.append(pred)
+            vocab_preds.append(logits.argmax(1))
+        pred=torch.cat(predictions).view(-1,4)
+        gold=labels.view(-1,4)
+        correct=(pred==gold)
+        out={"C_query":float(correct.all(1).float().mean()),
+             "accuracy4":float(correct.float().mean()),
+             "full_vocab_accuracy":float(
+                 (torch.cat(vocab_preds)==labels).float().mean())}
+        for event in range(2):
+            ix=event*2
+            p0,p1=pred[:,ix],pred[:,ix+1]
+            g0,g1=gold[:,ix],gold[:,ix+1]
+            wrong=~(((p0==g0)|(p0==g1))&((p1==g0)|(p1==g1)))
+            classes={"correct":(p0==g0)&(p1==g1)&~wrong,
+                     "reversed":(p0==g1)&(p1==g0)&~wrong,
+                     "collapsed":(p0==p1)&~wrong,
+                     "wrong_event_name":wrong}
+            assert torch.all(torch.stack(list(classes.values())).sum(0)==1)
+            out["event%d_pair_classes"%(event+1)]={
+                key:float(value.float().mean()) for key,value in classes.items()}
+        result[voice]=out
+    return result
+
 
 ROOT=Path(__file__).resolve().parents[1]
 SCRIPT=Path(__file__).resolve()
@@ -134,11 +245,7 @@ def schedule_sha(seed,ids):
     return h.hexdigest()
 
 def expected_manifest(ids,hids,vocab,sm):
-    deps=("exp105_generator_preflight.py","exp105_development_pilot_v0.py",
-          "exp105_position_control_preflight_v1.py",
-          "exp112_clause_state_causal_patch_v0.py",
-          "exp113_position_update_factorial_v0.py",
-          "position_counterbalance_v0.py",
+    deps=("exp105_generator_preflight.py",
           "core_diversity_v1_preflight.py")
     protocol={
         "study":"CORE-DIVERSITY-v1","status":"PROSPECTIVE_NOT_RUN",
@@ -229,9 +336,9 @@ def smoke(device):
     ids,hids,tables,vocab,m=verify()
     _=(hids,m)
     batch=generate_batch(ids[:8],(0,1,2,3,4,5,6,7),tables)
-    model=cb.pilot.Model(len(vocab)).to(device).eval()
+    model=Model(len(vocab)).to(device).eval()
     for arm in ARMS:
-        data=cb.pilot.encode_sources(batch[arm],vocab,check=True)
+        data=encode_sources(batch[arm],vocab,check=True)
         with torch.inference_mode():
             logits=model(data[0].to(device),data[1].to(device))
         assert logits.shape==(64,len(vocab))
@@ -249,7 +356,7 @@ def evaluate_inputs(ids,hids,tables,vocab):
         encoded[regime]={}
         for pop,rows in populations.items():
             encoded[regime][pop]={
-                voice:cb.pilot.encode_sources([r[voice] for r in rows],vocab,check=False)
+                voice:encode_sources([r[voice] for r in rows],vocab,check=False)
                 for voice in voices}
     return encoded
 
@@ -266,21 +373,21 @@ def run(seed,device):
     commit=frozen()
     encoded=evaluate_inputs(ids,hids,tables,vocab)
     torch.manual_seed(seed)
-    initial=cb.pilot.Model(len(vocab)).to(device)
+    initial=Model(len(vocab)).to(device)
     nets={}
     for arm in ARMS:
         model=deepcopy(initial).to(device)
         assert all(torch.equal(a,b) for a,b in zip(initial.parameters(),
                                                    model.parameters()))
         nets[arm]=(model,torch.optim.AdamW(
-            model.parameters(),lr=cb.pilot.LR,weight_decay=cb.pilot.WEIGHT_DECAY))
+            model.parameters(),lr=LR,weight_decay=WD))
     trace=sha256();history=[]
     for step,chosen,choices in schedule(seed,ids):
         batches=generate_batch(chosen,choices,tables)
         losses={}
         for arm in ARMS:
-            data=cb.pilot.encode_sources(batches[arm],vocab,check=False)
-            losses[arm]=cb.pilot.one_update(*nets[arm],data,device)
+            data=encode_sources(batches[arm],vocab,check=False)
+            losses[arm]=one_update(*nets[arm],data,device)
         trace.update((json.dumps((step,chosen,choices),separators=(",",":"))+"\n").encode())
         if step in MILESTONES:
             history.append({"step":step,"losses":losses})
@@ -290,7 +397,7 @@ def run(seed,device):
     outputs={}
     for arm in ARMS:
         net=nets[arm][0].eval()
-        outputs[arm]={pop:cb.score(net,encoded[regime(arm)][pop],device)
+        outputs[arm]={pop:score_native(net,encoded[regime(arm)][pop],device)
                       for pop in POPS}
     WEIGHTS.mkdir(parents=True,exist_ok=True)
     OUT.mkdir(parents=True,exist_ok=True)
