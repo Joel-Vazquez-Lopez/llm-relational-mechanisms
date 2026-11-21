@@ -52,6 +52,7 @@ from relational_lab.experiments import broad_stimuli as bx  # noqa: E402
 from relational_lab.experiments import bx_adapter as bxa  # noqa: E402
 from relational_lab.experiments import order_role_stimuli as ors  # noqa: E402
 from relational_lab.experiments import xl_adapter as xla  # noqa: E402
+from relational_lab.experiments import ud_stimuli as uds  # noqa: E402
 from relational_lab.experiments.question_templates import fill as fill_template  # noqa: E402
 
 OTR09_VERSION = "1.1.0"
@@ -63,6 +64,8 @@ def make_pairs(seed: int, base_q: str, source_q: str, instruction: str, construc
     another dev sentence of the same construction with a disjoint name pair."""
     if stimuli in xla.STIMULI:
         return _xl_triples(stimuli, seed, constructions, n_per, instruction)
+    if stimuli == "ud-en":
+        return _with_donors(uds.generate_pairs(base_q, source_q, instruction, seed=seed), constructions, n_per, seed)
     if stimuli != "otr":
         items = bxa.repair_items(stimuli, seed, constructions)
 
@@ -87,7 +90,10 @@ def make_pairs(seed: int, base_q: str, source_q: str, instruction: str, construc
 def _xl_triples(lang, seed, constructions, n_per, instruction):
     """Spanish/Galician: base = the failing passive agent question, source = the active agent
     question on the same sentence; donor = another sentence of the same construction."""
-    pairs = xla.repair_pairs(lang, seed, constructions, instruction)
+    return _with_donors(xla.repair_pairs(lang, seed, constructions, instruction), constructions, n_per, seed)
+
+
+def _with_donors(pairs, constructions, n_per, seed):
     rng = random.Random(seed)
     out = []
     for c in constructions:
@@ -139,7 +145,7 @@ def attn_modules(layers):
 def main(argv=None):
     p = argparse.ArgumentParser()
     p.add_argument("--model", required=True)
-    p.add_argument("--stimuli", default="otr", choices=["otr", *bxa.STIMULI, *xla.STIMULI])
+    p.add_argument("--stimuli", default="otr", choices=["otr", *bxa.STIMULI, *xla.STIMULI, "ud-en"])
     p.add_argument("--base-question", default=None, help='default "Who was someone {past} by?" (bx: {pp})')
     p.add_argument("--source-question", default=None, help='default "Who was the {ing} done by?"')
     p.add_argument("--rank-from", type=Path, default=None,
@@ -168,6 +174,9 @@ def main(argv=None):
         args.base_question = "XL default passive agent question"
         args.source_question = "XL default active agent question"
         args.constructions = args.constructions or ",".join(xla.REPAIR_CONSTRUCTIONS[args.stimuli])
+    elif args.stimuli == "ud-en":
+        args.base_question = args.base_question or "Who was someone {pp} by?"
+        args.constructions = args.constructions or ",".join(uds.CONSTRUCTIONS)
     elif args.stimuli == "otr":
         args.base_question = args.base_question or "Who was someone {past} by?"
         args.constructions = args.constructions or "active,object_cleft,passive,by_cleft"
@@ -351,6 +360,7 @@ def main(argv=None):
         "experiment": "OTR-09", "status": "EXPLORATORY", "version": OTR09_VERSION,
         "generator_version": ors.GENERATOR_VERSION, "stimuli": args.stimuli,
         "bx_generator_version": bx.BX_GENERATOR_VERSION if args.stimuli in bxa.STIMULI else None,
+        "ud_version": uds.UD_VERSION if args.stimuli == "ud-en" else None,
         "model": args.model, "chat_template": args.chat_template,
         "chat_template_kwargs": chat_kwargs, "instruction": args.instruction,
         "base_question": args.base_question, "source_question": args.source_question, "n_layers": L,

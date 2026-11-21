@@ -193,3 +193,34 @@ def test_smoke_otr03_and_otr09_spanish(monkeypatch, tmp_path):
              "--instruction", "Responde con un solo nombre.", "--out-dir", str(tmp_path)])
     r9 = json.loads(next(tmp_path.glob("otr09_*_es_*.json")).read_text())
     assert abs(r9["residual"]["all"]["repair"][-1] - 1.0) < 1e-3
+
+
+# ------------------------------------------------------------------ natural sentences (UD)
+
+def test_ud_items_are_natural_sentences_with_two_names():
+    from relational_lab.experiments import ud_stimuli as uds
+    pairs = uds.generate_pairs("Who was someone {pp} by?", "Who was the {ing} done by?", "Reply with one name only.")
+    assert len(pairs) > 300 and {b.construction for b, _ in pairs} == set(uds.CONSTRUCTIONS)
+    for b, s in pairs:
+        assert b.sentence == s.sentence and b.answer == b.agent
+        assert b.sentence.count(b.agent) == 1 and b.sentence.count(b.patient) == 1
+        assert b.prompt.endswith("Reply with one name only.\nAnswer:")
+        for t in b.names:
+            assert b.prompt[t.prompt_char_start:t.prompt_char_end] == t.name
+        a_tok = next(t for t in b.names if t.is_agent)
+        assert a_tok.is_subject == (b.construction == "ud_active")
+    assert " n't" not in " ".join(b.sentence for b, _ in pairs)
+
+
+def test_smoke_otr09_ud(monkeypatch, tmp_path):
+    pytest.importorskip("transformers")
+    from relational_lab.experiments import order_role_stimuli as ors
+    from relational_lab.experiments import ud_stimuli as uds
+    extra = [b.prompt for b, _ in uds.generate_pairs("Who was someone {pp} by?", "Who was the {ing} done by?")]
+    extra += [" " + n for n in ors.NAMES] * 50
+    _tiny_bx(monkeypatch, extra)
+    o9 = _script("otr09_answer_patching")
+    o9.main(["--model", "tiny", "--dtype", "float32", "--stimuli", "ud-en", "--n-per", "6", "--layer-stride", "1",
+             "--head-from", "0.6", "--n-rank", "2", "--top-k", "1", "--min-gap", "1e-4", "--out-dir", str(tmp_path)])
+    r = json.loads(next(tmp_path.glob("otr09_*_ud-en_*.json")).read_text())
+    assert r["ud_version"] and abs(r["residual"]["all"]["repair"][-1] - 1.0) < 1e-3
