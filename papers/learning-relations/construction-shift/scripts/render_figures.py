@@ -103,5 +103,39 @@ def fig4():
     ax.set_title("EXP-116: exploratory specificity screen (0/12 modes qualify)",loc="left")
     ax.legend(loc="upper left");ax.grid(alpha=.18);fig.tight_layout();save(fig,"fig4")
 
+
+def fig_supp_phase2():
+    """Frozen Phase 2 primary and gated results; do not conflate endpoints."""
+    p = DATA["phase2"]
+    rows = [
+        ("P2-01 20% vs 0% (primary, failed)",
+         p["phase2_01"]["tests"]["primary_p020_minus_p000_AP_accuracy"]["estimate"]),
+        ("P2-01 100% vs 0% (gated, not reached)",
+         p["phase2_01"]["tests"]["secondary_p100_minus_p000_AP_accuracy"]["estimate"]),
+        ("P2-02 shifted AP (primary, failed)",
+         p["phase2_02"]["tests"]["primary_p100_minus_p000_SHIFTED_AP_accuracy"]["estimate"]),
+        ("P2-03 near distractor (primary, failed)",
+         p["phase2_03"]["tests"]["primary_p000_tail_minus_canonical_AP_near_specificity"]["estimate"]),
+    ]
+    fig, ax = plt.subplots(figsize=(11, 5.3))
+    colors = ["#b6534d", "#64748b", "#b6534d", "#b6534d"]
+    for i, ((label, v), color) in enumerate(zip(rows, colors)):
+        y = 3 - i
+        vals = list(v["per_seed"].values())
+        ax.scatter([x*100 for x in vals],
+                   [y + (j-3.5)*0.03 for j in range(len(vals))],
+                   s=22, color="#b9cbd8", zorder=2)
+        lo, hi = [x*100 for x in v["ci95"]]
+        ax.plot([lo,hi],[y,y],color=color,lw=3)
+        ax.scatter([v["mean"]*100],[y],color=color,s=70,zorder=3)
+    ax.axvline(0,color="#83919e",ls="--",lw=1)
+    ax.set_xlim(-50,58)
+    ax.set_yticks([3,2,1,0],[q[0] for q in rows])
+    ax.set_xlabel("Estimate (percentage points; distinct endpoints, not pooled)")
+    ax.set_title("Phase 2: prespecified tests and their stopping rules",loc="left")
+    ax.grid(axis="x",alpha=.2)
+    fig.tight_layout()
+    save(fig,"supp_phase2")
+
 if __name__ == "__main__":
-    fig1();fig2();fig3();fig4()
+    fig1();fig2();fig3();fig4();fig_supp_phase2()
