@@ -1,0 +1,24 @@
+name: Paper shortcut baselines (read-only)
+on:
+  push:
+    branches:
+      - paper/construction-sensitive-roles-20261121
+    paths:
+      - 'papers/learning-relations/construction-shift/baselines/**'
+      - '.github/workflows/paper-shortcut-baselines.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  shortcut-baseline:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Frozen EXP-109 positional baseline (standard library only)
+        run: python papers/learning-relations/construction-shift/baselines/shortcut_baselines.py --emit-json
