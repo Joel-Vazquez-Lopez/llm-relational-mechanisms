@@ -1,0 +1,33 @@
+name: CORE-DIVERSITY-v1 training runner preflight and random-weight smoke
+on:
+  push:
+    branches: [design/position-cb-core-diversity-v1]
+    paths:
+      - 'scripts/core_diversity_v1.py'
+      - 'scripts/core_diversity_v1_preflight.py'
+      - 'scripts/run_core_diversity_v1.sh'
+      - '.github/workflows/core-diversity-v1-runner-smoke.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Python and bash syntax
+        run: |
+          python -m py_compile scripts/core_diversity_v1.py
+          python -m py_compile scripts/core_diversity_v1_preflight.py
+          bash -n scripts/run_core_diversity_v1.sh
+      - name: Install CPU PyTorch for non-scientific random-weight smoke
+        run: python -m pip install -q torch --index-url https://download.pytorch.org/whl/cpu
+      - name: Source-only gold/overlap audit
+        run: python scripts/core_diversity_v1_preflight.py --phase prepare
+      - name: Full study schedule and code freeze preflight, NO trained checkpoint inference
+        run: python scripts/core_diversity_v1.py --phase prepare
+      - name: CPU random-weight tensor and forward smoke, NO scientific training
+        run: python scripts/core_diversity_v1.py --phase smoke --device cpu
