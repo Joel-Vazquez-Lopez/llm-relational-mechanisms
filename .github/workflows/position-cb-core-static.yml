@@ -1,0 +1,47 @@
+name: core-transfer source audit static validation
+on:
+  push:
+    branches: [analysis/position-cb-core-transfer-v0]
+    paths:
+      - 'scripts/position_cb_core_transfer_v0.py'
+      - 'scripts/run_position_cb_core_transfer_v0.sh'
+      - 'paper/POSITION_CB_CORE_TRANSFER_V0_PROTOCOL.md'
+      - '.github/workflows/position-cb-core-static.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  static:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Python compile and Bash parse
+        run: |
+          python -m py_compile scripts/position_cb_core_transfer_v0.py
+          bash -n scripts/run_position_cb_core_transfer_v0.sh
+      - name: Pure-Python 24-permutation exhaustiveness and balanced cross sampling
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          from itertools import permutations
+          import ast
+          tree = ast.parse(Path('scripts/position_cb_core_transfer_v0.py').read_text())
+          node = next(n for n in tree.body if isinstance(n, ast.FunctionDef) and n.name == 'variants')
+          ns = {'permutations': permutations, 'VARIANTS': (
+              'original','flip_first','flip_second','flip_both',
+              'swap','swap_flip_first','swap_flip_second','swap_flip_both',
+              'cross_ac','cross_bd','cross_ad','cross_bc')}
+          exec(compile(ast.Module(body=[node], type_ignores=[]), '<variants>', 'exec'), ns)
+          seen = {name: set() for name in ns['VARIANTS']}
+          for i in range(16):
+              data = ns['variants'](('Alda','Berto','Cira','Dalen'),i)
+              assert len(data) == 12 and len(set(data.values())) == 12
+              for name, value in data.items():
+                  seen[name].add(value)
+          for name in ('cross_ac','cross_bd','cross_ad','cross_bc'):
+              assert len(seen[name]) == 4, (name, seen[name])
+          print('STATIC VALIDATION PASS: 12 distinct role permutations and rotating balanced crossed orientations')
+          PY
