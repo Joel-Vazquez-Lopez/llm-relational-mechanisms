@@ -15,10 +15,15 @@
 | C9 | **0/12** candidate dose modes satisfied EXP-116's strict descriptive selectivity screen | EXP-116 final exploratory study on same checkpoints/examples | `reports/exp116/targeted_role_event_selectivity_v0/analysis_summary.json` `strict_descriptive_selectivity_screen` | Failure of a screen is not proof that no selective mechanism exists; screen unadjusted and descriptive |
 | C10 | Different scratch-Transformer training cohorts show exposure benefits (48/48 paired seeds), but this is not 48 independent grammars | Historical ML-080/084/085/086/088/099 | `paper/manuscript.md`; ML archived JSON reports | Context only, not pooled into EXP-109 confidence intervals |
 
+| C11 | PHASE2-01: p020−p000 AP accuracy: **+10.35 pp; CI [−10.27,+30.97]; failed primary** | New-seed prospective PHASE2 study; scope as labelled | `reports/phase2_01/coverage_curve_v0/analysis_summary.json` `tests` | 20% means eligible dose-pair steps, not all examples |
+| C12 | PHASE2-01: p100−p000 AP accuracy: **+27.30 pp; CI [+13.04,+41.56]; gated secondary NOT reached** | New-seed prospective PHASE2 study; scope as labelled | `reports/phase2_01/coverage_curve_v0/analysis_summary.json` `tests` | Positive interval descriptive only after failed primary |
+| C13 | PHASE2-02: p100−p000 shifted-AP accuracy: **+6.97 pp; CI [−13.10,+27.03]; failed primary** | New-seed prospective PHASE2 study; scope as labelled | `reports/phase2_02/structural_transfer_v0/analysis_summary.json` `tests` | Two novel adjunct placements, same grammar/vocab |
+| C14 | PHASE2-03: p000 tail named-distractor specificity: **+6.46 pp; CI [−3.09,+16.00]; failed primary** | New-seed prospective PHASE2 study; scope as labelled | `reports/phase2_03/distractor_event_binding_v0/analysis_summary.json` `tests` | Tertiary p100 positive interval is gated/unreached |
+
 ## Required reporting rules
 
 - Seed is the replication unit. Average the two MPS numerical repeats within each seed before statistics.
-- Label EXP-110, EXP-111–113 and EXP-115–116 **exploratory**. EXP-114 is a prospective within-grammar replication of effects selected on earlier development results, not independent grammatical-family validation.
+- Label EXP-110, EXP-111–113 and EXP-115–116 **exploratory**. PHASE2-01–03 were prospective *within-project* follow-ups with independent seeds, but their frozen primary tests failed; gated secondary/tertiary positive intervals must never be promoted as successful tests. EXP-114 is a prospective within-grammar replication of effects selected on earlier development results, not independent grammatical-family validation.
 - Distinguish `C_query` (strict all-four questions correct), single-question native four-candidate accuracy, full-vocabulary accuracy, and correct-event-oracle restricted outcomes.
 - `wrong_role_rate` is *per-question* selecting the other member of the correct event. A **complete pair reversal** is an event-level paired outcome. Do not conflate these.
 - A positive patching effect is a causal response to an imposed perturbation; not evidence of necessity, uniquely decoded native pathway, semantic-role representation or context-independent mediation.

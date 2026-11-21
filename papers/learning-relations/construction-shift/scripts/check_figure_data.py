@@ -53,6 +53,10 @@ def main():
             checks.append((f"EXP-110 {arm}/{cl}", value, a["descriptive_AP_second_event_pair_classes"][arm][cl]))
     for mode, vals in data["exp116"]["paOnlyAP_modes"].items():
         checks.append((f"EXP-116 mode {mode}", vals, c["arms"]["pa_only"]["AP"][mode]))
+    for stage, source_path in data.get('phase2', {}).get('sources', {}).items():
+        orig = load(ROOT / source_path)
+        saved = data['phase2'][stage]
+        checks.append((f'{stage} tests', saved['tests'], orig['tests']))
     for name, s, t in checks:
         assert_same(name, s, t)
     assert len(data["exp109"]["primary"]["per_seed"]) == 8

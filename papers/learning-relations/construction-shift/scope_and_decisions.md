@@ -12,7 +12,14 @@ In a restricted two-event synthetic grammar, scratch-trained Transformers can sh
 2. **RQ2: Error type?** Supported descriptively by EXP-110; not a prospectively confirmed new primary endpoint.
 3. **RQ3: Causal layerwise sensitivity?** Supported by EXP-114's three frozen tests and reciprocal direction; controls limit interpretations.
 4. **RQ4: Unique role-specific circuit?** NOT established. EXP-115/116 negative/ambiguous controls must be retained.
-5. **RQ5: Out-of-grammar/general architecture?** NOT tested. New grammar or model family needed for broader paper claim.
+5. **RQ5: Out-of-grammar/general architecture?** PHASE2-02 tested unseen adjunct orders within the same grammar and failed its frozen primary exposure-transfer test. A truly different grammar or model family remains untested.
+
+## Additional prospective evidence (PHASE2-01–03)
+
+- PHASE2-01: direct exposure 20% primary failed; full-dose gated secondary descriptively positive but not formally reached.
+- PHASE2-02: unseen adjunct-placement transfer primary failed; not an entirely new syntax family.
+- PHASE2-03: named-distractor relocation primary failed; later positive p100 tertiary is exploratory because the gate was closed.
+- These results should appear in the main Results as boundary tests and in Supplement S1. Do not launch another within-grammar adjunct sweep just to obtain a positive result.
 
 ## Do not do
 
@@ -37,6 +44,6 @@ In a restricted two-event synthetic grammar, scratch-trained Transformers can sh
 - [ ] Complete literature and novelty review; select appropriate venue.
 - [ ] Independent grammar study **only if** claiming transfer beyond this grammar.
 
-## Conditional new study (EXP-117 concept, NOT preregistered)
+## Conditional new study (separate future protocol, NOT preregistered)
 
-Freeze a genuinely new grammar (not merely more seeds or names); prespecify PA–AP semantic contrast and one intervention predicted to increase correct-role answers without increasing wrong-event errors; include position-only heuristics and negative controls; use fresh training seeds and dev/test partitions. Do not select best head, seed, checkpoint or grammar after seeing results. If the study fails, restrict final paper to this well-characterized grammar.
+PHASE2-01–03 already investigate coverage, new adjunct orders and distractors. If a further study is justified, freeze a **genuinely new grammar or model family** (not merely more seeds, names or near-tail placement); prespecify PA–AP semantic contrast and one intervention predicted to increase correct-role answers without increasing wrong-event errors; include position-only heuristics and negative controls; use fresh training seeds and dev/test partitions. Do not select best head, seed, checkpoint or grammar after seeing results. If the study fails, restrict final paper to this well-characterized grammar.

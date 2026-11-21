@@ -17,6 +17,7 @@ This package was created from `experiments/exp102-clean-design` at `df82ab3ad9db
 2. ![Figure 2](figures/fig2_behavior_and_errors.svg) Prospectively replicated construction gap + exploratory joint-error taxonomy.
 3. ![Figure 3](figures/fig3_intervention_replication.svg) Three prespecified EXP-114 intervention tests with confidence intervals.
 4. ![Figure 4](figures/fig4_selectivity_tradeoff.svg) EXP-116 targeted repair trade-off; no candidate passes selective-repair screen.
+5. ![Supplement S1](figures/supp_phase2_followups.svg) PHASE2-01–03 prospective boundary tests. All three frozen primary tests fail.
 
 The SVGs are included as immediately inspectable drafts. They are not polished submission figures. A separate plot script can reconstruct equivalent panels as PNG from the archived figure data.
 
@@ -40,7 +41,7 @@ This outputs `figures/replot_fig1.png` through `replot_fig4.png` within this pac
 
 ## Interpretation
 
-The paper's strongest tests are EXP-109 (behavior) and EXP-114 (early intervention) within one synthetic family. EXP-110–113 and EXP-115–116 are exploratory. No unique semantic-role circuit was proven, no external grammar generalization was demonstrated, and the reserved/protected/L+I evaluation gates remain closed.
+The paper's strongest passed tests are EXP-109 (behavior) and EXP-114 (early intervention) within one synthetic family. Later PHASE2-01–03 tests provide prospective negative boundaries (dose, adjunct order and distractor specificity). EXP-110–113 and EXP-115–116 are exploratory. No unique semantic-role circuit was proven, no external grammar generalization was demonstrated, and the reserved/protected/L+I evaluation gates remain closed.
 
 ## What still needs action
 
