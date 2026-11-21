@@ -1,0 +1,39 @@
+name, memory.total [MiB]
+NVIDIA H100 NVL, 95830 MiB
+Loading weights:   0%|          | 0/243 [00:00<?, ?it/s]Loading weights: 100%|██████████| 243/243 [00:00<00:00, 13148.12it/s]
+Wrote /gorilla/home/jova3528/private/llm_relation/results/otrgen_microsoft__phi-4_dev_es_20261120T010402.json
+answer kinds: {'direct': 0.9091463414634147, 'frame': 0.0, 'statement': 0.018902439024390243, 'inferred': 0.056707317073170734, 'ambiguous': 0.006097560975609756, 'none': 0.009146341463414634}
+generation accuracy (ambiguous/none = wrong): 0.74   direct answers only: 0.76
+  active/agent/active              1.00
+  active/agent/passive             0.09
+  active/patient/active            0.96
+  active/patient/passive           1.00
+  by_cleft/agent/active            0.07
+  by_cleft/agent/passive           0.07
+  by_cleft/patient/active          0.95
+  by_cleft/patient/passive         0.98
+  object_cleft/agent/active        1.00
+  object_cleft/agent/passive       0.04
+  object_cleft/patient/active      1.00
+  object_cleft/patient/passive     0.99
+  ovs_clitic/agent/active          1.00
+  ovs_clitic/agent/passive         0.13
+  ovs_clitic/patient/active        0.99
+  ovs_clitic/patient/passive       1.00
+  passive/agent/active             1.00
+  passive/agent/passive            0.59
+  passive/patient/active           0.89
+  passive/patient/passive          1.00
+examples:
+  [active/agent/active] answer='Daniel' -> 'Daniel'
+  [active/agent/passive] answer='David' -> 'James fue invitado por David. Por lo tanto, la respuesta es: James.'
+  [active/patient/passive] answer='Emma' -> 'Emma'
+  [by_cleft/agent/active] answer='Daniel' -> 'Michael\n\nEn la oración, "Michael fue saludado por Daniel", lo que indica que Michael es quien fue saludado, y Daniel es quien realizó la acción de saludar. Por lo'
+  [by_cleft/patient/active] answer='Lisa' -> 'Lisa\n\nEn la oración, Lisa es la persona que fue invitada, por lo que ella es la que fue invitada por alguien.'
+  [object_cleft/agent/active] answer='Peter' -> 'Peter\n\nEn la oración "Fue a Alice a quien rescató Peter", Peter es quien realizó la acción de rescatar.'
+  [object_cleft/agent/passive] answer='Paul' -> 'Peter\n\nEn la oración "Fue a Peter a quien persiguió Paul," Peter es la persona que fue perseguida.'
+  [object_cleft/patient/passive] answer='Sarah' -> 'Sarah'
+  [ovs_clitic/agent/passive] answer='Julia' -> 'Lisa\n\nEn la oración "A Lisa la felicitó Julia", Lisa es la persona que fue felicitada.'
+  [ovs_clitic/patient/active] answer='Peter' -> 'Peter'
+  [passive/agent/active] answer='Daniel' -> 'Daniel'
+  [passive/patient/active] answer='Kate' -> 'Daniel'
