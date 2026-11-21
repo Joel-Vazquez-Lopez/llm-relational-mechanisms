@@ -60,6 +60,10 @@ This suggests that convergence on an individual sampled training batch does **no
 
 Do not select high-competence seeds or change the passed/failed status of POSITION-CB-v0 based on this exploratory analysis. Choose a prospective training-data/grammar study only after identifying which distributional transfer fails.
 
+## Completed checkpoint-only training-pool audit
+
+The read-only checkpoint study is complete on [the audit branch](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/tree/analysis/position-cb-train-dev-audit/reports/position_cb_train_dev_audit_v0): eight seeds × two numerical repeats × two arms. Strict four-query accuracy on selected/never-selected original training-pool variants and previously scored familiar development was **97.81%/97.59%/35.44%** (same-voice) and **91.95%/91.73%/38.54%** (mixed-voice). This is a large distributional transfer gap, but never-selected pool indices are not necessarily unseen event cores. Full audit details: [analysis/position_cb_train_dev_audit_v0.md](position_cb_train_dev_audit_v0.md).
+
 ## Threats and next decisions
 
 - **Not a second grammar:** the same two-event grammar, vocabulary and familiar modifiers are reused; development examples have new source permutations in non-reserved name sets.

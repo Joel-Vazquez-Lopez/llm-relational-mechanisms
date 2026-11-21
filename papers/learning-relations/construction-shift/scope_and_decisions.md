@@ -30,6 +30,10 @@ In a restricted two-event synthetic grammar, scratch-trained Transformers can sh
 - Strong instability: some arms near perfect and others near zero familiarity, 3 seeds contribute ~90.3% of summed effects; the paired arm interaction is inconclusive. Preserve all seeds; do not turn this into a strong robustness claim.
 - For figures, include all eight seed-level paired traces and label confidence limits with four decimals. See `analysis/position_cb_v0_audit.md`.
 
+## Completed post-hoc training-pool transfer audit
+
+The follow-up run found same-voice familiar accuracy of 97.81% on selected training variants and 97.59% on never-selected training-pool variants, versus 35.44% on familiar development. Corresponding mixed-voice values: 91.95%, 91.73% and 38.54%. The pooled across-arm unused-pool−development gap is +57.67 pp (exploratory t CI [+32.52,+82.82]). **Unused pool variants may share entire source cores with previously sampled variants**; development uses fresh four-name sets. Distinguishing core memorization from four-name combination shift is the next priority, not a new head/patch sweep. No change to the original frozen inferential decisions.
+
 ## Additional prospective evidence (PHASE2-01–03)
 
 - PHASE2-01: direct exposure 20% primary failed; full-dose gated secondary descriptively positive but not formally reached.

@@ -12,6 +12,7 @@ This package was created from `experiments/exp102-clean-design` at `df82ab3ad9db
 - [Next-study decision gates: shortcut baseline before new grammar](NEXT_STUDY_DECISION.md)
 - [Executed positional baselines and results](baselines/analysis.md)
 - [Completed POSITION-CB-v0: independent raw-report audit and interpretation](analysis/position_cb_v0_audit.md)
+- [Read-only checkpoint audit: training-pool versus development transfer](analysis/position_cb_train_dev_audit_v0.md)
 - [Archived-data extraction for the four figures](analysis/figure_data.json)
 
 ## Figures
@@ -55,6 +56,10 @@ The dependency-free baseline was run successfully in [GitHub Actions #4489850010
 ## Independently audited position-counterbalanced study
 
 The [POSITION-CB-v0 experimental branch](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/tree/experiments/position-counterbalanced-roles-v0/reports/position_cb_v0) contains its frozen manifest, 16 per-process JSON reports and final summary. Their primary (+14.41 pp) and gated role-reversal (+1.60 pp) effects were recomputed from raw results with 8 seed-level units. Both nominally pass with lower CI limits almost zero. Familiar competence is extremely unstable across seeds. The source and interpretation are documented in [analysis/position_cb_v0_audit.md](analysis/position_cb_v0_audit.md); this remains **within one original grammar**.
+
+## Read-only training-pool transfer audit
+
+All 16 read-only checkpoint audit reports are available on [the dedicated audit branch](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/tree/analysis/position-cb-train-dev-audit/reports/position_cb_train_dev_audit_v0). Selected and never-selected variants from the original training pool achieve similar, near-ceiling familiar accuracy, but familiar development from different four-name sets is much lower. This should **not** be called independent core-level generalization or proof of memorization. See [numerical audit and next control](analysis/position_cb_train_dev_audit_v0.md).
 
 ## What still needs action
 
