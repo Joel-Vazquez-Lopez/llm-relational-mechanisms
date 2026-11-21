@@ -1,0 +1,27 @@
+name: POSITION-CB posthoc audit static checks
+on:
+  push:
+    branches: [analysis/position-cb-train-dev-audit]
+    paths:
+      - 'scripts/position_cb_train_dev_audit_v0.py'
+      - 'scripts/run_position_cb_train_dev_audit_v0.sh'
+      - '.github/workflows/position-cb-audit-static.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  syntax:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Compile pure Python syntax
+        run: python -m py_compile scripts/position_cb_train_dev_audit_v0.py
+      - name: Check bash launcher syntax
+        run: bash -n scripts/run_position_cb_train_dev_audit_v0.sh
+      - name: Check original runner frozen files remain present
+        run: |
+          test -f reports/position_cb_v0/manifest.json
+          test -f scripts/position_counterbalance_v0.py
