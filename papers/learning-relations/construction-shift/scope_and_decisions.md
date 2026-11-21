@@ -14,6 +14,14 @@ In a restricted two-event synthetic grammar, scratch-trained Transformers can sh
 4. **RQ4: Unique role-specific circuit?** NOT established. EXP-115/116 negative/ambiguous controls must be retained.
 5. **RQ5: Out-of-grammar/general architecture?** PHASE2-02 tested unseen adjunct orders within the same grammar and failed its frozen primary exposure-transfer test. A truly different grammar or model family remains untested.
 
+## New executed post-hoc positional audit
+
+- Frozen baseline script + protocol committed before GitHub Actions run #44898500105.
+- Exact EXP-109 development SHA-256 and 72 fixture checks PASS.
+- PA-only raw-name prior: +44.4 pp PA−AP strict C_query gap; generous oracle core-slot prior: +100 pp; neural mean: +61.4 pp.
+- Neither baseline generates AP same-person collapses; the raw prior can make wrong-event responses by selecting distractor mentions.
+- Do not claim the slot heuristic uniquely explains the actual neural mechanism or that failing to mimic all errors rules out other heuristics.
+
 ## Additional prospective evidence (PHASE2-01–03)
 
 - PHASE2-01: direct exposure 20% primary failed; full-dose gated secondary descriptively positive but not formally reached.
@@ -40,7 +48,7 @@ In a restricted two-event synthetic grammar, scratch-trained Transformers can sh
 - [ ] Finish and verify full manuscript against code (draft in this package).
 - [ ] Confirm per-run source/checkpoint hashes; clean machine environment file; make all plot generation reproducible from reports.
 - [ ] Audit labels, figure typography and thresholds by independent review.
-- [ ] Add simple lexical/absolute-position shortcut baselines or sharpen alternative explanations.
+- [x] Run initial simple positional-shortcut audit (raw mentions and privileged core-slot comparator), matched to the exact EXP-109 development hash. It explains a large construction gap in principle, but not the neural error mixture. Further capacity-matched/learned shortcuts remain untested.
 - [ ] Complete literature and novelty review; select appropriate venue.
 - [ ] Independent grammar study **only if** claiming transfer beyond this grammar.
 

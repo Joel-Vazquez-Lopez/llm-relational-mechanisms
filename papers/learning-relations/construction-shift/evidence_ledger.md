@@ -20,6 +20,8 @@
 | C13 | PHASE2-02: p100−p000 shifted-AP accuracy: **+6.97 pp; CI [−13.10,+27.03]; failed primary** | New-seed prospective PHASE2 study; scope as labelled | `reports/phase2_02/structural_transfer_v0/analysis_summary.json` `tests` | Two novel adjunct placements, same grammar/vocab |
 | C14 | PHASE2-03: p000 tail named-distractor specificity: **+6.46 pp; CI [−3.09,+16.00]; failed primary** | New-seed prospective PHASE2 study; scope as labelled | `reports/phase2_03/distractor_event_binding_v0/analysis_summary.json` `tests` | Tertiary p100 positive interval is gated/unreached |
 
+| C15 | Post-hoc source-position shortcut: PA-only literal PA−AP strict C_query gap **+44.44 pp** for raw name-mention prior, **+100.00 pp** for oracle-segmented core-slot prior; both fail to reproduce same-person collapse; core-slot oracle 0% wrong-event by design | Read-only deterministic baselines run on frozen EXP-109 dev surfaces; no new neural inference | `papers/learning-relations/construction-shift/baselines/analysis_summary.json`, successful GitHub Actions run #44898500105 | Core-slot extractor uses privileged grammar-specific modifier stripping; expected pool weights not exact per-seed optimization histories; post-hoc, not new confirmation |
+
 ## Required reporting rules
 
 - Seed is the replication unit. Average the two MPS numerical repeats within each seed before statistics.
