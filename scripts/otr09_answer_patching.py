@@ -53,17 +53,22 @@ from relational_lab.experiments import bx_adapter as bxa  # noqa: E402
 from relational_lab.experiments import order_role_stimuli as ors  # noqa: E402
 from relational_lab.experiments import xl_adapter as xla  # noqa: E402
 from relational_lab.experiments import ud_stimuli as uds  # noqa: E402
+from relational_lab.experiments import wiki_roles as wr  # noqa: E402
 from relational_lab.experiments.question_templates import fill as fill_template  # noqa: E402
 
 OTR09_VERSION = "1.1.0"
 
 
 def make_pairs(seed: int, base_q: str, source_q: str, instruction: str, constructions, n_per: int,
-               stimuli: str = "otr"):
+               stimuli: str = "otr", wiki_file=None, wiki_names: str = "real"):
     """(base item, source item, donor item) triples: same sentence for base/source; donor =
     another dev sentence of the same construction with a disjoint name pair."""
     if stimuli in xla.STIMULI:
         return _xl_triples(stimuli, seed, constructions, n_per, instruction)
+    if stimuli == "wiki-en":
+        recs = wr.load_records(wiki_file)
+        return _with_donors(wr.generate_pairs(recs, base_q, source_q, instruction, wiki_names, seed),
+                            constructions, n_per, seed)
     if stimuli == "ud-en":
         return _with_donors(uds.generate_pairs(base_q, source_q, instruction, seed=seed), constructions, n_per, seed)
     if stimuli != "otr":
@@ -145,7 +150,10 @@ def attn_modules(layers):
 def main(argv=None):
     p = argparse.ArgumentParser()
     p.add_argument("--model", required=True)
-    p.add_argument("--stimuli", default="otr", choices=["otr", *bxa.STIMULI, *xla.STIMULI, "ud-en"])
+    p.add_argument("--stimuli", default="otr", choices=["otr", *bxa.STIMULI, *xla.STIMULI, "ud-en", "wiki-en"])
+    p.add_argument("--wiki-file", type=Path, default=None, help="WIKI-ROLES jsonl (scripts/wiki_extract_roles.py)")
+    p.add_argument("--wiki-names", default="real", choices=["real", "neutral"],
+                   help="real Wikipedia names, or two neutral OTR names swapped in (memory control)")
     p.add_argument("--base-question", default=None, help='default "Who was someone {past} by?" (bx: {pp})')
     p.add_argument("--source-question", default=None, help='default "Who was the {ing} done by?"')
     p.add_argument("--rank-from", type=Path, default=None,
@@ -174,6 +182,11 @@ def main(argv=None):
         args.base_question = "XL default passive agent question"
         args.source_question = "XL default active agent question"
         args.constructions = args.constructions or ",".join(xla.REPAIR_CONSTRUCTIONS[args.stimuli])
+    elif args.stimuli == "wiki-en":
+        if not args.wiki_file:
+            raise SystemExit("--stimuli wiki-en needs --wiki-file")
+        args.base_question = args.base_question or "Who was someone {pp} by?"
+        args.constructions = args.constructions or ",".join(wr.CONSTRUCTIONS)
     elif args.stimuli == "ud-en":
         args.base_question = args.base_question or "Who was someone {pp} by?"
         args.constructions = args.constructions or ",".join(uds.CONSTRUCTIONS)
@@ -212,7 +225,7 @@ def main(argv=None):
     lead = not args.chat_template
     cons = [c.strip() for c in args.constructions.split(",")]
     triples = make_pairs(args.seed, args.base_question, args.source_question, args.instruction, cons, args.n_per,
-                         stimuli=args.stimuli)
+                         stimuli=args.stimuli, wiki_file=args.wiki_file, wiki_names=args.wiki_names)
     # a bare answer is scored by its first token: skip items whose two names share it
     n_before = len(triples)
     triples = [t for t in triples
@@ -361,6 +374,8 @@ def main(argv=None):
         "generator_version": ors.GENERATOR_VERSION, "stimuli": args.stimuli,
         "bx_generator_version": bx.BX_GENERATOR_VERSION if args.stimuli in bxa.STIMULI else None,
         "ud_version": uds.UD_VERSION if args.stimuli == "ud-en" else None,
+        "wiki": ({"version": wr.WIKI_VERSION, "file": str(args.wiki_file), "names": args.wiki_names}
+                 if args.stimuli == "wiki-en" else None),
         "model": args.model, "chat_template": args.chat_template,
         "chat_template_kwargs": chat_kwargs, "instruction": args.instruction,
         "base_question": args.base_question, "source_question": args.source_question, "n_layers": L,
@@ -380,6 +395,8 @@ def main(argv=None):
     }
     args.out_dir.mkdir(parents=True, exist_ok=True)
     stag = "" if args.stimuli == "otr" else f"_{args.stimuli}"
+    if args.stimuli == "wiki-en":
+        stag += f"-{args.wiki_names}"
     out = args.out_dir / f"otr09_{args.model.replace('/', '__')}_dev{stag}_{time.strftime('%Y%m%dT%H%M%S')}.json"
     out.write_text(json.dumps(report))
     print(f"Wrote {out}")

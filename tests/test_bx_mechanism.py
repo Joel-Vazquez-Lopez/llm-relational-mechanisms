@@ -224,3 +224,32 @@ def test_smoke_otr09_ud(monkeypatch, tmp_path):
              "--head-from", "0.6", "--n-rank", "2", "--top-k", "1", "--min-gap", "1e-4", "--out-dir", str(tmp_path)])
     r = json.loads(next(tmp_path.glob("otr09_*_ud-en_*.json")).read_text())
     assert r["ud_version"] and abs(r["residual"]["all"]["repair"][-1] - 1.0) < 1e-3
+
+
+def test_smoke_otr09_wiki(monkeypatch, tmp_path):
+    pytest.importorskip("transformers")
+    from relational_lab.experiments import order_role_stimuli as ors
+    sents = [("In {y}, {p} was defeated by {a} in the regional election.", "passive", "defeat", "defeated", "defeating"),
+             ("Later that year, {a} hired {p} as an assistant at the museum.", "active", "hire", "hired", "hiring")]
+    people = ["Mary Montague", "John Carlton", "Peter Hawthorne", "Susan Fenwick", "Laura Becket", "Owen Marsh",
+              "Diane Croft", "Victor Lane"]
+    recs = []
+    for k in range(16):
+        tpl, kind, lm, past, ing = sents[k % 2]
+        a, p = people[k % 8], people[(k + 3) % 8]
+        s = tpl.format(y=1990 + k, a=a, p=p)
+        recs.append({"sentence": s, "kind": kind, "lemma": lm, "past": past, "pp": past, "ing": ing, "agent": a,
+                     "patient": p, "agent_char": [s.index(a), s.index(a) + len(a)],
+                     "patient_char": [s.index(p), s.index(p) + len(p)], "article_id": str(k), "title": "T"})
+    wf = tmp_path / "w.jsonl"
+    wf.write_text("\n".join(json.dumps(r) for r in recs))
+    extra = [r["sentence"] + " Who was someone defeated by? Who was the hiring done by?" for r in recs] * 20
+    extra += [" " + n for n in ors.NAMES + tuple(people)] * 50
+    _tiny_bx(monkeypatch, extra)
+    o9 = _script("otr09_answer_patching")
+    for names in ("real", "neutral"):
+        o9.main(["--model", "tiny", "--dtype", "float32", "--stimuli", "wiki-en", "--wiki-file", str(wf),
+                 "--wiki-names", names, "--n-per", "8", "--layer-stride", "1", "--head-from", "0.6", "--n-rank", "2",
+                 "--top-k", "1", "--min-gap", "1e-4", "--out-dir", str(tmp_path)])
+        r = json.loads(next(tmp_path.glob(f"otr09_*_wiki-en-{names}_*.json")).read_text())
+        assert r["wiki"]["names"] == names and abs(r["residual"]["all"]["repair"][-1] - 1.0) < 1e-3
