@@ -13,6 +13,7 @@ This package was created from `experiments/exp102-clean-design` at `df82ab3ad9db
 - [Executed positional baselines and results](baselines/analysis.md)
 - [Completed POSITION-CB-v0: independent raw-report audit and interpretation](analysis/position_cb_v0_audit.md)
 - [Read-only checkpoint audit: training-pool versus development transfer](analysis/position_cb_train_dev_audit_v0.md)
+- [Audited core-transfer role/event permutations and exact-token-bag controls](analysis/position_cb_core_transfer_v0.md)
 - [Archived-data extraction for the four figures](analysis/figure_data.json)
 
 ## Figures
@@ -60,6 +61,10 @@ The [POSITION-CB-v0 experimental branch](https://github.com/Joel-Vazquez-Lopez/l
 ## Read-only training-pool transfer audit
 
 All 16 read-only checkpoint audit reports are available on [the dedicated audit branch](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/tree/analysis/position-cb-train-dev-audit/reports/position_cb_train_dev_audit_v0). Selected and never-selected variants from the original training pool achieve similar, near-ceiling familiar accuracy, but familiar development from different four-name sets is much lower. This should **not** be called independent core-level generalization or proof of memorization. See [numerical audit and next control](analysis/position_cb_train_dev_audit_v0.md).
+
+## New event-core permutation diagnostic
+
+The [completed CORE-TRANSFER-v0 source/seed audit](analysis/position_cb_core_transfer_v0.md) shows that changing roles, event order, or participant pairings within familiar training name quartets reproduces the large familiar-development drop. Crucially, role flips mostly yield complete reversals, while event swaps/repartitioning yield wrong-event answers; a bare/bare exact-token-bag check preserves all three declines. This is exploratory and motivates the separate [CORE-DIVERSITY-v1 prospective training design](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/tree/design/position-cb-core-diversity-v1).
 
 ## What still needs action
 

@@ -34,6 +34,10 @@ In a restricted two-event synthetic grammar, scratch-trained Transformers can sh
 
 The follow-up run found same-voice familiar accuracy of 97.81% on selected training variants and 97.59% on never-selected training-pool variants, versus 35.44% on familiar development. Corresponding mixed-voice values: 91.95%, 91.73% and 38.54%. The pooled across-arm unused-pool−development gap is +57.67 pp (exploratory t CI [+32.52,+82.82]). **Unused pool variants may share entire source cores with previously sampled variants**; development uses fresh four-name sets. Distinguishing core memorization from four-name combination shift is the next priority, not a new head/patch sweep. No change to the original frozen inferential decisions.
 
+## Completed core-transfer permutation diagnostic
+
+All 16 original JSON reports and the frozen manifest are archived and independently reaggregated. Role flips, event swaps and participant repartitioning with familiar training name quartets cause paired strict C_query drops of approximately 59–60 pp compared with unchanged cores, in both voice regimes. The role-flip failures are substantially complete role reversals; swaps and new pairings mostly produce wrong-event names. The same effects persist in the bare/bare exact-token-multiset subset. **This is new post-hoc diagnostic information, not an independently prospective replication.** It does not isolate a unique circuit or prove word-level memorization. Full details: `analysis/position_cb_core_transfer_v0.md`.
+
 ## Additional prospective evidence (PHASE2-01–03)
 
 - PHASE2-01: direct exposure 20% primary failed; full-dose gated secondary descriptively positive but not formally reached.
