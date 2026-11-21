@@ -1,0 +1,156 @@
+# When Position Matters: Construction-Sensitive Role Assignment and Causal Interventions in Small Transformers
+
+**Working paper draft — 21 November 2026. NOT SUBMISSION-READY.**
+
+*Authors and affiliations: to be supplied by the researchers. This package intentionally does not infer authorship from repository history.*
+
+**Scope:** The scratch-trained Transformer experiments only; no Order-to-Role results are included.
+
+## Abstract
+
+Relational language understanding requires identifying the relevant event and assigning distinct semantic roles to its participants. We study construction-dependent relational question answering in three-layer causal Transformers trained from scratch on a controlled, two-event synthetic grammar. In a prospective eight-seed within-grammar study, a training condition without second-position passive exposure exhibits a 61.4-percentage-point difference in all-four-question correctness between two presentations containing the same clauses in reversed order (95% seed-level confidence interval: 41.3–81.4 points). Post-hoc decomposition shows that the difficult construction frequently produces complete agent–patient reversals rather than merely selecting participants from the wrong event. We then investigate where the difference is causally sensitive to positional information and early residual updates. In a separate, prespecified replication with eight new training seeds and disjoint within-family development sentences, passive-clause input-position editing increases native second-event answer accuracy by 29.2 points (95% CI: 18.5–40.0); learned first-block update transfer outperforms late positional-code transfer by 17.0 points (95% CI: 1.7–32.2); and reciprocal update transfer degrades familiar-construction accuracy by 34.3 points (95% CI for the negative effect: −47.8 to −20.7). Exploratory head/MLP and targeted interventions do not establish a unique grammatical-role circuit: accuracy gains can accompany wrong-event errors, and none of twelve candidate interventions satisfies a prespecified descriptive selectivity screen. Our findings isolate a reproducible *within-grammar* behavioral asymmetry and constrain, without uniquely identifying, its early-layer computational basis.
+
+**Keywords:** compositional generalization; semantic roles; causal Transformers; activation interventions; syntactic position; controlled experiments.
+
+## 1. Introduction
+
+A model may answer questions about simple relational descriptions correctly yet fail when the same familiar linguistic material appears in a new structural arrangement. This failure is more informative if we can distinguish choosing the wrong event, reversing the participants within the correct event, and assigning the same participant to complementary roles. Accuracy alone obscures these distinctions. Controlling grammatical exposure and reordering clauses offers a way to test construction sensitivity without simultaneously changing the lexical items and event meanings.
+
+Mechanistic accounts of these behaviors face a separate evidential hurdle. A representation may contain linearly readable role information without the model using it for selection. Conversely, an activation transplant can alter an answer because it changes event access, position, or context-dependent computation; it need not isolate a role variable. A claim that a specific Transformer component implements grammatical-role binding requires stronger specificity controls than a positive patch effect.
+
+We ask three questions. **RQ1:** Does a fixed training regime lead to a reproducible difference between literal AP and PA arrangements of the same two clauses? **RQ2:** Does the difference involve wrong-event choice, role reversals, or same-participant collapse? **RQ3:** Which early computations causally influence these answers, and can any tested intervention repair role choices *selectively* rather than shift errors to other events?
+
+Our contributions are narrowly scoped: a prospectively evaluated within-grammar construction gap (EXP-109), a transparent exploratory error taxonomy (EXP-110), a separate prospective within-family replication of three ordered intervention hypotheses (EXP-114), and exploratory specificity limits from first-block component and targeted-token interventions (EXP-115–116). We do **not** claim transfer to natural language, a new syntactic family, pretrained models, or a unique role-specific circuit.
+
+![Figure 1: grammar and training schedules](figures/fig1_task_design.svg)
+
+*Figure 1.* Two-event constructions and the literal clause swap. A=active, P=passive. The PA-only baseline is not exposed to AP as an intervention construction during training; the competing schedules introduce different construction combinations. Identical clauses preserve lexical identities and event meanings across AP/PA presentations but change absolute positions, prefix contexts and question-reference assignments.
+
+## 2. Background and related work
+
+Controlled evaluations of compositional generalization distinguish familiar lexical recombinations from genuinely new structures. COGS (Kim and Linzen, 2020) introduced a semantic interpretation benchmark with structural generalization tests; SLOG (Li et al., 2023) expanded the structural challenge set. Their evaluation tasks and natural-language-like grammars differ from our small four-candidate question-answering task, and we do not claim direct benchmark comparison.
+
+Training objectives and grammatical distributions can change whether Transformers generalize hierarchically (Ahuja et al., 2025, *Learning Syntax Without Planting Trees*). Our work is instead a controlled within-model study of passive voice position, joint response errors and source-state interventions. Tang, Lake and Jazayeri (2026) show that small synthetic-task Transformers may generalize through positional routing and support precise activation edits. This close methodological comparator means that observing position-sensitive effects is not in itself novel evidence for a grammatical mechanism.
+
+What is potentially distinctive here is the *combination*: a controlled literal clause-reordering asymmetry, an event-versus-role error partition, a fresh-seed prospective intervention replication, and a demonstrated selectivity limitation. Whether this combination constitutes a sufficiently substantial publication contribution requires an explicit reviewer-style novelty audit rather than an assumption of uniqueness.
+
+## 3. Task, models, and experimental protocol
+
+### 3.1 Synthetic task and response measures
+
+Each source contains two events with four distinct participants. Each event can be rendered in active or passive voice; AA, PA, AP, and PP designate the first and second event voices. Questions query the agent or patient of the first or second event, yielding four relational answers per source.
+
+We distinguish four metrics. **Four-query joint correctness (`C_query`):** all four answers must be correct for a source. **Native four-name question accuracy:** fraction of individually correct answers when evaluated among the four mentioned names. **Full-vocabulary accuracy:** the correct answer must win against the full output vocabulary. **Second-event pair taxonomy:** for its complementary agent and patient questions, the native predictions are classified as both correct, both reversed, same participant for both questions, or at least one response from the wrong event. The pair taxonomy is mutually exclusive *as implemented for EXP-109/110* and should not be mixed arithmetically with the per-question wrong-role or wrong-event rates.
+
+### 3.2 Model and controlled exposure
+
+The EXP-109/114 model is a three-layer, width-96, four-head pre-layer-normalized causal Transformer trained from scratch with full-vocabulary cross-entropy, AdamW (learning rate 0.002, weight decay 0.01), and no dropout. Training lasts 6,400 fixed updates. At each update, the common core is seven AA and seven PA sources, plus two intervention sources, with four answer labels per source (64 labels/update).
+
+The three conditions are: **PA-only** = common core + PA + PA; **indirect PP+AA** = common core + PP + AA; **direct PA+AP** = common core + PA + AP. The indirect condition offers second-position passive examples but does not present AP as such. The direct condition includes AP. These contrasts alter more than abstract compositional structure: sentence lengths, exact positions and source-level construction co-occurrence are not fully matched across arms. Accordingly, an indirect-training benefit cannot be uniquely attributed to abstract recombination.
+
+### 3.3 EXP-109: prospective within-grammar construction comparison
+
+Eight independently initialized seeds (10901, 10903, 10907, 10909, 10913, 10919, 10921 and 10927) were each run twice in separate Apple MPS processes. Neither failed nor low-competence models were excluded. A fixed 6,400-update endpoint was evaluated once per run, without favorable checkpoint selection.
+
+The within-family development evaluation uses 144 fresh AP anchors: 16 for each of nine modifier combinations, drawn from the existing non-reserved development name sets using new participant orderings. Each anchor has a literal PA clause-reordered counterpart; the comparison keeps clause-internal tokens, event participants and event semantics unchanged. Reordering changes event position, preceding context and how first/second queries refer to the events. Other predefined derived presentations were recorded, including AA, PP, participant renaming and second-event reversal.
+
+The **primary prespecified estimand** is PA-only `C_query(PA_literal) − C_query(AP)`. The **secondary prespecified estimand** is `C_query(AP | indirect) − C_query(AP | PA_only)`. Estimates average two numerical repeats within each independent seed; two-sided t confidence intervals use eight seed-level differences and seven degrees of freedom.
+
+### 3.4 EXP-110–113: exploratory diagnosis and causal discovery
+
+EXP-110 reanalyzed all 16 frozen EXP-109 runs without retraining. It partitions second-event answer pairs and measures per-question wrong-role/wrong-event differences. These are **post-hoc descriptive** outcomes, not new held-out confirmations. EXP-111 examined layerwise native readouts and probes; EXP-112 transplanted matching clause states; EXP-113 decomposed positional input changes and learned first-block updates. These results selected hypotheses for the later replication and must not be pooled as independent evidence.
+
+### 3.5 EXP-114: prespecified independent-seed intervention replication
+
+A separate set of eight seeds (11401, 11403, 11407, 11409, 11413, 11419, 11421 and 11427), with two MPS repetitions per seed and all three training arms, generated 48 final model states. Evaluation used 144 newly generated AP anchors and literal PA counterparts, disjoint from previously explored development surfaces but using the **same grammar and non-reserved development name sets**. All model states were retained.
+
+The first ordered test replaces recipient passive-clause input positional codes with those from the matched reordered clause while recomputing all model blocks. The second compares transplanting the **Block-1 learned residual update** with replacing only the explicit positional code after Block 1. Writing token embedding `E_i`, absolute position embedding `P_i`, and end-of-block residual `h_i^(1)`, the donor update is `U_i = h_i^(1) − (E_i + P_i)`. Thus `U_i` is itself influenced by position, prior context and the model's learned computations. The third test checks whether the reciprocal update transplant harms familiar PA performance. The three hypotheses were frozen and assessed hierarchically; passing a later test required passing the earlier ones.
+
+Controls include active-clause transplants, reversed donor alignment, participant-name-only and voice-cue-only position editing, wrong-event responses and collateral effects on non-target queries. None of these operations should be interpreted as a direct intervention on an isolated semantic-role latent variable.
+
+### 3.6 EXP-115–116: descriptive specificity tests
+
+EXP-115 decomposed Block-1 residual writes into individual attention-head, combined attention, and MLP contributions. EXP-116 applied fixed-dose transplants to passive agent names, patient names, both names and several other token sets. Both studies reused the EXP-114 checkpoints and development examples, so they are *exploratory follow-ups*, not independent confirmations.
+
+EXP-116's strict descriptive screen examined twelve single-agent, single-patient and two-name dose configurations. A mode qualified only if the lower seed-level 95% CI for accuracy rescue was positive, the upper CI for wrong-event change was nonpositive, and the lower CI for wrong-role-to-correct transitions exceeded the upper CI for wrong-role-to-wrong-event transitions. This is a conservative heuristic screen, not a formal multiple-testing-adjusted test or a noninferiority design.
+
+## 4. Results
+
+### 4.1 A large within-grammar construction gap
+
+In the PA-only condition, **literal PA minus original AP four-query correctness was +61.37 percentage points** (95% t CI **+41.33 to +81.41**), with a positive difference for **8/8** independent seeds (Figure 2). This replicates a strong dependence on the construction's event position under the fixed training regime. The key secondary indirect-minus-baseline AP improvement was **+22.96 points**, but the 95% interval **[−2.11,+48.03]** includes zero. Indirect exposure is consequently promising but **not confirmed** on the preregistered endpoint.
+
+Importantly, the clause-swap comparison by itself does not distinguish dependence on grammatical configuration from positional/answer-order heuristics. The PA-only model did not train on the second-position passive AP construction, so this effect is not surprising in isolation. The more informative results are the type of mistakes and the response to targeted interventions.
+
+![Figure 2: eight-seed construction contrast and pair errors](figures/fig2_behavior_and_errors.svg)
+
+*Figure 2.* Upper: seed-level prespecified PA-only literal-PA-minus-AP `C_query` differences (EXP-109). Lower: exploratory native four-name taxonomy for AP second-event paired questions by training arm, from EXP-110. The same EXP-109 model runs are used for the lower panel; it is not a second replication.
+
+### 4.2 Role reversals dominate the difficult construction's second-event errors
+
+For the PA-only AP second-event agent/patient question pair, **11.1%** of events were answered correctly on both roles, **41.2%** were completely reversed, **21.4%** gave the same participant twice, and **26.4%** involved an answer from the wrong event. In the direct PA+AP arm, these descriptive proportions were **43.8%, 10.8%, 27.8%, and 17.6%**, respectively. The indirect PP+AA arm lay between these on correct and reversed pairs, while same-person answers remained common.
+
+Relative to literal PA, the PA-only AP condition increased *per-question* wrong-role choices by **+32.44 points** (descriptive t CI **+25.79 to +39.10**) and wrong-event choices by **+9.23 points** (CI **+2.51 to +15.96**). The larger role error excess is visible in all eight seed comparisons. These rates are not independent additive pieces of the pair-level taxonomy.
+
+The behavioral conclusion is that AP failures cannot be reduced simply to choosing the wrong event: the same-event participants are often selected in the opposite role assignment. This does **not** establish a representation of abstract roles that is subsequently swapped; a position-based selection heuristic could yield the same pattern.
+
+### 4.3 Position-dependent and early learned updates causally influence answers
+
+All three hierarchical prespecified EXP-114 intervention tests passed on new seeds and disjoint development sentence surfaces (Figure 3). Editing passive-clause input positional codes increased AP second-event native four-name accuracy by **+29.23 pp** (95% CI **[+18.49,+39.97]**, 8/8 positive). Transplanting first-block learned updates outperformed replacing explicit positional codes only *after* Block 1 by **+16.97 pp** (95% CI **[+1.73,+32.21]**, 7/8 positive). The reciprocal transplant into familiar PA reduced first-event accuracy by **−34.27 pp** (95% CI **[−47.80,−20.73]**, 8/8 negative).
+
+These results establish that the tested upstream modifications can influence subsequent predictions and that early learned computation matters beyond a late explicit position-embedding edit. They **do not** establish that the Block-1 update is position-invariant, role-specific, sufficient for native role binding, or its unique mediator. In descriptive controls, reversing source-position correspondence sometimes preserved substantial effects and wrong-event selection could increase. Such effects weaken a narrowly role-specific explanation.
+
+![Figure 3: prospective intervention replication](figures/fig3_intervention_replication.svg)
+
+*Figure 3.* EXP-114 predeclared primary and two gated secondary comparisons; mean effects, seed-level 95% intervals and individual seed estimates. All refer to native four-name individual-question accuracy, not the strict four-query endpoint of EXP-109.
+
+### 4.4 Causal influence is not selective semantic-role repair
+
+EXP-115 indicates that different first-block residual contributions can change downstream choices, but isolated attention-head effects do not yield an independently demonstrated, unique grammatical-role circuit. Reversed and active-clause controls also respond, and the interventions can increase errors involving the other event.
+
+In EXP-116, twelve fixed-dose candidate agent/patient/both-name transplants were assessed against the strict selectivity screen. **None qualified (0/12)**. The trade-off can be seen in Figure 4: some conditions improve native answer accuracy while simultaneously increasing wrong-event predictions. For example, transplanting the patient-name update at full dose yields a descriptive mean **+21.29 pp** accuracy change together with **+7.99 pp** wrong-event change; transplanting both names at full dose yields **+16.08 pp** accuracy with **+14.30 pp** wrong-event change. These are exploratory means on the previously evaluated sources, not independent estimates of a newly discovered repair method.
+
+Consequently, the current evidence supports **intervention sensitivity**, not **selectively localized role correction**. A screen failure does not prove that no role-specific mechanism exists; only that this tested family of interventions did not demonstrate the stipulated selectivity.
+
+![Figure 4: dose-response tradeoff](figures/fig4_selectivity_tradeoff.svg)
+
+*Figure 4.* EXP-116 exploratory accuracy versus wrong-event-rate changes in the twelve prespecified agent, patient and both-name dose modes, displayed as means across eight seeds. Dose lines are visualization aids; the full unfiltered mode set and confidence intervals remain in the archived EXP-116 report.
+
+## 5. Discussion
+
+The behavioral results complement existing work on structural generalization by providing a controlled view of *how* a construction shift fails. A model trained on limited syntactic exposure often maintains access to the appropriate pair of participants yet chooses the wrong mapping between them. The distinction between event selection and role assignment, and the distinction between single-question accuracy and paired consistency, matter because improvements in one dimension need not eliminate another failure.
+
+The causal findings qualify explanations based solely on an externally edited positional vector. Position-code editing at input changes the entire ensuing computation, while late explicit positional editing has much less effect. Transplanting the Block-1 update changes predictions, including under reciprocal perturbation. But the donor update encodes all of the first block's context-dependent computation; it is not a direct measurement or intervention on abstract roles. Reverse-alignment effects and increased wrong-event choices are evidence against interpreting the best-performing patch as a selectively repaired semantic-role channel.
+
+Our evidence therefore supports a *restricted causal-computational claim*: certain position-sensitive early updates are influential in this synthetic task, while more ambitious descriptions of the model's native relational algorithm remain unresolved. This is a useful negative methodological lesson: success at changing an answer need not mean a causal explanation has isolated the information whose manipulation the experimenter intended.
+
+## 6. Limitations and threats to validity
+
+**Single task family.** All prospective analyses involve one synthetic grammar, a small fixed architecture, familiar vocabulary/name partitions, four-answer question templates and fixed endpoints. New permutations, even when disjoint, do not amount to new grammars or a new model family. There is no natural-language or external benchmark result supporting the same phenomenon.
+
+**Exposure confounding.** The PA-only baseline lacks AP intervention exposure. Indirect/direct comparisons alter second-position passive evidence, construction co-occurrence and potentially sentence length and token positions. The design therefore does not isolate an abstract recombination factor.
+
+**Statistical power and numerical variation.** Eight independent training seeds is limited for estimating effects over possible model trainings. The two Apple MPS repetitions are not additional independent seeds; within-seed repeat discrepancies were substantial for EXP-109 (mean absolute difference of 13.7 pp in the primary construction-gap effect; maximum 44.4 pp). Seed-level t intervals do not capture grammar-family or hardware-generalization uncertainty.
+
+**Exploration versus confirmation.** The later role-pair decomposition, many patch modes, heads and selectivity screens are exploratory and reuse sources already examined. Their descriptive confidence intervals are not multiplicity-adjusted. EXP-114 prospective replication validates prespecified comparisons on fresh seeds and surfaces but remains within the same grammar and was motivated by prior exploratory selection.
+
+**Causal interpretation.** Donor activation or position-code replacement can be off-manifold and is not guaranteed to hold unrelated computation fixed. Changes to wrong-event rates and non-target queries undermine a clean role-specific causal attribution. Readout/probe accessibility does not imply usage.
+
+**Unfinished controls.** Rule-based token-position heuristics, a new grammar and an independent architecture family have not been evaluated as primary confirmatory baselines in this manuscript. These remain important possible reviewer requirements.
+
+## 7. Conclusion
+
+We establish a reproducible within-grammar construction-sensitive role-assignment failure in scratch-trained Transformers and provide a prospective causal-intervention replication linking downstream answer selection to positional inputs and early context-dependent updates. A complementary, explicitly exploratory decomposition shows that apparent accuracy rescue does not necessarily constitute selective repair of semantic-role assignment. The results argue for joint error diagnostics and stringent intervention specificity when making mechanistic claims about relational generalization. Future evidence is required before extrapolating to unseen grammars or a unique native role-binding circuit.
+
+## Reproducibility and source provenance
+
+The exact claim-to-report mapping, frozen branch commit, figure source extraction and stopping criteria are in [evidence_ledger.md](evidence_ledger.md), [scope_and_decisions.md](scope_and_decisions.md), and [analysis/figure_data.json](analysis/figure_data.json). Original protocols and data are on `experiments/exp102-clean-design`. The two MPS repeats are averaged within each seed. No protected/reserved or within-event L+I examples were opened for this draft. Source checkpoints are intentionally kept local and are not distributed here.
+
+**Manuscript status:** complete first scientific draft, **not final submission text**. Required before submission: independent numerical review of plots, reproducibility commands against the actual worktree, a close novelty audit, shortcut baselines and target-venue formatting.
+
+## References (provisional)
+
+1. Kim, N., and Linzen, T. (2020). [COGS: A Compositional Generalization Challenge Based on Semantic Interpretation](https://aclanthology.org/2020.emnlp-main.731/). EMNLP.
+2. Li, B., Donatelli, L., Koller, A., Linzen, T., Yao, Y., and Kim, N. (2023). [SLOG: A Structural Generalization Benchmark for Semantic Parsing](https://aclanthology.org/2023.emnlp-main.194/). EMNLP.
+3. Ahuja, K., et al. (2025). [Learning Syntax Without Planting Trees: Understanding Hierarchical Generalization in Transformers](https://aclanthology.org/2025.tacl-1.6/). TACL.
+4. Tang, C., Lake, B., and Jazayeri, M. (2026). [Circuit explained: How does a transformer perform compositional generalization](https://doi.org/10.1371/journal.pone.0340088). PLOS ONE.
