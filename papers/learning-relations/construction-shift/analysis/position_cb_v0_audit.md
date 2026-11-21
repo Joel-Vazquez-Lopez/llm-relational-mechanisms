@@ -50,6 +50,16 @@ The 8.50-point decrease in both-roles-correct pairs is descriptively partitioned
 
 Unseen individual-question accuracy falls by **6.30 pp**. Differences on error subtypes and arm interaction are exploratory, not multiple-comparison-adjusted confirmation.
 
+## Post-run training-loss diagnosis and immediate next experiment
+
+The 16 archived processes also contain final **single-minibatch training loss snapshots** for 32 model states. A post-hoc check found **19/32** model states with familiar `C_query` below 10%; among them **16/19** had recorded final minibatch loss below `0.01`. All **10/32** model states with familiar `C_query` above 90% also had final-batch losses below `0.01`.
+
+This suggests that convergence on an individual sampled training batch does **not** reliably predict familiar-development generalization. It does *not* establish exact memorization, because the loss is one scheduled minibatch rather than exhaustive training-pool accuracy.
+
+**Next step:** run the frozen-checkpoint **read-only** script on branch `analysis/position-cb-train-dev-audit`. It compares previously presented training-pool variants, variants never sampled by that seed's schedule, and the *existing archived* familiar development scores. No new training or protected evaluation is required. [Script](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/blob/analysis/position-cb-train-dev-audit/scripts/position_cb_train_dev_audit_v0.py) · [Instructions](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/blob/analysis/position-cb-train-dev-audit/paper/POSITION_CB_TRAIN_DEV_AUDIT_README.md).
+
+Do not select high-competence seeds or change the passed/failed status of POSITION-CB-v0 based on this exploratory analysis. Choose a prospective training-data/grammar study only after identifying which distributional transfer fails.
+
 ## Threats and next decisions
 
 - **Not a second grammar:** the same two-event grammar, vocabulary and familiar modifiers are reused; development examples have new source permutations in non-reserved name sets.
