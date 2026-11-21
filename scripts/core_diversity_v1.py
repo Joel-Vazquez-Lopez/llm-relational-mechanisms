@@ -157,7 +157,7 @@ def fixtures():
     if not SOURCE.exists():
         raise FileNotFoundError("Run SOURCE preflight prepare first")
     sm=json.loads(SOURCE.read_text())
-    if sm!=pf.build():raise RuntimeError("Source manifest drift")
+    if digest(sm)!=digest(pf.build()):raise RuntimeError("Source manifest drift")
     name_sets,_dev,_part=pf.gen.partitions()
     original={}
     for j,cid,events in pf.gen.cores(name_sets,"train"):
