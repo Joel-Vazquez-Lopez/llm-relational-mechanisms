@@ -1,0 +1,22 @@
+name: CORE-DIVERSITY-v1 source-only feasibility
+on:
+  push:
+    branches: [design/position-cb-core-diversity-v1]
+    paths:
+      - 'scripts/core_diversity_v1_preflight.py'
+      - '.github/workflows/core-diversity-v1-preflight.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  source-only-preflight:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Compile static script
+        run: python -m py_compile scripts/core_diversity_v1_preflight.py
+      - name: Full source-only overlap, gold, token-bag and split audit
+        run: python scripts/core_diversity_v1_preflight.py --phase check
