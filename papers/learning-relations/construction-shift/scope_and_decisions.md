@@ -22,6 +22,14 @@ In a restricted two-event synthetic grammar, scratch-trained Transformers can sh
 - Neither baseline generates AP same-person collapses; the raw prior can make wrong-event responses by selecting distractor mentions.
 - Do not claim the slot heuristic uniquely explains the actual neural mechanism or that failing to mimic all errors rules out other heuristics.
 
+## Completed position-counterbalanced co-occurrence study
+
+- New frozen 8-seed / 2-MPS-repeat / 2-arm study: AA+PP vs AP+PA on the same source cores with balanced per-event voice marginals and per-pair aggregate token bags; source-level co-occurrence is manipulated. The original two-event grammar is unchanged.
+- Primary familiar−unseen strict C_query +14.4097 pp, 95% t CI [+0.0041,+28.8154] pp, nominal pass, 7/8 seed signs positive.
+- Gated reversal increase +1.6005 pp CI [+0.0139,+3.1871], nominal pass, 7/8 positive.
+- Strong instability: some arms near perfect and others near zero familiarity, 3 seeds contribute ~90.3% of summed effects; the paired arm interaction is inconclusive. Preserve all seeds; do not turn this into a strong robustness claim.
+- For figures, include all eight seed-level paired traces and label confidence limits with four decimals. See `analysis/position_cb_v0_audit.md`.
+
 ## Additional prospective evidence (PHASE2-01–03)
 
 - PHASE2-01: direct exposure 20% primary failed; full-dose gated secondary descriptively positive but not formally reached.
@@ -43,7 +51,7 @@ In a restricted two-event synthetic grammar, scratch-trained Transformers can sh
 
 - [x] Four principal numerical stories present in archived reports.
 - [x] Frozen within-grammar replication available for behavioral and intervention effects.
-- [x] Four figures generated from archived aggregate data.
+- [x] Four original main figures generated from archived aggregate data; the newer POSITION-CB result is included as Figure 5 with individual seeds.
 - [x] Claim-level evidence ledger and provenance.
 - [ ] Finish and verify full manuscript against code (draft in this package).
 - [ ] Confirm per-run source/checkpoint hashes; clean machine environment file; make all plot generation reproducible from reports.

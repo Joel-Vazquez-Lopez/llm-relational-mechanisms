@@ -11,6 +11,7 @@ This package was created from `experiments/exp102-clean-design` at `df82ab3ad9db
 - [Scientific scope, stopping rules, publication gates](scope_and_decisions.md)
 - [Next-study decision gates: shortcut baseline before new grammar](NEXT_STUDY_DECISION.md)
 - [Executed positional baselines and results](baselines/analysis.md)
+- [Completed POSITION-CB-v0: independent raw-report audit and interpretation](analysis/position_cb_v0_audit.md)
 - [Archived-data extraction for the four figures](analysis/figure_data.json)
 
 ## Figures
@@ -21,6 +22,7 @@ This package was created from `experiments/exp102-clean-design` at `df82ab3ad9db
 4. ![Figure 4](figures/fig4_selectivity_tradeoff.svg) EXP-116 targeted repair trade-off; no candidate passes selective-repair screen.
 5. ![Supplement S1](figures/supp_phase2_followups.svg) PHASE2-01–03 prospective boundary tests. All three frozen primary tests fail.
 6. ![Supplement S2](figures/supp_shortcut_baselines.svg) Executed post-hoc positional shortcuts versus the archived neural result.
+7. ![Figure 5](figures/fig5_position_counterbalance.svg) New position-counterbalanced voice co-occurrence study, including all eight independent seeds.
 
 The SVGs are included as immediately inspectable drafts. They are not polished submission figures. A separate plot script can reconstruct equivalent panels as PNG from the archived figure data.
 
@@ -49,6 +51,10 @@ The paper's strongest passed tests are EXP-109 (behavior) and EXP-114 (early int
 ## Executed new shortcut audit
 
 The dependency-free baseline was run successfully in [GitHub Actions #44898500105](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/actions/runs/44898500105); exact original EXP-109 development digest matched. Both deterministic source-pool-expectation controls reproduced a large AP/PA gap but not the full neural error mixture. See [baselines/analysis.md](baselines/analysis.md), [frozen pre-run protocol](baselines/PROTOCOL.md) and [complete JSON](baselines/analysis_summary.json). These are post-hoc descriptive results, not new independent neural test evidence.
+
+## Independently audited position-counterbalanced study
+
+The [POSITION-CB-v0 experimental branch](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/tree/experiments/position-counterbalanced-roles-v0/reports/position_cb_v0) contains its frozen manifest, 16 per-process JSON reports and final summary. Their primary (+14.41 pp) and gated role-reversal (+1.60 pp) effects were recomputed from raw results with 8 seed-level units. Both nominally pass with lower CI limits almost zero. Familiar competence is extremely unstable across seeds. The source and interpretation are documented in [analysis/position_cb_v0_audit.md](analysis/position_cb_v0_audit.md); this remains **within one original grammar**.
 
 ## What still needs action
 
