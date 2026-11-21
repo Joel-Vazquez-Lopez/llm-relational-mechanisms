@@ -333,16 +333,33 @@ def generate_batch(chosen,role_choices,tables):
     return samples
 
 def smoke(device):
+    """Throwaway model on TRAIN sources only; check optimizer and native scorer."""
     ids,hids,tables,vocab,m=verify()
     _=(hids,m)
     batch=generate_batch(ids[:8],(0,1,2,3,4,5,6,7),tables)
-    model=Model(len(vocab)).to(device).eval()
     for arm in ARMS:
+        model=Model(len(vocab)).to(device)
         data=encode_sources(batch[arm],vocab,check=True)
         with torch.inference_mode():
             logits=model(data[0].to(device),data[1].to(device))
         assert logits.shape==(64,len(vocab))
-    print("SMOKE PASS random weights + source encoding. NO study model trained.")
+        optimizer=torch.optim.AdamW(model.parameters(),lr=LR,weight_decay=WD)
+        loss=one_update(model,optimizer,data,device)
+        assert math.isfinite(loss)
+        voice_pair=VOICES[regime(arm)]
+        original=tables["train_permutations"][ids[0]][0]
+        encoded={voice:encode_sources([original[voice]],vocab,check=True)
+                 for voice in voice_pair}
+        scored=score_native(model,encoded,device,chunk_size=4)
+        assert set(scored)==set(voice_pair)
+        for metrics in scored.values():
+            assert 0<=metrics["C_query"]<=1
+            assert 0<=metrics["accuracy4"]<=1
+            for event in (1,2):
+                categories=metrics["event%d_pair_classes"%event]
+                assert abs(sum(categories.values())-1)<1e-6
+    print("SMOKE PASS: throwaway random train-core updates + native scorer")
+    print("NO frozen-seed study training; no heldout model outcomes touched")
 
 def evaluate_inputs(ids,hids,tables,vocab):
     populations={
