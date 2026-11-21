@@ -92,6 +92,9 @@ def main(argv=None):
     p.add_argument("--model", required=True)
     p.add_argument("--condition", nargs=2, action="append", metavar=("ROLE", "TEMPLATE"), required=True)
     p.add_argument("--instruction", default="")
+    p.add_argument("--by-prefix", default="{patient} was {verb} by",
+                   help='assistant text whose last token is the "by" slot; placeholders {agent} {patient} {verb}. '
+                        'Control: "Someone was {verb} by" (no name given, so the agent must be looked up)')
     p.add_argument("--n-per-construction", type=int, default=None)
     p.add_argument("--probe-every", type=int, default=4, help="probe every k-th layer (0 = no probes)")
     p.add_argument("--chat-template", action="store_true")
@@ -144,7 +147,7 @@ def main(argv=None):
     try:
         for ci, it in prompts:
             ids, offsets = _encode_one(tok, it.prompt, args.chat_template)
-            prefix = f"{it.patient} was {it.verb} by"
+            prefix = args.by_prefix.format(agent=it.agent, patient=it.patient, verb=it.verb)
             if not args.chat_template:
                 prefix = " " + prefix
             pre_ids = tok.encode(prefix, add_special_tokens=False)
@@ -245,7 +248,7 @@ def main(argv=None):
     report = {
         "experiment": "OTR-07", "status": "EXPLORATORY", "version": OTR07_VERSION,
         "generator_version": ors.GENERATOR_VERSION, "model": args.model, "chat_template": args.chat_template,
-        "chat_template_kwargs": chat_kwargs, "instruction": args.instruction,
+        "chat_template_kwargs": chat_kwargs, "instruction": args.instruction, "by_prefix": args.by_prefix,
         "conditions": [{"role": r, "template": t} for r, t in args.condition], "n_layers": L, "n_heads": H,
         "attn_layers": attn_layers,
         "probe_layers": probe_layers, "seconds": round(time.time() - t0, 1),
@@ -253,6 +256,8 @@ def main(argv=None):
     }
     args.out_dir.mkdir(parents=True, exist_ok=True)
     tag = "_instr" if args.instruction else ""
+    if args.by_prefix != "{patient} was {verb} by":
+        tag += "_byctl"
     out = args.out_dir / f"otr07_{args.model.replace('/', '__')}_dev{tag}_{time.strftime('%Y%m%dT%H%M%S')}.json"
     out.write_text(json.dumps(report))
     print(f"Wrote {out}")

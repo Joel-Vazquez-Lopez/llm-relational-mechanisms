@@ -26,3 +26,16 @@ def test_answer_process_runs_and_is_consistent(monkeypatch, tmp_path):
         assert abs(rec["lens_bare"][-1] - rec["ld_model_bare"]) < 1e-3
         assert len(rec["attn_agent_by"]) == r["n_layers"]
     assert r["probes"]
+
+
+def test_by_prefix_control(monkeypatch, tmp_path):
+    _tiny(monkeypatch)
+    spec = importlib.util.spec_from_file_location("o7b", ROOT / "scripts" / "otr07_answer_process.py")
+    o7 = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(o7)
+    o7.main(["--model", "tiny", "--dtype", "float32", "--n-per-construction", "4", "--probe-every", "0",
+             "--by-prefix", "Someone was {verb} by",
+             "--out-dir", str(tmp_path), "--condition", "agent", "Who was someone {past} by?"])
+    f = next(tmp_path.glob("*_byctl_*.json"))
+    r = json.loads(f.read_text())
+    assert r["by_prefix"] == "Someone was {verb} by" and len(r["records"]) == 16
