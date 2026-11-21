@@ -9,6 +9,7 @@ This package was created from `experiments/exp102-clean-design` at `df82ab3ad9db
 - [First full manuscript](manuscript.md)
 - [Claim-by-claim evidence ledger](evidence_ledger.md)
 - [Scientific scope, stopping rules, publication gates](scope_and_decisions.md)
+- [Next-study decision gates: shortcut baseline before new grammar](NEXT_STUDY_DECISION.md)
 - [Archived-data extraction for the four figures](analysis/figure_data.json)
 
 ## Figures
