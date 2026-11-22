@@ -26,6 +26,17 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 from relational_lab.experiments import wiki_roles as wr  # noqa: E402
 
 
+def _retry(fn, *a, tries=200):
+    """The project file system on Pelle can answer EAGAIN (BlockingIOError) under load while the
+    spaCy worker processes run: retry instead of losing the job (0.1.1)."""
+    for k in range(tries):
+        try:
+            return fn(*a)
+        except BlockingIOError:
+            time.sleep(min(5.0, 0.05 * (k + 1)))
+    return fn(*a)
+
+
 def articles(paths, max_articles):
     import pyarrow.parquet as pq
     n = 0
@@ -65,7 +76,7 @@ def main(argv=None):
     counts, per_lemma, seen = collections.Counter(), collections.Counter(), set()
     n_art = n_cand = 0
     t0 = time.time()
-    buf = []
+    buf, lines = [], []
 
     def flush(f):
         nonlocal n_cand
@@ -79,10 +90,14 @@ def main(argv=None):
                 seen.add(key)
                 counts[rec["kind"]] += 1
                 per_lemma[(rec["lemma"], rec["kind"])] += 1
-                f.write(json.dumps(rec, ensure_ascii=False) + "\n")
-        f.flush()
+                lines.append(json.dumps(rec, ensure_ascii=False) + "\n")
+        if lines:
+            _retry(f.write, "".join(lines))
+            lines.clear()
+        _retry(f.flush)
         buf.clear()
-        print(f"[{time.time() - t0:7.0f}s] articles {n_art}  candidates {n_cand}  kept {dict(counts)}", flush=True)
+        _retry(print, f"[{time.time() - t0:7.0f}s] articles {n_art}  candidates {n_cand}  kept {dict(counts)}")
+        _retry(sys.stdout.flush)
 
     with args.out.open("w", encoding="utf8") as f:
         for aid, title, text in articles(paths, args.max_articles):
