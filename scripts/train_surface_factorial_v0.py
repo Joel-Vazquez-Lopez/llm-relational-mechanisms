@@ -9,7 +9,7 @@ import argparse,json,math,subprocess
 from collections import Counter
 from copy import deepcopy
 from hashlib import sha256
-from itertools import permutations
+from itertools import permutations, product
 from pathlib import Path
 from random import Random
 from statistics import mean,stdev
