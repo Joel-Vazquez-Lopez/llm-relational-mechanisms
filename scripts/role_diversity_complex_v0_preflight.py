@@ -66,7 +66,7 @@ def audit():
     signatures={"train_all_base_slots":[],"train_full_cells_sample":[],
                 "eval_unseen_bare":[],"eval_unseen_rich":[],
                 "eval_heldout_bare":[],"eval_heldout_rich":[]}
-    expected_train_slot_counts={n:240*n for n in DIVERSITIES}
+    expected_train_slot_counts={str(n):240*n for n in DIVERSITIES}
     unknown_role_overlaps=0
     for ix in train_ids:
         events=original[ix]
