@@ -19,8 +19,13 @@ jobs:
           python-version: '3.12'
       - name: Validate source-only fixture generation
         run: |
-          python -m py_compile scripts/train_surface_cross_eval_v0_preflight.py
+          python -m py_compile scripts/train_surface_cross_eval_v0_preflight.py scripts/train_surface_cross_eval_v0.py
+          bash -n scripts/run_train_surface_cross_eval_v0.sh
           python scripts/train_surface_cross_eval_v0_preflight.py --phase prepare
+      - name: Install CPU-only torch for original-training-core smoke
+        run: python -m pip install -q torch --index-url https://download.pytorch.org/whl/cpu
+      - name: Smoke-check scorer without existing checkpoint inference
+        run: python scripts/train_surface_cross_eval_v0.py --phase smoke --device cpu
       - uses: actions/upload-artifact@v4
         with:
           name: cross-surface-source-only-manifest
