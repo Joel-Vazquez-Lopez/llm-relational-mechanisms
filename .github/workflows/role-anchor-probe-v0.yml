@@ -1,0 +1,27 @@
+name: Role-anchor probe CPU smoke
+on:
+  push:
+    branches: [analysis/role-anchor-probe-v0]
+    paths:
+      - 'scripts/train_role_anchor_probe_v0.py'
+      - 'scripts/run_train_role_anchor_probe_v0.sh'
+      - '.github/workflows/role-anchor-probe-v0.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Source and bash syntax
+        run: |
+          python -m py_compile scripts/train_role_anchor_probe_v0.py
+          bash -n scripts/run_train_role_anchor_probe_v0.sh
+      - name: Install CPU torch
+        run: python -m pip install -q torch --index-url https://download.pytorch.org/whl/cpu
+      - name: Run random-weight no-checkpoint smoke
+        run: python scripts/train_role_anchor_probe_v0.py --phase smoke --device cpu
