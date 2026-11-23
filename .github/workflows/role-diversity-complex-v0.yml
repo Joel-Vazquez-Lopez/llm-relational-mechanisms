@@ -1,26 +1,39 @@
-name: Role-diversity complex source feasibility
+name: Role-diversity complex prospective source and CPU smoke audit
 on:
   push:
     branches: [design/role-diversity-complex-v0]
     paths:
       - 'scripts/role_diversity_complex_v0_preflight.py'
+      - 'scripts/role_diversity_complex_v0.py'
+      - 'scripts/run_role_diversity_complex_v0.sh'
+      - 'paper/ROLE_DIVERSITY_COMPLEX_V0_PROTOCOL.md'
       - '.github/workflows/role-diversity-complex-v0.yml'
   workflow_dispatch:
 permissions:
   contents: read
 jobs:
-  source-only:
+  source-only-and-disposable-smoke:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - name: Compile source script
-        run: python -m py_compile scripts/role_diversity_complex_v0_preflight.py
-      - name: Audit role assignments and matched structural exposures, no inference
+      - name: Python compilation and launcher syntax
+        run: |
+          python -m py_compile scripts/role_diversity_complex_v0_preflight.py scripts/role_diversity_complex_v0.py
+          bash -n scripts/run_role_diversity_complex_v0.sh
+      - name: Prepare full role-diversity source-only audit
         run: python scripts/role_diversity_complex_v0_preflight.py --phase prepare
+      - name: Install PyTorch CPU for disposable training-only smoke
+        run: python -m pip install -q torch --index-url https://download.pytorch.org/whl/cpu
+      - name: Verify new prospective 16-seed schedule, protocol, old vocabulary
+        run: python scripts/role_diversity_complex_v0.py --phase prepare
+      - name: Throwaway training-only model checks, never score heldout
+        run: python scripts/role_diversity_complex_v0.py --phase smoke --device cpu
       - uses: actions/upload-artifact@v4
         with:
-          name: role-diversity-source-only-audit
-          path: reports/role_diversity_complex_v0/design_source_audit.json
+          name: new-role-diversity-design-manifests
+          path: |
+            reports/role_diversity_complex_v0/design_source_audit.json
+            reports/role_diversity_complex_v0/study_manifest.json
