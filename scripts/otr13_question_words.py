@@ -44,28 +44,32 @@ sys.path.insert(0, str(ROOT / "scripts"))
 
 import otr09_answer_patching as o9  # noqa: E402
 
-OTR13_VERSION = "1.0.0"
+OTR13_VERSION = "1.1.0"
 BASE_WORDS = ("Who", "was", "someone", "VERB", "by", "?")
-# counterpart in the working question "Who was the {ing} done by?"
-SOURCE_OF = {"Who": "Who", "was": "was", "someone": "the", "VERB": "ING", "by": "by", "?": "?"}
+FUNCTION_WORDS = {"Who", "was", "someone", "the", "of", "done", "by", "?"}
 
 
 def question_words(question: str, kind: str) -> dict[str, tuple[int, int]]:
-    """char spans (inside the question) of the analysed words; VERB/ING = the 4th word."""
+    """char spans (inside the question) of its words, named by themselves; the one content word
+    (the verb form) is named VERB in the failing (base) question and ING in the working one."""
     spans = [(m.group(0), m.start(), m.end()) for m in re.finditer(r"[A-Za-z\-']+|\?", question)]
-    out = {}
-    words = [w for w, _, _ in spans]
-    if kind == "base":
-        # Who was someone V-ed by ?
-        names = ["Who", "was", "someone", "VERB", "by", "?"]
-    else:
-        # Who was the V-ing done by ?
-        names = ["Who", "was", "the", "ING", "done", "by", "?"]
-    if len(spans) != len(names):
-        raise ValueError(f"unexpected question shape: {question!r} -> {words}")
-    for n, (_w, s, e) in zip(names, spans):
-        out[n] = (s, e)
-    return out
+    content = [w for w, _, _ in spans if w not in FUNCTION_WORDS]
+    if len(content) != 1 or len({w for w, _, _ in spans}) != len(spans):
+        raise ValueError(f"unexpected question shape: {question!r}")
+    return {(("VERB" if kind == "base" else "ING") if w not in FUNCTION_WORDS else w): (s, e) for w, s, e in spans}
+
+
+def source_of(name: str, source_words) -> str | None:
+    """counterpart of a failing-question word in the working question (None = no counterpart)."""
+    if name.startswith("tail"):
+        return name
+    if name == "VERB":
+        return "ING"
+    if name in source_words:
+        return name
+    if name == "someone" and "the" in source_words:
+        return "the"
+    return None
 
 
 def token_at(offsets, char_end: int) -> int:
@@ -89,10 +93,11 @@ def anchors(item, offsets, kind: str, n_ids: int, n_tail: int):
 def main(argv=None):
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument("--model", required=True)
-    p.add_argument("--base-question", default="Who was someone {past} by?")
+    p.add_argument("--stimuli", default="otr", choices=["otr", "bx-transitive", "bx-psych"])
+    p.add_argument("--base-question", default=None, help='default "Who was someone {past} by?" (bx: {pp})')
     p.add_argument("--source-question", default="Who was the {ing} done by?")
     p.add_argument("--instruction", default="Reply with one name only.")
-    p.add_argument("--constructions", default="active,object_cleft,passive,by_cleft")
+    p.add_argument("--constructions", default=None)
     p.add_argument("--n-per", type=int, default=16)
     p.add_argument("--n-tail", type=int, default=6, help="prompt-tail tokens before and incl. the answer position")
     p.add_argument("--layer-stride", type=int, default=2)
@@ -105,6 +110,12 @@ def main(argv=None):
     p.add_argument("--seed", type=int, default=2026)
     p.add_argument("--out-dir", type=Path, default=ROOT / "results")
     args = p.parse_args(argv)
+    if args.stimuli == "otr":
+        args.base_question = args.base_question or "Who was someone {past} by?"
+        args.constructions = args.constructions or "active,object_cleft,passive,by_cleft"
+    else:
+        args.base_question = args.base_question or "Who was someone {pp} by?"
+        args.constructions = args.constructions or ",".join(o9.bxa.BASE_CONSTRUCTIONS[o9.bxa.block_name(args.stimuli)])
 
     from relational_lab.instrumentation import chat as _chat
     _chat.configure(no_thinking=args.no_thinking, template_kwargs=args.template_kwarg,
@@ -124,7 +135,8 @@ def main(argv=None):
     lays = sorted(set(range(0, L, args.layer_stride)) | {L - 1})
     lead = not args.chat_template
     cons = [c.strip() for c in args.constructions.split(",")]
-    triples = o9.make_pairs(args.seed, args.base_question, args.source_question, args.instruction, cons, args.n_per)
+    triples = o9.make_pairs(args.seed, args.base_question, args.source_question, args.instruction, cons, args.n_per,
+                            stimuli=args.stimuli)
     triples = [t for t in triples if answer_token(tok, t[0].answer, lead) != answer_token(tok, t[0].distractor, lead)]
 
     def enc(it):
@@ -178,8 +190,10 @@ def main(argv=None):
     # mean failing-question state per (word, layer)
     mean_state = {li: {n: torch.stack([d["cb"][li][d["ab"][n]] for d in data]).mean(0) for n in names} for li in lays}
 
+    src_words = set(question_words(data[0]["s"].question, "source"))
+
     def src_name(n):
-        return SOURCE_OF.get(n, n)
+        return source_of(n, src_words)
 
     def rep(ld, d):
         return (ld - d["ld_b"]) / (d["ld_s"] - d["ld_b"])
@@ -191,16 +205,19 @@ def main(argv=None):
         b, s = d["b"], d["s"]
         for li in lays:
             for n in names:
-                qb, qs = d["ab"][n], d["as_"][src_name(n)]
+                qb = d["ab"][n]
+                ld, _ = forward(b, d["ib"], {li: {qb: mean_state[li][n]}})
+                res["mean_ablate"][n][li].append(rep(ld, d))
+                if src_name(n) is None:
+                    continue
+                qs = d["as_"][src_name(n)]
                 ld, _ = forward(b, d["ib"], {li: {qb: d["cs"][li][qs]}})
                 res["interchange"][n][li].append(rep(ld, d))
                 if d["ld_b"] < 0:
                     flips[n][li].append(ld > 0)
-                ld, _ = forward(b, d["ib"], {li: {qb: mean_state[li][n]}})
-                res["mean_ablate"][n][li].append(rep(ld, d))
                 ld, _ = forward(s, d["is_"], {li: {qs: d["cb"][li][qb]}})
                 res["reverse"][n][li].append((d["ld_s"] - ld) / (d["ld_s"] - d["ld_b"]))
-            qpos = {d["ab"][n]: d["cs"][li][d["as_"][src_name(n)]] for n in BASE_WORDS}
+            qpos = {d["ab"][n]: d["cs"][li][d["as_"][src_name(n)]] for n in BASE_WORDS if src_name(n) is not None}
             joint[li].append(rep(forward(b, d["ib"], {li: qpos})[0], d))
         if k % 5 == 0:
             print(f"  {k + 1}/{len(data)} items, {time.time() - t0:.0f}s", flush=True)
@@ -210,7 +227,8 @@ def main(argv=None):
 
     report = {
         "experiment": "OTR-13 question-word patching", "otr13_version": OTR13_VERSION,
-        "generator_version": ors.GENERATOR_VERSION, "model": args.model, "chat_template": args.chat_template,
+        "generator_version": ors.GENERATOR_VERSION, "stimuli": args.stimuli, "model": args.model,
+        "chat_template": args.chat_template,
         "base_question": args.base_question, "source_question": args.source_question,
         "instruction": args.instruction, "n_layers": L, "layers": lays, "n_items": len(data),
         "n_base_wrong": sum(d["ld_b"] < 0 for d in data), "words": names,
@@ -228,7 +246,9 @@ def main(argv=None):
                    "ld_working": d["ld_s"]} for d in data],
     }
     args.out_dir.mkdir(parents=True, exist_ok=True)
-    out = args.out_dir / f"otr13_{args.model.replace('/', '__')}_dev_{time.strftime('%Y%m%dT%H%M%S')}.json"
+    stag = "" if args.stimuli == "otr" else f"_{args.stimuli}"
+    qtag = "" if args.source_question == "Who was the {ing} done by?" else "_src2"
+    out = args.out_dir / f"otr13_{args.model.replace('/', '__')}_dev{stag}{qtag}_{time.strftime('%Y%m%dT%H%M%S')}.json"
     out.write_text(json.dumps(report, indent=1))
     try:
         _plot(report, out.with_suffix(".png"))
@@ -250,7 +270,8 @@ def _plot(report, path):
                               ("A. working-question word patched in\n(repair of the failing answer)",
                                "M. word mean-ablated in the failing question\n(repair)",
                                "R. failing-question word patched into the working question\n(share of margin destroyed)")):
-        m = [[report[key][n][str(li)] if isinstance(next(iter(report[key][n])), str) else report[key][n][li]
+        m = [[(lambda v: float("nan") if v is None else v)(
+                  report[key][n][str(li)] if isinstance(next(iter(report[key][n])), str) else report[key][n][li])
               for li in lays] for n in names]
         im = ax.imshow(m, aspect="auto", cmap="RdBu_r", vmin=-1, vmax=1,
                        extent=(lays[0] / (L - 1), lays[-1] / (L - 1), len(names) - 0.5, -0.5))
