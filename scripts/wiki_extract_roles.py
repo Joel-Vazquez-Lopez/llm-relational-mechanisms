@@ -62,11 +62,26 @@ def main(argv=None):
     p.add_argument("--n-process", type=int, default=8)
     p.add_argument("--batch", type=int, default=2000, help="candidate sentences parsed per round")
     p.add_argument("--seed", type=int, default=2026)
+    p.add_argument("--confirm-ner", default="",
+                   help="HF token-classification model that must also tag both names PER, e.g. dslim/bert-large-NER "
+                        "(runs on the GPU if there is one; download it on the login node first)")
     args = p.parse_args(argv)
 
     import spacy
     nlp = spacy.load(args.spacy_model, disable=["textcat"])
     forms = wr.verb_forms()
+    ner = None
+    n_unconfirmed = 0
+    if args.confirm_ner:
+        import torch
+        from transformers import pipeline
+        pipe = pipeline("token-classification", model=args.confirm_ner, aggregation_strategy="simple",
+                        device=0 if torch.cuda.is_available() else -1)
+
+        def ner(sentences):
+            out = pipe(sentences, batch_size=64)
+            return [[{"entity_group": e["entity_group"], "start": int(e["start"]), "end": int(e["end"])} for e in es]
+                    for es in out]
     surface = wr.surface_forms(forms)
     paths = sorted(glob.glob(args.parquet))
     if not paths:
@@ -79,18 +94,23 @@ def main(argv=None):
     buf, lines = [], []
 
     def flush(f):
-        nonlocal n_cand
+        nonlocal n_cand, n_unconfirmed
         n_cand += len(buf)
-        for doc, meta in nlp.pipe(buf, as_tuples=True, n_process=args.n_process, batch_size=256):
-            for rec in wr.extract_from_doc(doc, forms, meta):
-                key = (rec["sentence"], rec["lemma"])
-                quota = args.n_active if rec["kind"] == "active" else args.n_passive
-                if key in seen or counts[rec["kind"]] >= quota or per_lemma[(rec["lemma"], rec["kind"])] >= args.max_per_lemma:
-                    continue
-                seen.add(key)
-                counts[rec["kind"]] += 1
-                per_lemma[(rec["lemma"], rec["kind"])] += 1
-                lines.append(json.dumps(rec, ensure_ascii=False) + "\n")
+        found = [rec for doc, meta in nlp.pipe(buf, as_tuples=True, n_process=args.n_process, batch_size=256)
+                 for rec in wr.extract_from_doc(doc, forms, meta)]
+        if ner is not None:
+            kept = wr.confirm_people(found, ner)
+            n_unconfirmed += len(found) - len(kept)
+            found = kept
+        for rec in found:
+            key = (rec["sentence"], rec["lemma"])
+            quota = args.n_active if rec["kind"] == "active" else args.n_passive
+            if key in seen or counts[rec["kind"]] >= quota or per_lemma[(rec["lemma"], rec["kind"])] >= args.max_per_lemma:
+                continue
+            seen.add(key)
+            counts[rec["kind"]] += 1
+            per_lemma[(rec["lemma"], rec["kind"])] += 1
+            lines.append(json.dumps(rec, ensure_ascii=False) + "\n")
         if lines:
             _retry(f.write, "".join(lines))
             lines.clear()
@@ -113,6 +133,7 @@ def main(argv=None):
 
     summary = {"wiki_version": wr.WIKI_VERSION, "spacy_model": args.spacy_model, "parquet": paths,
                "articles_read": n_art, "candidates_parsed": n_cand, "kept": dict(counts),
+               "confirm_ner": args.confirm_ner or None, "dropped_by_confirm_ner": n_unconfirmed,
                "per_lemma": {f"{k[0]}|{k[1]}": v for k, v in sorted(per_lemma.items())},
                "seconds": round(time.time() - t0), "seed": args.seed}
     args.out.with_suffix(".summary.json").write_text(json.dumps(summary, indent=1))

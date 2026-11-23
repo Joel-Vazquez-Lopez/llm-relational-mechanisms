@@ -86,3 +86,32 @@ def test_extract_script_end_to_end(tmp_path):
     assert recs and {r["kind"] for r in recs} == {"active", "passive"}
     summary = json.loads(out.with_suffix(".summary.json").read_text())
     assert summary["kept"]["passive"] >= 1
+
+
+def test_v02_name_filters_and_confirmation():
+    assert wr.looks_like_person("Mary Montague") and wr.looks_like_person("Herbert W.")
+    assert wr.looks_like_person("Ludwig van Beethoven")
+    assert not wr.looks_like_person("Wigan Highfield FC") and not wr.looks_like_person("Labour Party")
+    assert not wr.looks_like_person("Louis XIV 2") and not wr.looks_like_person("the Senate")
+    recs = [_rec("passive"), _rec("active")]
+    recs[1] = dict(recs[1], title="org")
+
+    def fake_ner(sents):
+        out = []
+        for s in sents:
+            es = [{"entity_group": "PER", "start": s.index(n), "end": s.index(n) + len(n)}
+                  for n in ("Montague", "Carlton", "Hawthorne") if n in s]
+            if "Fenwick" in s:  # tagged as an organisation by the second model
+                es.append({"entity_group": "ORG", "start": s.index("Fenwick"), "end": s.index("Fenwick") + 7})
+            out.append(es)
+        return out
+
+    kept = wr.confirm_people(recs, fake_ner)
+    assert [r["kind"] for r in kept] == ["passive"]
+
+
+def test_shared_word_pairs_dropped():
+    nlp = _nlp()
+    forms = wr.verb_forms()
+    doc = nlp("In 1999, Wigan Highfield beat Wigan Johnson in the final.")
+    assert not wr.extract_from_doc(doc, forms)

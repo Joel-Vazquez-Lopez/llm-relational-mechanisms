@@ -12,6 +12,11 @@ entities, neither name (nor any token of it) occurring elsewhere in the sentence
 Each record keeps the real names; ``neutral`` swaps them for two OTR names (single tokens in every
 model) to control for answers recalled from memory about famous people. Records are released
 with the paper (Wikipedia text: CC BY-SA 4.0, attribution = article title + revision dump).
+
+0.2.0: names must look like person names (title-case words or initials, no digits, no
+organisation words such as "FC", "Party", "University"), the two names may not share a word,
+and (``confirm_people``) a second, independent NER model (BERT, CoNLL PER) must also tag both
+names as persons.
 """
 
 from __future__ import annotations
@@ -22,7 +27,7 @@ import re
 
 from relational_lab.experiments import order_role_stimuli as ors
 
-WIKI_VERSION = "0.1.0"
+WIKI_VERSION = "0.2.0"
 CONSTRUCTIONS = ("wiki_active", "wiki_passive")
 
 PERSON_VERBS = sorted(set("""
@@ -37,6 +42,21 @@ sack save shoot sign stab succeed sue support tackle teach thank threaten train 
 _SENT_SPLIT = re.compile(r"(?<=[.!?])\s+(?=[A-Z\"'(])")
 _WORD = re.compile(r"[A-Za-z]+")
 _CAP = re.compile(r"\b[A-Z][a-z]+")
+ORG_WORDS = set("""
+fc afc cf sc ac club united city town rovers wanderers athletic county party army navy corps council university
+college school institute academy records group bank league ministry government church team association committee
+republic kingdom empire company corporation inc ltd llc co plc society union federation foundation brothers
+""".split())
+_NAME_TOKEN = re.compile(r"^(?:[A-Z][a-zA-Z'\-]*\.?|[A-Z]\.|(?:de|van|von|der|den|da|di|du|la|le|bin|al|ibn|ben)\b)$")
+
+
+def looks_like_person(name: str) -> bool:
+    toks = name.split()
+    if not 1 <= len(toks) <= 4 or any(ch.isdigit() for ch in name):
+        return False
+    if {t.lower().strip(".,") for t in toks} & ORG_WORDS:
+        return False
+    return all(_NAME_TOKEN.match(t) for t in toks) and toks[0][0].isupper()
 
 
 def verb_forms():
@@ -109,6 +129,10 @@ def extract_from_doc(doc, forms, meta: dict | None = None):
             continue
         if a is None or p is None or a.text == p.text:
             continue
+        if not (looks_like_person(a.text) and looks_like_person(p.text)):
+            continue
+        if {t.lower_ for t in a} & {t.lower_ for t in p}:  # "Wigan Highfield" vs "Wigan"
+            continue
         text = doc.text
         name_toks = {t.lower_ for t in a} | {t.lower_ for t in p}
         others = [t.lower_ for t in doc if not (a.start <= t.i < a.end or p.start <= t.i < p.end)]
@@ -122,6 +146,21 @@ def extract_from_doc(doc, forms, meta: dict | None = None):
             "verb_char": [v.idx, v.idx + len(v.text)], **(meta or {}),
         })
     return out
+
+
+def confirm_people(records, ner):
+    """Keep records whose agent and patient are both tagged PER by a second NER model.
+    ``ner(sentences) -> list[list[dict(entity_group, start, end)]]`` (a transformers
+    token-classification pipeline with aggregation_strategy="simple")."""
+    if not records:
+        return []
+    ents = ner([r["sentence"] for r in records])
+
+    def covered(span, es):
+        s, e = span
+        return any(x["entity_group"] in ("PER", "PERSON") and x["start"] <= s + 1 and x["end"] >= e - 1 for x in es)
+
+    return [r for r, es in zip(records, ents) if covered(r["agent_char"], es) and covered(r["patient_char"], es)]
 
 
 # ------------------------------------------------------------------ items for OTR-09

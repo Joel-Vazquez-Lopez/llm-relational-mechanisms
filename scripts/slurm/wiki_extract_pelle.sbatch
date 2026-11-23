@@ -16,9 +16,10 @@ export HF_HUB_OFFLINE=1
 mkdir -p results
 # write to node-local scratch (the project file system answered EAGAIN under load in 0.1.0) and
 # copy back on exit, also if the job fails or hits its time limit
-OUT="${TMPDIR:-/tmp}/wiki_roles_en.jsonl"
+NAME="${WIKI_OUT:-wiki_roles_en.jsonl}"   # e.g. sbatch --export=ALL,WIKI_OUT=wiki_roles_v2_en.jsonl
+OUT="${TMPDIR:-/tmp}/${NAME}"
 trap 'cp -f "$OUT" "${OUT%.jsonl}.summary.json" results/ 2>/dev/null || true' EXIT
 python scripts/wiki_extract_roles.py --parquet "/proj/${SLURM_JOB_ACCOUNT}/wiki/20231101.en/train-*.parquet" \
     --out "$OUT" --n-process 15 "$@"
 cp -f "$OUT" "${OUT%.jsonl}.summary.json" results/
-python scripts/wiki_check_sheet.py results/wiki_roles_en.jsonl --n 200 --out results/wiki_check_sheet.csv
+python scripts/wiki_check_sheet.py "results/${NAME}" --n 200 --out "results/${NAME%.jsonl}_check_sheet.csv"
