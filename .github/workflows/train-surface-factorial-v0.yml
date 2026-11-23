@@ -1,0 +1,28 @@
+name: TRAIN-SURFACE-FACTORIAL-v0 preflight (source only)
+on:
+  push:
+    branches: [experiments/train-surface-factorial-v0]
+    paths:
+      - 'scripts/train_surface_factorial_v0_preflight.py'
+      - '.github/workflows/train-surface-factorial-v0.yml'
+      - 'scripts/train_surface_factorial_v0.py'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  preflight:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Compile source generator
+        run: python -m py_compile scripts/train_surface_factorial_v0_preflight.py
+      - name: Source parsing, overlap, token-length and nuisance audit
+        run: python scripts/train_surface_factorial_v0_preflight.py --phase prepare
+      - name: Upload source manifest for review (not yet frozen)
+        uses: actions/upload-artifact@v4
+        with:
+          name: surface-factorial-source-only-report
+          path: reports/train_surface_factorial_v0/source_manifest.json
