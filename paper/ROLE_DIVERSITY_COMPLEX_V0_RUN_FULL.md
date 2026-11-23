@@ -17,10 +17,11 @@ If branch already exists use git switch design/role-diversity-complex-v0; do not
 \`\`\`bash
 python3 scripts/role_diversity_complex_v0_preflight.py --phase prepare
 python3 scripts/role_diversity_complex_v0.py --phase prepare
+python3 scripts/role_diversity_complex_v0.py --phase eval_preflight
 python3 scripts/role_diversity_complex_v0.py --phase smoke --device mps
 \`\`\`
 
-First command audits the nested 1/2/4/8 role-source sets; second audits full per-seed schedules and creates a prospective source/study manifest, with no model inference; third runs only one disposable update per arm on current TRAIN-eligible examples, never unseen-role tests. If any check fails, STOP.
+First command audits the nested 1/2/4/8 role-source sets; second audits full per-seed schedules and creates a prospective source/study manifest, with no model inference; third validates every heldout input tensor against the source-only label audit without model inference; fourth runs only one disposable update per arm on current TRAIN-eligible examples, never unseen-role tests. If any check fails, STOP.
 
 ## 3. Freeze before first prospective training
 
