@@ -1,0 +1,27 @@
+name: Cross-surface v0 read-only diagnostic checks
+on:
+  push:
+    branches: [analysis/train-surface-cross-eval-v0]
+    paths:
+      - 'scripts/train_surface_cross_eval_v0_preflight.py'
+      - 'scripts/train_surface_cross_eval_v0.py'
+      - '.github/workflows/train-surface-cross-eval-v0.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  source-audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Validate source-only fixture generation
+        run: |
+          python -m py_compile scripts/train_surface_cross_eval_v0_preflight.py
+          python scripts/train_surface_cross_eval_v0_preflight.py --phase prepare
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cross-surface-source-only-manifest
+          path: reports/train_surface_cross_eval_v0/source_manifest.json
