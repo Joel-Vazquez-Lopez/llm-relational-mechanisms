@@ -1,6 +1,12 @@
-# Publication decision: from construction gap to a falsifiable shortcut-distribution study
+# Publication decision after the prospectively successful training-surface factorial
 
-**Prepared:** 2026-11-23. **Status:** non-frozen research plan; NOT a new confirmatory protocol. New model performance must not be inspected or used to choose a preferred condition until a fresh protocol is frozen. Existing protected/reserved/L+I gates remain CLOSED. Separate from Order-to-Role.
+**Updated:** 2026-11-23 after complete TRAIN-SURFACE-FACTORIAL-v0 results. **Status:** publication planning; not a frozen protocol for any future study. New model performance must not be inspected or used to choose a preferred condition until a fresh protocol is frozen. Existing protected/reserved/L+I gates remain CLOSED. Separate from Order-to-Role.
+
+## New result and publication decision
+
+TRAIN-SURFACE-FACTORIAL-v0 is **COMPLETE**, not a proposed experiment. The 12 independent new seeds and 48 trained models passed the prospective adjunct-associated main-effect primary (+29.86 pp, CI [+13.46,+46.26]) and its gated unseen-quartet secondary (+29.37 pp, CI [+13.56,+45.18]). Absolute heldout role accuracies were 99.21% bare, 84.25% prefixes only, 97.01% adjuncts only, and 26.73% combined. Thus the strongest **exploratory** pattern is a prefix×adjunct interaction of ~+55.32 pp difference-in-penalties, with severe seed bimodality and wrong-event errors in the combined arm. Do **not** promote this post-primary interaction to independent confirmation. The manipulation is a bundled training distribution: token lengths, positional statistics, name mentions and dose of unmodified sources differ.
+
+**Revised recommendation:** immediately prepare a bounded empirical submission with existing **confirmed primary+secondary** and earlier replicated position-dependent interventions, keeping one-grammar scope and identifying all exploratory status. A stronger ACL/EMNLP-style paper would benefit from one *new, separately frozen* direct interaction replication with more carefully controlled exposure frequency, plus a second genuinely distinct grammar before broad generality claims. Do not rerun the same 48-model test or tune its conditions after the result.
 
 ## New synthesis
 
@@ -18,7 +24,7 @@
 
 **B. Stronger full NLP conference / Findings attempt:** Execute ONE fresh, fully controlled *training surface-factorial* (below), then a genuinely distinct grammatical family if claiming generality across grammars. This is stronger but demands new evidence; prior work already investigates data complexity, shortcut strategies and compositionality.
 
-## ONE candidate controlled study: TRAIN-SURFACE-FACTORIAL-v0 (not frozen)
+## Historical prospective design: TRAIN-SURFACE-FACTORIAL-v0 (now completed)
 
 ### Hypothesis
 
@@ -75,10 +81,9 @@ Four training arms: bare, frame-only, adjunct-only, frame+adjunct. No core-diver
 9. Limitations: all studies are small scratch Transformers in one grammar; extensive researcher degrees of freedom in older exploratory studies; no uniquely identified role circuit.
 10. Conclusion: bounded behavioral claim, not an architecture-universal impossibility theorem.
 
-## Immediate execution order
+## Immediate execution order — revised after completed factorial
 
-1. Archive & independently reaggregate all 16 CORE-DIVERSITY-v1 reports (done).
-2. Correct the working paper and evidence ledger to include the FAILED prospective study and the 98–100% fixed-core transfer (done in current documentation update).
-3. Create source-only validation code for the 2×2 surface factorial, **without loading study checkpoints**, and explicitly audit all distribution shifts.
-4. Freeze a single new primary test, meaningful effect and 12-seed schedule only after blinded feasibility validation.
-5. Run the one study (if pursuing route B); update the manuscript whether it passes or fails. No post-hoc rescue run.
+1. **DONE:** archive independently verified 12 full reports and frozen six-file experiment inputs.
+2. **DONE:** update manuscript, evidence ledger, README and audit to report successful prespecified primary and gated secondary, plus honest exploratory interaction and seed heterogeneity.
+3. **NEXT:** perform a final independent numerical/figure audit against the manuscript and identify a target publication venue. Finalize a narrow, accurate paper first.
+4. **OPTIONAL STRONGER PAPER:** separately freeze one **new** interaction-focused study testing frequency/length/position controls; then test a distinct grammar for generality. Do not label the already-seen interaction confirmatory.

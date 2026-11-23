@@ -42,6 +42,10 @@ All 16 original JSON reports and the frozen manifest are archived and independen
 
 A new 16-seed / 64-model training study compared fixed-core versus eight balanced core assignments under AA+PP and AP+PA exposure with bare/bare inputs. Both fixed-core arms reached 98–99% on unseen role permutations/new four-name quartets, and diverse-core arms nearly 100%. Diverse-minus-fixed primary +1.488 pp CI [+0.498,+2.479] pp; **FAILED** prespecified +10 pp meaningful-effect criterion. The gated new-quartet secondary was not opened. This requires a different next hypothesis: surface-complexity/position effects in the TRAINING distribution, *not* a blanket inability to recombine roles after fixed-core training. Confounded cross-cohort observations cannot establish such a cause. Audit: \`analysis/core_diversity_v1_audit.md\`. Planning: \`PUBLICATION_ROADMAP_2026_11.md\`.
 
+## TRAIN-SURFACE-FACTORIAL-v0: successful independent prospective causal-training-distribution test
+
+A frozen 2×2 training intervention with **12 fresh seeds / 48 scratch models** compared bare, neutral-prefix-only, name-bearing-adjunct-only and combined prefix+adjunct training, holding original event cores, labels, quartet sampling and architecture fixed. **Primary PASSED:** averaged adjunct-associated degradation **+29.86 pp** 95% t CI [+13.46,+46.26], 9/12 positive seeds, exceeding preregistered +10 pp criterion. **Gated secondary PASSED:** +29.37 pp CI [+13.56,+45.18] on 60 unseen four-name quartets. The four-arm combined-condition collapse (26.73% joint vs 99.21% bare) and 55.32 pp descriptive interaction are exploratory; the training regime also changes token lengths, name frequencies, input positions and dose of unmodified sources. Eight combined-arm seeds near zero and three at 100% make heterogeneity central. This is one-grammar evidence, not a proof of a unique circuit. [Independent audit](analysis/train_surface_factorial_v0_audit.md).
+
 ## Additional prospective evidence (PHASE2-01–03)
 
 - PHASE2-01: direct exposure 20% primary failed; full-dose gated secondary descriptively positive but not formally reached.

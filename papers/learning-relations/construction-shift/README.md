@@ -15,6 +15,7 @@ This package was created from `experiments/exp102-clean-design` at `df82ab3ad9db
 - [Read-only checkpoint audit: training-pool versus development transfer](analysis/position_cb_train_dev_audit_v0.md)
 - [Audited core-transfer role/event permutations and exact-token-bag controls](analysis/position_cb_core_transfer_v0.md)
 - [CORE-DIVERSITY-v1: independently verified prospective null-to-threshold and near-ceiling fixed-core result](analysis/core_diversity_v1_audit.md)
+- [TRAIN-SURFACE-FACTORIAL-v0: prospective passed primary + gated secondary and exploratory interaction](analysis/train_surface_factorial_v0_audit.md)
 - [Publication roadmap: workshop paper now versus one controlled surface-factorial](PUBLICATION_ROADMAP_2026_11.md)
 - [Archived-data extraction for the four figures](analysis/figure_data.json)
 
@@ -71,6 +72,10 @@ The [completed CORE-TRANSFER-v0 source/seed audit](analysis/position_cb_core_tra
 ## Prospective CORE-DIVERSITY-v1: negative primary and near-ceiling transfer
 
 The [completed 16-seed, 64-model cohort](analysis/core_diversity_v1_audit.md) established that fixed-core models trained on bare/bare sources already generalize at 98–99% accuracy to unseen role assignments and unseen four-name sets. The prospective diverse-minus-fixed primary produced a small positive +1.49 pp estimate but **failed** the frozen ≥10 pp improvement threshold; the gated secondary remains nonconfirmatory. This constrains a simplistic core-memorization explanation of the earlier severe failures but does not causally isolate the training feature responsible. See the [publication roadmap](PUBLICATION_ROADMAP_2026_11.md).
+
+## Prospective TRAIN-SURFACE-FACTORIAL-v0: both frozen tests passed
+
+The [completed, independently reaggregated 12-seed, 48-model study](analysis/train_surface_factorial_v0_audit.md) found **+29.86 pp adjunct-associated degradation** on never-trained role permutations (95% CI [+13.46,+46.26], 9/12 positive; frozen primary **PASSED**) and a **+29.37 pp** effect on withheld name quartets (gated CI [+13.56,+45.18]; secondary **PASSED**). Four-arm decomposition revealed most of the performance loss in the **combined prefix+adjunct training** condition (**26.73%** strict joint on never-seen roles versus **99.21%** bare), although this interaction and error composition are exploratory. The original bare training core remained ~99.9–100% correct in every arm; rich training-variant accuracy was not separately measured. The factor bundles changes in input length, token positions, name mentions and bare-source exposure, and a unique mechanism/cross-grammar claim is **not** established.
 
 ## What still needs action
 
