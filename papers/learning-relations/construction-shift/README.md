@@ -14,6 +14,8 @@ This package was created from `experiments/exp102-clean-design` at `df82ab3ad9db
 - [Completed POSITION-CB-v0: independent raw-report audit and interpretation](analysis/position_cb_v0_audit.md)
 - [Read-only checkpoint audit: training-pool versus development transfer](analysis/position_cb_train_dev_audit_v0.md)
 - [Audited core-transfer role/event permutations and exact-token-bag controls](analysis/position_cb_core_transfer_v0.md)
+- [CORE-DIVERSITY-v1: independently verified prospective null-to-threshold and near-ceiling fixed-core result](analysis/core_diversity_v1_audit.md)
+- [Publication roadmap: workshop paper now versus one controlled surface-factorial](PUBLICATION_ROADMAP_2026_11.md)
 - [Archived-data extraction for the four figures](analysis/figure_data.json)
 
 ## Figures
@@ -65,6 +67,10 @@ All 16 read-only checkpoint audit reports are available on [the dedicated audit 
 ## New event-core permutation diagnostic
 
 The [completed CORE-TRANSFER-v0 source/seed audit](analysis/position_cb_core_transfer_v0.md) shows that changing roles, event order, or participant pairings within familiar training name quartets reproduces the large familiar-development drop. Crucially, role flips mostly yield complete reversals, while event swaps/repartitioning yield wrong-event answers; a bare/bare exact-token-bag check preserves all three declines. This is exploratory and motivates the separate [CORE-DIVERSITY-v1 prospective training design](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/tree/design/position-cb-core-diversity-v1).
+
+## Prospective CORE-DIVERSITY-v1: negative primary and near-ceiling transfer
+
+The [completed 16-seed, 64-model cohort](analysis/core_diversity_v1_audit.md) established that fixed-core models trained on bare/bare sources already generalize at 98–99% accuracy to unseen role assignments and unseen four-name sets. The prospective diverse-minus-fixed primary produced a small positive +1.49 pp estimate but **failed** the frozen ≥10 pp improvement threshold; the gated secondary remains nonconfirmatory. This constrains a simplistic core-memorization explanation of the earlier severe failures but does not causally isolate the training feature responsible. See the [publication roadmap](PUBLICATION_ROADMAP_2026_11.md).
 
 ## What still needs action
 

@@ -38,6 +38,10 @@ The follow-up run found same-voice familiar accuracy of 97.81% on selected train
 
 All 16 original JSON reports and the frozen manifest are archived and independently reaggregated. Role flips, event swaps and participant repartitioning with familiar training name quartets cause paired strict C_query drops of approximately 59–60 pp compared with unchanged cores, in both voice regimes. The role-flip failures are substantially complete role reversals; swaps and new pairings mostly produce wrong-event names. The same effects persist in the bare/bare exact-token-multiset subset. **This is new post-hoc diagnostic information, not an independently prospective replication.** It does not isolate a unique circuit or prove word-level memorization. Full details: `analysis/position_cb_core_transfer_v0.md`.
 
+## CORE-DIVERSITY-v1: additional completed prospective boundary
+
+A new 16-seed / 64-model training study compared fixed-core versus eight balanced core assignments under AA+PP and AP+PA exposure with bare/bare inputs. Both fixed-core arms reached 98–99% on unseen role permutations/new four-name quartets, and diverse-core arms nearly 100%. Diverse-minus-fixed primary +1.488 pp CI [+0.498,+2.479] pp; **FAILED** prespecified +10 pp meaningful-effect criterion. The gated new-quartet secondary was not opened. This requires a different next hypothesis: surface-complexity/position effects in the TRAINING distribution, *not* a blanket inability to recombine roles after fixed-core training. Confounded cross-cohort observations cannot establish such a cause. Audit: \`analysis/core_diversity_v1_audit.md\`. Planning: \`PUBLICATION_ROADMAP_2026_11.md\`.
+
 ## Additional prospective evidence (PHASE2-01–03)
 
 - PHASE2-01: direct exposure 20% primary failed; full-dose gated secondary descriptively positive but not formally reached.
