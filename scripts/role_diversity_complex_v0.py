@@ -298,6 +298,44 @@ def evaluations(train,held,training,withheld,vocab):
             for v in VOICES} for arm in ARMS}
     return data
 
+def eval_preflight():
+    """Exhaustively encode frozen TRAIN-derived evaluation sources, NO model.
+
+    Catch shape/token/gold errors before any expensive prospective training.
+    Source-only check must never load checkpoints or call a model.
+    """
+    train,held,training,withheld,vocab,manifest=verified()
+    _=manifest
+    tests=evaluations(train,held,training,withheld,vocab)
+    expected={"original_bare":240,"original_rich":240,
+              "unseen_roles_bare":240*16,"unseen_roles_rich":240*16,
+              "unseen_quartets_bare":60*24,"unseen_quartets_rich":60*24}
+    for pop,n in expected.items():
+        assert set(tests[pop])==set(VOICES)
+        for voice in VOICES:
+            ids,readout,labels,choices=tests[pop][voice]
+            assert ids.shape[0]==readout.numel()==labels.numel()==4*n
+            assert len(choices)==4*n and choices.shape[1]==4
+            assert ids.shape[1]<=old.MAX_TOKENS
+            assert int(readout.max())<old.MAX_TOKENS
+    for arm,n in zip(ARMS,pf.DIVERSITIES):
+        assert set(tests["train_seen_rich"][arm])==set(VOICES)
+        for voice in VOICES:
+            ids,readout,labels,choices=tests["train_seen_rich"][arm][voice]
+            assert ids.shape[0]==readout.numel()==labels.numel()==240*n*4
+            assert len(choices)==240*n*4
+            assert ids.shape[1]<=old.MAX_TOKENS
+    # Each heldout semantic role label is identical across bare and rich
+    # expressions, including full candidate pools and label ordering.
+    for pop in ("unseen_roles","unseen_quartets"):
+        for voice in VOICES:
+            bare=tests[pop+"_bare"][voice]
+            rich=tests[pop+"_rich"][voice]
+            assert torch.equal(bare[2],rich[2])
+            assert torch.equal(bare[3],rich[3])
+    print("EVAL-SOURCE-ONLY PREFLIGHT PASS: all populations, 4 role arms, both voices")
+    print("No model training or inference; original DEV/reserved/protected/LI untouched")
+
 def smoke(device):
     train,held,training,withheld,vocab,manifest=verified()
     _=(held,withheld,manifest)
@@ -441,11 +479,12 @@ def summary():
 def main():
     ap=argparse.ArgumentParser()
     ap.add_argument("--phase",required=True,
-                    choices=("prepare","smoke","run","summary"))
+                    choices=("prepare","eval_preflight","smoke","run","summary"))
     ap.add_argument("--seed",type=int)
     ap.add_argument("--device",choices=("cpu","mps"),default="cpu")
     a=ap.parse_args()
     if a.phase=="prepare":prepare()
+    elif a.phase=="eval_preflight":eval_preflight()
     elif a.phase=="smoke":smoke(torch.device(a.device))
     elif a.phase=="run":
         if a.seed is None:ap.error("run requires --seed")
