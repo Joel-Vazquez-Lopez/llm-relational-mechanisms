@@ -426,6 +426,12 @@ def summary():
                                   for v in VOICES) for s in SEEDS])
                     for metric in ("C_query","accuracy4","full_vocab_accuracy")}
                    for arm in ARMS} for pop in POPS}
+    pair_classes={pop:{arm:{str(event):{cls:ci([
+        mean(reports[seed]["outcomes"][arm][pop][v]
+             ["event%d_pair_classes"%event][cls] for v in VOICES)
+        for seed in SEEDS])
+        for cls in ("correct","reversed","collapsed","wrong_event_name")}
+        for event in (1,2)} for arm in ARMS} for pop in POPS}
     desc={pop:{"prefix_effect":ci([effect(reports[s],pop)[1] for s in SEEDS]),
                "adjunct_effect":ci([effect(reports[s],pop)[0] for s in SEEDS]),
                "interaction":ci([effect(reports[s],pop)[2] for s in SEEDS])}
@@ -438,6 +444,7 @@ def summary():
       "gated_secondary":{"estimate":secondary,"confirmatory_gate_open":passed,
                          "passes":secondary["ci95"][0]>0 if passed else None},
       "arm_metrics":arms,"exploratory_factorial":desc,
+      "exploratory_pair_error_classes":pair_classes,
       "no_excluded_seeds":True,"no_old_dev_reserved_protected_LI":True}
     save_once(OUT/"analysis_summary.json",output)
     print("SUMMARY PASS: 12 seeds / 48 new models")
