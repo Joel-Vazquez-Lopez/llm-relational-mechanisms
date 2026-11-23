@@ -1,5 +1,7 @@
 # ROLE-DIVERSITY-COMPLEX-v0 — proposed 1/2/4/8 training study
 
+**Historical source-only design note.** The full prospective runner, fixed 16-seed schedule, protocol hierarchy, source/evaluation preflight, and CPU random-weight smoke are now implemented and [validated](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/actions/runs/45285668723). This historical document predates that implementation. For the current procedure, use [ROLE_DIVERSITY_COMPLEX_V0_PROTOCOL.md](ROLE_DIVERSITY_COMPLEX_V0_PROTOCOL.md) and [ROLE_DIVERSITY_COMPLEX_V0_RUN_FULL.md](ROLE_DIVERSITY_COMPLEX_V0_RUN_FULL.md). The model study has NOT been trained and is not frozen until both local manifests are committed.
+
 **Status: source-only design validated, NOT YET A FROZEN TRAINING PROTOCOL.** Do not run any new-seed models, use heldout target outcomes to select conditions, or mutate prior scientific studies. A new prospective seed list, exact training code, per-seed quartet/cell/role schedules, full vocabulary, model checkpoint guard, scoring implementation and study manifest must be written, audited, and Git-frozen BEFORE the first training run.
 
 ## Question
