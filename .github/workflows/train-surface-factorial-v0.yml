@@ -17,8 +17,9 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - name: Compile source generator
-        run: python -m py_compile scripts/train_surface_factorial_v0_preflight.py scripts/train_surface_factorial_v0.py
+      - name: Compile source generator and check launcher
+        run: |
+          python -m py_compile scripts/train_surface_factorial_v0_preflight.py scripts/train_surface_factorial_v0.py
           bash -n scripts/run_train_surface_factorial_v0.sh
       - name: Source parsing, overlap, token-length and nuisance audit
         run: python scripts/train_surface_factorial_v0_preflight.py --phase prepare
