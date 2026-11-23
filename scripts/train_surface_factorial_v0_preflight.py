@@ -83,7 +83,8 @@ def build():
     assert len(FRAMES)==5 and tuple(len(gen.tokens(p)) if p else 0
                                    for p in FRAMES)==frame.EXPECTED_SHIFTS
     for prefix in FRAMES:
-        assert not (set(gen.tokens(prefix))&(gen.NAME_SET|set(gen.VERBS)))
+        if prefix:
+            assert not (set(gen.tokens(prefix))&(gen.NAME_SET|set(gen.VERBS)))
     records={"train_variants":[],"test_unseen_roles":[],"test_unseen_quartets":[]}
     training_text=set();testing_text=set()
     per_arm={arm:{"n_sources":0,"token_length_sum":0,"name_mentions_sum":0,
