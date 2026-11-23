@@ -1,0 +1,26 @@
+name: Role-diversity complex source feasibility
+on:
+  push:
+    branches: [design/role-diversity-complex-v0]
+    paths:
+      - 'scripts/role_diversity_complex_v0_preflight.py'
+      - '.github/workflows/role-diversity-complex-v0.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  source-only:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Compile source script
+        run: python -m py_compile scripts/role_diversity_complex_v0_preflight.py
+      - name: Audit role assignments and matched structural exposures, no inference
+        run: python scripts/role_diversity_complex_v0_preflight.py --phase prepare
+      - uses: actions/upload-artifact@v4
+        with:
+          name: role-diversity-source-only-audit
+          path: reports/role_diversity_complex_v0/design_source_audit.json
