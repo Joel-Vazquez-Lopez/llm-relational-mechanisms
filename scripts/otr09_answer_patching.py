@@ -164,6 +164,8 @@ def main(argv=None):
     p.add_argument("--split", default="dev", choices=SPLITS, help="test0..test3 only after FREEZE.md")
     p.add_argument("--skip-scan", action="store_true",
                    help="no head scan: the --rank-from heads are the circuit (frozen heads on a test set)")
+    p.add_argument("--n-random", type=int, default=1,
+                   help="independent random-head draws per k (per-item mean over draws); 1 = original")
     p.add_argument("--controls", action="store_true",
                    help="head controls: patch from another item's failing run; random nudge of the same norm")
     p.add_argument("--rank-from", type=Path, default=None,
@@ -230,7 +232,10 @@ def main(argv=None):
     attn = attn_modules(layers)
     head_layers = [li for li in sorted(attn) if li >= args.head_from * (L - 1)]
     scan_layers = list(head_layers)
+    n_frozen = len(transfer_heads)
     transfer_heads = [k for k in transfer_heads if int(k.split(".")[0]) in attn]
+    if args.split != "dev" and len(transfer_heads) != n_frozen:
+        raise SystemExit(f"frozen heads dropped ({n_frozen} -> {len(transfer_heads)}); refusing a test run")
     head_layers = sorted(set(head_layers) | {int(k.split(".")[0]) for k in transfer_heads})
     lead = not args.chat_template
     cons = [c.strip() for c in args.constructions.split(",")]
@@ -375,7 +380,20 @@ def main(argv=None):
                     patch[li][h] = (base.float() + noise / noise.norm() * diff.norm()).to(base.dtype)
             ld = run(item_of[r["item_id"]], head_patch=dict(patch))[0]
             out.append((repair(ld, r["ld_base"], r["ld_source"]), float(ld > 0) if r["ld_base"] < 0 else float("nan")))
-        return {"repair": mean([x for x, _ in out]), "flip_to_correct": mean([f for _, f in out]), "n": len(out)}
+        return {"repair": mean([x for x, _ in out]), "flip_to_correct": mean([f for _, f in out]), "n": len(out),
+                "heads": list(head_keys),
+                # per-item values keyed to families, for paired family-bootstrap CIs (freeze C5)
+                "items": [{"item_id": r["item_id"], "family_id": r["family_id"], "repair": x}
+                          for r, (x, _) in zip(items, out)]}
+
+    def joint_random(pool, k, items):
+        """--n-random independent draws of k heads from ``pool``; per item, the mean over draws."""
+        draws = [joint(rng.sample(pool, min(k, len(pool))), items) for _ in range(args.n_random)]
+        per = [mean([d["items"][i]["repair"] for d in draws]) for i in range(len(items))]
+        return {"repair": mean(per), "flip_to_correct": mean([d["flip_to_correct"] for d in draws]),
+                "n": len(items), "n_draws": args.n_random, "draw_heads": [d["heads"] for d in draws],
+                "items": [{"item_id": r["item_id"], "family_id": r["family_id"], "repair": x}
+                          for r, x in zip(items, per)]}
 
     rng = random.Random(args.seed)
     pool_layers = sorted(set(scan_layers) | ({int(k.split(".")[0]) for k in ranked} if args.skip_scan else set()))
@@ -384,7 +402,7 @@ def main(argv=None):
     for k in [int(x) for x in args.top_k.split(",")]:
         k = min(k, len(ranked))
         circuit[str(k)] = {"top": joint(ranked[:k], eval_set),
-                           "random": joint(rng.sample(all_heads, min(k, len(all_heads))), eval_set)}
+                           "random": joint_random(all_heads, k, eval_set)}
         if args.controls:
             circuit[str(k)]["top_other_failing"] = joint(ranked[:k], eval_set, "other_failing")
             circuit[str(k)]["top_random_nudge"] = joint(ranked[:k], eval_set, "nudge")
@@ -402,7 +420,7 @@ def main(argv=None):
             transfer["by_k"][str(k)] = {
                 "eval_items": joint(transfer_heads[:k], eval_set),
                 "all_items": joint(transfer_heads[:k], all_gap),
-                "random_same_layers": joint(rng.sample(t_pool, k), all_gap)}
+                "random_same_layers": joint_random(t_pool, k, all_gap)}
             if args.controls:
                 transfer["by_k"][str(k)]["other_failing"] = joint(transfer_heads[:k], all_gap, "other_failing")
                 transfer["by_k"][str(k)]["random_nudge"] = joint(transfer_heads[:k], all_gap, "nudge")

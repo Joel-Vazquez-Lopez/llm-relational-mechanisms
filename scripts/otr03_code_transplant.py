@@ -107,6 +107,8 @@ def main(argv=None):
                         '(only by-phrase-role bases are kept; fear-class psych verbs: the experiencer)')
     p.add_argument("--batch-size", type=int, default=32)
     p.add_argument("--layer-stride", type=int, default=1)
+    p.add_argument("--layers", default=None, metavar="L1,L2,...",
+                   help="explicit layer list (overrides --layer-stride), e.g. to include frozen layers")
     p.add_argument("--n-boot", type=int, default=500)
     p.add_argument("--seed", type=int, default=2026)
     p.add_argument("--include-incorrect", action="store_true",
@@ -158,12 +160,25 @@ def main(argv=None):
     from relational_lab.instrumentation.patching import decoder_layers
 
     n_layers = len(decoder_layers(model))
-    layers = list(range(0, n_layers, args.layer_stride))
+    if args.layers:
+        layers = sorted({int(x) for x in args.layers.split(",") if x.strip()})
+        if not layers or layers[0] < 0 or layers[-1] >= n_layers:
+            raise SystemExit(f"--layers must lie in 0..{n_layers - 1}")
+    else:
+        layers = list(range(0, n_layers, args.layer_stride))
+    # Test splits: donor name pairs come from the same split as the bases (no dev pair enters a
+    # test run). Dev keeps the original unrestricted draw, so archived dev runs reproduce exactly.
+    pair_ok = None
+    if args.split != "dev":
+        fam_split = ors.split_families(bx.NAMES if is_bx else ors.NAMES, args.seed, 0.15, 4)
+        want = ("test", int(args.split[-1]))
+        pair_ok = lambda a, b: fam_split["|".join(sorted((a, b)))] == want  # noqa: E731
     if is_xl:
         if args.agent_question:
             raise SystemExit("es/gl: use --question-voices passive --roles agent for the failing question")
         bases = xla.select_bases(args.stimuli, args.split, args.n_events, args.question_voices, args.roles, args.seed)
-        transplants = otr.make_transplants(bases, xla.TRANSPLANT_CONSTRUCTIONS, seed=args.seed, builder=xla.builder)
+        transplants = otr.make_transplants(bases, xla.TRANSPLANT_CONSTRUCTIONS, seed=args.seed, builder=xla.builder,
+                                           pair_ok=pair_ok)
         null_cons = ("active", "passive")
     elif is_bx:
         bases = bxa.select_bases(args.stimuli, args.split, args.n_events, args.question_voices, args.seed,
@@ -172,7 +187,7 @@ def main(argv=None):
         if args.agent_question:
             bases = bxa.with_by_question(bases, args.agent_question)
         transplants = otr.make_transplants(bases, seed=args.seed, names=names, builder=bxa.builder,
-                                           constructions_for=bxa.source_constructions)
+                                           constructions_for=bxa.source_constructions, pair_ok=pair_ok)
         null_cons = bxa.NULL_CONSTRUCTIONS[bxa.block_name(args.stimuli)]
     else:
         bases = select_bases(ors.generate_items(seed=args.seed), args.split, args.n_events,
@@ -180,8 +195,14 @@ def main(argv=None):
         bases = [b for b in bases if b.role_asked in args.roles]
         if args.agent_question:
             bases = with_agent_question(bases, args.agent_question)
-        transplants = otr.make_transplants(bases, seed=args.seed)
+        transplants = otr.make_transplants(bases, seed=args.seed, pair_ok=pair_ok)
         null_cons = ("active", "passive")
+    donor_pairs = {t.base.item_id: "|".join(sorted((t.source.agent, t.source.patient))) for t in transplants}
+    if pair_ok is not None:
+        bad = [b.item_id for b in bases if not pair_ok(b.agent, b.patient)]
+        bad += [i for i, fam in donor_pairs.items() if not pair_ok(*fam.split("|"))]
+        if bad:
+            raise SystemExit(f"split leak: {len(bad)} base/donor pairs outside {args.split}: {bad[:5]}")
     print(f"{len(bases)} bases, {len(transplants)} transplants x {len(layers)} layers, {args.model}", flush=True)
     t0 = time.time()
     records, skipped = otr.sweep(model, tok, transplants, layers=layers, batch_size=args.batch_size,
@@ -235,7 +256,8 @@ def main(argv=None):
         "generator_version": ors.GENERATOR_VERSION, "stimuli": args.stimuli,
         "bx_generator_version": bx.BX_GENERATOR_VERSION if is_bx else None,
         "xl_generator_version": xl.XL_GENERATOR_VERSION if is_xl else None,
-        "seed": args.seed, "layers": layers,
+        "seed": args.seed, "layers": layers, "donor_pairs": donor_pairs,
+        "donor_pairs_restricted_to_split": pair_ok is not None,
         "base_constructions": sorted({b.construction for b in bases}),
         "dropped_names": dropped_names,
         "n_events": args.n_events, "question_voices": args.question_voices, "roles": args.roles,

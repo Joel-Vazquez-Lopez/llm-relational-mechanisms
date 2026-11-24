@@ -85,10 +85,18 @@ class Transplant:
         return predictors(self.base, self.k, self.source, self.j)
 
 
-def _foreign_pair(base: Item, rng: random.Random, names: Sequence[str]) -> tuple[str, str]:
+def _foreign_pair(base: Item, rng: random.Random, names: Sequence[str], pair_ok=None) -> tuple[str, str]:
+    """A fresh name pair for the donor. ``pair_ok(a, b)`` (optional) restricts donors, e.g. to name
+    pairs of the same split as the base; without it the draw is identical to the original design."""
     pool = [n for n in names if n not in (base.agent, base.patient)]
-    a, b = rng.sample(pool, 2)
-    return a, b
+    if pair_ok is None:
+        a, b = rng.sample(pool, 2)
+        return a, b
+    for _ in range(10000):
+        a, b = rng.sample(pool, 2)
+        if pair_ok(a, b):
+            return a, b
+    raise ValueError(f"no donor pair allowed for base {base.item_id}")
 
 
 def make_transplants(
@@ -98,6 +106,7 @@ def make_transplants(
     names: Sequence[str] = NAMES,
     builder=None,
     constructions_for=None,
+    pair_ok=None,
 ) -> list[Transplant]:
     """For every base: both base slots x every source construction x both source
     slots x BOTH assignments of one foreign name pair (U as agent and V as
@@ -111,7 +120,7 @@ def make_transplants(
     rng = random.Random(seed)
     out: list[Transplant] = []
     for base in bases:
-        u, v = _foreign_pair(base, rng, names)
+        u, v = _foreign_pair(base, rng, names, pair_ok)
         for fa, fp in ((u, v), (v, u)):
             for cs in (constructions_for(base) if constructions_for else source_constructions):
                 if builder is not None:

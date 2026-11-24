@@ -172,7 +172,8 @@ def main(argv=None):
             ids_bare = (answer_token(tok, it.agent, lead_bare), answer_token(tok, it.patient, lead_bare))
             ids_by = (answer_token(tok, it.agent, True), answer_token(tok, it.patient, True))
             sign = 1.0 if it.role_asked == "agent" else -1.0
-            rec = {"item_id": it.item_id, "condition": ci, "construction": it.construction, "role": it.role_asked}
+            rec = {"item_id": it.item_id, "family_id": getattr(it, "family_id", None), "condition": ci,
+                   "construction": it.construction, "role": it.role_asked}
             with torch.no_grad():
                 for pname, tids, sgn in (("bare", ids_bare, sign), ("by", ids_by, 1.0)):
                     h = torch.stack([store[l][0, pos[pname]] for l in range(L)])
