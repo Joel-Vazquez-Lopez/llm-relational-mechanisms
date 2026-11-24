@@ -44,6 +44,9 @@ sys.path.insert(0, str(ROOT / "scripts"))
 
 import otr09_answer_patching as o9  # noqa: E402
 
+from relational_lab.experiments.splits import SPLITS  # noqa: E402
+from relational_lab.experiments.splits import status as split_status  # noqa: E402
+
 OTR13_VERSION = "1.1.0"
 BASE_WORDS = ("Who", "was", "someone", "VERB", "by", "?")
 FUNCTION_WORDS = {"Who", "was", "someone", "the", "of", "done", "by", "?"}
@@ -108,6 +111,7 @@ def main(argv=None):
     p.add_argument("--template-kwarg", action="append", default=[], metavar="KEY=VALUE")
     p.add_argument("--dtype", default="bfloat16")
     p.add_argument("--seed", type=int, default=2026)
+    p.add_argument("--split", default="dev", choices=SPLITS, help="test0..test3 only after FREEZE.md")
     p.add_argument("--out-dir", type=Path, default=ROOT / "results")
     args = p.parse_args(argv)
     if args.stimuli == "otr":
@@ -136,7 +140,7 @@ def main(argv=None):
     lead = not args.chat_template
     cons = [c.strip() for c in args.constructions.split(",")]
     triples = o9.make_pairs(args.seed, args.base_question, args.source_question, args.instruction, cons, args.n_per,
-                            stimuli=args.stimuli)
+                            stimuli=args.stimuli, split=args.split)
     triples = [t for t in triples if answer_token(tok, t[0].answer, lead) != answer_token(tok, t[0].distractor, lead)]
 
     def enc(it):
@@ -226,7 +230,7 @@ def main(argv=None):
         return round(sum(xs) / len(xs), 4) if xs else None
 
     report = {
-        "experiment": "OTR-13 question-word patching", "otr13_version": OTR13_VERSION,
+        "status": split_status(args.split), "split": args.split, "experiment": "OTR-13 question-word patching", "otr13_version": OTR13_VERSION,
         "generator_version": ors.GENERATOR_VERSION, "stimuli": args.stimuli, "model": args.model,
         "chat_template": args.chat_template,
         "base_question": args.base_question, "source_question": args.source_question,
@@ -248,7 +252,7 @@ def main(argv=None):
     args.out_dir.mkdir(parents=True, exist_ok=True)
     stag = "" if args.stimuli == "otr" else f"_{args.stimuli}"
     qtag = "" if args.source_question == "Who was the {ing} done by?" else "_src2"
-    out = args.out_dir / f"otr13_{args.model.replace('/', '__')}_dev{stag}{qtag}_{time.strftime('%Y%m%dT%H%M%S')}.json"
+    out = args.out_dir / f"otr13_{args.model.replace('/', '__')}_{args.split}{stag}{qtag}_{time.strftime('%Y%m%dT%H%M%S')}.json"
     out.write_text(json.dumps(report, indent=1))
     try:
         _plot(report, out.with_suffix(".png"))

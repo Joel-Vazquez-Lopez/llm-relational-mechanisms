@@ -54,17 +54,22 @@ from relational_lab.experiments import order_role_stimuli as ors  # noqa: E402
 from relational_lab.experiments import xl_adapter as xla  # noqa: E402
 from relational_lab.experiments import ud_stimuli as uds  # noqa: E402
 from relational_lab.experiments import wiki_roles as wr  # noqa: E402
+from relational_lab.experiments.splits import SPLITS, in_split  # noqa: E402
+from relational_lab.experiments.splits import status as split_status  # noqa: E402
 from relational_lab.experiments.question_templates import fill as fill_template  # noqa: E402
 
 OTR09_VERSION = "1.1.0"
 
 
 def make_pairs(seed: int, base_q: str, source_q: str, instruction: str, constructions, n_per: int,
-               stimuli: str = "otr", wiki_file=None, wiki_names: str = "real"):
+               stimuli: str = "otr", wiki_file=None, wiki_names: str = "real", split: str = "dev"):
     """(base item, source item, donor item) triples: same sentence for base/source; donor =
     another dev sentence of the same construction with a disjoint name pair."""
+    if split != "dev" and stimuli in ("ud-en", "wiki-en"):
+        raise ValueError("UD and WIKI-ROLES have no test split (they are validation sets)")
     if stimuli in xla.STIMULI:
-        return _xl_triples(stimuli, seed, constructions, n_per, instruction)
+        return _with_donors(xla.repair_pairs(stimuli, seed, constructions, instruction, split), constructions, n_per,
+                            seed)
     if stimuli == "wiki-en":
         recs = wr.load_records(wiki_file)
         return _with_donors(wr.generate_pairs(recs, base_q, source_q, instruction, wiki_names, seed),
@@ -72,13 +77,13 @@ def make_pairs(seed: int, base_q: str, source_q: str, instruction: str, construc
     if stimuli == "ud-en":
         return _with_donors(uds.generate_pairs(base_q, source_q, instruction, seed=seed), constructions, n_per, seed)
     if stimuli != "otr":
-        items = bxa.repair_items(stimuli, seed, constructions)
+        items = bxa.repair_items(stimuli, seed, constructions, split=split)
 
         def ask(it, template):
             return bxa.ask(it, template, instruction)
         return _triples(items, constructions, n_per, seed, ask, base_q, source_q)
     items = [i for i in ors.generate_items(seed=seed)
-             if i.split == "dev" and i.construction in constructions and i.role_asked == "agent"
+             if in_split(i, split) and i.construction in constructions and i.role_asked == "agent"
              and i.question_voice == "active"]
 
     def ask(it, template):
@@ -156,6 +161,9 @@ def main(argv=None):
                    help="real Wikipedia names, or two neutral OTR names swapped in (memory control)")
     p.add_argument("--base-question", default=None, help='default "Who was someone {past} by?" (bx: {pp})')
     p.add_argument("--source-question", default=None, help='default "Who was the {ing} done by?"')
+    p.add_argument("--split", default="dev", choices=SPLITS, help="test0..test3 only after FREEZE.md")
+    p.add_argument("--skip-scan", action="store_true",
+                   help="no head scan: the --rank-from heads are the circuit (frozen heads on a test set)")
     p.add_argument("--controls", action="store_true",
                    help="head controls: patch from another item's failing run; random nudge of the same norm")
     p.add_argument("--rank-from", type=Path, default=None,
@@ -227,7 +235,8 @@ def main(argv=None):
     lead = not args.chat_template
     cons = [c.strip() for c in args.constructions.split(",")]
     triples = make_pairs(args.seed, args.base_question, args.source_question, args.instruction, cons, args.n_per,
-                         stimuli=args.stimuli, wiki_file=args.wiki_file, wiki_names=args.wiki_names)
+                         stimuli=args.stimuli, wiki_file=args.wiki_file, wiki_names=args.wiki_names,
+                         split=args.split)
     # a bare answer is scored by its first token: skip items whose two names share it
     n_before = len(triples)
     triples = [t for t in triples
@@ -320,7 +329,9 @@ def main(argv=None):
     item_of = {b.item_id: b for b, _, _ in triples}
     head_scores = {}
     t1 = time.time()
-    for li in scan_layers:
+    if args.skip_scan and not transfer_heads:
+        raise SystemExit("--skip-scan needs --rank-from")
+    for li in ([] if args.skip_scan else scan_layers):
         _, nh, hd = attn[li]
         for h in range(nh):
             vals = []
@@ -331,6 +342,9 @@ def main(argv=None):
             head_scores[f"{li}.{h}"] = mean(vals)
         print(f"  heads: layer {li} done, {time.time() - t1:.0f}s", flush=True)
     ranked = sorted(head_scores, key=lambda k: -(head_scores[k] if head_scores[k] is not None else -1e9))
+    if args.skip_scan:
+        ranked = list(transfer_heads)  # frozen heads: the circuit is fixed in advance
+        eval_set = [r for r in recs if r["ld_source"] - r["ld_base"] > args.min_gap]  # no ranking fold needed
 
     ctrl_rng = random.Random(args.seed + 1)
     gen = torch.Generator(device="cpu").manual_seed(args.seed)
@@ -364,12 +378,13 @@ def main(argv=None):
         return {"repair": mean([x for x, _ in out]), "flip_to_correct": mean([f for _, f in out]), "n": len(out)}
 
     rng = random.Random(args.seed)
-    all_heads = [f"{li}.{h}" for li in scan_layers for h in range(attn[li][1])]
+    pool_layers = sorted(set(scan_layers) | ({int(k.split(".")[0]) for k in ranked} if args.skip_scan else set()))
+    all_heads = [f"{li}.{h}" for li in pool_layers for h in range(attn[li][1])]
     circuit = {}
     for k in [int(x) for x in args.top_k.split(",")]:
         k = min(k, len(ranked))
         circuit[str(k)] = {"top": joint(ranked[:k], eval_set),
-                           "random": joint(rng.sample(all_heads, k), eval_set)}
+                           "random": joint(rng.sample(all_heads, min(k, len(all_heads))), eval_set)}
         if args.controls:
             circuit[str(k)]["top_other_failing"] = joint(ranked[:k], eval_set, "other_failing")
             circuit[str(k)]["top_random_nudge"] = joint(ranked[:k], eval_set, "nudge")
@@ -398,7 +413,8 @@ def main(argv=None):
         named = {"heads": keys, **joint(keys, eval_set)} if keys else None
 
     report = {
-        "experiment": "OTR-09", "status": "EXPLORATORY", "version": OTR09_VERSION,
+        "experiment": "OTR-09", "status": split_status(args.split), "split": args.split,
+        "skip_scan": args.skip_scan, "version": OTR09_VERSION,
         "generator_version": ors.GENERATOR_VERSION, "stimuli": args.stimuli,
         "bx_generator_version": bx.BX_GENERATOR_VERSION if args.stimuli in bxa.STIMULI else None,
         "ud_version": uds.UD_VERSION if args.stimuli == "ud-en" else None,
@@ -425,7 +441,7 @@ def main(argv=None):
     stag = "" if args.stimuli == "otr" else f"_{args.stimuli}"
     if args.stimuli == "wiki-en":
         stag += f"-{args.wiki_names}"
-    out = args.out_dir / f"otr09_{args.model.replace('/', '__')}_dev{stag}_{time.strftime('%Y%m%dT%H%M%S')}.json"
+    out = args.out_dir / f"otr09_{args.model.replace('/', '__')}_{args.split}{stag}_{time.strftime('%Y%m%dT%H%M%S')}.json"
     out.write_text(json.dumps(report))
     print(f"Wrote {out}")
     print("baseline:", {c: (v["base_agent_preferred"], v["source_agent_preferred"]) for c, v in report["baseline"].items()})
@@ -434,7 +450,7 @@ def main(argv=None):
         i = next((j for j, v in enumerate(r["repair"]) if v is not None and v >= 0.5), None)
         print(f"residual repair (all, n={r['n']}): first layer >= 0.5: {res_layers[i] if i is not None else None}; "
               f"donor max {max(v for v in r['donor_repair'] if v is not None):.2f}")
-    print("top heads:", [(k, head_scores[k]) for k in ranked[:8]])
+    print("top heads:", [(k, head_scores.get(k)) for k in ranked[:8]])
     print("circuit (held-out):", {k: (v["top"]["repair"], v["random"]["repair"]) for k, v in circuit.items()})
     if named:
         print("named heads:", named)

@@ -45,6 +45,7 @@ sys.path.insert(0, str(ROOT / "src"))
 
 from relational_lab.experiments import order_role_stimuli as ors  # noqa: E402
 from relational_lab.experiments.question_templates import fill as fill_template
+from relational_lab.experiments.splits import SPLITS, in_split, status as split_status
 
 
 def first_name(text: str, names) -> str | None:
@@ -165,26 +166,27 @@ def fill_xl_template(lang: str, template: str, pret: str, lemma: str) -> str:
     return template.format(pret=pret, stem=stems[lemma], lemma=lemma)
 
 
-def prepared_prompts(stimuli="otr", seed=2026, n=256, question_template="", question_role=None, instruction=""):
+def prepared_prompts(stimuli="otr", seed=2026, n=256, question_template="", question_role=None, instruction="",
+                     split="dev"):
     """The balanced dev sample and final prompts used by every generation run (local or API).
     Returns [(item, prompt)]; with a question template the item's question is rewritten."""
     if stimuli == "sp":
         from relational_lab.experiments import stranded_p_stimuli as sp
-        items = [i for i in sp.generate_items(seed=seed) if i.split == "dev"]
+        items = [i for i in sp.generate_items(seed=seed) if in_split(i, split)]
     elif stimuli in ("es", "gl"):
         from relational_lab.experiments import multilingual_stimuli as xl
         items = [i for i in xl.generate_items(stimuli, seed=seed)
-                 if i.split == "dev" and i.construction in xl.XL_MAIN_CONSTRUCTIONS]
+                 if in_split(i, split) and i.construction in xl.XL_MAIN_CONSTRUCTIONS]
     elif stimuli.startswith("bx-"):
         from relational_lab.experiments import broad_stimuli as bx
-        items = bx.generate_items(stimuli[3:], split="dev", seed=seed)
+        items = [i for i in bx.generate_items(stimuli[3:], split=None, seed=seed) if in_split(i, split)]
     elif stimuli == "sv":
         from relational_lab.experiments import swedish_stimuli as sv
         items = [i for i in sv.generate_items(seed=seed)
-                 if i.split == "dev" and i.construction in sv.SV_MAIN_CONSTRUCTIONS]
+                 if in_split(i, split) and i.construction in sv.SV_MAIN_CONSTRUCTIONS]
     else:
         items = [i for i in ors.generate_items(seed=seed)
-                 if i.split == "dev" and i.construction in ors.MAIN_CONSTRUCTIONS]
+                 if in_split(i, split) and i.construction in ors.MAIN_CONSTRUCTIONS]
     if question_template:
         # one item per event and role: keep the active-voice question slot, then rewrite it
         if question_role == "by":  # broad stimuli: the role a passive by-phrase expresses for this verb
@@ -274,6 +276,7 @@ def main(argv=None):
     p.add_argument("--assistant-prefix", default="")
     p.add_argument("--dtype", default="bfloat16")
     p.add_argument("--seed", type=int, default=2026)
+    p.add_argument("--split", default="dev", choices=SPLITS, help="test0..test3 only after FREEZE.md")
     p.add_argument("--out-dir", type=Path, default=ROOT / "results")
     args = p.parse_args(argv)
     if bool(args.question_template) != bool(args.question_role):
@@ -293,7 +296,7 @@ def main(argv=None):
     t0 = time.time()
     rows = []
     for it, prompt in prepared_prompts(args.stimuli, args.seed, args.n, args.question_template,
-                                       args.question_role, args.instruction):
+                                       args.question_role, args.instruction, split=args.split):
         ids = _prompt_ids(tok, prompt, args.chat_template)
         x = torch.tensor([ids], device=dev)
         with torch.no_grad():
@@ -304,7 +307,7 @@ def main(argv=None):
     report = make_report(args.model, rows, time.time() - t0, chat_template=args.chat_template,
                          chat_template_kwargs=chat_kwargs, stimuli=args.stimuli, instruction=args.instruction,
                          question_template=args.question_template or None, question_role=args.question_role,
-                         max_new_tokens=args.max_new_tokens)
+                         max_new_tokens=args.max_new_tokens, split=args.split, status=split_status(args.split))
     if args.stimuli == "sv":
         from relational_lab.experiments import swedish_stimuli as sv
         report["sv_generator_version"], report["native_checked"] = sv.SV_GENERATOR_VERSION, sv.NATIVE_CHECKED
@@ -313,7 +316,7 @@ def main(argv=None):
     tag = "" if args.stimuli == "otr" else f"_{args.stimuli}"
     if args.question_template:
         tag += "_q-" + re.sub(r"[^a-z]+", "-", args.question_template.lower()).strip("-")
-    out = args.out_dir / f"otrgen_{args.model.replace('/', '__')}_dev{tag}_{time.strftime('%Y%m%dT%H%M%S')}.json"
+    out = args.out_dir / f"otrgen_{args.model.replace('/', '__')}_{args.split}{tag}_{time.strftime('%Y%m%dT%H%M%S')}.json"
     out.write_text(json.dumps(report, indent=1))
     print(f"Wrote {out}")
     print(f"answer kinds: {report['kinds']}")

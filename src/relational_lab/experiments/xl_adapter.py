@@ -18,6 +18,7 @@ import dataclasses
 import random
 
 from relational_lab.experiments import multilingual_stimuli as xl
+from relational_lab.experiments.splits import in_split
 
 STIMULI = xl.LANGS  # ("es", "gl")
 TRANSPLANT_CONSTRUCTIONS = ("active", "passive", "object_cleft", "by_cleft")
@@ -42,7 +43,7 @@ def builder(base, a: str, p: str, construction: str):
 def select_bases(lang: str, split: str, n_events: int, voices, roles, seed: int,
                  constructions=TRANSPLANT_CONSTRUCTIONS):
     pool = [i for i in xl.generate_items(lang, seed=seed)
-            if i.split == split and i.construction in constructions and i.question_voice in set(voices)]
+            if in_split(i, split) and i.construction in constructions and i.question_voice in set(voices)]
     events = sorted({i.event_id for i in pool})
     random.Random(seed).shuffle(events)
     keep = set(events[:n_events])
@@ -57,11 +58,11 @@ def with_instruction(item, instruction: str):
     return dataclasses.replace(item, prompt=item.prompt[: -len(cue)] + f"\n{instruction}{cue}")
 
 
-def repair_pairs(lang: str, seed: int, constructions, instruction: str):
+def repair_pairs(lang: str, seed: int, constructions, instruction: str, split: str = "dev"):
     """(base, source) per (event, construction): same sentence; base = failing passive agent
     question, source = active agent question."""
     items = {i.item_id: i for i in xl.generate_items(lang, seed=seed)
-             if i.split == "dev" and i.construction in constructions and i.role_asked == "agent"}
+             if in_split(i, split) and i.construction in constructions and i.role_asked == "agent"}
     out = []
     for iid, it in items.items():
         if it.question_voice != "passive":

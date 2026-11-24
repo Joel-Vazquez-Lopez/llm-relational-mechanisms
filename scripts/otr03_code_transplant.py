@@ -28,6 +28,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
 from relational_lab.experiments import bx_adapter as bxa
+from relational_lab.experiments.splits import SPLITS, in_split
 from relational_lab.experiments import broad_stimuli as bx
 from relational_lab.experiments import order_role_stimuli as ors
 from relational_lab.experiments import multilingual_stimuli as xl
@@ -37,7 +38,7 @@ from relational_lab.experiments.question_templates import fill as fill_template
 
 
 def select_bases(items, split, n_events, question_voices, seed):
-    pool = [i for i in items if i.split == split and i.construction in ors.MAIN_CONSTRUCTIONS
+    pool = [i for i in items if in_split(i, split) and i.construction in ors.MAIN_CONSTRUCTIONS
             and i.question_voice in question_voices]
     events = sorted({i.event_id for i in pool})
     random.Random(seed).shuffle(events)
@@ -90,7 +91,7 @@ def main(argv=None):
     p.add_argument("--revision", default=None)
     p.add_argument("--dtype", default="bfloat16", choices=["bfloat16", "float16", "float32"])
     p.add_argument("--device", default=None)
-    p.add_argument("--split", default="dev", choices=["dev", "test"])
+    p.add_argument("--split", default="dev", choices=SPLITS, help="test0..test3 only after FREEZE.md")
     p.add_argument("--stimuli", default="otr", choices=["otr", *bxa.STIMULI, *xla.STIMULI],
                    help="otr = the original materials; bx-* = broad English blocks (new names, verbs, "
                         "constructions). For bx, --roles agent/patient mean the block's A/B slot "

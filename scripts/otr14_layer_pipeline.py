@@ -47,6 +47,9 @@ sys.path.insert(0, str(ROOT / "scripts"))
 
 import otr09_answer_patching as o9  # noqa: E402
 
+from relational_lab.experiments.splits import SPLITS  # noqa: E402
+from relational_lab.experiments.splits import status as split_status  # noqa: E402
+
 OTR14_VERSION = "1.0.0"
 PATIENT_Q = "Who was {past} by someone?"
 
@@ -138,6 +141,7 @@ def main(argv=None):
     p.add_argument("--template-kwarg", action="append", default=[], metavar="KEY=VALUE")
     p.add_argument("--dtype", default="bfloat16")
     p.add_argument("--seed", type=int, default=2026)
+    p.add_argument("--split", default="dev", choices=SPLITS, help="test0..test3 only after FREEZE.md")
     p.add_argument("--out-dir", type=Path, default=ROOT / "results")
     args = p.parse_args(argv)
     if args.stimuli == "otr":
@@ -169,7 +173,7 @@ def main(argv=None):
     lead = not args.chat_template
     cons = [c.strip() for c in args.constructions.split(",")]
     triples = o9.make_pairs(args.seed, args.base_question, args.source_question, args.instruction, cons, args.n_per,
-                            stimuli=args.stimuli)
+                            stimuli=args.stimuli, split=args.split)
     triples = [t for t in triples if answer_token(tok, t[0].answer, lead) != answer_token(tok, t[0].distractor, lead)]
 
     def patient_version(b):
@@ -349,7 +353,7 @@ def main(argv=None):
             if vals:
                 head_summary[hk] = {k: round(sum(v[k] for v in vals) / len(vals), 4) for k in vals[0]}
 
-    report = {"experiment": "OTR-14 layer pipeline", "otr14_version": OTR14_VERSION,
+    report = {"status": split_status(args.split), "split": args.split, "experiment": "OTR-14 layer pipeline", "otr14_version": OTR14_VERSION,
               "generator_version": ors.GENERATOR_VERSION, "stimuli": args.stimuli, "model": args.model,
               "chat_template": args.chat_template, "base_question": args.base_question,
               "source_question": args.source_question, "patient_question": args.patient_question,
@@ -360,7 +364,7 @@ def main(argv=None):
               "seconds": round(time.time() - t0)}
     args.out_dir.mkdir(parents=True, exist_ok=True)
     stag = "" if args.stimuli == "otr" else f"_{args.stimuli}"
-    out = args.out_dir / f"otr14_{args.model.replace('/', '__')}_dev{stag}_{time.strftime('%Y%m%dT%H%M%S')}.json"
+    out = args.out_dir / f"otr14_{args.model.replace('/', '__')}_{args.split}{stag}_{time.strftime('%Y%m%dT%H%M%S')}.json"
     out.write_text(json.dumps(report, indent=1))
     print(f"wrote {out}")
     for k, v in summary.items():

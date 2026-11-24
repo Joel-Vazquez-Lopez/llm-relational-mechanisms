@@ -25,6 +25,7 @@ import dataclasses
 import random
 
 from relational_lab.experiments import broad_stimuli as bx
+from relational_lab.experiments.splits import in_split
 
 STIMULI = ("bx-transitive", "bx-ditransitive", "bx-psych")
 
@@ -102,8 +103,8 @@ def select_bases(stimuli: str, split: str, n_events: int, voices, seed: int, rol
     roles unless restricted, the given question voices)."""
     block = block_name(stimuli)
     cons = BASE_CONSTRUCTIONS[block]
-    pool = [normalize(i) for i in bx.generate_items(block, split=split, seed=seed, constructions_subset=cons)
-            if i.question_voice in set(voices)]
+    pool = [normalize(i) for i in bx.generate_items(block, split=None, seed=seed, constructions_subset=cons)
+            if i.question_voice in set(voices) and in_split(i, split)]
     events = sorted({i.event_id for i in pool})
     random.Random(seed).shuffle(events)
     keep = set(events[:n_events])
@@ -119,5 +120,5 @@ def repair_items(stimuli: str, seed: int, constructions, split: str = "dev"):
     """OTR-09 pool: one item per (event, construction) asking for the by-phrase role
     (active question voice; the question is replaced anyway)."""
     block = block_name(stimuli)
-    return [i for i in bx.generate_items(block, split=split, seed=seed, constructions_subset=tuple(constructions))
-            if i.question_voice == "active" and real_role(i) == bx.by_phrase_role(i)]
+    return [i for i in bx.generate_items(block, split=None, seed=seed, constructions_subset=tuple(constructions))
+            if i.question_voice == "active" and real_role(i) == bx.by_phrase_role(i) and in_split(i, split)]
