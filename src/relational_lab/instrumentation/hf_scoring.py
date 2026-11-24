@@ -97,10 +97,19 @@ def _prompt_ids(tokenizer, prompt: str, use_chat_template: bool) -> list[int]:
         text, _ = chat_text(tokenizer, prompt)
         return list(tokenizer(text, add_special_tokens=False)["input_ids"])
     if use_chat_template:
-        out = tokenizer.apply_chat_template(
-            [{"role": "user", "content": prompt}], add_generation_prompt=True, tokenize=True,
-            **chat.CHAT_TEMPLATE_KWARGS,
-        )
+        msgs = [{"role": "user", "content": prompt}]
+        if chat.SYSTEM_PROMPT[0]:
+            msgs = [{"role": "system", "content": chat.SYSTEM_PROMPT[0]}] + msgs
+        try:
+            out = tokenizer.apply_chat_template(msgs, add_generation_prompt=True, tokenize=True,
+                                                **chat.CHAT_TEMPLATE_KWARGS)
+        except Exception:
+            if len(msgs) == 1:
+                raise
+            # template without a system role: put the system text in front of the user turn
+            out = tokenizer.apply_chat_template(
+                [{"role": "user", "content": chat.SYSTEM_PROMPT[0] + "\n\n" + prompt}],
+                add_generation_prompt=True, tokenize=True, **chat.CHAT_TEMPLATE_KWARGS)
         # transformers >= 5 returns a BatchEncoding (dict-like); older versions a list.
         if not isinstance(out, list):
             out = out["input_ids"]

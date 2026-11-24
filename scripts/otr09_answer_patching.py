@@ -156,6 +156,8 @@ def main(argv=None):
                    help="real Wikipedia names, or two neutral OTR names swapped in (memory control)")
     p.add_argument("--base-question", default=None, help='default "Who was someone {past} by?" (bx: {pp})')
     p.add_argument("--source-question", default=None, help='default "Who was the {ing} done by?"')
+    p.add_argument("--controls", action="store_true",
+                   help="head controls: patch from another item's failing run; random nudge of the same norm")
     p.add_argument("--rank-from", type=Path, default=None,
                    help="OTR-09 result whose head ranking (top20) is tested on these items (transfer)")
     p.add_argument("--instruction", default="")
@@ -282,7 +284,8 @@ def main(argv=None):
         ld_s, cs = run(s, capture=True)
         _, cd = run(d, capture=True)
         rec = {"item_id": b.item_id, "family_id": b.family_id, "construction": b.construction,
-               "ld_base": ld_b, "ld_source": ld_s, "res": {}, "donor": {}, "reverse": {}, "heads_src": cs["head"]}
+               "ld_base": ld_b, "ld_source": ld_s, "res": {}, "donor": {}, "reverse": {}, "heads_src": cs["head"],
+               "heads_base": cb["head"]}
         for li in res_layers:
             rec["res"][li] = run(b, res_patch=(li, cs["res"][li]))[0]
             rec["donor"][li] = run(b, res_patch=(li, cd["res"][li]))[0]
@@ -329,14 +332,33 @@ def main(argv=None):
         print(f"  heads: layer {li} done, {time.time() - t1:.0f}s", flush=True)
     ranked = sorted(head_scores, key=lambda k: -(head_scores[k] if head_scores[k] is not None else -1e9))
 
-    def joint(head_keys, items):
+    ctrl_rng = random.Random(args.seed + 1)
+    gen = torch.Generator(device="cpu").manual_seed(args.seed)
+
+    def joint(head_keys, items, mode="source"):
+        """mode: source = the working run's head outputs (the repair); other_failing = head outputs
+        from ANOTHER item's failing run (no transferable state should repair); nudge = the failing
+        head output plus a random vector of the same norm as (working - failing)."""
         out = []
         for r in items:
             patch = defaultdict(dict)
+            other = None
+            if mode == "other_failing":
+                pool = [x for x in recs if x["family_id"] != r["family_id"]]
+                other = ctrl_rng.choice(pool)
             for k in head_keys:
                 li, h = (int(x) for x in k.split("."))
                 hd = attn[li][2]
-                patch[li][h] = r["heads_src"][li][h * hd:(h + 1) * hd]
+                sl = slice(h * hd, (h + 1) * hd)
+                if mode == "source":
+                    patch[li][h] = r["heads_src"][li][sl]
+                elif mode == "other_failing":
+                    patch[li][h] = other["heads_base"][li][sl]
+                else:
+                    base = r["heads_base"][li][sl]
+                    diff = (r["heads_src"][li][sl] - base).float()
+                    noise = torch.randn(diff.shape, generator=gen).to(diff.device)
+                    patch[li][h] = (base.float() + noise / noise.norm() * diff.norm()).to(base.dtype)
             ld = run(item_of[r["item_id"]], head_patch=dict(patch))[0]
             out.append((repair(ld, r["ld_base"], r["ld_source"]), float(ld > 0) if r["ld_base"] < 0 else float("nan")))
         return {"repair": mean([x for x, _ in out]), "flip_to_correct": mean([f for _, f in out]), "n": len(out)}
@@ -348,6 +370,9 @@ def main(argv=None):
         k = min(k, len(ranked))
         circuit[str(k)] = {"top": joint(ranked[:k], eval_set),
                            "random": joint(rng.sample(all_heads, k), eval_set)}
+        if args.controls:
+            circuit[str(k)]["top_other_failing"] = joint(ranked[:k], eval_set, "other_failing")
+            circuit[str(k)]["top_random_nudge"] = joint(ranked[:k], eval_set, "nudge")
     # transfer: heads ranked on another run (e.g. the original materials) tested on these items
     transfer = None
     if transfer_heads:
@@ -363,6 +388,9 @@ def main(argv=None):
                 "eval_items": joint(transfer_heads[:k], eval_set),
                 "all_items": joint(transfer_heads[:k], all_gap),
                 "random_same_layers": joint(rng.sample(t_pool, k), all_gap)}
+            if args.controls:
+                transfer["by_k"][str(k)]["other_failing"] = joint(transfer_heads[:k], all_gap, "other_failing")
+                transfer["by_k"][str(k)]["random_nudge"] = joint(transfer_heads[:k], all_gap, "nudge")
     named = None
     if args.heads:
         keys = [h.strip() for h in args.heads.split(",") if h.strip()]

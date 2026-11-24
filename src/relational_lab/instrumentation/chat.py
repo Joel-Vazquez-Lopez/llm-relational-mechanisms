@@ -15,6 +15,9 @@ CHAT_TEMPLATE_KWARGS: dict = {}
 # so that a model with a reasoning channel (Muse Glimmer) starts its final answer
 # directly. Empty by default.
 ASSISTANT_PREFIX: list[str] = [""]
+# Optional system message for every chat-template prompt (prompt-robustness runs). Empty = none,
+# which reproduces all earlier runs.
+SYSTEM_PROMPT: list[str] = [""]
 
 
 def assistant_prefix() -> str:
