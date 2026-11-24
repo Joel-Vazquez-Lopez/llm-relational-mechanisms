@@ -56,3 +56,10 @@ def test_otr09_frozen_heads_on_test(monkeypatch, tmp_path):
     r = json.loads(next(tmp_path.glob("otr09_tiny_test0_*.json")).read_text())
     assert r["status"] == "TEST_SET_OPENED" and r["skip_scan"]
     assert abs(r["circuit_eval"]["by_k"]["12"]["top"]["repair"] - 1.0) < 1e-3
+
+
+def test_otr06_prompts_split():
+    o6 = _load("otr06_logit_lens")
+    pr = o6.build_prompts(2026, [("agent", "Who was someone {past} by?")], "", 2, split="test0")
+    assert pr and all(it.test_set == 0 for _, it in pr)
+    assert all(it.split == "dev" for _, it in o6.build_prompts(2026, [("agent", "Who {past} someone?")], "", 2))

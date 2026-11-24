@@ -102,6 +102,7 @@ def main(argv=None):
     p.add_argument("--template-kwarg", action="append", default=[], metavar="KEY=VALUE")
     p.add_argument("--dtype", default="bfloat16")
     p.add_argument("--seed", type=int, default=2026)
+    p.add_argument("--split", default="dev", help="dev or test0..test3 (test only after FREEZE.md)")
     p.add_argument("--out-dir", type=Path, default=ROOT / "results")
     args = p.parse_args(argv)
     for role, _ in args.condition:
@@ -133,7 +134,8 @@ def main(argv=None):
     names = sorted(ors.NAMES)
     name_ix = {n: i for i, n in enumerate(names)}
 
-    prompts = otr06.build_prompts(args.seed, args.condition, args.instruction, args.n_per_construction)
+    prompts = otr06.build_prompts(args.seed, args.condition, args.instruction, args.n_per_construction,
+                                  split=args.split)
     store: list = [None] * L
     handles = [layer.register_forward_hook(lambda _m, _i, out, i=i: store.__setitem__(i, _hidden(out).detach()))
                for i, layer in enumerate(layers)]
@@ -246,7 +248,7 @@ def main(argv=None):
                         entry[f"top_patient_heads_{pname}"] = [(l, h, round(v, 3)) for v, l, h in flat[:10]]
                 agg[key] = entry
     report = {
-        "experiment": "OTR-07", "status": "EXPLORATORY", "version": OTR07_VERSION,
+        "experiment": "OTR-07", "status": "EXPLORATORY" if args.split == "dev" else "TEST_SET_OPENED", "split": args.split, "version": OTR07_VERSION,
         "generator_version": ors.GENERATOR_VERSION, "model": args.model, "chat_template": args.chat_template,
         "chat_template_kwargs": chat_kwargs, "instruction": args.instruction, "by_prefix": args.by_prefix,
         "conditions": [{"role": r, "template": t} for r, t in args.condition], "n_layers": L, "n_heads": H,
@@ -258,7 +260,7 @@ def main(argv=None):
     tag = "_instr" if args.instruction else ""
     if args.by_prefix != "{patient} was {verb} by":
         tag += "_byctl"
-    out = args.out_dir / f"otr07_{args.model.replace('/', '__')}_dev{tag}_{time.strftime('%Y%m%dT%H%M%S')}.json"
+    out = args.out_dir / f"otr07_{args.model.replace('/', '__')}_{args.split}{tag}_{time.strftime('%Y%m%dT%H%M%S')}.json"
     out.write_text(json.dumps(report))
     print(f"Wrote {out}")
     for k, v in agg.items():

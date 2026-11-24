@@ -66,7 +66,12 @@ def softcap(model) -> float | None:
     return None
 
 
-def build_prompts(seed: int, conditions, instruction: str, n_per: int | None, stimuli: str = "otr"):
+def _in_split(item, split):
+    from relational_lab.experiments.splits import in_split
+    return in_split(item, split)
+
+
+def build_prompts(seed: int, conditions, instruction: str, n_per: int | None, stimuli: str = "otr", split="dev"):
     """One prompt per (dev event in the four main constructions, condition).
 
     With ``stimuli="sp"`` each condition is (role, question form) on the stranded-preposition
@@ -87,7 +92,7 @@ def build_prompts(seed: int, conditions, instruction: str, n_per: int | None, st
                 out.append((ci, dataclasses.replace(it, prompt=prompt)))
         return out
     items = [i for i in ors.generate_items(seed=seed)
-             if i.split == "dev" and i.construction in ors.MAIN_CONSTRUCTIONS
+             if _in_split(i, split) and i.construction in ors.MAIN_CONSTRUCTIONS
              and i.question_voice == "active"]
     out = []
     for ci, (role, template) in enumerate(conditions):
