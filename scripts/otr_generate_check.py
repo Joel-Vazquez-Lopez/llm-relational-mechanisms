@@ -212,7 +212,7 @@ def prepared_prompts(stimuli="otr", seed=2026, n=256, question_template="", ques
                     from relational_lab.experiments import broad_stimuli as bx
                     question = bx.fill_template(question_template, it.lemma, bx.theme_of(it))
                 else:
-                    question = fill_template(question_template, it.verb, it.lemma)
+                    question = fill_template(question_template, it.verb, it.lemma, it.agent, it.patient)
                 assert it.prompt.count(f" {it.question}\n") == 1, it.prompt
                 it = dataclasses.replace(it, question=question, question_voice="custom",
                                          prompt=it.prompt.replace(f" {it.question}\n", f" {question}\n"))
@@ -266,7 +266,8 @@ def main(argv=None):
                         "Galician OTR; sv = Swedish OTR (NOT YET NATIVE-CHECKED); bx-* = broad English stimuli "
                         "(new names/verbs, many constructions)")
     p.add_argument("--question-template", default="",
-                   help='custom question, e.g. "Who was someone {past} by?" ({past}, {lemma}, {ing} filled per item)')
+                   help='custom question, e.g. "Who was someone {past} by?" ({past}, {lemma}, {ing}, {agent}, {patient} '
+                        'filled per item; names only for the core OTR stimuli)')
     p.add_argument("--question-role", choices=("agent", "patient", "recipient", "stimulus", "experiencer", "by"),
                    default=None, help="role the custom question asks for (required with --question-template); "
                    "'by' = the role a passive by-phrase expresses (broad stimuli, e.g. 'Who was someone {pp} by?')")

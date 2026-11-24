@@ -89,3 +89,12 @@ def test_otr03_donors_stay_in_split():
         held = otr.make_transplants(bases, seed=2026, pair_ok=ok, **kw)
         assert all(ok(t.source.agent, t.source.patient) for t in held)
         assert len(held) == len(free)
+
+
+def test_question_template_names():
+    """Question battery: {agent}/{patient} fill from the item; missing names fail loudly."""
+    from relational_lab.experiments.question_templates import fill
+    assert fill("Who was {patient} {past} by?", "chased", "chase", "Ann", "Bob") == "Who was Bob chased by?"
+    assert fill("Who was the {ing} done by?", "chased", "chase") == "Who was the chasing done by?"
+    with pytest.raises(ValueError):
+        fill("Who did {agent} {lemma}?", "chased", "chase")
