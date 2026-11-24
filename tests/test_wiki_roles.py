@@ -115,3 +115,13 @@ def test_shared_word_pairs_dropped():
     forms = wr.verb_forms()
     doc = nlp("In 1999, Wigan Highfield beat Wigan Johnson in the final.")
     assert not wr.extract_from_doc(doc, forms)
+
+
+def test_v021_initials_not_split_and_truncated_dropped(tmp_path):
+    s = list(wr.candidate_sentences("In 1843, Poe contacted Thomas C. Clarke about the magazine. "
+                                    "Later Poe met Anna Smith in Boston.", {"contacted", "met"}))
+    assert s[0].endswith("magazine.") and len(s) == 2
+    bad = dict(_rec("passive"), sentence="Paul Galetto was replaced by Donald F.", agent="Donald F.")
+    f = tmp_path / "w.jsonl"
+    f.write_text(json.dumps(bad) + "\n" + json.dumps(_rec("active")) + "\n")
+    assert [r["kind"] for r in wr.load_records(f)] == ["active"]

@@ -11,6 +11,7 @@ import argparse
 import csv
 import json
 import random
+import sys
 from pathlib import Path
 
 p = argparse.ArgumentParser()
@@ -19,7 +20,9 @@ p.add_argument("--n", type=int, default=200)
 p.add_argument("--out", type=Path, default=Path("docs/order_to_role/wiki_check_sheet.csv"))
 p.add_argument("--seed", type=int, default=2026)
 a = p.parse_args()
-recs = [json.loads(x) for x in a.jsonl.read_text(encoding="utf8").splitlines() if x.strip()]
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
+from relational_lab.experiments import wiki_roles as wr  # noqa: E402
+recs = wr.load_records(a.jsonl)  # drops sentences cut after an initial
 act = [r for r in recs if r["kind"] == "active"]
 pas = [r for r in recs if r["kind"] == "passive"]
 rng = random.Random(a.seed)

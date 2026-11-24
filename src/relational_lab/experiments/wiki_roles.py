@@ -27,7 +27,7 @@ import re
 
 from relational_lab.experiments import order_role_stimuli as ors
 
-WIKI_VERSION = "0.2.0"
+WIKI_VERSION = "0.2.1"
 CONSTRUCTIONS = ("wiki_active", "wiki_passive")
 
 PERSON_VERBS = sorted(set("""
@@ -39,7 +39,15 @@ oppose overthrow pardon persuade praise promote protect punish recruit replace r
 sack save shoot sign stab succeed sue support tackle teach thank threaten train treat tutor visit warn
 """.split()))
 
-_SENT_SPLIT = re.compile(r"(?<=[.!?])\s+(?=[A-Z\"'(])")
+# no split after a single-letter initial ("Thomas C. Smith"): 0.2.0 cut such sentences (0.2.1)
+_SENT_SPLIT = re.compile(r"(?<=[.!?])(?<!\b[A-Z]\.)\s+(?=[A-Z\"'(])")
+_TRUNCATED = re.compile(r"\b[A-Z]\.$")
+
+
+def is_truncated(rec: dict) -> bool:
+    """A sentence (or a name) cut after an initial by the 0.2.0 splitter: "... replaced by Donald F." """
+    return bool(_TRUNCATED.search(rec["sentence"].strip()) or _TRUNCATED.search(rec["agent"])
+                or _TRUNCATED.search(rec["patient"]))
 _WORD = re.compile(r"[A-Za-z]+")
 _CAP = re.compile(r"\b[A-Z][a-z]+")
 ORG_WORDS = set("""
@@ -226,7 +234,8 @@ def generate_pairs(records, base_q: str, source_q: str, instruction: str = "", n
     return out
 
 
-def load_records(path):
+def load_records(path, drop_truncated: bool = True):
     import json
     with open(path, encoding="utf8") as f:
-        return [json.loads(line) for line in f if line.strip()]
+        recs = [json.loads(line) for line in f if line.strip()]
+    return [r for r in recs if not (drop_truncated and is_truncated(r))]
