@@ -22,7 +22,7 @@ def manifest():
     dm, fixtures=diag.manifest()
     assert read(diag.MANIFEST)==dm
     train,held,_,_,vocab=fixtures
-    protocol=dict(study='ROLE-REPRESENTATION-LOCALISATION-v0',classification='exploratory',diagnostic_digest=dm['protocol_digest'],diagnostic_summary_sha=p.sha(diag.OUT/'analysis_summary.json'),script_sha=p.sha(SCRIPT),protocol_sha=p.sha(PROTOCOL),sites=SITES,populations=POPS,seeds=list(r.SEEDS),steps=list(r.MILESTONES),arms=list(p.ARMS),ridge=REG,split='fit unseen-role quartets; test disjoint withheld quartets; both AP/PA transfer directions and same voice; same bare/rich plus cross surface',train_ids=p.digest(train),held_ids=p.digest(held),inputs=dm['protocol']['inputs'])
+    protocol=dict(study='ROLE-REPRESENTATION-LOCALISATION-v0',classification='exploratory',diagnostic_digest=dm['protocol_digest'],diagnostic_summary_sha=p.sha(diag.OUT/'analysis_summary.json'),script_sha=p.sha(SCRIPT),protocol_sha=p.sha(PROTOCOL),sites=SITES,populations=list(POPS),seeds=list(r.SEEDS),steps=list(r.MILESTONES),arms=list(p.ARMS),ridge=REG,split='fit unseen-role quartets; test disjoint withheld quartets; both AP/PA transfer directions and same voice; same bare/rich plus cross surface',train_ids=p.digest(train),held_ids=p.digest(held),inputs=dm['protocol']['inputs'])
     assert not set(train)&set(held)
     return dict(protocol=protocol,protocol_digest=p.digest(protocol)),fixtures
 
