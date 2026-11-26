@@ -52,7 +52,7 @@ def test_otr09_frozen_heads_on_test(monkeypatch, tmp_path):
     prior.write_text(json.dumps({"head_scan": {"top20": [f"{li}.{h}" for li in range(3) for h in range(4)]}}))
     o9.main(["--model", "tiny", "--dtype", "float32", "--n-per", "3", "--layer-stride", "1", "--head-from", "0.6",
              "--top-k", "12", "--min-gap", "1e-4", "--split", "test0", "--skip-scan", "--rank-from", str(prior),
-             "--n-random", "2", "--out-dir", str(tmp_path)])
+             "--n-random", "2", "--controls", "--controls-extra", "--out-dir", str(tmp_path)])
     r = json.loads(next(tmp_path.glob("otr09_tiny_test0_*.json")).read_text())
     assert r["status"] == "TEST_SET_OPENED" and r["skip_scan"]
     assert abs(r["circuit_eval"]["by_k"]["12"]["top"]["repair"] - 1.0) < 1e-3
@@ -60,6 +60,8 @@ def test_otr09_frozen_heads_on_test(monkeypatch, tmp_path):
     assert tr["random_same_layers"]["n_draws"] == 2
     assert len(tr["all_items"]["items"]) == len(tr["random_same_layers"]["items"]) == tr["all_items"]["n"]
     assert all("family_id" in x for x in tr["all_items"]["items"])
+    for mode in ("other_failing", "random_nudge", "mean_failing", "other_working"):
+        assert tr[mode]["n"] == tr["all_items"]["n"]
 
 
 def test_otr06_prompts_split():

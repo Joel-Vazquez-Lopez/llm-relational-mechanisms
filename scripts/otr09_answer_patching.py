@@ -168,6 +168,9 @@ def main(argv=None):
                    help="independent random-head draws per k (per-item mean over draws); 1 = original")
     p.add_argument("--controls", action="store_true",
                    help="head controls: patch from another item's failing run; random nudge of the same norm")
+    p.add_argument("--controls-extra", action="store_true",
+                   help="exploratory controls: the mean head output over other families' failing runs "
+                        "(removes item content), and another item's WORKING run")
     p.add_argument("--rank-from", type=Path, default=None,
                    help="OTR-09 result whose head ranking (top20) is tested on these items (transfer)")
     p.add_argument("--instruction", default="")
@@ -361,6 +364,17 @@ def main(argv=None):
     ctrl_rng = random.Random(args.seed + 1)
     gen = torch.Generator(device="cpu").manual_seed(args.seed)
 
+    mean_heads, mean_heads_fam = {}, defaultdict(dict)
+    if getattr(args, "controls_extra", False):
+        # sums of the failing-run head outputs per layer, overall and per family (for leave-family-out means)
+        for r in recs:
+            for li, v in r["heads_base"].items():
+                v = v.float()
+                t, n = mean_heads.get(li, (torch.zeros_like(v), 0))
+                mean_heads[li] = (t + v, n + 1)
+                ft, fn = mean_heads_fam[r["family_id"]].get(li, (torch.zeros_like(v), 0))
+                mean_heads_fam[r["family_id"]][li] = (ft + v, fn + 1)
+
     def joint(head_keys, items, mode="source"):
         """mode: source = the working run's head outputs (the repair); other_failing = head outputs
         from ANOTHER item's failing run (no transferable state should repair); nudge = the failing
@@ -369,7 +383,7 @@ def main(argv=None):
         for r in items:
             patch = defaultdict(dict)
             other = None
-            if mode == "other_failing":
+            if mode in ("other_failing", "other_working"):
                 pool = [x for x in recs if x["family_id"] != r["family_id"]]
                 other = ctrl_rng.choice(pool)
             for k in head_keys:
@@ -380,6 +394,12 @@ def main(argv=None):
                     patch[li][h] = r["heads_src"][li][sl]
                 elif mode == "other_failing":
                     patch[li][h] = other["heads_base"][li][sl]
+                elif mode == "other_working":
+                    patch[li][h] = other["heads_src"][li][sl]
+                elif mode == "mean_failing":
+                    tot, n = mean_heads[li]
+                    fam_tot, fam_n = mean_heads_fam[r["family_id"]][li]
+                    patch[li][h] = ((tot - fam_tot) / max(n - fam_n, 1))[sl].to(r["heads_base"][li].dtype)
                 else:
                     base = r["heads_base"][li][sl]
                     diff = (r["heads_src"][li][sl] - base).float()
@@ -431,6 +451,9 @@ def main(argv=None):
             if args.controls:
                 transfer["by_k"][str(k)]["other_failing"] = joint(transfer_heads[:k], all_gap, "other_failing")
                 transfer["by_k"][str(k)]["random_nudge"] = joint(transfer_heads[:k], all_gap, "nudge")
+                if args.controls_extra:
+                    transfer["by_k"][str(k)]["mean_failing"] = joint(transfer_heads[:k], all_gap, "mean_failing")
+                    transfer["by_k"][str(k)]["other_working"] = joint(transfer_heads[:k], all_gap, "other_working")
     named = None
     if args.heads:
         keys = [h.strip() for h in args.heads.split(",") if h.strip()]
