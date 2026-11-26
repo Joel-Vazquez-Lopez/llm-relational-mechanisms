@@ -131,6 +131,8 @@ def main(argv=None):
     p.add_argument("--constructions", default=None)
     p.add_argument("--n-per", type=int, default=16)
     p.add_argument("--layer-stride", type=int, default=2)
+    p.add_argument("--layers", default=None, metavar="L1,L2,...",
+                   help="explicit layer list (overrides --layer-stride); e.g. only the frozen layers on test runs")
     p.add_argument("--min-gap", type=float, default=1.0)
     p.add_argument("--rank-from", type=Path, default=None, help="OTR-09 result: its top heads' attention is recorded")
     p.add_argument("--n-heads-attn", type=int, default=10)
@@ -168,7 +170,12 @@ def main(argv=None):
     model = model.to(device).eval()
     layers = decoder_layers(model)
     L = len(layers)
-    lays = sorted(set(range(0, L, args.layer_stride)) | {L - 1})
+    if args.layers:
+        lays = sorted({int(x) for x in args.layers.split(",") if x.strip()})
+        if not lays or lays[0] < 0 or lays[-1] >= L:
+            raise SystemExit(f"--layers must lie in 0..{L - 1}")
+    else:
+        lays = sorted(set(range(0, L, args.layer_stride)) | {L - 1})
     attn_layers = {li for li in lays if getattr(getattr(layers[li], "self_attn", None), "forward", None) is not None}
     lead = not args.chat_template
     cons = [c.strip() for c in args.constructions.split(",")]

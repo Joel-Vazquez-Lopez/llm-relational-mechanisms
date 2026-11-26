@@ -51,3 +51,17 @@ def test_smoke_tiny_exact_last_layer_repair(monkeypatch, tmp_path):
     assert abs(r["circuit_eval"]["by_k"]["12"]["top"]["repair"] - 1.0) < 1e-3
     assert r["circuit_eval"]["named_heads"]["heads"] == ["1.0", "2.3"]
     assert (tmp_path / (next(tmp_path.glob("otr09_*.json")).stem + ".png")).exists()
+
+
+def test_layers_option(monkeypatch, tmp_path):
+    """--layers restricts the residual scan (lean test runs); a layer outside the model is refused."""
+    pytest.importorskip("transformers")
+    from test_logit_lens import _tiny
+    _tiny(monkeypatch)
+    o9 = _o9()
+    o9.main(["--model", "tiny", "--dtype", "float32", "--n-per", "4", "--layers", "0,2", "--head-from", "0",
+             "--n-rank", "4", "--top-k", "2", "--min-gap", "1e-4", "--out-dir", str(tmp_path)])
+    r = json.loads(next(tmp_path.glob("otr09_*.json")).read_text())
+    assert r["residual_layers"] == [0, 2] and len(r["residual"]["all"]["repair"]) == 2
+    with pytest.raises(SystemExit):
+        o9.main(["--model", "tiny", "--dtype", "float32", "--n-per", "2", "--layers", "7", "--out-dir", str(tmp_path)])

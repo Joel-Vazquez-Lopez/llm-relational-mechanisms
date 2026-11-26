@@ -175,6 +175,8 @@ def main(argv=None):
                    help="default: the four main constructions (bx-psych: the six of both verb classes)")
     p.add_argument("--n-per", type=int, default=32, help="sentences per construction")
     p.add_argument("--layer-stride", type=int, default=2)
+    p.add_argument("--layers", default=None, metavar="L1,L2,...",
+                   help="explicit layer list (overrides --layer-stride); e.g. only the frozen layers on test runs")
     p.add_argument("--head-from", type=float, default=0.55, help="relative depth from which heads are scanned")
     p.add_argument("--n-rank", type=int, default=24, help="ranking items for the head scan (largest gaps)")
     p.add_argument("--top-k", default="1,3,5,10,20")
@@ -228,7 +230,12 @@ def main(argv=None):
     model = model.to(device).eval()
     layers = decoder_layers(model)
     L = len(layers)
-    res_layers = sorted(set(range(0, L, args.layer_stride)) | {L - 1})
+    if args.layers:
+        res_layers = sorted({int(x) for x in args.layers.split(",") if x.strip()})
+        if not res_layers or res_layers[0] < 0 or res_layers[-1] >= L:
+            raise SystemExit(f"--layers must lie in 0..{L - 1}")
+    else:
+        res_layers = sorted(set(range(0, L, args.layer_stride)) | {L - 1})
     attn = attn_modules(layers)
     head_layers = [li for li in sorted(attn) if li >= args.head_from * (L - 1)]
     scan_layers = list(head_layers)
@@ -309,7 +316,7 @@ def main(argv=None):
             print(f"  residual: {n}/{len(triples)} items, {time.time() - t0:.0f}s", flush=True)
 
     def mean(xs):
-        xs = [x for x in xs if x == x]
+        xs = [x for x in xs if x is not None and x == x]
         return round(sum(xs) / len(xs), 4) if xs else None
 
     residual = {}

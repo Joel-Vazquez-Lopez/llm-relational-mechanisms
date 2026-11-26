@@ -43,3 +43,19 @@ def test_smoke(monkeypatch, tmp_path):
         assert s[k] is not None and len(s[k]["mean"]) == 3
     assert r["n_items"] > 0 and r["items"][0]["family_id"]
     assert r["heads_attention_available"] and set(r["heads_attention"]) == {"2.1", "1.0", "0.3"}
+
+
+def test_layers_option(monkeypatch, tmp_path):
+    """--layers keeps only the listed layers (the frozen "by" layer on lean test runs)."""
+    pytest.importorskip("transformers")
+    from test_bx_mechanism import _tiny_bx
+    from relational_lab.experiments import order_role_stimuli as ors
+    extra = [i.prompt for i in ors.generate_items()[:3000]] + [" " + n for n in ors.NAMES] * 50
+    extra += ["Who was watched by someone? Who was praised by someone?"] * 20
+    _tiny_bx(monkeypatch, extra)
+    o14 = _mod()
+    o14.main(["--model", "tiny", "--dtype", "float32", "--n-per", "2", "--layers", "1", "--min-gap=-1e9",
+              "--instruction", "", "--n-boot", "20", "--out-dir", str(tmp_path)])
+    r = json.loads(next(tmp_path.glob("otr14_*.json")).read_text())
+    assert r["layers"] == [1]
+    assert all(len(c["by_from_failing"]) == 1 for c in r["curves"].values())
