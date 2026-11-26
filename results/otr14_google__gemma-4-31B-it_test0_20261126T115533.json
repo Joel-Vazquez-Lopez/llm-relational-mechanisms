@@ -1,0 +1,6467 @@
+{
+ "status": "TEST_SET_OPENED",
+ "split": "test0",
+ "experiment": "OTR-14 layer pipeline",
+ "otr14_version": "1.0.0",
+ "generator_version": "1.3.0",
+ "stimuli": "otr",
+ "model": "google/gemma-4-31B-it",
+ "chat_template": true,
+ "base_question": "Who was someone {past} by?",
+ "source_question": "Who was the {ing} done by?",
+ "patient_question": "Who was {past} by someone?",
+ "instruction": "Reply with one name only.",
+ "n_layers": 60,
+ "layers": [
+  28
+ ],
+ "attention_blocking_layers": [
+  28
+ ],
+ "heads_attention_available": true,
+ "n_items": 64,
+ "n_base_wrong": 23,
+ "summary": {
+  "read_question_fail": {
+   "mean": [
+    -0.0051
+   ],
+   "ci_low": [
+    -0.0157
+   ],
+   "ci_high": [
+    0.0047
+   ],
+   "onset_depth": NaN,
+   "onset_ci": [
+    0.475,
+    0.475
+   ],
+   "peak_depth": NaN,
+   "peak_ci": [
+    0.475,
+    0.475
+   ],
+   "n_items": 64,
+   "n_families": 40
+  },
+  "read_names_fail": {
+   "mean": [
+    -0.0038
+   ],
+   "ci_low": [
+    -0.0135
+   ],
+   "ci_high": [
+    0.0055
+   ],
+   "onset_depth": NaN,
+   "onset_ci": [
+    0.475,
+    0.475
+   ],
+   "peak_depth": NaN,
+   "peak_ci": [
+    0.475,
+    0.475
+   ],
+   "n_items": 64,
+   "n_families": 40
+  },
+  "read_question_work": {
+   "mean": [
+    -0.0007
+   ],
+   "ci_low": [
+    -0.0032
+   ],
+   "ci_high": [
+    0.0016
+   ],
+   "onset_depth": NaN,
+   "onset_ci": [
+    0.475,
+    0.475
+   ],
+   "peak_depth": NaN,
+   "peak_ci": [
+    0.475,
+    0.475
+   ],
+   "n_items": 64,
+   "n_families": 40
+  },
+  "read_names_work": {
+   "mean": [
+    -0.0011
+   ],
+   "ci_low": [
+    -0.0042
+   ],
+   "ci_high": [
+    0.0024
+   ],
+   "onset_depth": NaN,
+   "onset_ci": [
+    0.475,
+    0.475
+   ],
+   "peak_depth": NaN,
+   "peak_ci": [
+    0.475,
+    0.475
+   ],
+   "n_items": 64,
+   "n_families": 40
+  },
+  "swap_question": {
+   "mean": [
+    0.9794
+   ],
+   "ci_low": [
+    0.9721
+   ],
+   "ci_high": [
+    0.9874
+   ],
+   "onset_depth": 0.475,
+   "onset_ci": [
+    0.475,
+    0.475
+   ],
+   "peak_depth": 0.475,
+   "peak_ci": [
+    0.475,
+    0.475
+   ],
+   "n_items": 64,
+   "n_families": 40
+  },
+  "swap_answer": {
+   "mean": [
+    0.0007
+   ],
+   "ci_low": [
+    -0.008
+   ],
+   "ci_high": [
+    0.0104
+   ],
+   "onset_depth": 0.475,
+   "onset_ci": [
+    0.475,
+    0.475
+   ],
+   "peak_depth": 0.475,
+   "peak_ci": [
+    0.475,
+    0.475
+   ],
+   "n_items": 64,
+   "n_families": 40
+  },
+  "by_from_failing": {
+   "mean": [
+    0.763
+   ],
+   "ci_low": [
+    0.2541
+   ],
+   "ci_high": [
+    1.5503
+   ],
+   "onset_depth": 0.475,
+   "onset_ci": [
+    0.475,
+    0.475
+   ],
+   "peak_depth": 0.475,
+   "peak_ci": [
+    0.475,
+    0.475
+   ],
+   "n_items": 64,
+   "n_families": 40
+  },
+  "by_from_patient": {
+   "mean": [
+    0.1648
+   ],
+   "ci_low": [
+    0.0681
+   ],
+   "ci_high": [
+    0.2835
+   ],
+   "onset_depth": 0.475,
+   "onset_ci": [
+    0.475,
+    0.475
+   ],
+   "peak_depth": 0.475,
+   "peak_ci": [
+    0.475,
+    0.475
+   ],
+   "n_items": 64,
+   "n_families": 40
+  },
+  "by_from_patient_wrong": {
+   "mean": [
+    0.0483
+   ],
+   "ci_low": [
+    0.022
+   ],
+   "ci_high": [
+    0.0916
+   ],
+   "onset_depth": 0.475,
+   "onset_ci": [
+    0.475,
+    0.475
+   ],
+   "peak_depth": 0.475,
+   "peak_ci": [
+    0.475,
+    0.475
+   ],
+   "n_items": 23,
+   "n_families": 16
+  },
+  "by_from_patient_right": {
+   "mean": [
+    0.2302
+   ],
+   "ci_low": [
+    0.0828
+   ],
+   "ci_high": [
+    0.4138
+   ],
+   "onset_depth": 0.475,
+   "onset_ci": [
+    0.475,
+    0.475
+   ],
+   "peak_depth": 0.475,
+   "peak_ci": [
+    0.475,
+    0.475
+   ],
+   "n_items": 41,
+   "n_families": 29
+  }
+ },
+ "heads_attention": {
+  "49.16": {
+   "fail_agent": 0.0003,
+   "fail_patient": 0.0003,
+   "work_agent": 0.0001,
+   "work_patient": 0.0
+  },
+  "40.12": {
+   "fail_agent": 0.0008,
+   "fail_patient": 0.0004,
+   "work_agent": 0.0038,
+   "work_patient": 0.0015
+  },
+  "39.23": {
+   "fail_agent": 0.0031,
+   "fail_patient": 0.0034,
+   "work_agent": 0.0087,
+   "work_patient": 0.0078
+  },
+  "56.4": {
+   "fail_agent": 0.003,
+   "fail_patient": 0.0017,
+   "work_agent": 0.0053,
+   "work_patient": 0.0004
+  },
+  "58.26": {
+   "fail_agent": 0.0006,
+   "fail_patient": 0.0008,
+   "work_agent": 0.0005,
+   "work_patient": 0.0007
+  },
+  "46.29": {
+   "fail_agent": 0.0032,
+   "fail_patient": 0.0021,
+   "work_agent": 0.0038,
+   "work_patient": 0.0015
+  },
+  "40.1": {
+   "fail_agent": 0.0458,
+   "fail_patient": 0.0299,
+   "work_agent": 0.1109,
+   "work_patient": 0.0134
+  },
+  "41.14": {
+   "fail_agent": 0.0554,
+   "fail_patient": 0.0485,
+   "work_agent": 0.0777,
+   "work_patient": 0.0082
+  },
+  "49.31": {
+   "fail_agent": 0.0,
+   "fail_patient": 0.0,
+   "work_agent": 0.0,
+   "work_patient": 0.0
+  },
+  "57.13": {
+   "fail_agent": 0.0565,
+   "fail_patient": 0.0454,
+   "work_agent": 0.0771,
+   "work_patient": 0.0206
+  }
+ },
+ "items": [
+  {
+   "item_id": "Anna>George:watch:active:agent:active",
+   "family_id": "Anna|George",
+   "construction": "active",
+   "ld_failing": 0.625,
+   "ld_working": 31.8125,
+   "ld_patient_q": -32.4375,
+   "heads_attention": {
+    "49.16": {
+     "fail_agent": 0.0004215240478515625,
+     "fail_patient": 0.000576019287109375,
+     "work_agent": 2.4557113647460938e-05,
+     "work_patient": 1.0907649993896484e-05
+    },
+    "40.12": {
+     "fail_agent": 7.534027099609375e-05,
+     "fail_patient": 0.0004138946533203125,
+     "work_agent": 0.0019073486328125,
+     "work_patient": 0.0019683837890625
+    },
+    "39.23": {
+     "fail_agent": 0.0021209716796875,
+     "fail_patient": 0.003387451171875,
+     "work_agent": 0.0089111328125,
+     "work_patient": 0.0081787109375
+    },
+    "56.4": {
+     "fail_agent": 0.0012359619140625,
+     "fail_patient": 0.0026092529296875,
+     "work_agent": 0.00250244140625,
+     "work_patient": 0.00041961669921875
+    },
+    "58.26": {
+     "fail_agent": 0.00113677978515625,
+     "fail_patient": 0.0009765625,
+     "work_agent": 0.000644683837890625,
+     "work_patient": 0.000293731689453125
+    },
+    "46.29": {
+     "fail_agent": 0.00141143798828125,
+     "fail_patient": 0.00193023681640625,
+     "work_agent": 0.0034027099609375,
+     "work_patient": 0.0010223388671875
+    },
+    "40.1": {
+     "fail_agent": 0.0162353515625,
+     "fail_patient": 0.1162109375,
+     "work_agent": 0.1103515625,
+     "work_patient": 0.00994873046875
+    },
+    "41.14": {
+     "fail_agent": 0.06689453125,
+     "fail_patient": 0.08203125,
+     "work_agent": 0.0673828125,
+     "work_patient": 0.0059814453125
+    },
+    "49.31": {
+     "fail_agent": 1.0013580322265625e-05,
+     "fail_patient": 1.3709068298339844e-05,
+     "work_agent": 2.4557113647460938e-05,
+     "work_patient": 2.1696090698242188e-05
+    },
+    "57.13": {
+     "fail_agent": 0.023193359375,
+     "fail_patient": 0.0693359375,
+     "work_agent": 0.061767578125,
+     "work_patient": 0.0341796875
+    }
+   }
+  },
+  {
+   "item_id": "Kate>Grace:chase:active:agent:active",
+   "family_id": "Grace|Kate",
+   "construction": "active",
+   "ld_failing": -11.5,
+   "ld_working": 31.4375,
+   "ld_patient_q": -34.75,
+   "heads_attention": {
+    "49.16": {
+     "fail_agent": 0.00012493133544921875,
+     "fail_patient": 0.0004367828369140625,
+     "work_agent": 4.506111145019531e-05,
+     "work_patient": 8.344650268554688e-06
+    },
+    "40.12": {
+     "fail_agent": 4.482269287109375e-05,
+     "fail_patient": 0.0004825592041015625,
+     "work_agent": 0.0024871826171875,
+     "work_patient": 0.0040283203125
+    },
+    "39.23": {
+     "fail_agent": 0.00201416015625,
+     "fail_patient": 0.00555419921875,
+     "work_agent": 0.01129150390625,
+     "work_patient": 0.0140380859375
+    },
+    "56.4": {
+     "fail_agent": 0.0001850128173828125,
+     "fail_patient": 0.006317138671875,
+     "work_agent": 0.00154876708984375,
+     "work_patient": 0.000732421875
+    },
+    "58.26": {
+     "fail_agent": 0.000614166259765625,
+     "fail_patient": 0.0003108978271484375,
+     "work_agent": 0.0002536773681640625,
+     "work_patient": 9.679794311523438e-05
+    },
+    "46.29": {
+     "fail_agent": 0.0014801025390625,
+     "fail_patient": 0.003448486328125,
+     "work_agent": 0.00537109375,
+     "work_patient": 0.0031585693359375
+    },
+    "40.1": {
+     "fail_agent": 0.01300048828125,
+     "fail_patient": 0.1005859375,
+     "work_agent": 0.1240234375,
+     "work_patient": 0.00927734375
+    },
+    "41.14": {
+     "fail_agent": 0.01495361328125,
+     "fail_patient": 0.146484375,
+     "work_agent": 0.08642578125,
+     "work_patient": 0.01031494140625
+    },
+    "49.31": {
+     "fail_agent": 1.7657876014709473e-06,
+     "fail_patient": 6.139278411865234e-06,
+     "work_agent": 8.52346420288086e-06,
+     "work_patient": 6.258487701416016e-06
+    },
+    "57.13": {
+     "fail_agent": 0.048095703125,
+     "fail_patient": 0.0703125,
+     "work_agent": 0.07666015625,
+     "work_patient": 0.0177001953125
+    }
+   }
+  },
+  {
+   "item_id": "Michael>Frank:greet:active:agent:active",
+   "family_id": "Frank|Michael",
+   "construction": "active",
+   "ld_failing": 5.5,
+   "ld_working": 33.75,
+   "ld_patient_q": -37.5625,
+   "heads_attention": {
+    "49.16": {
+     "fail_agent": 0.00034332275390625,
+     "fail_patient": 0.0003662109375,
+     "work_agent": 1.3053417205810547e-05,
+     "work_patient": 4.798173904418945e-06
+    },
+    "40.12": {
+     "fail_agent": 6.103515625e-05,
+     "fail_patient": 0.0007476806640625,
+     "work_agent": 0.0012359619140625,
+     "work_patient": 0.0030670166015625
+    },
+    "39.23": {
+     "fail_agent": 0.001556396484375,
+     "fail_patient": 0.004791259765625,
+     "work_agent": 0.00714111328125,
+     "work_patient": 0.01068115234375
+    },
+    "56.4": {
+     "fail_agent": 0.0002155303955078125,
+     "fail_patient": 0.00164031982421875,
+     "work_agent": 0.00151824951171875,
+     "work_patient": 0.000232696533203125
+    },
+    "58.26": {
+     "fail_agent": 0.000835418701171875,
+     "fail_patient": 0.000850677490234375,
+     "work_agent": 0.0006866455078125,
+     "work_patient": 0.0004787445068359375
+    },
+    "46.29": {
+     "fail_agent": 0.00116729736328125,
+     "fail_patient": 0.0028839111328125,
+     "work_agent": 0.0026397705078125,
+     "work_patient": 0.00180816650390625
+    },
+    "40.1": {
+     "fail_agent": 0.0089111328125,
+     "fail_patient": 0.050537109375,
+     "work_agent": 0.11328125,
+     "work_patient": 0.00958251953125
+    },
+    "41.14": {
+     "fail_agent": 0.02880859375,
+     "fail_patient": 0.10888671875,
+     "work_agent": 0.06982421875,
+     "work_patient": 0.01092529296875
+    },
+    "49.31": {
+     "fail_agent": 6.109476089477539e-06,
+     "fail_patient": 4.470348358154297e-06,
+     "work_agent": 1.9311904907226562e-05,
+     "work_patient": 7.539987564086914e-06
+    },
+    "57.13": {
+     "fail_agent": 0.019775390625,
+     "fail_patient": 0.04443359375,
+     "work_agent": 0.04736328125,
+     "work_patient": 0.02099609375
+    }
+   }
+  },
+  {
+   "item_id": "Peter>Kate:chase:active:agent:active",
+   "family_id": "Kate|Peter",
+   "construction": "active",
+   "ld_failing": -9.5,
+   "ld_working": 29.96875,
+   "ld_patient_q": -33.5625,
+   "heads_attention": {
+    "49.16": {
+     "fail_agent": 0.00012969970703125,
+     "fail_patient": 0.000797271728515625,
+     "work_agent": 1.7762184143066406e-05,
+     "work_patient": 5.0961971282958984e-06
+    },
+    "40.12": {
+     "fail_agent": 6.031990051269531e-05,
+     "fail_patient": 0.00109100341796875,
+     "work_agent": 0.00179290771484375,
+     "work_patient": 0.004364013671875
+    },
+    "39.23": {
+     "fail_agent": 0.0028076171875,
+     "fail_patient": 0.00787353515625,
+     "work_agent": 0.0101318359375,
+     "work_patient": 0.013427734375
+    },
+    "56.4": {
+     "fail_agent": 0.00013446807861328125,
+     "fail_patient": 0.00335693359375,
+     "work_agent": 0.002685546875,
+     "work_patient": 0.00049591064453125
+    },
+    "58.26": {
+     "fail_agent": 0.000957489013671875,
+     "fail_patient": 0.0003204345703125,
+     "work_agent": 0.000598907470703125,
+     "work_patient": 0.0001811981201171875
+    },
+    "46.29": {
+     "fail_agent": 0.000865936279296875,
+     "fail_patient": 0.004974365234375,
+     "work_agent": 0.0027923583984375,
+     "work_patient": 0.0028839111328125
+    },
+    "40.1": {
+     "fail_agent": 0.01531982421875,
+     "fail_patient": 0.13671875,
+     "work_agent": 0.1435546875,
+     "work_patient": 0.00946044921875
+    },
+    "41.14": {
+     "fail_agent": 0.035888671875,
+     "fail_patient": 0.181640625,
+     "work_agent": 0.068359375,
+     "work_patient": 0.005615234375
+    },
+    "49.31": {
+     "fail_agent": 4.202127456665039e-06,
+     "fail_patient": 2.7120113372802734e-06,
+     "work_agent": 2.5033950805664062e-05,
+     "work_patient": 4.082918167114258e-06
+    },
+    "57.13": {
+     "fail_agent": 0.02587890625,
+     "fail_patient": 0.1162109375,
+     "work_agent": 0.06640625,
+     "work_patient": 0.040283203125
+    }
+   }
+  },
+  {
+   "item_id": "Alice>Tom:call:active:agent:active",
+   "family_id": "Alice|Tom",
+   "construction": "active",
+   "ld_failing": -11.0625,
+   "ld_working": 38.25,
+   "ld_patient_q": -33.25,
+   "heads_attention": {
+    "49.16": {
+     "fail_agent": 5.507469177246094e-05,
+     "fail_patient": 0.000522613525390625,
+     "work_agent": 1.4066696166992188e-05,
+     "work_patient": 7.987022399902344e-06
+    },
+    "40.12": {
+     "fail_agent": 0.0002727508544921875,
+     "fail_patient": 0.00147247314453125,
+     "work_agent": 0.0024566650390625,
+     "work_patient": 0.004730224609375
+    },
+    "39.23": {
+     "fail_agent": 0.003265380859375,
+     "fail_patient": 0.006622314453125,
+     "work_agent": 0.0108642578125,
+     "work_patient": 0.01165771484375
+    },
+    "56.4": {
+     "fail_agent": 0.000568389892578125,
+     "fail_patient": 0.00738525390625,
+     "work_agent": 0.0027923583984375,
+     "work_patient": 0.0007781982421875
+    },
+    "58.26": {
+     "fail_agent": 0.00066375732421875,
+     "fail_patient": 0.0002918243408203125,
+     "work_agent": 0.0004520416259765625,
+     "work_patient": 0.0001220703125
+    },
+    "46.29": {
+     "fail_agent": 0.002532958984375,
+     "fail_patient": 0.0031585693359375,
+     "work_agent": 0.004425048828125,
+     "work_patient": 0.0017852783203125
+    },
+    "40.1": {
+     "fail_agent": 0.01373291015625,
+     "fail_patient": 0.1181640625,
+     "work_agent": 0.138671875,
+     "work_patient": 0.01416015625
+    },
+    "41.14": {
+     "fail_agent": 0.029052734375,
+     "fail_patient": 0.1953125,
+     "work_agent": 0.0791015625,
+     "work_patient": 0.01312255859375
+    },
+    "49.31": {
+     "fail_agent": 5.453824996948242e-06,
+     "fail_patient": 3.7550926208496094e-06,
+     "work_agent": 3.600120544433594e-05,
+     "work_patient": 8.52346420288086e-06
+    },
+    "57.13": {
+     "fail_agent": 0.0242919921875,
+     "fail_patient": 0.07958984375,
+     "work_agent": 0.05810546875,
+     "work_patient": 0.026611328125
+    }
+   }
+  },
+  {
+   "item_id": "Julia>Paul:admire:active:agent:active",
+   "family_id": "Julia|Paul",
+   "construction": "active",
+   "ld_failing": -5.875,
+   "ld_working": 36.1875,
+   "ld_patient_q": -30.875,
+   "heads_attention": {
+    "49.16": {
+     "fail_agent": 0.000335693359375,
+     "fail_patient": 0.0004863739013671875,
+     "work_agent": 2.4318695068359375e-05,
+     "work_patient": 5.424022674560547e-06
+    },
+    "40.12": {
+     "fail_agent": 8.344650268554688e-05,
+     "fail_patient": 0.0003833770751953125,
+     "work_agent": 0.0020904541015625,
+     "work_patient": 0.00170135498046875
+    },
+    "39.23": {
+     "fail_agent": 0.002166748046875,
+     "fail_patient": 0.00439453125,
+     "work_agent": 0.00823974609375,
+     "work_patient": 0.01055908203125
+    },
+    "56.4": {
+     "fail_agent": 0.000705718994140625,
+     "fail_patient": 0.0037994384765625,
+     "work_agent": 0.002777099609375,
+     "work_patient": 0.00016117095947265625
+    },
+    "58.26": {
+     "fail_agent": 0.00069427490234375,
+     "fail_patient": 0.000690460205078125,
+     "work_agent": 0.0004825592041015625,
+     "work_patient": 0.000396728515625
+    },
+    "46.29": {
+     "fail_agent": 0.0016326904296875,
+     "fail_patient": 0.004425048828125,
+     "work_agent": 0.003692626953125,
+     "work_patient": 0.00164031982421875
+    },
+    "40.1": {
+     "fail_agent": 0.0084228515625,
+     "fail_patient": 0.08251953125,
+     "work_agent": 0.10546875,
+     "work_patient": 0.011474609375
+    },
+    "41.14": {
+     "fail_agent": 0.029296875,
+     "fail_patient": 0.146484375,
+     "work_agent": 0.0625,
+     "work_patient": 0.0079345703125
+    },
+    "49.31": {
+     "fail_agent": 8.404254913330078e-06,
+     "fail_patient": 3.084540367126465e-06,
+     "work_agent": 2.0623207092285156e-05,
+     "work_patient": 6.288290023803711e-06
+    },
+    "57.13": {
+     "fail_agent": 0.0311279296875,
+     "fail_patient": 0.06787109375,
+     "work_agent": 0.07177734375,
+     "work_patient": 0.0308837890625
+    }
+   }
+  },
+  {
+   "item_id": "Laura>James:warn:active:agent:active",
+   "family_id": "James|Laura",
+   "construction": "active",
+   "ld_failing": 26.875,
+   "ld_working": 32.9375,
+   "ld_patient_q": -36.875,
+   "heads_attention": {
+    "49.16": {
+     "fail_agent": 0.00010061264038085938,
+     "fail_patient": 8.916854858398438e-05,
+     "work_agent": 3.266334533691406e-05,
+     "work_patient": 2.110004425048828e-05
+    },
+    "40.12": {
+     "fail_agent": 0.00015163421630859375,
+     "fail_patient": 0.00066375732421875,
+     "work_agent": 0.001983642578125,
+     "work_patient": 0.0034332275390625
+    },
+    "39.23": {
+     "fail_agent": 0.0028839111328125,
+     "fail_patient": 0.004913330078125,
+     "work_agent": 0.008056640625,
+     "work_patient": 0.00830078125
+    },
+    "56.4": {
+     "fail_agent": 0.0023345947265625,
+     "fail_patient": 0.00146484375,
+     "work_agent": 0.00225830078125,
+     "work_patient": 0.000881195068359375
+    },
+    "58.26": {
+     "fail_agent": 0.00041961669921875,
+     "fail_patient": 0.0002841949462890625,
+     "work_agent": 0.000514984130859375,
+     "work_patient": 0.00018405914306640625
+    },
+    "46.29": {
+     "fail_agent": 0.004180908203125,
+     "fail_patient": 0.00390625,
+     "work_agent": 0.00347900390625,
+     "work_patient": 0.00213623046875
+    },
+    "40.1": {
+     "fail_agent": 0.038330078125,
+     "fail_patient": 0.0279541015625,
+     "work_agent": 0.109375,
+     "work_patient": 0.01904296875
+    },
+    "41.14": {
+     "fail_agent": 0.04638671875,
+     "fail_patient": 0.0194091796875,
+     "work_agent": 0.072265625,
+     "work_patient": 0.0135498046875
+    },
+    "49.31": {
+     "fail_agent": 9.59634780883789e-06,
+     "fail_patient": 3.546476364135742e-06,
+     "work_agent": 1.609325408935547e-05,
+     "work_patient": 5.543231964111328e-06
+    },
+    "57.13": {
+     "fail_agent": 0.0595703125,
+     "fail_patient": 0.0693359375,
+     "work_agent": 0.0615234375,
+     "work_patient": 0.039794921875
+    }
+   }
+  },
+  {
+   "item_id": "Frank>John:invite:active:agent:active",
+   "family_id": "Frank|John",
+   "construction": "active",
+   "ld_failing": 13.875,
+   "ld_working": 35.375,
+   "ld_patient_q": -28.8125,
+   "heads_attention": {
+    "49.16": {
+     "fail_agent": 0.0002899169921875,
+     "fail_patient": 0.00011396408081054688,
+     "work_agent": 2.4199485778808594e-05,
+     "work_patient": 3.2633543014526367e-06
+    },
+    "40.12": {
+     "fail_agent": 7.867813110351562e-05,
+     "fail_patient": 0.000881195068359375,
+     "work_agent": 0.0010986328125,
+     "work_patient": 0.004547119140625
+    },
+    "39.23": {
+     "fail_agent": 0.0016632080078125,
+     "fail_patient": 0.0031890869140625,
+     "work_agent": 0.005523681640625,
+     "work_patient": 0.008544921875
+    },
+    "56.4": {
+     "fail_agent": 0.000518798828125,
+     "fail_patient": 0.00225830078125,
+     "work_agent": 0.001129150390625,
+     "work_patient": 0.000518798828125
+    },
+    "58.26": {
+     "fail_agent": 0.0003566741943359375,
+     "fail_patient": 0.000301361083984375,
+     "work_agent": 0.000484466552734375,
+     "work_patient": 0.000202178955078125
+    },
+    "46.29": {
+     "fail_agent": 0.001068115234375,
+     "fail_patient": 0.0026397705078125,
+     "work_agent": 0.0030670166015625,
+     "work_patient": 0.00201416015625
+    },
+    "40.1": {
+     "fail_agent": 0.01953125,
+     "fail_patient": 0.04541015625,
+     "work_agent": 0.10693359375,
+     "work_patient": 0.01361083984375
+    },
+    "41.14": {
+     "fail_agent": 0.033935546875,
+     "fail_patient": 0.040283203125,
+     "work_agent": 0.049560546875,
+     "work_patient": 0.01214599609375
+    },
+    "49.31": {
+     "fail_agent": 1.0251998901367188e-05,
+     "fail_patient": 5.155801773071289e-06,
+     "work_agent": 2.181529998779297e-05,
+     "work_patient": 1.245737075805664e-05
+    },
+    "57.13": {
+     "fail_agent": 0.030517578125,
+     "fail_patient": 0.0732421875,
+     "work_agent": 0.043701171875,
+     "work_patient": 0.02490234375
+    }
+   }
+  },
+  {
+   "item_id": "James>Anna:praise:active:agent:active",
+   "family_id": "Anna|James",
+   "construction": "active",
+   "ld_failing": 8.875,
+   "ld_working": 34.9375,
+   "ld_patient_q": -34.625,
+   "heads_attention": {
+    "49.16": {
+     "fail_agent": 0.00022602081298828125,
+     "fail_patient": 0.000240325927734375,
+     "work_agent": 1.0192394256591797e-05,
+     "work_patient": 1.0907649993896484e-05
+    },
+    "40.12": {
+     "fail_agent": 9.822845458984375e-05,
+     "fail_patient": 0.0005645751953125,
+     "work_agent": 0.00144195556640625,
+     "work_patient": 0.0032958984375
+    },
+    "39.23": {
+     "fail_agent": 0.0024261474609375,
+     "fail_patient": 0.004608154296875,
+     "work_agent": 0.007537841796875,
+     "work_patient": 0.00946044921875
+    },
+    "56.4": {
+     "fail_agent": 0.000667572021484375,
+     "fail_patient": 0.0025634765625,
+     "work_agent": 0.001312255859375,
+     "work_patient": 0.0010528564453125
+    },
+    "58.26": {
+     "fail_agent": 0.000885009765625,
+     "fail_patient": 0.000919342041015625,
+     "work_agent": 0.000644683837890625,
+     "work_patient": 0.000362396240234375
+    },
+    "46.29": {
+     "fail_agent": 0.000728607177734375,
+     "fail_patient": 0.00164794921875,
+     "work_agent": 0.0020904541015625,
+     "work_patient": 0.00176239013671875
+    },
+    "40.1": {
+     "fail_agent": 0.020751953125,
+     "fail_patient": 0.0400390625,
+     "work_agent": 0.10693359375,
+     "work_patient": 0.01031494140625
+    },
+    "41.14": {
+     "fail_agent": 0.041015625,
+     "fail_patient": 0.0693359375,
+     "work_agent": 0.06640625,
+     "work_patient": 0.01080322265625
+    },
+    "49.31": {
+     "fail_agent": 1.3172626495361328e-05,
+     "fail_patient": 4.291534423828125e-06,
+     "work_agent": 2.8371810913085938e-05,
+     "work_patient": 9.775161743164062e-06
+    },
+    "57.13": {
+     "fail_agent": 0.029052734375,
+     "fail_patient": 0.03955078125,
+     "work_agent": 0.043212890625,
+     "work_patient": 0.0169677734375
+    }
+   }
+  },
+  {
+   "item_id": "David>Laura:help:active:agent:active",
+   "family_id": "David|Laura",
+   "construction": "active",
+   "ld_failing": 4.625,
+   "ld_working": 33.1875,
+   "ld_patient_q": -32.3125,
+   "heads_attention": {
+    "49.16": {
+     "fail_agent": 0.000823974609375,
+     "fail_patient": 0.000823974609375,
+     "work_agent": 1.990795135498047e-05,
+     "work_patient": 3.933906555175781e-06
+    },
+    "40.12": {
+     "fail_agent": 0.00013256072998046875,
+     "fail_patient": 0.0010986328125,
+     "work_agent": 0.00182342529296875,
+     "work_patient": 0.00250244140625
+    },
+    "39.23": {
+     "fail_agent": 0.0022735595703125,
+     "fail_patient": 0.0034637451171875,
+     "work_agent": 0.00872802734375,
+     "work_patient": 0.0081787109375
+    },
+    "56.4": {
+     "fail_agent": 0.00092315673828125,
+     "fail_patient": 0.0034332275390625,
+     "work_agent": 0.00299072265625,
+     "work_patient": 0.000457763671875
+    },
+    "58.26": {
+     "fail_agent": 0.0004520416259765625,
+     "fail_patient": 0.00057220458984375,
+     "work_agent": 0.000476837158203125,
+     "work_patient": 0.00023937225341796875
+    },
+    "46.29": {
+     "fail_agent": 0.001251220703125,
+     "fail_patient": 0.005279541015625,
+     "work_agent": 0.00225830078125,
+     "work_patient": 0.002288818359375
+    },
+    "40.1": {
+     "fail_agent": 0.0123291015625,
+     "fail_patient": 0.048095703125,
+     "work_agent": 0.111328125,
+     "work_patient": 0.010009765625
+    },
+    "41.14": {
+     "fail_agent": 0.033935546875,
+     "fail_patient": 0.177734375,
+     "work_agent": 0.056396484375,
+     "work_patient": 0.006622314453125
+    },
+    "49.31": {
+     "fail_agent": 6.139278411865234e-06,
+     "fail_patient": 3.725290298461914e-06,
+     "work_agent": 2.0623207092285156e-05,
+     "work_patient": 5.7220458984375e-06
+    },
+    "57.13": {
+     "fail_agent": 0.046142578125,
+     "fail_patient": 0.047607421875,
+     "work_agent": 0.07568359375,
+     "work_patient": 0.0230712890625
+    }
+   }
+  },
+  {
+   "item_id": "Anna>Daniel:watch:active:agent:active",
+   "family_id": "Anna|Daniel",
+   "construction": "active",
+   "ld_failing": 7.375,
+   "ld_working": 32.125,
+   "ld_patient_q": -34.0625,
+   "heads_attention": {
+    "49.16": {
+     "fail_agent": 0.000331878662109375,
+     "fail_patient": 0.000293731689453125,
+     "work_agent": 2.4557113647460938e-05,
+     "work_patient": 1.0907649993896484e-05
+    },
+    "40.12": {
+     "fail_agent": 6.0558319091796875e-05,
+     "fail_patient": 0.0001735687255859375,
+     "work_agent": 0.00185394287109375,
+     "work_patient": 0.002105712890625
+    },
+    "39.23": {
+     "fail_agent": 0.00225830078125,
+     "fail_patient": 0.003265380859375,
+     "work_agent": 0.00872802734375,
+     "work_patient": 0.008544921875
+    },
+    "56.4": {
+     "fail_agent": 0.002044677734375,
+     "fail_patient": 0.00128173828125,
+     "work_agent": 0.0025787353515625,
+     "work_patient": 0.0002899169921875
+    },
+    "58.26": {
+     "fail_agent": 0.0005645751953125,
+     "fail_patient": 0.0003948211669921875,
+     "work_agent": 0.000614166259765625,
+     "work_patient": 0.0002498626708984375
+    },
+    "46.29": {
+     "fail_agent": 0.00157928466796875,
+     "fail_patient": 0.00173187255859375,
+     "work_agent": 0.003173828125,
+     "work_patient": 0.001129150390625
+    },
+    "40.1": {
+     "fail_agent": 0.0208740234375,
+     "fail_patient": 0.037841796875,
+     "work_agent": 0.10888671875,
+     "work_patient": 0.0111083984375
+    },
+    "41.14": {
+     "fail_agent": 0.08544921875,
+     "fail_patient": 0.042236328125,
+     "work_agent": 0.0673828125,
+     "work_patient": 0.007659912109375
+    },
+    "49.31": {
+     "fail_agent": 1.0192394256591797e-05,
+     "fail_patient": 8.463859558105469e-06,
+     "work_agent": 2.467632293701172e-05,
+     "work_patient": 1.1682510375976562e-05
+    },
+    "57.13": {
+     "fail_agent": 0.03466796875,
+     "fail_patient": 0.06494140625,
+     "work_agent": 0.059814453125,
+     "work_patient": 0.0361328125
+    }
+   }
+  },
+  {
+   "item_id": "Paul>Michael:rescue:active:agent:active",
+   "family_id": "Michael|Paul",
+   "construction": "active",
+   "ld_failing": 8.875,
+   "ld_working": 33.875,
+   "ld_patient_q": -35.6875,
+   "heads_attention": {
+    "49.16": {
+     "fail_agent": 0.000591278076171875,
+     "fail_patient": 0.000553131103515625,
+     "work_agent": 1.0073184967041016e-05,
+     "work_patient": 6.9141387939453125e-06
+    },
+    "40.12": {
+     "fail_agent": 7.2479248046875e-05,
+     "fail_patient": 0.000499725341796875,
+     "work_agent": 0.00115966796875,
+     "work_patient": 0.003265380859375
+    },
+    "39.23": {
+     "fail_agent": 0.0018768310546875,
+     "fail_patient": 0.00555419921875,
+     "work_agent": 0.007080078125,
+     "work_patient": 0.0091552734375
+    },
+    "56.4": {
+     "fail_agent": 0.000579833984375,
+     "fail_patient": 0.0011138916015625,
+     "work_agent": 0.0013275146484375,
+     "work_patient": 0.0004444122314453125
+    },
+    "58.26": {
+     "fail_agent": 0.0012054443359375,
+     "fail_patient": 0.000705718994140625,
+     "work_agent": 0.00092315673828125,
+     "work_patient": 0.00026702880859375
+    },
+    "46.29": {
+     "fail_agent": 0.0010833740234375,
+     "fail_patient": 0.00122833251953125,
+     "work_agent": 0.0028839111328125,
+     "work_patient": 0.00138092041015625
+    },
+    "40.1": {
+     "fail_agent": 0.01239013671875,
+     "fail_patient": 0.05908203125,
+     "work_agent": 0.099609375,
+     "work_patient": 0.0108642578125
+    },
+    "41.14": {
+     "fail_agent": 0.02734375,
+     "fail_patient": 0.08837890625,
+     "work_agent": 0.060791015625,
+     "work_patient": 0.0135498046875
+    },
+    "49.31": {
+     "fail_agent": 6.5267086029052734e-06,
+     "fail_patient": 6.5267086029052734e-06,
+     "work_agent": 1.6927719116210938e-05,
+     "work_patient": 1.3172626495361328e-05
+    },
+    "57.13": {
+     "fail_agent": 0.0289306640625,
+     "fail_patient": 0.037109375,
+     "work_agent": 0.0458984375,
+     "work_patient": 0.016357421875
+    }
+   }
+  },
+  {
+   "item_id": "Julia>Alice:praise:active:agent:active",
+   "family_id": "Alice|Julia",
+   "construction": "active",
+   "ld_failing": 8.375,
+   "ld_working": 34.4375,
+   "ld_patient_q": -34.5,
+   "heads_attention": {
+    "49.16": {
+     "fail_agent": 0.000823974609375,
+     "fail_patient": 0.00025177001953125,
+     "work_agent": 2.956390380859375e-05,
+     "work_patient": 9.59634780883789e-06
+    },
+    "40.12": {
+     "fail_agent": 0.00010538101196289062,
+     "fail_patient": 0.0013427734375,
+     "work_agent": 0.0019073486328125,
+     "work_patient": 0.004730224609375
+    },
+    "39.23": {
+     "fail_agent": 0.0020904541015625,
+     "fail_patient": 0.004180908203125,
+     "work_agent": 0.0081787109375,
+     "work_patient": 0.01092529296875
+    },
+    "56.4": {
+     "fail_agent": 0.001007080078125,
+     "fail_patient": 0.002410888671875,
+     "work_agent": 0.0031890869140625,
+     "work_patient": 0.00091552734375
+    },
+    "58.26": {
+     "fail_agent": 0.000865936279296875,
+     "fail_patient": 0.000560760498046875,
+     "work_agent": 0.000492095947265625,
+     "work_patient": 0.0002079010009765625
+    },
+    "46.29": {
+     "fail_agent": 0.000858306884765625,
+     "fail_patient": 0.00150299072265625,
+     "work_agent": 0.004058837890625,
+     "work_patient": 0.0023193359375
+    },
+    "40.1": {
+     "fail_agent": 0.01513671875,
+     "fail_patient": 0.052978515625,
+     "work_agent": 0.0771484375,
+     "work_patient": 0.00836181640625
+    },
+    "41.14": {
+     "fail_agent": 0.04833984375,
+     "fail_patient": 0.11279296875,
+     "work_agent": 0.05908203125,
+     "work_patient": 0.01300048828125
+    },
+    "49.31": {
+     "fail_agent": 1.2993812561035156e-05,
+     "fail_patient": 5.0961971282958984e-06,
+     "work_agent": 1.9550323486328125e-05,
+     "work_patient": 8.64267349243164e-06
+    },
+    "57.13": {
+     "fail_agent": 0.0439453125,
+     "fail_patient": 0.038818359375,
+     "work_agent": 0.07568359375,
+     "work_patient": 0.02099609375
+    }
+   }
+  },
+  {
+   "item_id": "David>Peter:blame:active:agent:active",
+   "family_id": "David|Peter",
+   "construction": "active",
+   "ld_failing": -1.75,
+   "ld_working": 29.75,
+   "ld_patient_q": -31.0,
+   "heads_attention": {
+    "49.16": {
+     "fail_agent": 0.00046539306640625,
+     "fail_patient": 0.0004367828369140625,
+     "work_agent": 2.4437904357910156e-05,
+     "work_patient": 6.586313247680664e-06
+    },
+    "40.12": {
+     "fail_agent": 5.316734313964844e-05,
+     "fail_patient": 0.00131988525390625,
+     "work_agent": 0.00164794921875,
+     "work_patient": 0.00347900390625
+    },
+    "39.23": {
+     "fail_agent": 0.00164794921875,
+     "fail_patient": 0.004486083984375,
+     "work_agent": 0.0081787109375,
+     "work_patient": 0.012939453125
+    },
+    "56.4": {
+     "fail_agent": 0.00174713134765625,
+     "fail_patient": 0.0146484375,
+     "work_agent": 0.00384521484375,
+     "work_patient": 0.00113677978515625
+    },
+    "58.26": {
+     "fail_agent": 0.00054168701171875,
+     "fail_patient": 0.0004444122314453125,
+     "work_agent": 0.0005035400390625,
+     "work_patient": 0.00016689300537109375
+    },
+    "46.29": {
+     "fail_agent": 0.001434326171875,
+     "fail_patient": 0.004150390625,
+     "work_agent": 0.0029144287109375,
+     "work_patient": 0.002227783203125
+    },
+    "40.1": {
+     "fail_agent": 0.0167236328125,
+     "fail_patient": 0.06201171875,
+     "work_agent": 0.1396484375,
+     "work_patient": 0.0086669921875
+    },
+    "41.14": {
+     "fail_agent": 0.0216064453125,
+     "fail_patient": 0.193359375,
+     "work_agent": 0.1044921875,
+     "work_patient": 0.0196533203125
+    },
+    "49.31": {
+     "fail_agent": 6.139278411865234e-06,
+     "fail_patient": 3.9637088775634766e-06,
+     "work_agent": 2.3365020751953125e-05,
+     "work_patient": 1.1742115020751953e-05
+    },
+    "57.13": {
+     "fail_agent": 0.04736328125,
+     "fail_patient": 0.07568359375,
+     "work_agent": 0.0810546875,
+     "work_patient": 0.0289306640625
+    }
+   }
+  },
+  {
+   "item_id": "Maria>Paul:call:active:agent:active",
+   "family_id": "Maria|Paul",
+   "construction": "active",
+   "ld_failing": -9.625,
+   "ld_working": 34.6875,
+   "ld_patient_q": -35.375,
+   "heads_attention": {
+    "49.16": {
+     "fail_agent": 8.0108642578125e-05,
+     "fail_patient": 0.000461578369140625,
+     "work_agent": 2.0265579223632812e-05,
+     "work_patient": 1.3053417205810547e-05
+    },
+    "40.12": {
+     "fail_agent": 0.00019073486328125,
+     "fail_patient": 0.00170135498046875,
+     "work_agent": 0.002593994140625,
+     "work_patient": 0.004852294921875
+    },
+    "39.23": {
+     "fail_agent": 0.0037078857421875,
+     "fail_patient": 0.00726318359375,
+     "work_agent": 0.01123046875,
+     "work_patient": 0.01214599609375
+    },
+    "56.4": {
+     "fail_agent": 0.00055694580078125,
+     "fail_patient": 0.00408935546875,
+     "work_agent": 0.0023193359375,
+     "work_patient": 0.00025177001953125
+    },
+    "58.26": {
+     "fail_agent": 0.000675201416015625,
+     "fail_patient": 0.00041961669921875,
+     "work_agent": 0.00061798095703125,
+     "work_patient": 0.0002803802490234375
+    },
+    "46.29": {
+     "fail_agent": 0.0015106201171875,
+     "fail_patient": 0.004364013671875,
+     "work_agent": 0.0031280517578125,
+     "work_patient": 0.00193023681640625
+    },
+    "40.1": {
+     "fail_agent": 0.01611328125,
+     "fail_patient": 0.1630859375,
+     "work_agent": 0.146484375,
+     "work_patient": 0.01409912109375
+    },
+    "41.14": {
+     "fail_agent": 0.036865234375,
+     "fail_patient": 0.28125,
+     "work_agent": 0.07666015625,
+     "work_patient": 0.0126953125
+    },
+    "49.31": {
+     "fail_agent": 1.0609626770019531e-05,
+     "fail_patient": 2.86102294921875e-06,
+     "work_agent": 2.0265579223632812e-05,
+     "work_patient": 4.380941390991211e-06
+    },
+    "57.13": {
+     "fail_agent": 0.030029296875,
+     "fail_patient": 0.06787109375,
+     "work_agent": 0.07666015625,
+     "work_patient": 0.03515625
+    }
+   }
+  },
+  {
+   "item_id": "Laura>Helen:greet:active:agent:active",
+   "family_id": "Helen|Laura",
+   "construction": "active",
+   "ld_failing": 2.875,
+   "ld_working": 32.0625,
+   "ld_patient_q": -31.8125,
+   "heads_attention": {
+    "49.16": {
+     "fail_agent": 0.000579833984375,
+     "fail_patient": 0.0004253387451171875,
+     "work_agent": 2.9087066650390625e-05,
+     "work_patient": 7.808208465576172e-06
+    },
+    "40.12": {
+     "fail_agent": 8.821487426757812e-05,
+     "fail_patient": 0.00081634521484375,
+     "work_agent": 0.0022735595703125,
+     "work_patient": 0.003936767578125
+    },
+    "39.23": {
+     "fail_agent": 0.0029449462890625,
+     "fail_patient": 0.006927490234375,
+     "work_agent": 0.01092529296875,
+     "work_patient": 0.01239013671875
+    },
+    "56.4": {
+     "fail_agent": 0.00061798095703125,
+     "fail_patient": 0.0026092529296875,
+     "work_agent": 0.0027618408203125,
+     "work_patient": 0.00048065185546875
+    },
+    "58.26": {
+     "fail_agent": 0.000583648681640625,
+     "fail_patient": 0.000225067138671875,
+     "work_agent": 0.000507354736328125,
+     "work_patient": 0.00017070770263671875
+    },
+    "46.29": {
+     "fail_agent": 0.00125885009765625,
+     "fail_patient": 0.0026702880859375,
+     "work_agent": 0.0037384033203125,
+     "work_patient": 0.00179290771484375
+    },
+    "40.1": {
+     "fail_agent": 0.0185546875,
+     "fail_patient": 0.08056640625,
+     "work_agent": 0.1279296875,
+     "work_patient": 0.0084228515625
+    },
+    "41.14": {
+     "fail_agent": 0.058349609375,
+     "fail_patient": 0.2275390625,
+     "work_agent": 0.07080078125,
+     "work_patient": 0.01068115234375
+    },
+    "49.31": {
+     "fail_agent": 5.0067901611328125e-06,
+     "fail_patient": 5.0067901611328125e-06,
+     "work_agent": 1.704692840576172e-05,
+     "work_patient": 9.119510650634766e-06
+    },
+    "57.13": {
+     "fail_agent": 0.0303955078125,
+     "fail_patient": 0.06640625,
+     "work_agent": 0.0634765625,
+     "work_patient": 0.031005859375
+    }
+   }
+  },
+  {
+   "item_id": "George>Frank:tickle:object_cleft:agent:active",
+   "family_id": "Frank|George",
+   "construction": "object_cleft",
+   "ld_failing": -9.25,
+   "ld_working": 33.0,
+   "ld_patient_q": -33.8125,
+   "heads_attention": {
+    "49.16": {
+     "fail_agent": 9.012222290039062e-05,
+     "fail_patient": 8.487701416015625e-05,
+     "work_agent": 5.8650970458984375e-05,
+     "work_patient": 1.6808509826660156e-05
+    },
+    "40.12": {
+     "fail_agent": 0.00010395050048828125,
+     "fail_patient": 3.6716461181640625e-05,
+     "work_agent": 0.00250244140625,
+     "work_patient": 0.000629425048828125
+    },
+    "39.23": {
+     "fail_agent": 0.0018310546875,
+     "fail_patient": 0.00130462646484375,
+     "work_agent": 0.00439453125,
+     "work_patient": 0.003997802734375
+    },
+    "56.4": {
+     "fail_agent": 0.00110626220703125,
+     "fail_patient": 0.000270843505859375,
+     "work_agent": 0.00714111328125,
+     "work_patient": 0.00017547607421875
+    },
+    "58.26": {
+     "fail_agent": 0.00022983551025390625,
+     "fail_patient": 0.0004291534423828125,
+     "work_agent": 0.000579833984375,
+     "work_patient": 0.00119781494140625
+    },
+    "46.29": {
+     "fail_agent": 0.0015869140625,
+     "fail_patient": 0.00164031982421875,
+     "work_agent": 0.0028076171875,
+     "work_patient": 0.00157928466796875
+    },
+    "40.1": {
+     "fail_agent": 0.01177978515625,
+     "fail_patient": 0.0091552734375,
+     "work_agent": 0.10009765625,
+     "work_patient": 0.00860595703125
+    },
+    "41.14": {
+     "fail_agent": 0.0167236328125,
+     "fail_patient": 0.01239013671875,
+     "work_agent": 0.06640625,
+     "work_patient": 0.00830078125
+    },
+    "49.31": {
+     "fail_agent": 1.0192394256591797e-05,
+     "fail_patient": 1.3947486877441406e-05,
+     "work_agent": 4.2438507080078125e-05,
+     "work_patient": 8.344650268554688e-06
+    },
+    "57.13": {
+     "fail_agent": 0.048095703125,
+     "fail_patient": 0.0166015625,
+     "work_agent": 0.080078125,
+     "work_patient": 0.0081787109375
+    }
+   }
+  },
+  {
+   "item_id": "Michael>Rose:push:object_cleft:agent:active",
+   "family_id": "Michael|Rose",
+   "construction": "object_cleft",
+   "ld_failing": 13.75,
+   "ld_working": 35.4375,
+   "ld_patient_q": -37.4375,
+   "heads_attention": {
+    "49.16": {
+     "fail_agent": 0.0002841949462890625,
+     "fail_patient": 5.9604644775390625e-05,
+     "work_agent": 5.91278076171875e-05,
+     "work_patient": 1.4960765838623047e-05
+    },
+    "40.12": {
+     "fail_agent": 0.000530242919921875,
+     "fail_patient": 6.151199340820312e-05,
+     "work_agent": 0.003173828125,
+     "work_patient": 0.000698089599609375
+    },
+    "39.23": {
+     "fail_agent": 0.004058837890625,
+     "fail_patient": 0.0023956298828125,
+     "work_agent": 0.007781982421875,
+     "work_patient": 0.005584716796875
+    },
+    "56.4": {
+     "fail_agent": 0.0031280517578125,
+     "fail_patient": 0.00023365020751953125,
+     "work_agent": 0.00469970703125,
+     "work_patient": 0.00015354156494140625
+    },
+    "58.26": {
+     "fail_agent": 0.0004787445068359375,
+     "fail_patient": 0.00092315673828125,
+     "work_agent": 0.0003719329833984375,
+     "work_patient": 0.000873565673828125
+    },
+    "46.29": {
+     "fail_agent": 0.00531005859375,
+     "fail_patient": 0.00201416015625,
+     "work_agent": 0.004241943359375,
+     "work_patient": 0.001251220703125
+    },
+    "40.1": {
+     "fail_agent": 0.07373046875,
+     "fail_patient": 0.003173828125,
+     "work_agent": 0.11328125,
+     "work_patient": 0.003692626953125
+    },
+    "41.14": {
+     "fail_agent": 0.058349609375,
+     "fail_patient": 0.004791259765625,
+     "work_agent": 0.05908203125,
+     "work_patient": 0.003875732421875
+    },
+    "49.31": {
+     "fail_agent": 2.9653310775756836e-06,
+     "fail_patient": 1.0371208190917969e-05,
+     "work_agent": 1.1682510375976562e-05,
+     "work_patient": 2.0503997802734375e-05
+    },
+    "57.13": {
+     "fail_agent": 0.061279296875,
+     "fail_patient": 0.0218505859375,
+     "work_agent": 0.068359375,
+     "work_patient": 0.0126953125
+    }
+   }
+  },
+  {
+   "item_id": "Kate>Peter:visit:object_cleft:agent:active",
+   "family_id": "Kate|Peter",
+   "construction": "object_cleft",
+   "ld_failing": -9.875,
+   "ld_working": 32.4375,
+   "ld_patient_q": -28.125,
+   "heads_attention": {
+    "49.16": {
+     "fail_agent": 9.632110595703125e-05,
+     "fail_patient": 0.000148773193359375,
+     "work_agent": 0.00010395050048828125,
+     "work_patient": 5.91278076171875e-05
+    },
+    "40.12": {
+     "fail_agent": 0.00010633468627929688,
+     "fail_patient": 6.532669067382812e-05,
+     "work_agent": 0.0028228759765625,
+     "work_patient": 0.00060272216796875
+    },
+    "39.23": {
+     "fail_agent": 0.004119873046875,
+     "fail_patient": 0.002471923828125,
+     "work_agent": 0.006805419921875,
+     "work_patient": 0.004791259765625
+    },
+    "56.4": {
+     "fail_agent": 0.001129150390625,
+     "fail_patient": 0.00154876708984375,
+     "work_agent": 0.005157470703125,
+     "work_patient": 0.0002574920654296875
+    },
+    "58.26": {
+     "fail_agent": 0.0001697540283203125,
+     "fail_patient": 0.00048828125,
+     "work_agent": 8.487701416015625e-05,
+     "work_patient": 0.0004405975341796875
+    },
+    "46.29": {
+     "fail_agent": 0.002593994140625,
+     "fail_patient": 0.00173187255859375,
+     "work_agent": 0.00634765625,
+     "work_patient": 0.00113677978515625
+    },
+    "40.1": {
+     "fail_agent": 0.01312255859375,
+     "fail_patient": 0.0196533203125,
+     "work_agent": 0.12353515625,
+     "work_patient": 0.009521484375
+    },
+    "41.14": {
+     "fail_agent": 0.0264892578125,
+     "fail_patient": 0.03857421875,
+     "work_agent": 0.0791015625,
+     "work_patient": 0.01007080078125
+    },
+    "49.31": {
+     "fail_agent": 1.5869736671447754e-06,
+     "fail_patient": 1.329183578491211e-05,
+     "work_agent": 4.738569259643555e-06,
+     "work_patient": 2.2530555725097656e-05
+    },
+    "57.13": {
+     "fail_agent": 0.07080078125,
+     "fail_patient": 0.045654296875,
+     "work_agent": 0.12158203125,
+     "work_patient": 0.0140380859375
+    }
+   }
+  },
+  {
+   "item_id": "Helen>Paul:blame:object_cleft:agent:active",
+   "family_id": "Helen|Paul",
+   "construction": "object_cleft",
+   "ld_failing": 7.0,
+   "ld_working": 33.75,
+   "ld_patient_q": -31.9375,
+   "heads_attention": {
+    "49.16": {
+     "fail_agent": 0.0004444122314453125,
+     "fail_patient": 0.0002689361572265625,
+     "work_agent": 7.104873657226562e-05,
+     "work_patient": 1.1622905731201172e-05
+    },
+    "40.12": {
+     "fail_agent": 0.0001811981201171875,
+     "fail_patient": 5.555152893066406e-05,
+     "work_agent": 0.0026092529296875,
+     "work_patient": 0.000492095947265625
+    },
+    "39.23": {
+     "fail_agent": 0.0035552978515625,
+     "fail_patient": 0.00213623046875,
+     "work_agent": 0.007049560546875,
+     "work_patient": 0.004913330078125
+    },
+    "56.4": {
+     "fail_agent": 0.004150390625,
+     "fail_patient": 0.000362396240234375,
+     "work_agent": 0.00787353515625,
+     "work_patient": 0.00016307830810546875
+    },
+    "58.26": {
+     "fail_agent": 0.0003414154052734375,
+     "fail_patient": 0.000865936279296875,
+     "work_agent": 0.00022792816162109375,
+     "work_patient": 0.001068115234375
+    },
+    "46.29": {
+     "fail_agent": 0.004364013671875,
+     "fail_patient": 0.001556396484375,
+     "work_agent": 0.00567626953125,
+     "work_patient": 0.0013275146484375
+    },
+    "40.1": {
+     "fail_agent": 0.018798828125,
+     "fail_patient": 0.01141357421875,
+     "work_agent": 0.1240234375,
+     "work_patient": 0.006195068359375
+    },
+    "41.14": {
+     "fail_agent": 0.03662109375,
+     "fail_patient": 0.01904296875,
+     "work_agent": 0.0947265625,
+     "work_patient": 0.006103515625
+    },
+    "49.31": {
+     "fail_agent": 8.64267349243164e-06,
+     "fail_patient": 9.834766387939453e-06,
+     "work_agent": 1.2218952178955078e-05,
+     "work_patient": 8.404254913330078e-06
+    },
+    "57.13": {
+     "fail_agent": 0.0537109375,
+     "fail_patient": 0.021728515625,
+     "work_agent": 0.10498046875,
+     "work_patient": 0.0133056640625
+    }
+   }
+  },
+  {
+   "item_id": "Sarah>Julia:greet:object_cleft:agent:active",
+   "family_id": "Julia|Sarah",
+   "construction": "object_cleft",
+   "ld_failing": -7.25,
+   "ld_working": 35.375,
+   "ld_patient_q": -29.75,
+   "heads_attention": {
+    "49.16": {
+     "fail_agent": 0.00017070770263671875,
+     "fail_patient": 0.00043487548828125,
+     "work_agent": 2.9921531677246094e-05,
+     "work_patient": 4.100799560546875e-05
+    },
+    "40.12": {
+     "fail_agent": 0.00010442733764648438,
+     "fail_patient": 9.72747802734375e-05,
+     "work_agent": 0.002838134765625,
+     "work_patient": 0.000865936279296875
+    },
+    "39.23": {
+     "fail_agent": 0.0022735595703125,
+     "fail_patient": 0.00174713134765625,
+     "work_agent": 0.0059814453125,
+     "work_patient": 0.0059814453125
+    },
+    "56.4": {
+     "fail_agent": 0.00075531005859375,
+     "fail_patient": 0.00141143798828125,
+     "work_agent": 0.006561279296875,
+     "work_patient": 0.000591278076171875
+    },
+    "58.26": {
+     "fail_agent": 0.0003490447998046875,
+     "fail_patient": 0.00054168701171875,
+     "work_agent": 0.00029754638671875,
+     "work_patient": 0.000759124755859375
+    },
+    "46.29": {
+     "fail_agent": 0.0027313232421875,
+     "fail_patient": 0.00182342529296875,
+     "work_agent": 0.0052490234375,
+     "work_patient": 0.001983642578125
+    },
+    "40.1": {
+     "fail_agent": 0.00921630859375,
+     "fail_patient": 0.01544189453125,
+     "work_agent": 0.1298828125,
+     "work_patient": 0.007080078125
+    },
+    "41.14": {
+     "fail_agent": 0.036376953125,
+     "fail_patient": 0.053955078125,
+     "work_agent": 0.125,
+     "work_patient": 0.00982666015625
+    },
+    "49.31": {
+     "fail_agent": 5.066394805908203e-06,
+     "fail_patient": 1.2159347534179688e-05,
+     "work_agent": 6.765127182006836e-06,
+     "work_patient": 2.3603439331054688e-05
+    },
+    "57.13": {
+     "fail_agent": 0.05322265625,
+     "fail_patient": 0.060302734375,
+     "work_agent": 0.091796875,
+     "work_patient": 0.0203857421875
+    }
+   }
+  },
+  {
+   "item_id": "Peter>Kate:chase:object_cleft:agent:active",
+   "family_id": "Kate|Peter",
+   "construction": "object_cleft",
+   "ld_failing": -8.625,
+   "ld_working": 29.03125,
+   "ld_patient_q": -33.125,
+   "heads_attention": {
+    "49.16": {
+     "fail_agent": 0.0003414154052734375,
+     "fail_patient": 0.00077056884765625,
+     "work_agent": 5.1975250244140625e-05,
+     "work_patient": 1.800060272216797e-05
+    },
+    "40.12": {
+     "fail_agent": 0.000152587890625,
+     "fail_patient": 7.009506225585938e-05,
+     "work_agent": 0.0034332275390625,
+     "work_patient": 0.00116729736328125
+    },
+    "39.23": {
+     "fail_agent": 0.004150390625,
+     "fail_patient": 0.0023956298828125,
+     "work_agent": 0.00836181640625,
+     "work_patient": 0.006561279296875
+    },
+    "56.4": {
+     "fail_agent": 0.00124359130859375,
+     "fail_patient": 0.00090789794921875,
+     "work_agent": 0.01007080078125,
+     "work_patient": 0.0003795623779296875
+    },
+    "58.26": {
+     "fail_agent": 0.00029754638671875,
+     "fail_patient": 0.000514984130859375,
+     "work_agent": 0.000225067138671875,
+     "work_patient": 0.00067138671875
+    },
+    "46.29": {
+     "fail_agent": 0.0021209716796875,
+     "fail_patient": 0.0019989013671875,
+     "work_agent": 0.0042724609375,
+     "work_patient": 0.0023651123046875
+    },
+    "40.1": {
+     "fail_agent": 0.049560546875,
+     "fail_patient": 0.0123291015625,
+     "work_agent": 0.1591796875,
+     "work_patient": 0.0108642578125
+    },
+    "41.14": {
+     "fail_agent": 0.0693359375,
+     "fail_patient": 0.03173828125,
+     "work_agent": 0.0751953125,
+     "work_patient": 0.007568359375
+    },
+    "49.31": {
+     "fail_agent": 5.990266799926758e-06,
+     "fail_patient": 5.27501106262207e-06,
+     "work_agent": 2.0503997802734375e-05,
+     "work_patient": 8.046627044677734e-06
+    },
+    "57.13": {
+     "fail_agent": 0.072265625,
+     "fail_patient": 0.06591796875,
+     "work_agent": 0.091796875,
+     "work_patient": 0.0279541015625
+    }
+   }
+  },
+  {
+   "item_id": "Michael>Robert:blame:object_cleft:agent:active",
+   "family_id": "Michael|Robert",
+   "construction": "object_cleft",
+   "ld_failing": -4.625,
+   "ld_working": 33.5,
+   "ld_patient_q": -31.6875,
+   "heads_attention": {
+    "49.16": {
+     "fail_agent": 0.0003147125244140625,
+     "fail_patient": 0.00018024444580078125,
+     "work_agent": 5.9604644775390625e-05,
+     "work_patient": 1.1742115020751953e-05
+    },
+    "40.12": {
+     "fail_agent": 0.0001468658447265625,
+     "fail_patient": 5.2928924560546875e-05,
+     "work_agent": 0.0037689208984375,
+     "work_patient": 0.00090789794921875
+    },
+    "39.23": {
+     "fail_agent": 0.0024261474609375,
+     "fail_patient": 0.00153350830078125,
+     "work_agent": 0.0064697265625,
+     "work_patient": 0.0047607421875
+    },
+    "56.4": {
+     "fail_agent": 0.0016937255859375,
+     "fail_patient": 0.0013580322265625,
+     "work_agent": 0.005279541015625,
+     "work_patient": 0.000347137451171875
+    },
+    "58.26": {
+     "fail_agent": 0.000453948974609375,
+     "fail_patient": 0.000698089599609375,
+     "work_agent": 0.0003757476806640625,
+     "work_patient": 0.0012664794921875
+    },
+    "46.29": {
+     "fail_agent": 0.0024566650390625,
+     "fail_patient": 0.001312255859375,
+     "work_agent": 0.0032196044921875,
+     "work_patient": 0.001129150390625
+    },
+    "40.1": {
+     "fail_agent": 0.020263671875,
+     "fail_patient": 0.00970458984375,
+     "work_agent": 0.16796875,
+     "work_patient": 0.0086669921875
+    },
+    "41.14": {
+     "fail_agent": 0.03173828125,
+     "fail_patient": 0.01470947265625,
+     "work_agent": 0.1259765625,
+     "work_patient": 0.00677490234375
+    },
+    "49.31": {
+     "fail_agent": 4.500150680541992e-06,
+     "fail_patient": 1.1444091796875e-05,
+     "work_agent": 1.0848045349121094e-05,
+     "work_patient": 2.4437904357910156e-05
+    },
+    "57.13": {
+     "fail_agent": 0.039306640625,
+     "fail_patient": 0.04052734375,
+     "work_agent": 0.07421875,
+     "work_patient": 0.02197265625
+    }
+   }
+  },
+  {
+   "item_id": "Paul>Kate:thank:object_cleft:agent:active",
+   "family_id": "Kate|Paul",
+   "construction": "object_cleft",
+   "ld_failing": -4.5,
+   "ld_working": 29.25,
+   "ld_patient_q": -34.75,
+   "heads_attention": {
+    "49.16": {
+     "fail_agent": 0.000518798828125,
+     "fail_patient": 0.00070953369140625,
+     "work_agent": 3.409385681152344e-05,
+     "work_patient": 2.3484230041503906e-05
+    },
+    "40.12": {
+     "fail_agent": 0.0002613067626953125,
+     "fail_patient": 8.726119995117188e-05,
+     "work_agent": 0.0035247802734375,
+     "work_patient": 0.0009765625
+    },
+    "39.23": {
+     "fail_agent": 0.00604248046875,
+     "fail_patient": 0.00372314453125,
+     "work_agent": 0.01007080078125,
+     "work_patient": 0.007171630859375
+    },
+    "56.4": {
+     "fail_agent": 0.0036773681640625,
+     "fail_patient": 0.0010528564453125,
+     "work_agent": 0.0068359375,
+     "work_patient": 0.000385284423828125
+    },
+    "58.26": {
+     "fail_agent": 0.000331878662109375,
+     "fail_patient": 0.0003795623779296875,
+     "work_agent": 0.000339508056640625,
+     "work_patient": 0.000728607177734375
+    },
+    "46.29": {
+     "fail_agent": 0.003387451171875,
+     "fail_patient": 0.00225830078125,
+     "work_agent": 0.004608154296875,
+     "work_patient": 0.002166748046875
+    },
+    "40.1": {
+     "fail_agent": 0.058349609375,
+     "fail_patient": 0.005279541015625,
+     "work_agent": 0.20703125,
+     "work_patient": 0.01031494140625
+    },
+    "41.14": {
+     "fail_agent": 0.08544921875,
+     "fail_patient": 0.025634765625,
+     "work_agent": 0.11474609375,
+     "work_patient": 0.00921630859375
+    },
+    "49.31": {
+     "fail_agent": 4.26173210144043e-06,
+     "fail_patient": 7.4803829193115234e-06,
+     "work_agent": 1.0192394256591797e-05,
+     "work_patient": 1.150369644165039e-05
+    },
+    "57.13": {
+     "fail_agent": 0.0595703125,
+     "fail_patient": 0.0478515625,
+     "work_agent": 0.083984375,
+     "work_patient": 0.0240478515625
+    }
+   }
+  },
+  {
+   "item_id": "Maria>Paul:call:object_cleft:agent:active",
+   "family_id": "Maria|Paul",
+   "construction": "object_cleft",
+   "ld_failing": -8.75,
+   "ld_working": 34.125,
+   "ld_patient_q": -34.4375,
+   "heads_attention": {
+    "49.16": {
+     "fail_agent": 0.000141143798828125,
+     "fail_patient": 0.00017070770263671875,
+     "work_agent": 0.00015163421630859375,
+     "work_patient": 3.600120544433594e-05
+    },
+    "40.12": {
+     "fail_agent": 0.00013637542724609375,
+     "fail_patient": 9.822845458984375e-05,
+     "work_agent": 0.00396728515625,
+     "work_patient": 0.00054168701171875
+    },
+    "39.23": {
+     "fail_agent": 0.00408935546875,
+     "fail_patient": 0.002197265625,
+     "work_agent": 0.0086669921875,
+     "work_patient": 0.00457763671875
+    },
+    "56.4": {
+     "fail_agent": 0.00286865234375,
+     "fail_patient": 0.00084686279296875,
+     "work_agent": 0.00836181640625,
+     "work_patient": 0.00012111663818359375
+    },
+    "58.26": {
+     "fail_agent": 0.0004405975341796875,
+     "fail_patient": 0.000537872314453125,
+     "work_agent": 0.000392913818359375,
+     "work_patient": 0.00148773193359375
+    },
+    "46.29": {
+     "fail_agent": 0.0024261474609375,
+     "fail_patient": 0.0016632080078125,
+     "work_agent": 0.00592041015625,
+     "work_patient": 0.00142669677734375
+    },
+    "40.1": {
+     "fail_agent": 0.007598876953125,
+     "fail_patient": 0.02734375,
+     "work_agent": 0.1337890625,
+     "work_patient": 0.0069580078125
+    },
+    "41.14": {
+     "fail_agent": 0.024169921875,
+     "fail_patient": 0.051025390625,
+     "work_agent": 0.115234375,
+     "work_patient": 0.00787353515625
+    },
+    "49.31": {
+     "fail_agent": 1.2099742889404297e-05,
+     "fail_patient": 1.138448715209961e-05,
+     "work_agent": 1.537799835205078e-05,
+     "work_patient": 8.225440979003906e-06
+    },
+    "57.13": {
+     "fail_agent": 0.0498046875,
+     "fail_patient": 0.029296875,
+     "work_agent": 0.11572265625,
+     "work_patient": 0.01422119140625
+    }
+   }
+  },
+  {
+   "item_id": "Peter>David:tickle:object_cleft:agent:active",
+   "family_id": "David|Peter",
+   "construction": "object_cleft",
+   "ld_failing": -5.875,
+   "ld_working": 30.25,
+   "ld_patient_q": -30.8125,
+   "heads_attention": {
+    "49.16": {
+     "fail_agent": 8.0108642578125e-05,
+     "fail_patient": 0.0001697540283203125,
+     "work_agent": 4.863739013671875e-05,
+     "work_patient": 1.3053417205810547e-05
+    },
+    "40.12": {
+     "fail_agent": 6.866455078125e-05,
+     "fail_patient": 5.507469177246094e-05,
+     "work_agent": 0.0030517578125,
+     "work_patient": 0.00103759765625
+    },
+    "39.23": {
+     "fail_agent": 0.0019378662109375,
+     "fail_patient": 0.0012359619140625,
+     "work_agent": 0.005401611328125,
+     "work_patient": 0.00469970703125
+    },
+    "56.4": {
+     "fail_agent": 0.000606536865234375,
+     "fail_patient": 0.0007781982421875,
+     "work_agent": 0.00677490234375,
+     "work_patient": 0.000946044921875
+    },
+    "58.26": {
+     "fail_agent": 0.0003108978271484375,
+     "fail_patient": 0.0005035400390625,
+     "work_agent": 0.0004825592041015625,
+     "work_patient": 0.00084686279296875
+    },
+    "46.29": {
+     "fail_agent": 0.00136566162109375,
+     "fail_patient": 0.00083160400390625,
+     "work_agent": 0.0037078857421875,
+     "work_patient": 0.001129150390625
+    },
+    "40.1": {
+     "fail_agent": 0.01129150390625,
+     "fail_patient": 0.015869140625,
+     "work_agent": 0.13671875,
+     "work_patient": 0.011962890625
+    },
+    "41.14": {
+     "fail_agent": 0.014404296875,
+     "fail_patient": 0.016357421875,
+     "work_agent": 0.09619140625,
+     "work_patient": 0.0106201171875
+    },
+    "49.31": {
+     "fail_agent": 8.463859558105469e-06,
+     "fail_patient": 1.1563301086425781e-05,
+     "work_agent": 1.5497207641601562e-05,
+     "work_patient": 1.0669231414794922e-05
+    },
+    "57.13": {
+     "fail_agent": 0.03466796875,
+     "fail_patient": 0.043212890625,
+     "work_agent": 0.08935546875,
+     "work_patient": 0.0272216796875
+    }
+   }
+  },
+  {
+   "item_id": "Alice>Tom:call:object_cleft:agent:active",
+   "family_id": "Alice|Tom",
+   "construction": "object_cleft",
+   "ld_failing": -2.875,
+   "ld_working": 37.625,
+   "ld_patient_q": -31.75,
+   "heads_attention": {
+    "49.16": {
+     "fail_agent": 0.00023651123046875,
+     "fail_patient": 0.000640869140625,
+     "work_agent": 7.724761962890625e-05,
+     "work_patient": 7.724761962890625e-05
+    },
+    "40.12": {
+     "fail_agent": 0.0007476806640625,
+     "fail_patient": 0.0001392364501953125,
+     "work_agent": 0.00445556640625,
+     "work_patient": 0.0007476806640625
+    },
+    "39.23": {
+     "fail_agent": 0.00494384765625,
+     "fail_patient": 0.003570556640625,
+     "work_agent": 0.00921630859375,
+     "work_patient": 0.0064697265625
+    },
+    "56.4": {
+     "fail_agent": 0.0040283203125,
+     "fail_patient": 0.0017852783203125,
+     "work_agent": 0.01348876953125,
+     "work_patient": 0.000537872314453125
+    },
+    "58.26": {
+     "fail_agent": 0.0004711151123046875,
+     "fail_patient": 0.0008544921875,
+     "work_agent": 0.0002422332763671875,
+     "work_patient": 0.00060272216796875
+    },
+    "46.29": {
+     "fail_agent": 0.003509521484375,
+     "fail_patient": 0.00128936767578125,
+     "work_agent": 0.00604248046875,
+     "work_patient": 0.0013275146484375
+    },
+    "40.1": {
+     "fail_agent": 0.023681640625,
+     "fail_patient": 0.0277099609375,
+     "work_agent": 0.1337890625,
+     "work_patient": 0.010986328125
+    },
+    "41.14": {
+     "fail_agent": 0.044921875,
+     "fail_patient": 0.0361328125,
+     "work_agent": 0.09521484375,
+     "work_patient": 0.01019287109375
+    },
+    "49.31": {
+     "fail_agent": 3.5017728805541992e-06,
+     "fail_patient": 1.5735626220703125e-05,
+     "work_agent": 1.5497207641601562e-05,
+     "work_patient": 1.7642974853515625e-05
+    },
+    "57.13": {
+     "fail_agent": 0.04052734375,
+     "fail_patient": 0.0380859375,
+     "work_agent": 0.09326171875,
+     "work_patient": 0.0189208984375
+    }
+   }
+  },
+  {
+   "item_id": "Tom>Rose:praise:object_cleft:agent:active",
+   "family_id": "Rose|Tom",
+   "construction": "object_cleft",
+   "ld_failing": 14.4375,
+   "ld_working": 32.375,
+   "ld_patient_q": -36.0625,
+   "heads_attention": {
+    "49.16": {
+     "fail_agent": 0.000293731689453125,
+     "fail_patient": 0.00011491775512695312,
+     "work_agent": 5.53131103515625e-05,
+     "work_patient": 2.1696090698242188e-05
+    },
+    "40.12": {
+     "fail_agent": 0.000274658203125,
+     "fail_patient": 3.337860107421875e-05,
+     "work_agent": 0.0025787353515625,
+     "work_patient": 0.000614166259765625
+    },
+    "39.23": {
+     "fail_agent": 0.00433349609375,
+     "fail_patient": 0.0017852783203125,
+     "work_agent": 0.0084228515625,
+     "work_patient": 0.005340576171875
+    },
+    "56.4": {
+     "fail_agent": 0.006744384765625,
+     "fail_patient": 0.0001125335693359375,
+     "work_agent": 0.0062255859375,
+     "work_patient": 6.103515625e-05
+    },
+    "58.26": {
+     "fail_agent": 0.0003261566162109375,
+     "fail_patient": 0.00104522705078125,
+     "work_agent": 0.00015735626220703125,
+     "work_patient": 0.000736236572265625
+    },
+    "46.29": {
+     "fail_agent": 0.00567626953125,
+     "fail_patient": 0.00173187255859375,
+     "work_agent": 0.00390625,
+     "work_patient": 0.0009765625
+    },
+    "40.1": {
+     "fail_agent": 0.08203125,
+     "fail_patient": 0.003387451171875,
+     "work_agent": 0.1337890625,
+     "work_patient": 0.00323486328125
+    },
+    "41.14": {
+     "fail_agent": 0.07666015625,
+     "fail_patient": 0.005615234375,
+     "work_agent": 0.07275390625,
+     "work_patient": 0.0038299560546875
+    },
+    "49.31": {
+     "fail_agent": 7.033348083496094e-06,
+     "fail_patient": 1.4007091522216797e-05,
+     "work_agent": 1.823902130126953e-05,
+     "work_patient": 1.9311904907226562e-05
+    },
+    "57.13": {
+     "fail_agent": 0.08984375,
+     "fail_patient": 0.024169921875,
+     "work_agent": 0.0869140625,
+     "work_patient": 0.01177978515625
+    }
+   }
+  },
+  {
+   "item_id": "Julia>Robert:push:object_cleft:agent:active",
+   "family_id": "Julia|Robert",
+   "construction": "object_cleft",
+   "ld_failing": 8.75,
+   "ld_working": 36.8125,
+   "ld_patient_q": -31.9375,
+   "heads_attention": {
+    "49.16": {
+     "fail_agent": 0.00083160400390625,
+     "fail_patient": 0.00013637542724609375,
+     "work_agent": 0.00011014938354492188,
+     "work_patient": 9.059906005859375e-06
+    },
+    "40.12": {
+     "fail_agent": 0.00023174285888671875,
+     "fail_patient": 9.298324584960938e-05,
+     "work_agent": 0.003173828125,
+     "work_patient": 0.0006256103515625
+    },
+    "39.23": {
+     "fail_agent": 0.00262451171875,
+     "fail_patient": 0.00173187255859375,
+     "work_agent": 0.007659912109375,
+     "work_patient": 0.00445556640625
+    },
+    "56.4": {
+     "fail_agent": 0.00225830078125,
+     "fail_patient": 0.00022983551025390625,
+     "work_agent": 0.011474609375,
+     "work_patient": 0.00015163421630859375
+    },
+    "58.26": {
+     "fail_agent": 0.0006256103515625,
+     "fail_patient": 0.00125885009765625,
+     "work_agent": 0.0003185272216796875,
+     "work_patient": 0.00113677978515625
+    },
+    "46.29": {
+     "fail_agent": 0.00176239013671875,
+     "fail_patient": 0.000579833984375,
+     "work_agent": 0.006988525390625,
+     "work_patient": 0.0009918212890625
+    },
+    "40.1": {
+     "fail_agent": 0.0189208984375,
+     "fail_patient": 0.009765625,
+     "work_agent": 0.1279296875,
+     "work_patient": 0.006683349609375
+    },
+    "41.14": {
+     "fail_agent": 0.03857421875,
+     "fail_patient": 0.0223388671875,
+     "work_agent": 0.1015625,
+     "work_patient": 0.00537109375
+    },
+    "49.31": {
+     "fail_agent": 7.927417755126953e-06,
+     "fail_patient": 5.125999450683594e-06,
+     "work_agent": 1.6808509826660156e-05,
+     "work_patient": 1.6808509826660156e-05
+    },
+    "57.13": {
+     "fail_agent": 0.0537109375,
+     "fail_patient": 0.03466796875,
+     "work_agent": 0.1220703125,
+     "work_patient": 0.0198974609375
+    }
+   }
+  },
+  {
+   "item_id": "James>John:watch:object_cleft:agent:active",
+   "family_id": "James|John",
+   "construction": "object_cleft",
+   "ld_failing": -2.625,
+   "ld_working": 35.0,
+   "ld_patient_q": -28.125,
+   "heads_attention": {
+    "49.16": {
+     "fail_agent": 0.00014591217041015625,
+     "fail_patient": 0.00018787384033203125,
+     "work_agent": 3.409385681152344e-05,
+     "work_patient": 1.823902130126953e-05
+    },
+    "40.12": {
+     "fail_agent": 0.0004291534423828125,
+     "fail_patient": 0.0001049041748046875,
+     "work_agent": 0.004180908203125,
+     "work_patient": 0.001068115234375
+    },
+    "39.23": {
+     "fail_agent": 0.00274658203125,
+     "fail_patient": 0.002044677734375,
+     "work_agent": 0.007598876953125,
+     "work_patient": 0.0068359375
+    },
+    "56.4": {
+     "fail_agent": 0.0020599365234375,
+     "fail_patient": 0.0036163330078125,
+     "work_agent": 0.00494384765625,
+     "work_patient": 0.000972747802734375
+    },
+    "58.26": {
+     "fail_agent": 0.0003528594970703125,
+     "fail_patient": 0.000843048095703125,
+     "work_agent": 0.000255584716796875,
+     "work_patient": 0.0009765625
+    },
+    "46.29": {
+     "fail_agent": 0.0019683837890625,
+     "fail_patient": 0.00244140625,
+     "work_agent": 0.002716064453125,
+     "work_patient": 0.00201416015625
+    },
+    "40.1": {
+     "fail_agent": 0.0238037109375,
+     "fail_patient": 0.01904296875,
+     "work_agent": 0.1455078125,
+     "work_patient": 0.01153564453125
+    },
+    "41.14": {
+     "fail_agent": 0.12109375,
+     "fail_patient": 0.0400390625,
+     "work_agent": 0.140625,
+     "work_patient": 0.012451171875
+    },
+    "49.31": {
+     "fail_agent": 5.841255187988281e-06,
+     "fail_patient": 1.5854835510253906e-05,
+     "work_agent": 1.5735626220703125e-05,
+     "work_patient": 3.790855407714844e-05
+    },
+    "57.13": {
+     "fail_agent": 0.05126953125,
+     "fail_patient": 0.035400390625,
+     "work_agent": 0.05712890625,
+     "work_patient": 0.014892578125
+    }
+   }
+  },
+  {
+   "item_id": "Julia>George:thank:object_cleft:agent:active",
+   "family_id": "George|Julia",
+   "construction": "object_cleft",
+   "ld_failing": -9.0,
+   "ld_working": 35.4375,
+   "ld_patient_q": -33.875,
+   "heads_attention": {
+    "49.16": {
+     "fail_agent": 0.000301361083984375,
+     "fail_patient": 9.775161743164062e-05,
+     "work_agent": 8.678436279296875e-05,
+     "work_patient": 1.5079975128173828e-05
+    },
+    "40.12": {
+     "fail_agent": 3.409385681152344e-05,
+     "fail_patient": 2.0384788513183594e-05,
+     "work_agent": 0.0031585693359375,
+     "work_patient": 0.000423431396484375
+    },
+    "39.23": {
+     "fail_agent": 0.0025482177734375,
+     "fail_patient": 0.00136566162109375,
+     "work_agent": 0.0068359375,
+     "work_patient": 0.0036163330078125
+    },
+    "56.4": {
+     "fail_agent": 0.00133514404296875,
+     "fail_patient": 0.00054168701171875,
+     "work_agent": 0.00823974609375,
+     "work_patient": 0.00024127960205078125
+    },
+    "58.26": {
+     "fail_agent": 0.000270843505859375,
+     "fail_patient": 0.000514984130859375,
+     "work_agent": 0.0003528594970703125,
+     "work_patient": 0.0010986328125
+    },
+    "46.29": {
+     "fail_agent": 0.0027008056640625,
+     "fail_patient": 0.000965118408203125,
+     "work_agent": 0.006011962890625,
+     "work_patient": 0.000507354736328125
+    },
+    "40.1": {
+     "fail_agent": 0.006103515625,
+     "fail_patient": 0.0159912109375,
+     "work_agent": 0.146484375,
+     "work_patient": 0.00634765625
+    },
+    "41.14": {
+     "fail_agent": 0.0245361328125,
+     "fail_patient": 0.0234375,
+     "work_agent": 0.10986328125,
+     "work_patient": 0.00396728515625
+    },
+    "49.31": {
+     "fail_agent": 6.5267086029052734e-06,
+     "fail_patient": 2.9325485229492188e-05,
+     "work_agent": 1.7762184143066406e-05,
+     "work_patient": 5.125999450683594e-05
+    },
+    "57.13": {
+     "fail_agent": 0.05078125,
+     "fail_patient": 0.0299072265625,
+     "work_agent": 0.10888671875,
+     "work_patient": 0.01226806640625
+    }
+   }
+  },
+  {
+   "item_id": "Alice>Daniel:blame:object_cleft:agent:active",
+   "family_id": "Alice|Daniel",
+   "construction": "object_cleft",
+   "ld_failing": -0.25,
+   "ld_working": 33.4375,
+   "ld_patient_q": -32.5625,
+   "heads_attention": {
+    "49.16": {
+     "fail_agent": 0.0003376007080078125,
+     "fail_patient": 0.000629425048828125,
+     "work_agent": 8.630752563476562e-05,
+     "work_patient": 5.5789947509765625e-05
+    },
+    "40.12": {
+     "fail_agent": 0.00021648406982421875,
+     "fail_patient": 4.863739013671875e-05,
+     "work_agent": 0.0032501220703125,
+     "work_patient": 0.000614166259765625
+    },
+    "39.23": {
+     "fail_agent": 0.004058837890625,
+     "fail_patient": 0.0020751953125,
+     "work_agent": 0.008544921875,
+     "work_patient": 0.00518798828125
+    },
+    "56.4": {
+     "fail_agent": 0.0084228515625,
+     "fail_patient": 0.000759124755859375,
+     "work_agent": 0.009521484375,
+     "work_patient": 0.0002536773681640625
+    },
+    "58.26": {
+     "fail_agent": 0.00037384033203125,
+     "fail_patient": 0.000667572021484375,
+     "work_agent": 0.0002536773681640625,
+     "work_patient": 0.0010833740234375
+    },
+    "46.29": {
+     "fail_agent": 0.00518798828125,
+     "fail_patient": 0.00127410888671875,
+     "work_agent": 0.005767822265625,
+     "work_patient": 0.000804901123046875
+    },
+    "40.1": {
+     "fail_agent": 0.0181884765625,
+     "fail_patient": 0.01226806640625,
+     "work_agent": 0.1259765625,
+     "work_patient": 0.008056640625
+    },
+    "41.14": {
+     "fail_agent": 0.0556640625,
+     "fail_patient": 0.023193359375,
+     "work_agent": 0.08935546875,
+     "work_patient": 0.006195068359375
+    },
+    "49.31": {
+     "fail_agent": 6.020069122314453e-06,
+     "fail_patient": 1.1980533599853516e-05,
+     "work_agent": 1.6570091247558594e-05,
+     "work_patient": 8.821487426757812e-06
+    },
+    "57.13": {
+     "fail_agent": 0.04541015625,
+     "fail_patient": 0.038818359375,
+     "work_agent": 0.095703125,
+     "work_patient": 0.0257568359375
+    }
+   }
+  },
+  {
+   "item_id": "Kate>Grace:chase:passive:agent:active",
+   "family_id": "Grace|Kate",
+   "construction": "passive",
+   "ld_failing": 26.546875,
+   "ld_working": 33.25,
+   "ld_patient_q": -33.75,
+   "heads_attention": {
+    "49.16": {
+     "fail_agent": 0.00054168701171875,
+     "fail_patient": 5.340576171875e-05,
+     "work_agent": 0.00017452239990234375,
+     "work_patient": 2.0742416381835938e-05
+    },
+    "40.12": {
+     "fail_agent": 0.002471923828125,
+     "fail_patient": 7.62939453125e-05,
+     "work_agent": 0.0078125,
+     "work_patient": 0.0003662109375
+    },
+    "39.23": {
+     "fail_agent": 0.00494384765625,
+     "fail_patient": 0.001739501953125,
+     "work_agent": 0.00860595703125,
+     "work_patient": 0.0033721923828125
+    },
+    "56.4": {
+     "fail_agent": 0.00225830078125,
+     "fail_patient": 8.344650268554688e-05,
+     "work_agent": 0.0034637451171875,
+     "work_patient": 9.822845458984375e-05
+    },
+    "58.26": {
+     "fail_agent": 0.00021076202392578125,
+     "fail_patient": 0.000396728515625,
+     "work_agent": 0.0001354217529296875,
+     "work_patient": 0.0004291534423828125
+    },
+    "46.29": {
+     "fail_agent": 0.01043701171875,
+     "fail_patient": 0.0020599365234375,
+     "work_agent": 0.006866455078125,
+     "work_patient": 0.00139617919921875
+    },
+    "40.1": {
+     "fail_agent": 0.13671875,
+     "fail_patient": 0.00445556640625,
+     "work_agent": 0.14453125,
+     "work_patient": 0.007080078125
+    },
+    "41.14": {
+     "fail_agent": 0.107421875,
+     "fail_patient": 0.002349853515625,
+     "work_agent": 0.10986328125,
+     "work_patient": 0.004119873046875
+    },
+    "49.31": {
+     "fail_agent": 3.725290298461914e-06,
+     "fail_patient": 1.2993812561035156e-05,
+     "work_agent": 3.769993782043457e-06,
+     "work_patient": 1.4007091522216797e-05
+    },
+    "57.13": {
+     "fail_agent": 0.10205078125,
+     "fail_patient": 0.01300048828125,
+     "work_agent": 0.09375,
+     "work_patient": 0.0059814453125
+    }
+   }
+  },
+  {
+   "item_id": "Rose>Robert:warn:passive:agent:active",
+   "family_id": "Robert|Rose",
+   "construction": "passive",
+   "ld_failing": 31.5625,
+   "ld_working": 33.375,
+   "ld_patient_q": -27.09375,
+   "heads_attention": {
+    "49.16": {
+     "fail_agent": 0.0003032684326171875,
+     "fail_patient": 1.823902130126953e-05,
+     "work_agent": 0.000125885009765625,
+     "work_patient": 1.0311603546142578e-05
+    },
+    "40.12": {
+     "fail_agent": 0.003448486328125,
+     "fail_patient": 0.000263214111328125,
+     "work_agent": 0.004119873046875,
+     "work_patient": 0.0004520416259765625
+    },
+    "39.23": {
+     "fail_agent": 0.00799560546875,
+     "fail_patient": 0.004638671875,
+     "work_agent": 0.010986328125,
+     "work_patient": 0.006072998046875
+    },
+    "56.4": {
+     "fail_agent": 0.007110595703125,
+     "fail_patient": 0.00013256072998046875,
+     "work_agent": 0.005035400390625,
+     "work_patient": 0.0001010894775390625
+    },
+    "58.26": {
+     "fail_agent": 0.000316619873046875,
+     "fail_patient": 0.0009918212890625,
+     "work_agent": 0.00023174285888671875,
+     "work_patient": 0.00110626220703125
+    },
+    "46.29": {
+     "fail_agent": 0.00830078125,
+     "fail_patient": 0.001007080078125,
+     "work_agent": 0.005157470703125,
+     "work_patient": 0.000827789306640625
+    },
+    "40.1": {
+     "fail_agent": 0.1767578125,
+     "fail_patient": 0.01226806640625,
+     "work_agent": 0.11328125,
+     "work_patient": 0.015869140625
+    },
+    "41.14": {
+     "fail_agent": 0.1552734375,
+     "fail_patient": 0.004608154296875,
+     "work_agent": 0.09375,
+     "work_patient": 0.00567626953125
+    },
+    "49.31": {
+     "fail_agent": 6.556510925292969e-06,
+     "fail_patient": 1.150369644165039e-05,
+     "work_agent": 1.0848045349121094e-05,
+     "work_patient": 1.1563301086425781e-05
+    },
+    "57.13": {
+     "fail_agent": 0.11767578125,
+     "fail_patient": 0.0211181640625,
+     "work_agent": 0.1064453125,
+     "work_patient": 0.015869140625
+    }
+   }
+  },
+  {
+   "item_id": "George>Julia:watch:passive:agent:active",
+   "family_id": "George|Julia",
+   "construction": "passive",
+   "ld_failing": 25.03125,
+   "ld_working": 36.75,
+   "ld_patient_q": -35.0,
+   "heads_attention": {
+    "49.16": {
+     "fail_agent": 0.0002880096435546875,
+     "fail_patient": 3.6716461181640625e-05,
+     "work_agent": 7.43865966796875e-05,
+     "work_patient": 9.47713851928711e-06
+    },
+    "40.12": {
+     "fail_agent": 0.0023345947265625,
+     "fail_patient": 8.630752563476562e-05,
+     "work_agent": 0.01019287109375,
+     "work_patient": 0.00078582763671875
+    },
+    "39.23": {
+     "fail_agent": 0.004364013671875,
+     "fail_patient": 0.001861572265625,
+     "work_agent": 0.01312255859375,
+     "work_patient": 0.0062255859375
+    },
+    "56.4": {
+     "fail_agent": 0.0108642578125,
+     "fail_patient": 0.0002994537353515625,
+     "work_agent": 0.014404296875,
+     "work_patient": 0.000308990478515625
+    },
+    "58.26": {
+     "fail_agent": 0.000583648681640625,
+     "fail_patient": 0.000827789306640625,
+     "work_agent": 0.000347137451171875,
+     "work_patient": 0.000659942626953125
+    },
+    "46.29": {
+     "fail_agent": 0.005218505859375,
+     "fail_patient": 0.00185394287109375,
+     "work_agent": 0.0033416748046875,
+     "work_patient": 0.0012664794921875
+    },
+    "40.1": {
+     "fail_agent": 0.1728515625,
+     "fail_patient": 0.006927490234375,
+     "work_agent": 0.1904296875,
+     "work_patient": 0.011474609375
+    },
+    "41.14": {
+     "fail_agent": 0.0751953125,
+     "fail_patient": 0.0037078857421875,
+     "work_agent": 0.09814453125,
+     "work_patient": 0.00750732421875
+    },
+    "49.31": {
+     "fail_agent": 7.063150405883789e-06,
+     "fail_patient": 6.616115570068359e-06,
+     "work_agent": 1.0311603546142578e-05,
+     "work_patient": 5.513429641723633e-06
+    },
+    "57.13": {
+     "fail_agent": 0.10205078125,
+     "fail_patient": 0.02001953125,
+     "work_agent": 0.09814453125,
+     "work_patient": 0.00946044921875
+    }
+   }
+  },
+  {
+   "item_id": "George>Anna:thank:passive:agent:active",
+   "family_id": "Anna|George",
+   "construction": "passive",
+   "ld_failing": 22.51953125,
+   "ld_working": 34.8125,
+   "ld_patient_q": -31.6875,
+   "heads_attention": {
+    "49.16": {
+     "fail_agent": 0.00032806396484375,
+     "fail_patient": 2.2292137145996094e-05,
+     "work_agent": 0.00010156631469726562,
+     "work_patient": 9.47713851928711e-06
+    },
+    "40.12": {
+     "fail_agent": 0.00299072265625,
+     "fail_patient": 6.151199340820312e-05,
+     "work_agent": 0.007781982421875,
+     "work_patient": 0.000530242919921875
+    },
+    "39.23": {
+     "fail_agent": 0.00506591796875,
+     "fail_patient": 0.00238037109375,
+     "work_agent": 0.0123291015625,
+     "work_patient": 0.006683349609375
+    },
+    "56.4": {
+     "fail_agent": 0.0140380859375,
+     "fail_patient": 0.000301361083984375,
+     "work_agent": 0.01446533203125,
+     "work_patient": 0.0002727508544921875
+    },
+    "58.26": {
+     "fail_agent": 0.000537872314453125,
+     "fail_patient": 0.00130462646484375,
+     "work_agent": 0.0003147125244140625,
+     "work_patient": 0.0010528564453125
+    },
+    "46.29": {
+     "fail_agent": 0.006195068359375,
+     "fail_patient": 0.00213623046875,
+     "work_agent": 0.00408935546875,
+     "work_patient": 0.00150299072265625
+    },
+    "40.1": {
+     "fail_agent": 0.2236328125,
+     "fail_patient": 0.007659912109375,
+     "work_agent": 0.1728515625,
+     "work_patient": 0.00958251953125
+    },
+    "41.14": {
+     "fail_agent": 0.09228515625,
+     "fail_patient": 0.003448486328125,
+     "work_agent": 0.09814453125,
+     "work_patient": 0.0059814453125
+    },
+    "49.31": {
+     "fail_agent": 8.463859558105469e-06,
+     "fail_patient": 7.927417755126953e-06,
+     "work_agent": 1.1622905731201172e-05,
+     "work_patient": 6.22868537902832e-06
+    },
+    "57.13": {
+     "fail_agent": 0.1259765625,
+     "fail_patient": 0.012451171875,
+     "work_agent": 0.10986328125,
+     "work_patient": 0.005157470703125
+    }
+   }
+  },
+  {
+   "item_id": "Kate>Laura:push:passive:agent:active",
+   "family_id": "Kate|Laura",
+   "construction": "passive",
+   "ld_failing": 31.5625,
+   "ld_working": 36.25,
+   "ld_patient_q": -30.6875,
+   "heads_attention": {
+    "49.16": {
+     "fail_agent": 0.000354766845703125,
+     "fail_patient": 2.1338462829589844e-05,
+     "work_agent": 0.0001544952392578125,
+     "work_patient": 1.52587890625e-05
+    },
+    "40.12": {
+     "fail_agent": 0.00543212890625,
+     "fail_patient": 0.00016880035400390625,
+     "work_agent": 0.01031494140625,
+     "work_patient": 0.000736236572265625
+    },
+    "39.23": {
+     "fail_agent": 0.009521484375,
+     "fail_patient": 0.004730224609375,
+     "work_agent": 0.0123291015625,
+     "work_patient": 0.007415771484375
+    },
+    "56.4": {
+     "fail_agent": 0.004669189453125,
+     "fail_patient": 0.00021266937255859375,
+     "work_agent": 0.004364013671875,
+     "work_patient": 0.00016498565673828125
+    },
+    "58.26": {
+     "fail_agent": 0.00016880035400390625,
+     "fail_patient": 0.00061798095703125,
+     "work_agent": 0.000102996826171875,
+     "work_patient": 0.00067901611328125
+    },
+    "46.29": {
+     "fail_agent": 0.0113525390625,
+     "fail_patient": 0.0022735595703125,
+     "work_agent": 0.006805419921875,
+     "work_patient": 0.0013885498046875
+    },
+    "40.1": {
+     "fail_agent": 0.1953125,
+     "fail_patient": 0.0103759765625,
+     "work_agent": 0.1767578125,
+     "work_patient": 0.0159912109375
+    },
+    "41.14": {
+     "fail_agent": 0.16015625,
+     "fail_patient": 0.006072998046875,
+     "work_agent": 0.134765625,
+     "work_patient": 0.0079345703125
+    },
+    "49.31": {
+     "fail_agent": 3.1888484954833984e-06,
+     "fail_patient": 1.0788440704345703e-05,
+     "work_agent": 3.9637088775634766e-06,
+     "work_patient": 1.8835067749023438e-05
+    },
+    "57.13": {
+     "fail_agent": 0.130859375,
+     "fail_patient": 0.021484375,
+     "work_agent": 0.10546875,
+     "work_patient": 0.01220703125
+    }
+   }
+  },
+  {
+   "item_id": "Sarah>Robert:thank:passive:agent:active",
+   "family_id": "Robert|Sarah",
+   "construction": "passive",
+   "ld_failing": 28.8125,
+   "ld_working": 38.375,
+   "ld_patient_q": -29.125,
+   "heads_attention": {
+    "49.16": {
+     "fail_agent": 0.00021648406982421875,
+     "fail_patient": 1.7762184143066406e-05,
+     "work_agent": 4.267692565917969e-05,
+     "work_patient": 5.245208740234375e-06
+    },
+    "40.12": {
+     "fail_agent": 0.001861572265625,
+     "fail_patient": 4.863739013671875e-05,
+     "work_agent": 0.007049560546875,
+     "work_patient": 0.0003337860107421875
+    },
+    "39.23": {
+     "fail_agent": 0.0057373046875,
+     "fail_patient": 0.0024261474609375,
+     "work_agent": 0.01287841796875,
+     "work_patient": 0.00518798828125
+    },
+    "56.4": {
+     "fail_agent": 0.00823974609375,
+     "fail_patient": 0.00012969970703125,
+     "work_agent": 0.00848388671875,
+     "work_patient": 9.72747802734375e-05
+    },
+    "58.26": {
+     "fail_agent": 0.0004425048828125,
+     "fail_patient": 0.001922607421875,
+     "work_agent": 0.0002651214599609375,
+     "work_patient": 0.00151824951171875
+    },
+    "46.29": {
+     "fail_agent": 0.00933837890625,
+     "fail_patient": 0.0011444091796875,
+     "work_agent": 0.0074462890625,
+     "work_patient": 0.00086212158203125
+    },
+    "40.1": {
+     "fail_agent": 0.1162109375,
+     "fail_patient": 0.007080078125,
+     "work_agent": 0.1396484375,
+     "work_patient": 0.00994873046875
+    },
+    "41.14": {
+     "fail_agent": 0.11279296875,
+     "fail_patient": 0.0030059814453125,
+     "work_agent": 0.10498046875,
+     "work_patient": 0.00421142578125
+    },
+    "49.31": {
+     "fail_agent": 7.212162017822266e-06,
+     "fail_patient": 1.3470649719238281e-05,
+     "work_agent": 7.271766662597656e-06,
+     "work_patient": 2.2411346435546875e-05
+    },
+    "57.13": {
+     "fail_agent": 0.11865234375,
+     "fail_patient": 0.031982421875,
+     "work_agent": 0.11279296875,
+     "work_patient": 0.01116943359375
+    }
+   }
+  },
+  {
+   "item_id": "John>Frank:tickle:passive:agent:active",
+   "family_id": "Frank|John",
+   "construction": "passive",
+   "ld_failing": 14.625,
+   "ld_working": 31.4375,
+   "ld_patient_q": -34.5,
+   "heads_attention": {
+    "49.16": {
+     "fail_agent": 0.0002307891845703125,
+     "fail_patient": 4.5299530029296875e-05,
+     "work_agent": 3.743171691894531e-05,
+     "work_patient": 8.940696716308594e-06
+    },
+    "40.12": {
+     "fail_agent": 0.0023345947265625,
+     "fail_patient": 0.0001506805419921875,
+     "work_agent": 0.0052490234375,
+     "work_patient": 0.0004367828369140625
+    },
+    "39.23": {
+     "fail_agent": 0.004119873046875,
+     "fail_patient": 0.0018768310546875,
+     "work_agent": 0.0087890625,
+     "work_patient": 0.005279541015625
+    },
+    "56.4": {
+     "fail_agent": 0.0089111328125,
+     "fail_patient": 6.818771362304688e-05,
+     "work_agent": 0.010498046875,
+     "work_patient": 9.250640869140625e-05
+    },
+    "58.26": {
+     "fail_agent": 0.00090789794921875,
+     "fail_patient": 0.0025482177734375,
+     "work_agent": 0.000385284423828125,
+     "work_patient": 0.000965118408203125
+    },
+    "46.29": {
+     "fail_agent": 0.0038909912109375,
+     "fail_patient": 0.00081634521484375,
+     "work_agent": 0.005340576171875,
+     "work_patient": 0.00110626220703125
+    },
+    "40.1": {
+     "fail_agent": 0.0888671875,
+     "fail_patient": 0.0164794921875,
+     "work_agent": 0.13671875,
+     "work_patient": 0.014404296875
+    },
+    "41.14": {
+     "fail_agent": 0.07958984375,
+     "fail_patient": 0.01385498046875,
+     "work_agent": 0.1064453125,
+     "work_patient": 0.00665283203125
+    },
+    "49.31": {
+     "fail_agent": 9.715557098388672e-06,
+     "fail_patient": 6.288290023803711e-06,
+     "work_agent": 4.315376281738281e-05,
+     "work_patient": 2.7567148208618164e-06
+    },
+    "57.13": {
+     "fail_agent": 0.08251953125,
+     "fail_patient": 0.020263671875,
+     "work_agent": 0.0986328125,
+     "work_patient": 0.00946044921875
+    }
+   }
+  },
+  {
+   "item_id": "Michael>Paul:watch:passive:agent:active",
+   "family_id": "Michael|Paul",
+   "construction": "passive",
+   "ld_failing": 23.814453125,
+   "ld_working": 36.875,
+   "ld_patient_q": -32.9375,
+   "heads_attention": {
+    "49.16": {
+     "fail_agent": 0.000263214111328125,
+     "fail_patient": 2.944469451904297e-05,
+     "work_agent": 6.67572021484375e-05,
+     "work_patient": 5.662441253662109e-06
+    },
+    "40.12": {
+     "fail_agent": 0.0012664794921875,
+     "fail_patient": 5.9604644775390625e-05,
+     "work_agent": 0.01141357421875,
+     "work_patient": 0.0005035400390625
+    },
+    "39.23": {
+     "fail_agent": 0.003814697265625,
+     "fail_patient": 0.00144195556640625,
+     "work_agent": 0.0123291015625,
+     "work_patient": 0.00506591796875
+    },
+    "56.4": {
+     "fail_agent": 0.00567626953125,
+     "fail_patient": 0.0001068115234375,
+     "work_agent": 0.010986328125,
+     "work_patient": 0.00012969970703125
+    },
+    "58.26": {
+     "fail_agent": 0.000553131103515625,
+     "fail_patient": 0.00213623046875,
+     "work_agent": 0.0003662109375,
+     "work_patient": 0.0021514892578125
+    },
+    "46.29": {
+     "fail_agent": 0.004974365234375,
+     "fail_patient": 0.002105712890625,
+     "work_agent": 0.00445556640625,
+     "work_patient": 0.00128173828125
+    },
+    "40.1": {
+     "fail_agent": 0.1162109375,
+     "fail_patient": 0.0081787109375,
+     "work_agent": 0.1865234375,
+     "work_patient": 0.01312255859375
+    },
+    "41.14": {
+     "fail_agent": 0.1083984375,
+     "fail_patient": 0.004364013671875,
+     "work_agent": 0.162109375,
+     "work_patient": 0.006805419921875
+    },
+    "49.31": {
+     "fail_agent": 2.6226043701171875e-06,
+     "fail_patient": 3.5762786865234375e-06,
+     "work_agent": 8.52346420288086e-06,
+     "work_patient": 4.023313522338867e-06
+    },
+    "57.13": {
+     "fail_agent": 0.07080078125,
+     "fail_patient": 0.0223388671875,
+     "work_agent": 0.08056640625,
+     "work_patient": 0.01092529296875
+    }
+   }
+  },
+  {
+   "item_id": "Helen>Lisa:blame:passive:agent:active",
+   "family_id": "Helen|Lisa",
+   "construction": "passive",
+   "ld_failing": 20.90625,
+   "ld_working": 30.875,
+   "ld_patient_q": -31.1875,
+   "heads_attention": {
+    "49.16": {
+     "fail_agent": 0.000263214111328125,
+     "fail_patient": 2.6106834411621094e-05,
+     "work_agent": 8.869171142578125e-05,
+     "work_patient": 8.225440979003906e-06
+    },
+    "40.12": {
+     "fail_agent": 0.0018310546875,
+     "fail_patient": 7.295608520507812e-05,
+     "work_agent": 0.0059814453125,
+     "work_patient": 0.00054168701171875
+    },
+    "39.23": {
+     "fail_agent": 0.0037384033203125,
+     "fail_patient": 0.002410888671875,
+     "work_agent": 0.01055908203125,
+     "work_patient": 0.0078125
+    },
+    "56.4": {
+     "fail_agent": 0.0079345703125,
+     "fail_patient": 0.0001373291015625,
+     "work_agent": 0.00927734375,
+     "work_patient": 0.00015735626220703125
+    },
+    "58.26": {
+     "fail_agent": 0.0004520416259765625,
+     "fail_patient": 0.00146484375,
+     "work_agent": 0.0002498626708984375,
+     "work_patient": 0.00121307373046875
+    },
+    "46.29": {
+     "fail_agent": 0.00897216796875,
+     "fail_patient": 0.002410888671875,
+     "work_agent": 0.005340576171875,
+     "work_patient": 0.00139617919921875
+    },
+    "40.1": {
+     "fail_agent": 0.1767578125,
+     "fail_patient": 0.008056640625,
+     "work_agent": 0.1533203125,
+     "work_patient": 0.013427734375
+    },
+    "41.14": {
+     "fail_agent": 0.1611328125,
+     "fail_patient": 0.0026397705078125,
+     "work_agent": 0.1142578125,
+     "work_patient": 0.00634765625
+    },
+    "49.31": {
+     "fail_agent": 5.125999450683594e-06,
+     "fail_patient": 7.450580596923828e-06,
+     "work_agent": 6.645917892456055e-06,
+     "work_patient": 1.0311603546142578e-05
+    },
+    "57.13": {
+     "fail_agent": 0.11474609375,
+     "fail_patient": 0.0263671875,
+     "work_agent": 0.09716796875,
+     "work_patient": 0.0115966796875
+    }
+   }
+  },
+  {
+   "item_id": "Alice>Julia:call:passive:agent:active",
+   "family_id": "Alice|Julia",
+   "construction": "passive",
+   "ld_failing": 25.5234375,
+   "ld_working": 35.75,
+   "ld_patient_q": -33.625,
+   "heads_attention": {
+    "49.16": {
+     "fail_agent": 0.0002002716064453125,
+     "fail_patient": 6.103515625e-05,
+     "work_agent": 8.058547973632812e-05,
+     "work_patient": 2.0384788513183594e-05
+    },
+    "40.12": {
+     "fail_agent": 0.00225830078125,
+     "fail_patient": 0.00011110305786132812,
+     "work_agent": 0.007293701171875,
+     "work_patient": 0.000698089599609375
+    },
+    "39.23": {
+     "fail_agent": 0.00555419921875,
+     "fail_patient": 0.003173828125,
+     "work_agent": 0.01300048828125,
+     "work_patient": 0.007110595703125
+    },
+    "56.4": {
+     "fail_agent": 0.01171875,
+     "fail_patient": 0.0003643035888671875,
+     "work_agent": 0.01226806640625,
+     "work_patient": 0.0003376007080078125
+    },
+    "58.26": {
+     "fail_agent": 0.00054168701171875,
+     "fail_patient": 0.001220703125,
+     "work_agent": 0.0002651214599609375,
+     "work_patient": 0.0009307861328125
+    },
+    "46.29": {
+     "fail_agent": 0.005767822265625,
+     "fail_patient": 0.00150299072265625,
+     "work_agent": 0.004638671875,
+     "work_patient": 0.001190185546875
+    },
+    "40.1": {
+     "fail_agent": 0.1201171875,
+     "fail_patient": 0.0074462890625,
+     "work_agent": 0.1279296875,
+     "work_patient": 0.01171875
+    },
+    "41.14": {
+     "fail_agent": 0.1650390625,
+     "fail_patient": 0.0040283203125,
+     "work_agent": 0.11279296875,
+     "work_patient": 0.005828857421875
+    },
+    "49.31": {
+     "fail_agent": 6.496906280517578e-06,
+     "fail_patient": 9.417533874511719e-06,
+     "work_agent": 9.47713851928711e-06,
+     "work_patient": 1.0132789611816406e-05
+    },
+    "57.13": {
+     "fail_agent": 0.10595703125,
+     "fail_patient": 0.0400390625,
+     "work_agent": 0.1015625,
+     "work_patient": 0.0177001953125
+    }
+   }
+  },
+  {
+   "item_id": "Julia>Peter:invite:passive:agent:active",
+   "family_id": "Julia|Peter",
+   "construction": "passive",
+   "ld_failing": 21.78125,
+   "ld_working": 35.5,
+   "ld_patient_q": -31.625,
+   "heads_attention": {
+    "49.16": {
+     "fail_agent": 0.0003795623779296875,
+     "fail_patient": 7.05718994140625e-05,
+     "work_agent": 9.059906005859375e-05,
+     "work_patient": 2.1457672119140625e-05
+    },
+    "40.12": {
+     "fail_agent": 0.00164031982421875,
+     "fail_patient": 0.00018215179443359375,
+     "work_agent": 0.005035400390625,
+     "work_patient": 0.000518798828125
+    },
+    "39.23": {
+     "fail_agent": 0.0040283203125,
+     "fail_patient": 0.0036163330078125,
+     "work_agent": 0.010498046875,
+     "work_patient": 0.007110595703125
+    },
+    "56.4": {
+     "fail_agent": 0.0038909912109375,
+     "fail_patient": 8.058547973632812e-05,
+     "work_agent": 0.0111083984375,
+     "work_patient": 0.000179290771484375
+    },
+    "58.26": {
+     "fail_agent": 0.0007476806640625,
+     "fail_patient": 0.002349853515625,
+     "work_agent": 0.0003662109375,
+     "work_patient": 0.0015106201171875
+    },
+    "46.29": {
+     "fail_agent": 0.005035400390625,
+     "fail_patient": 0.00115966796875,
+     "work_agent": 0.00726318359375,
+     "work_patient": 0.0012664794921875
+    },
+    "40.1": {
+     "fail_agent": 0.07275390625,
+     "fail_patient": 0.0155029296875,
+     "work_agent": 0.11669921875,
+     "work_patient": 0.023681640625
+    },
+    "41.14": {
+     "fail_agent": 0.12890625,
+     "fail_patient": 0.00848388671875,
+     "work_agent": 0.1376953125,
+     "work_patient": 0.0101318359375
+    },
+    "49.31": {
+     "fail_agent": 1.0907649993896484e-05,
+     "fail_patient": 7.987022399902344e-06,
+     "work_agent": 3.337860107421875e-05,
+     "work_patient": 1.4841556549072266e-05
+    },
+    "57.13": {
+     "fail_agent": 0.10791015625,
+     "fail_patient": 0.044921875,
+     "work_agent": 0.1298828125,
+     "work_patient": 0.021240234375
+    }
+   }
+  },
+  {
+   "item_id": "Laura>David:rescue:passive:agent:active",
+   "family_id": "David|Laura",
+   "construction": "passive",
+   "ld_failing": 14.3125,
+   "ld_working": 33.0625,
+   "ld_patient_q": -31.25,
+   "heads_attention": {
+    "49.16": {
+     "fail_agent": 0.000499725341796875,
+     "fail_patient": 0.000125885009765625,
+     "work_agent": 9.393692016601562e-05,
+     "work_patient": 2.09808349609375e-05
+    },
+    "40.12": {
+     "fail_agent": 0.0033111572265625,
+     "fail_patient": 0.00021457672119140625,
+     "work_agent": 0.00823974609375,
+     "work_patient": 0.000579833984375
+    },
+    "39.23": {
+     "fail_agent": 0.0038604736328125,
+     "fail_patient": 0.0026092529296875,
+     "work_agent": 0.00982666015625,
+     "work_patient": 0.006439208984375
+    },
+    "56.4": {
+     "fail_agent": 0.005584716796875,
+     "fail_patient": 0.0002040863037109375,
+     "work_agent": 0.0068359375,
+     "work_patient": 0.00019359588623046875
+    },
+    "58.26": {
+     "fail_agent": 0.000545501708984375,
+     "fail_patient": 0.0014495849609375,
+     "work_agent": 0.0002689361572265625,
+     "work_patient": 0.0011138916015625
+    },
+    "46.29": {
+     "fail_agent": 0.007110595703125,
+     "fail_patient": 0.0015411376953125,
+     "work_agent": 0.005950927734375,
+     "work_patient": 0.00084686279296875
+    },
+    "40.1": {
+     "fail_agent": 0.0927734375,
+     "fail_patient": 0.0146484375,
+     "work_agent": 0.11865234375,
+     "work_patient": 0.0194091796875
+    },
+    "41.14": {
+     "fail_agent": 0.1064453125,
+     "fail_patient": 0.0103759765625,
+     "work_agent": 0.10498046875,
+     "work_patient": 0.008056640625
+    },
+    "49.31": {
+     "fail_agent": 4.887580871582031e-06,
+     "fail_patient": 5.513429641723633e-06,
+     "work_agent": 7.987022399902344e-06,
+     "work_patient": 1.3172626495361328e-05
+    },
+    "57.13": {
+     "fail_agent": 0.09765625,
+     "fail_patient": 0.059326171875,
+     "work_agent": 0.10400390625,
+     "work_patient": 0.0164794921875
+    }
+   }
+  },
+  {
+   "item_id": "Julia>David:follow:passive:agent:active",
+   "family_id": "David|Julia",
+   "construction": "passive",
+   "ld_failing": -4.125,
+   "ld_working": 36.1875,
+   "ld_patient_q": -29.5,
+   "heads_attention": {
+    "49.16": {
+     "fail_agent": 0.00064849853515625,
+     "fail_patient": 0.00057220458984375,
+     "work_agent": 0.00010204315185546875,
+     "work_patient": 8.344650268554688e-06
+    },
+    "40.12": {
+     "fail_agent": 0.000865936279296875,
+     "fail_patient": 0.00013065338134765625,
+     "work_agent": 0.0172119140625,
+     "work_patient": 0.000560760498046875
+    },
+    "39.23": {
+     "fail_agent": 0.004150390625,
+     "fail_patient": 0.00173187255859375,
+     "work_agent": 0.015380859375,
+     "work_patient": 0.006439208984375
+    },
+    "56.4": {
+     "fail_agent": 0.00185394287109375,
+     "fail_patient": 0.000583648681640625,
+     "work_agent": 0.0128173828125,
+     "work_patient": 0.0001239776611328125
+    },
+    "58.26": {
+     "fail_agent": 0.000640869140625,
+     "fail_patient": 0.000926971435546875,
+     "work_agent": 0.000370025634765625,
+     "work_patient": 0.00130462646484375
+    },
+    "46.29": {
+     "fail_agent": 0.00262451171875,
+     "fail_patient": 0.00087738037109375,
+     "work_agent": 0.0068359375,
+     "work_patient": 0.000885009765625
+    },
+    "40.1": {
+     "fail_agent": 0.0213623046875,
+     "fail_patient": 0.018798828125,
+     "work_agent": 0.1611328125,
+     "work_patient": 0.0159912109375
+    },
+    "41.14": {
+     "fail_agent": 0.0537109375,
+     "fail_patient": 0.04052734375,
+     "work_agent": 0.1484375,
+     "work_patient": 0.00604248046875
+    },
+    "49.31": {
+     "fail_agent": 4.857778549194336e-06,
+     "fail_patient": 5.185604095458984e-06,
+     "work_agent": 3.147125244140625e-05,
+     "work_patient": 1.3172626495361328e-05
+    },
+    "57.13": {
+     "fail_agent": 0.04931640625,
+     "fail_patient": 0.0478515625,
+     "work_agent": 0.11962890625,
+     "work_patient": 0.017822265625
+    }
+   }
+  },
+  {
+   "item_id": "Alice>Tom:push:passive:agent:active",
+   "family_id": "Alice|Tom",
+   "construction": "passive",
+   "ld_failing": 27.1875,
+   "ld_working": 40.75,
+   "ld_patient_q": -32.375,
+   "heads_attention": {
+    "49.16": {
+     "fail_agent": 0.00022029876708984375,
+     "fail_patient": 7.152557373046875e-05,
+     "work_agent": 9.012222290039062e-05,
+     "work_patient": 2.288818359375e-05
+    },
+    "40.12": {
+     "fail_agent": 0.0032196044921875,
+     "fail_patient": 5.245208740234375e-05,
+     "work_agent": 0.01275634765625,
+     "work_patient": 0.00054168701171875
+    },
+    "39.23": {
+     "fail_agent": 0.00701904296875,
+     "fail_patient": 0.0030670166015625,
+     "work_agent": 0.01470947265625,
+     "work_patient": 0.00811767578125
+    },
+    "56.4": {
+     "fail_agent": 0.01373291015625,
+     "fail_patient": 0.0001964569091796875,
+     "work_agent": 0.0167236328125,
+     "work_patient": 0.0003376007080078125
+    },
+    "58.26": {
+     "fail_agent": 0.00054168701171875,
+     "fail_patient": 0.0012969970703125,
+     "work_agent": 0.00023365020751953125,
+     "work_patient": 0.000919342041015625
+    },
+    "46.29": {
+     "fail_agent": 0.005615234375,
+     "fail_patient": 0.00118255615234375,
+     "work_agent": 0.0064697265625,
+     "work_patient": 0.0011749267578125
+    },
+    "40.1": {
+     "fail_agent": 0.134765625,
+     "fail_patient": 0.0137939453125,
+     "work_agent": 0.158203125,
+     "work_patient": 0.0274658203125
+    },
+    "41.14": {
+     "fail_agent": 0.12353515625,
+     "fail_patient": 0.00616455078125,
+     "work_agent": 0.11572265625,
+     "work_patient": 0.00799560546875
+    },
+    "49.31": {
+     "fail_agent": 5.155801773071289e-06,
+     "fail_patient": 9.059906005859375e-06,
+     "work_agent": 1.0132789611816406e-05,
+     "work_patient": 1.1444091796875e-05
+    },
+    "57.13": {
+     "fail_agent": 0.107421875,
+     "fail_patient": 0.03173828125,
+     "work_agent": 0.10205078125,
+     "work_patient": 0.01300048828125
+    }
+   }
+  },
+  {
+   "item_id": "Laura>Rose:admire:passive:agent:active",
+   "family_id": "Laura|Rose",
+   "construction": "passive",
+   "ld_failing": 12.6875,
+   "ld_working": 33.6875,
+   "ld_patient_q": -30.78125,
+   "heads_attention": {
+    "49.16": {
+     "fail_agent": 0.000423431396484375,
+     "fail_patient": 9.441375732421875e-05,
+     "work_agent": 8.0108642578125e-05,
+     "work_patient": 1.4781951904296875e-05
+    },
+    "40.12": {
+     "fail_agent": 0.00064849853515625,
+     "fail_patient": 5.054473876953125e-05,
+     "work_agent": 0.004180908203125,
+     "work_patient": 0.0002899169921875
+    },
+    "39.23": {
+     "fail_agent": 0.0019989013671875,
+     "fail_patient": 0.000766754150390625,
+     "work_agent": 0.007049560546875,
+     "work_patient": 0.005035400390625
+    },
+    "56.4": {
+     "fail_agent": 0.002777099609375,
+     "fail_patient": 2.86102294921875e-05,
+     "work_agent": 0.007720947265625,
+     "work_patient": 5.817413330078125e-05
+    },
+    "58.26": {
+     "fail_agent": 0.0005340576171875,
+     "fail_patient": 0.0015411376953125,
+     "work_agent": 0.0002918243408203125,
+     "work_patient": 0.00115203857421875
+    },
+    "46.29": {
+     "fail_agent": 0.00445556640625,
+     "fail_patient": 0.00060272216796875,
+     "work_agent": 0.0050048828125,
+     "work_patient": 0.000728607177734375
+    },
+    "40.1": {
+     "fail_agent": 0.039794921875,
+     "fail_patient": 0.001861572265625,
+     "work_agent": 0.07666015625,
+     "work_patient": 0.00174713134765625
+    },
+    "41.14": {
+     "fail_agent": 0.08984375,
+     "fail_patient": 0.0012664794921875,
+     "work_agent": 0.06298828125,
+     "work_patient": 0.00119781494140625
+    },
+    "49.31": {
+     "fail_agent": 4.678964614868164e-06,
+     "fail_patient": 1.4424324035644531e-05,
+     "work_agent": 7.450580596923828e-06,
+     "work_patient": 1.4841556549072266e-05
+    },
+    "57.13": {
+     "fail_agent": 0.08349609375,
+     "fail_patient": 0.0087890625,
+     "work_agent": 0.10791015625,
+     "work_patient": 0.004119873046875
+    }
+   }
+  },
+  {
+   "item_id": "David>Michael:watch:passive:agent:active",
+   "family_id": "David|Michael",
+   "construction": "passive",
+   "ld_failing": 24.4921875,
+   "ld_working": 35.0,
+   "ld_patient_q": -31.0,
+   "heads_attention": {
+    "49.16": {
+     "fail_agent": 0.0003814697265625,
+     "fail_patient": 2.1576881408691406e-05,
+     "work_agent": 8.96453857421875e-05,
+     "work_patient": 5.066394805908203e-06
+    },
+    "40.12": {
+     "fail_agent": 0.00188446044921875,
+     "fail_patient": 5.5789947509765625e-05,
+     "work_agent": 0.011474609375,
+     "work_patient": 0.0004253387451171875
+    },
+    "39.23": {
+     "fail_agent": 0.0038299560546875,
+     "fail_patient": 0.00130462646484375,
+     "work_agent": 0.01275634765625,
+     "work_patient": 0.00433349609375
+    },
+    "56.4": {
+     "fail_agent": 0.00933837890625,
+     "fail_patient": 0.000125885009765625,
+     "work_agent": 0.013671875,
+     "work_patient": 0.00013828277587890625
+    },
+    "58.26": {
+     "fail_agent": 0.000492095947265625,
+     "fail_patient": 0.00121307373046875,
+     "work_agent": 0.000240325927734375,
+     "work_patient": 0.000965118408203125
+    },
+    "46.29": {
+     "fail_agent": 0.0047607421875,
+     "fail_patient": 0.00142669677734375,
+     "work_agent": 0.0037384033203125,
+     "work_patient": 0.0009613037109375
+    },
+    "40.1": {
+     "fail_agent": 0.134765625,
+     "fail_patient": 0.007354736328125,
+     "work_agent": 0.19140625,
+     "work_patient": 0.0106201171875
+    },
+    "41.14": {
+     "fail_agent": 0.1162109375,
+     "fail_patient": 0.005157470703125,
+     "work_agent": 0.1474609375,
+     "work_patient": 0.006256103515625
+    },
+    "49.31": {
+     "fail_agent": 3.7997961044311523e-06,
+     "fail_patient": 7.092952728271484e-06,
+     "work_agent": 8.046627044677734e-06,
+     "work_patient": 6.258487701416016e-06
+    },
+    "57.13": {
+     "fail_agent": 0.1201171875,
+     "fail_patient": 0.0208740234375,
+     "work_agent": 0.11083984375,
+     "work_patient": 0.008056640625
+    }
+   }
+  },
+  {
+   "item_id": "Laura>Rose:admire:by_cleft:agent:active",
+   "family_id": "Laura|Rose",
+   "construction": "by_cleft",
+   "ld_failing": 6.0,
+   "ld_working": 31.75,
+   "ld_patient_q": -33.0,
+   "heads_attention": {
+    "49.16": {
+     "fail_agent": 0.0004425048828125,
+     "fail_patient": 0.0003910064697265625,
+     "work_agent": 4.863739013671875e-05,
+     "work_patient": 1.3947486877441406e-05
+    },
+    "40.12": {
+     "fail_agent": 0.0001964569091796875,
+     "fail_patient": 0.00049591064453125,
+     "work_agent": 0.00165557861328125,
+     "work_patient": 0.001434326171875
+    },
+    "39.23": {
+     "fail_agent": 0.0020904541015625,
+     "fail_patient": 0.0040283203125,
+     "work_agent": 0.0087890625,
+     "work_patient": 0.009521484375
+    },
+    "56.4": {
+     "fail_agent": 0.000583648681640625,
+     "fail_patient": 0.00185394287109375,
+     "work_agent": 0.001861572265625,
+     "work_patient": 0.000415802001953125
+    },
+    "58.26": {
+     "fail_agent": 0.000640869140625,
+     "fail_patient": 0.0003643035888671875,
+     "work_agent": 0.000652313232421875,
+     "work_patient": 0.0002651214599609375
+    },
+    "46.29": {
+     "fail_agent": 0.0013275146484375,
+     "fail_patient": 0.00186920166015625,
+     "work_agent": 0.0020751953125,
+     "work_patient": 0.00177764892578125
+    },
+    "40.1": {
+     "fail_agent": 0.00482177734375,
+     "fail_patient": 0.0223388671875,
+     "work_agent": 0.0419921875,
+     "work_patient": 0.0142822265625
+    },
+    "41.14": {
+     "fail_agent": 0.01513671875,
+     "fail_patient": 0.03564453125,
+     "work_agent": 0.02783203125,
+     "work_patient": 0.00823974609375
+    },
+    "49.31": {
+     "fail_agent": 1.1265277862548828e-05,
+     "fail_patient": 7.748603820800781e-06,
+     "work_agent": 2.47955322265625e-05,
+     "work_patient": 8.046627044677734e-06
+    },
+    "57.13": {
+     "fail_agent": 0.03564453125,
+     "fail_patient": 0.048583984375,
+     "work_agent": 0.058837890625,
+     "work_patient": 0.026123046875
+    }
+   }
+  },
+  {
+   "item_id": "James>Laura:call:by_cleft:agent:active",
+   "family_id": "James|Laura",
+   "construction": "by_cleft",
+   "ld_failing": 9.4375,
+   "ld_working": 36.5625,
+   "ld_patient_q": -32.875,
+   "heads_attention": {
+    "49.16": {
+     "fail_agent": 6.198883056640625e-05,
+     "fail_patient": 0.00016880035400390625,
+     "work_agent": 3.9637088775634766e-06,
+     "work_patient": 6.16908073425293e-06
+    },
+    "40.12": {
+     "fail_agent": 0.00054168701171875,
+     "fail_patient": 0.0003681182861328125,
+     "work_agent": 0.00164031982421875,
+     "work_patient": 0.0011444091796875
+    },
+    "39.23": {
+     "fail_agent": 0.0013580322265625,
+     "fail_patient": 0.0030364990234375,
+     "work_agent": 0.00531005859375,
+     "work_patient": 0.00946044921875
+    },
+    "56.4": {
+     "fail_agent": 0.00016021728515625,
+     "fail_patient": 0.0010833740234375,
+     "work_agent": 0.000331878662109375,
+     "work_patient": 0.0003528594970703125
+    },
+    "58.26": {
+     "fail_agent": 0.0003299713134765625,
+     "fail_patient": 0.0003871917724609375,
+     "work_agent": 0.00067901611328125,
+     "work_patient": 0.0004825592041015625
+    },
+    "46.29": {
+     "fail_agent": 0.00067901611328125,
+     "fail_patient": 0.0023956298828125,
+     "work_agent": 0.000637054443359375,
+     "work_patient": 0.001556396484375
+    },
+    "40.1": {
+     "fail_agent": 0.0062255859375,
+     "fail_patient": 0.01043701171875,
+     "work_agent": 0.034912109375,
+     "work_patient": 0.01226806640625
+    },
+    "41.14": {
+     "fail_agent": 0.0089111328125,
+     "fail_patient": 0.0211181640625,
+     "work_agent": 0.01409912109375,
+     "work_patient": 0.005645751953125
+    },
+    "49.31": {
+     "fail_agent": 2.014636993408203e-05,
+     "fail_patient": 4.231929779052734e-06,
+     "work_agent": 4.6253204345703125e-05,
+     "work_patient": 8.046627044677734e-06
+    },
+    "57.13": {
+     "fail_agent": 0.0107421875,
+     "fail_patient": 0.0311279296875,
+     "work_agent": 0.0203857421875,
+     "work_patient": 0.0179443359375
+    }
+   }
+  },
+  {
+   "item_id": "Julia>Paul:visit:by_cleft:agent:active",
+   "family_id": "Julia|Paul",
+   "construction": "by_cleft",
+   "ld_failing": 8.625,
+   "ld_working": 34.6875,
+   "ld_patient_q": -31.5,
+   "heads_attention": {
+    "49.16": {
+     "fail_agent": 0.000797271728515625,
+     "fail_patient": 0.000331878662109375,
+     "work_agent": 3.147125244140625e-05,
+     "work_patient": 1.2278556823730469e-05
+    },
+    "40.12": {
+     "fail_agent": 0.0003147125244140625,
+     "fail_patient": 0.000606536865234375,
+     "work_agent": 0.001708984375,
+     "work_patient": 0.00112152099609375
+    },
+    "39.23": {
+     "fail_agent": 0.0022125244140625,
+     "fail_patient": 0.00531005859375,
+     "work_agent": 0.00750732421875,
+     "work_patient": 0.010009765625
+    },
+    "56.4": {
+     "fail_agent": 0.000782012939453125,
+     "fail_patient": 0.000667572021484375,
+     "work_agent": 0.0018768310546875,
+     "work_patient": 0.00016880035400390625
+    },
+    "58.26": {
+     "fail_agent": 0.00075531005859375,
+     "fail_patient": 0.00077056884765625,
+     "work_agent": 0.0005950927734375,
+     "work_patient": 0.00055694580078125
+    },
+    "46.29": {
+     "fail_agent": 0.00145721435546875,
+     "fail_patient": 0.0023345947265625,
+     "work_agent": 0.002044677734375,
+     "work_patient": 0.0018310546875
+    },
+    "40.1": {
+     "fail_agent": 0.01177978515625,
+     "fail_patient": 0.032958984375,
+     "work_agent": 0.04931640625,
+     "work_patient": 0.03271484375
+    },
+    "41.14": {
+     "fail_agent": 0.0218505859375,
+     "fail_patient": 0.034912109375,
+     "work_agent": 0.03466796875,
+     "work_patient": 0.0096435546875
+    },
+    "49.31": {
+     "fail_agent": 1.0013580322265625e-05,
+     "fail_patient": 3.933906555175781e-06,
+     "work_agent": 2.4557113647460938e-05,
+     "work_patient": 4.291534423828125e-06
+    },
+    "57.13": {
+     "fail_agent": 0.040283203125,
+     "fail_patient": 0.048583984375,
+     "work_agent": 0.078125,
+     "work_patient": 0.03271484375
+    }
+   }
+  },
+  {
+   "item_id": "Daniel>Helen:call:by_cleft:agent:active",
+   "family_id": "Daniel|Helen",
+   "construction": "by_cleft",
+   "ld_failing": 11.6875,
+   "ld_working": 33.0,
+   "ld_patient_q": -33.6875,
+   "heads_attention": {
+    "49.16": {
+     "fail_agent": 0.00017261505126953125,
+     "fail_patient": 9.250640869140625e-05,
+     "work_agent": 2.0265579223632812e-05,
+     "work_patient": 6.586313247680664e-06
+    },
+    "40.12": {
+     "fail_agent": 0.0003604888916015625,
+     "fail_patient": 0.0003681182861328125,
+     "work_agent": 0.00115203857421875,
+     "work_patient": 0.001007080078125
+    },
+    "39.23": {
+     "fail_agent": 0.0013275146484375,
+     "fail_patient": 0.0034942626953125,
+     "work_agent": 0.005523681640625,
+     "work_patient": 0.0093994140625
+    },
+    "56.4": {
+     "fail_agent": 0.00037384033203125,
+     "fail_patient": 0.0012664794921875,
+     "work_agent": 0.000614166259765625,
+     "work_patient": 0.000576019287109375
+    },
+    "58.26": {
+     "fail_agent": 0.000530242919921875,
+     "fail_patient": 0.00018596649169921875,
+     "work_agent": 0.000926971435546875,
+     "work_patient": 0.0002689361572265625
+    },
+    "46.29": {
+     "fail_agent": 0.001068115234375,
+     "fail_patient": 0.0028533935546875,
+     "work_agent": 0.00074005126953125,
+     "work_patient": 0.00151824951171875
+    },
+    "40.1": {
+     "fail_agent": 0.01239013671875,
+     "fail_patient": 0.0086669921875,
+     "work_agent": 0.042236328125,
+     "work_patient": 0.012939453125
+    },
+    "41.14": {
+     "fail_agent": 0.023681640625,
+     "fail_patient": 0.0123291015625,
+     "work_agent": 0.0238037109375,
+     "work_patient": 0.004547119140625
+    },
+    "49.31": {
+     "fail_agent": 9.059906005859375e-06,
+     "fail_patient": 4.857778549194336e-06,
+     "work_agent": 1.2516975402832031e-05,
+     "work_patient": 1.1742115020751953e-05
+    },
+    "57.13": {
+     "fail_agent": 0.0201416015625,
+     "fail_patient": 0.038818359375,
+     "work_agent": 0.02783203125,
+     "work_patient": 0.0224609375
+    }
+   }
+  },
+  {
+   "item_id": "Helen>Emma:follow:by_cleft:agent:active",
+   "family_id": "Emma|Helen",
+   "construction": "by_cleft",
+   "ld_failing": -13.9375,
+   "ld_working": 29.90625,
+   "ld_patient_q": -35.3125,
+   "heads_attention": {
+    "49.16": {
+     "fail_agent": 0.000118255615234375,
+     "fail_patient": 0.00049591064453125,
+     "work_agent": 1.5497207641601562e-05,
+     "work_patient": 9.417533874511719e-06
+    },
+    "40.12": {
+     "fail_agent": 6.771087646484375e-05,
+     "fail_patient": 0.0003662109375,
+     "work_agent": 0.00098419189453125,
+     "work_patient": 0.0012664794921875
+    },
+    "39.23": {
+     "fail_agent": 0.00131988525390625,
+     "fail_patient": 0.0035552978515625,
+     "work_agent": 0.005096435546875,
+     "work_patient": 0.00787353515625
+    },
+    "56.4": {
+     "fail_agent": 4.863739013671875e-05,
+     "fail_patient": 0.002197265625,
+     "work_agent": 0.000888824462890625,
+     "work_patient": 0.00055694580078125
+    },
+    "58.26": {
+     "fail_agent": 0.0009002685546875,
+     "fail_patient": 0.000453948974609375,
+     "work_agent": 0.000782012939453125,
+     "work_patient": 0.0003681182861328125
+    },
+    "46.29": {
+     "fail_agent": 0.000522613525390625,
+     "fail_patient": 0.00128936767578125,
+     "work_agent": 0.002044677734375,
+     "work_patient": 0.00147247314453125
+    },
+    "40.1": {
+     "fail_agent": 0.0042724609375,
+     "fail_patient": 0.0206298828125,
+     "work_agent": 0.029052734375,
+     "work_patient": 0.01556396484375
+    },
+    "41.14": {
+     "fail_agent": 0.003448486328125,
+     "fail_patient": 0.048828125,
+     "work_agent": 0.019775390625,
+     "work_patient": 0.0089111328125
+    },
+    "49.31": {
+     "fail_agent": 7.927417755126953e-06,
+     "fail_patient": 4.5299530029296875e-06,
+     "work_agent": 2.6345252990722656e-05,
+     "work_patient": 7.092952728271484e-06
+    },
+    "57.13": {
+     "fail_agent": 0.0234375,
+     "fail_patient": 0.043701171875,
+     "work_agent": 0.0517578125,
+     "work_patient": 0.01904296875
+    }
+   }
+  },
+  {
+   "item_id": "Daniel>Alice:tickle:by_cleft:agent:active",
+   "family_id": "Alice|Daniel",
+   "construction": "by_cleft",
+   "ld_failing": -10.75,
+   "ld_working": 35.125,
+   "ld_patient_q": -35.4375,
+   "heads_attention": {
+    "49.16": {
+     "fail_agent": 0.0001621246337890625,
+     "fail_patient": 0.0002841949462890625,
+     "work_agent": 2.9087066650390625e-05,
+     "work_patient": 7.808208465576172e-06
+    },
+    "40.12": {
+     "fail_agent": 7.62939453125e-05,
+     "fail_patient": 0.0003299713134765625,
+     "work_agent": 0.0011749267578125,
+     "work_patient": 0.00160980224609375
+    },
+    "39.23": {
+     "fail_agent": 0.001007080078125,
+     "fail_patient": 0.0023956298828125,
+     "work_agent": 0.006195068359375,
+     "work_patient": 0.00927734375
+    },
+    "56.4": {
+     "fail_agent": 5.435943603515625e-05,
+     "fail_patient": 0.002105712890625,
+     "work_agent": 0.00069427490234375,
+     "work_patient": 0.000537872314453125
+    },
+    "58.26": {
+     "fail_agent": 0.0012969970703125,
+     "fail_patient": 0.000804901123046875,
+     "work_agent": 0.00074005126953125,
+     "work_patient": 0.0003871917724609375
+    },
+    "46.29": {
+     "fail_agent": 0.0004634857177734375,
+     "fail_patient": 0.00341796875,
+     "work_agent": 0.00089263916015625,
+     "work_patient": 0.0018310546875
+    },
+    "40.1": {
+     "fail_agent": 0.0026397705078125,
+     "fail_patient": 0.021728515625,
+     "work_agent": 0.039794921875,
+     "work_patient": 0.01373291015625
+    },
+    "41.14": {
+     "fail_agent": 0.003082275390625,
+     "fail_patient": 0.036865234375,
+     "work_agent": 0.038330078125,
+     "work_patient": 0.0078125
+    },
+    "49.31": {
+     "fail_agent": 2.950429916381836e-06,
+     "fail_patient": 6.645917892456055e-06,
+     "work_agent": 4.32133674621582e-06,
+     "work_patient": 7.12275505065918e-06
+    },
+    "57.13": {
+     "fail_agent": 0.015625,
+     "fail_patient": 0.0291748046875,
+     "work_agent": 0.027587890625,
+     "work_patient": 0.0142822265625
+    }
+   }
+  },
+  {
+   "item_id": "Julia>Alice:warn:by_cleft:agent:active",
+   "family_id": "Alice|Julia",
+   "construction": "by_cleft",
+   "ld_failing": 17.34375,
+   "ld_working": 33.6875,
+   "ld_patient_q": -34.625,
+   "heads_attention": {
+    "49.16": {
+     "fail_agent": 0.0001983642578125,
+     "fail_patient": 7.772445678710938e-05,
+     "work_agent": 3.528594970703125e-05,
+     "work_patient": 2.276897430419922e-05
+    },
+    "40.12": {
+     "fail_agent": 0.000705718994140625,
+     "fail_patient": 0.000621795654296875,
+     "work_agent": 0.0021820068359375,
+     "work_patient": 0.00189208984375
+    },
+    "39.23": {
+     "fail_agent": 0.002593994140625,
+     "fail_patient": 0.0038909912109375,
+     "work_agent": 0.010009765625,
+     "work_patient": 0.0126953125
+    },
+    "56.4": {
+     "fail_agent": 0.00141143798828125,
+     "fail_patient": 0.0006256103515625,
+     "work_agent": 0.00177001953125,
+     "work_patient": 0.000522613525390625
+    },
+    "58.26": {
+     "fail_agent": 0.000614166259765625,
+     "fail_patient": 0.0004024505615234375,
+     "work_agent": 0.000640869140625,
+     "work_patient": 0.00032806396484375
+    },
+    "46.29": {
+     "fail_agent": 0.0035858154296875,
+     "fail_patient": 0.003173828125,
+     "work_agent": 0.001983642578125,
+     "work_patient": 0.00154876708984375
+    },
+    "40.1": {
+     "fail_agent": 0.0262451171875,
+     "fail_patient": 0.01031494140625,
+     "work_agent": 0.041015625,
+     "work_patient": 0.0194091796875
+    },
+    "41.14": {
+     "fail_agent": 0.03369140625,
+     "fail_patient": 0.00811767578125,
+     "work_agent": 0.034423828125,
+     "work_patient": 0.00897216796875
+    },
+    "49.31": {
+     "fail_agent": 1.3947486877441406e-05,
+     "fail_patient": 5.453824996948242e-06,
+     "work_agent": 1.704692840576172e-05,
+     "work_patient": 7.12275505065918e-06
+    },
+    "57.13": {
+     "fail_agent": 0.0712890625,
+     "fail_patient": 0.03173828125,
+     "work_agent": 0.0703125,
+     "work_patient": 0.01953125
+    }
+   }
+  },
+  {
+   "item_id": "Laura>David:thank:by_cleft:agent:active",
+   "family_id": "David|Laura",
+   "construction": "by_cleft",
+   "ld_failing": 15.5625,
+   "ld_working": 31.75,
+   "ld_patient_q": -32.0,
+   "heads_attention": {
+    "49.16": {
+     "fail_agent": 0.000270843505859375,
+     "fail_patient": 0.000270843505859375,
+     "work_agent": 6.532669067382812e-05,
+     "work_patient": 3.504753112792969e-05
+    },
+    "40.12": {
+     "fail_agent": 0.000171661376953125,
+     "fail_patient": 0.000293731689453125,
+     "work_agent": 0.00148773193359375,
+     "work_patient": 0.00122833251953125
+    },
+    "39.23": {
+     "fail_agent": 0.002105712890625,
+     "fail_patient": 0.003448486328125,
+     "work_agent": 0.0084228515625,
+     "work_patient": 0.00823974609375
+    },
+    "56.4": {
+     "fail_agent": 0.0023193359375,
+     "fail_patient": 0.00099945068359375,
+     "work_agent": 0.00167083740234375,
+     "work_patient": 0.0004787445068359375
+    },
+    "58.26": {
+     "fail_agent": 0.000698089599609375,
+     "fail_patient": 0.0004482269287109375,
+     "work_agent": 0.000701904296875,
+     "work_patient": 0.0003948211669921875
+    },
+    "46.29": {
+     "fail_agent": 0.0033416748046875,
+     "fail_patient": 0.0020904541015625,
+     "work_agent": 0.0018463134765625,
+     "work_patient": 0.00110626220703125
+    },
+    "40.1": {
+     "fail_agent": 0.0172119140625,
+     "fail_patient": 0.0118408203125,
+     "work_agent": 0.04345703125,
+     "work_patient": 0.0255126953125
+    },
+    "41.14": {
+     "fail_agent": 0.03173828125,
+     "fail_patient": 0.00799560546875,
+     "work_agent": 0.03125,
+     "work_patient": 0.00823974609375
+    },
+    "49.31": {
+     "fail_agent": 1.6689300537109375e-05,
+     "fail_patient": 4.76837158203125e-06,
+     "work_agent": 2.8014183044433594e-05,
+     "work_patient": 5.513429641723633e-06
+    },
+    "57.13": {
+     "fail_agent": 0.0615234375,
+     "fail_patient": 0.09814453125,
+     "work_agent": 0.056396484375,
+     "work_patient": 0.036376953125
+    }
+   }
+  },
+  {
+   "item_id": "Maria>John:follow:by_cleft:agent:active",
+   "family_id": "John|Maria",
+   "construction": "by_cleft",
+   "ld_failing": -7.0,
+   "ld_working": 31.9375,
+   "ld_patient_q": -30.5625,
+   "heads_attention": {
+    "49.16": {
+     "fail_agent": 0.0001277923583984375,
+     "fail_patient": 0.000537872314453125,
+     "work_agent": 6.246566772460938e-05,
+     "work_patient": 2.5987625122070312e-05
+    },
+    "40.12": {
+     "fail_agent": 0.00020503997802734375,
+     "fail_patient": 0.000804901123046875,
+     "work_agent": 0.00115966796875,
+     "work_patient": 0.00091552734375
+    },
+    "39.23": {
+     "fail_agent": 0.00189208984375,
+     "fail_patient": 0.00506591796875,
+     "work_agent": 0.00634765625,
+     "work_patient": 0.00933837890625
+    },
+    "56.4": {
+     "fail_agent": 0.0008392333984375,
+     "fail_patient": 0.00848388671875,
+     "work_agent": 0.00176239013671875,
+     "work_patient": 0.0004062652587890625
+    },
+    "58.26": {
+     "fail_agent": 0.0019989013671875,
+     "fail_patient": 0.000659942626953125,
+     "work_agent": 0.00093841552734375,
+     "work_patient": 0.00060272216796875
+    },
+    "46.29": {
+     "fail_agent": 0.000881195068359375,
+     "fail_patient": 0.001983642578125,
+     "work_agent": 0.001953125,
+     "work_patient": 0.001983642578125
+    },
+    "40.1": {
+     "fail_agent": 0.00836181640625,
+     "fail_patient": 0.045166015625,
+     "work_agent": 0.0517578125,
+     "work_patient": 0.0245361328125
+    },
+    "41.14": {
+     "fail_agent": 0.014892578125,
+     "fail_patient": 0.08447265625,
+     "work_agent": 0.041259765625,
+     "work_patient": 0.00811767578125
+    },
+    "49.31": {
+     "fail_agent": 4.5299530029296875e-06,
+     "fail_patient": 6.586313247680664e-06,
+     "work_agent": 1.4722347259521484e-05,
+     "work_patient": 1.2993812561035156e-05
+    },
+    "57.13": {
+     "fail_agent": 0.044189453125,
+     "fail_patient": 0.06640625,
+     "work_agent": 0.0712890625,
+     "work_patient": 0.0269775390625
+    }
+   }
+  },
+  {
+   "item_id": "James>Tom:admire:by_cleft:agent:active",
+   "family_id": "James|Tom",
+   "construction": "by_cleft",
+   "ld_failing": 7.75,
+   "ld_working": 38.125,
+   "ld_patient_q": -30.9375,
+   "heads_attention": {
+    "49.16": {
+     "fail_agent": 9.870529174804688e-05,
+     "fail_patient": 0.00023746490478515625,
+     "work_agent": 3.2335519790649414e-06,
+     "work_patient": 5.185604095458984e-06
+    },
+    "40.12": {
+     "fail_agent": 0.000457763671875,
+     "fail_patient": 0.000423431396484375,
+     "work_agent": 0.001373291015625,
+     "work_patient": 0.001007080078125
+    },
+    "39.23": {
+     "fail_agent": 0.00124359130859375,
+     "fail_patient": 0.003875732421875,
+     "work_agent": 0.004180908203125,
+     "work_patient": 0.00909423828125
+    },
+    "56.4": {
+     "fail_agent": 0.00013446807861328125,
+     "fail_patient": 0.002166748046875,
+     "work_agent": 0.0003032684326171875,
+     "work_patient": 0.0004425048828125
+    },
+    "58.26": {
+     "fail_agent": 0.000926971435546875,
+     "fail_patient": 0.00052642822265625,
+     "work_agent": 0.00069427490234375,
+     "work_patient": 0.000255584716796875
+    },
+    "46.29": {
+     "fail_agent": 0.000576019287109375,
+     "fail_patient": 0.0012969970703125,
+     "work_agent": 0.000640869140625,
+     "work_patient": 0.00103759765625
+    },
+    "40.1": {
+     "fail_agent": 0.00775146484375,
+     "fail_patient": 0.02001953125,
+     "work_agent": 0.02880859375,
+     "work_patient": 0.01495361328125
+    },
+    "41.14": {
+     "fail_agent": 0.006591796875,
+     "fail_patient": 0.048828125,
+     "work_agent": 0.01177978515625,
+     "work_patient": 0.007598876953125
+    },
+    "49.31": {
+     "fail_agent": 2.384185791015625e-05,
+     "fail_patient": 1.0609626770019531e-05,
+     "work_agent": 4.100799560546875e-05,
+     "work_patient": 9.715557098388672e-06
+    },
+    "57.13": {
+     "fail_agent": 0.01190185546875,
+     "fail_patient": 0.03662109375,
+     "work_agent": 0.01953125,
+     "work_patient": 0.01336669921875
+    }
+   }
+  },
+  {
+   "item_id": "John>Maria:invite:by_cleft:agent:active",
+   "family_id": "John|Maria",
+   "construction": "by_cleft",
+   "ld_failing": -5.625,
+   "ld_working": 32.0625,
+   "ld_patient_q": -35.125,
+   "heads_attention": {
+    "49.16": {
+     "fail_agent": 0.00021266937255859375,
+     "fail_patient": 0.00045013427734375,
+     "work_agent": 4.26173210144043e-06,
+     "work_patient": 4.26173210144043e-06
+    },
+    "40.12": {
+     "fail_agent": 0.000240325927734375,
+     "fail_patient": 0.000789642333984375,
+     "work_agent": 0.0016632080078125,
+     "work_patient": 0.001800537109375
+    },
+    "39.23": {
+     "fail_agent": 0.00113677978515625,
+     "fail_patient": 0.0036468505859375,
+     "work_agent": 0.00543212890625,
+     "work_patient": 0.0106201171875
+    },
+    "56.4": {
+     "fail_agent": 0.00012493133544921875,
+     "fail_patient": 0.002349853515625,
+     "work_agent": 0.00139617919921875,
+     "work_patient": 0.000823974609375
+    },
+    "58.26": {
+     "fail_agent": 0.0023040771484375,
+     "fail_patient": 0.000736236572265625,
+     "work_agent": 0.00133514404296875,
+     "work_patient": 0.0004634857177734375
+    },
+    "46.29": {
+     "fail_agent": 0.00121307373046875,
+     "fail_patient": 0.003509521484375,
+     "work_agent": 0.00150299072265625,
+     "work_patient": 0.00159454345703125
+    },
+    "40.1": {
+     "fail_agent": 0.00677490234375,
+     "fail_patient": 0.0244140625,
+     "work_agent": 0.045166015625,
+     "work_patient": 0.018310546875
+    },
+    "41.14": {
+     "fail_agent": 0.0078125,
+     "fail_patient": 0.04931640625,
+     "work_agent": 0.032470703125,
+     "work_patient": 0.00830078125
+    },
+    "49.31": {
+     "fail_agent": 1.1265277862548828e-05,
+     "fail_patient": 6.4373016357421875e-06,
+     "work_agent": 2.8133392333984375e-05,
+     "work_patient": 1.0311603546142578e-05
+    },
+    "57.13": {
+     "fail_agent": 0.01318359375,
+     "fail_patient": 0.057373046875,
+     "work_agent": 0.031982421875,
+     "work_patient": 0.02490234375
+    }
+   }
+  },
+  {
+   "item_id": "Peter>Kate:chase:by_cleft:agent:active",
+   "family_id": "Kate|Peter",
+   "construction": "by_cleft",
+   "ld_failing": 10.375,
+   "ld_working": 29.84375,
+   "ld_patient_q": -33.6875,
+   "heads_attention": {
+    "49.16": {
+     "fail_agent": 0.00014400482177734375,
+     "fail_patient": 7.2479248046875e-05,
+     "work_agent": 1.6927719116210938e-05,
+     "work_patient": 5.4836273193359375e-06
+    },
+    "40.12": {
+     "fail_agent": 0.000446319580078125,
+     "fail_patient": 0.00028228759765625,
+     "work_agent": 0.0013427734375,
+     "work_patient": 0.001434326171875
+    },
+    "39.23": {
+     "fail_agent": 0.0019683837890625,
+     "fail_patient": 0.0036163330078125,
+     "work_agent": 0.006988525390625,
+     "work_patient": 0.0086669921875
+    },
+    "56.4": {
+     "fail_agent": 0.0015869140625,
+     "fail_patient": 0.00115966796875,
+     "work_agent": 0.001708984375,
+     "work_patient": 0.000492095947265625
+    },
+    "58.26": {
+     "fail_agent": 0.000797271728515625,
+     "fail_patient": 0.0002918243408203125,
+     "work_agent": 0.000843048095703125,
+     "work_patient": 0.000301361083984375
+    },
+    "46.29": {
+     "fail_agent": 0.00194549560546875,
+     "fail_patient": 0.0028228759765625,
+     "work_agent": 0.001190185546875,
+     "work_patient": 0.0018768310546875
+    },
+    "40.1": {
+     "fail_agent": 0.02587890625,
+     "fail_patient": 0.01116943359375,
+     "work_agent": 0.045654296875,
+     "work_patient": 0.0157470703125
+    },
+    "41.14": {
+     "fail_agent": 0.03564453125,
+     "fail_patient": 0.00830078125,
+     "work_agent": 0.028564453125,
+     "work_patient": 0.005157470703125
+    },
+    "49.31": {
+     "fail_agent": 9.119510650634766e-06,
+     "fail_patient": 2.3096799850463867e-06,
+     "work_agent": 1.4185905456542969e-05,
+     "work_patient": 4.589557647705078e-06
+    },
+    "57.13": {
+     "fail_agent": 0.04638671875,
+     "fail_patient": 0.0693359375,
+     "work_agent": 0.050048828125,
+     "work_patient": 0.034423828125
+    }
+   }
+  },
+  {
+   "item_id": "Rose>Robert:warn:by_cleft:agent:active",
+   "family_id": "Robert|Rose",
+   "construction": "by_cleft",
+   "ld_failing": 14.25,
+   "ld_working": 30.4375,
+   "ld_patient_q": -29.84375,
+   "heads_attention": {
+    "49.16": {
+     "fail_agent": 8.821487426757812e-05,
+     "fail_patient": 4.7206878662109375e-05,
+     "work_agent": 2.7060508728027344e-05,
+     "work_patient": 1.0609626770019531e-05
+    },
+    "40.12": {
+     "fail_agent": 0.0004100799560546875,
+     "fail_patient": 0.0004863739013671875,
+     "work_agent": 0.00145721435546875,
+     "work_patient": 0.0012664794921875
+    },
+    "39.23": {
+     "fail_agent": 0.00201416015625,
+     "fail_patient": 0.0037384033203125,
+     "work_agent": 0.00750732421875,
+     "work_patient": 0.0096435546875
+    },
+    "56.4": {
+     "fail_agent": 0.000240325927734375,
+     "fail_patient": 0.0002994537353515625,
+     "work_agent": 0.0003604888916015625,
+     "work_patient": 0.000225067138671875
+    },
+    "58.26": {
+     "fail_agent": 0.000591278076171875,
+     "fail_patient": 0.00019550323486328125,
+     "work_agent": 0.000850677490234375,
+     "work_patient": 0.0002841949462890625
+    },
+    "46.29": {
+     "fail_agent": 0.00186920166015625,
+     "fail_patient": 0.0020599365234375,
+     "work_agent": 0.00109100341796875,
+     "work_patient": 0.0009613037109375
+    },
+    "40.1": {
+     "fail_agent": 0.026611328125,
+     "fail_patient": 0.018798828125,
+     "work_agent": 0.037841796875,
+     "work_patient": 0.03125
+    },
+    "41.14": {
+     "fail_agent": 0.0260009765625,
+     "fail_patient": 0.010009765625,
+     "work_agent": 0.02392578125,
+     "work_patient": 0.01080322265625
+    },
+    "49.31": {
+     "fail_agent": 2.0265579223632812e-05,
+     "fail_patient": 3.3080577850341797e-06,
+     "work_agent": 1.5020370483398438e-05,
+     "work_patient": 4.857778549194336e-06
+    },
+    "57.13": {
+     "fail_agent": 0.031494140625,
+     "fail_patient": 0.06640625,
+     "work_agent": 0.04052734375,
+     "work_patient": 0.029541015625
+    }
+   }
+  },
+  {
+   "item_id": "Laura>Rose:visit:by_cleft:agent:active",
+   "family_id": "Laura|Rose",
+   "construction": "by_cleft",
+   "ld_failing": 7.125,
+   "ld_working": 32.1875,
+   "ld_patient_q": -33.1875,
+   "heads_attention": {
+    "49.16": {
+     "fail_agent": 0.0004119873046875,
+     "fail_patient": 0.0002498626708984375,
+     "work_agent": 5.841255187988281e-05,
+     "work_patient": 1.5735626220703125e-05
+    },
+    "40.12": {
+     "fail_agent": 0.000274658203125,
+     "fail_patient": 0.000274658203125,
+     "work_agent": 0.00156402587890625,
+     "work_patient": 0.00151824951171875
+    },
+    "39.23": {
+     "fail_agent": 0.0021820068359375,
+     "fail_patient": 0.004180908203125,
+     "work_agent": 0.00872802734375,
+     "work_patient": 0.00933837890625
+    },
+    "56.4": {
+     "fail_agent": 0.0008392333984375,
+     "fail_patient": 0.0012969970703125,
+     "work_agent": 0.0020294189453125,
+     "work_patient": 0.0004520416259765625
+    },
+    "58.26": {
+     "fail_agent": 0.000415802001953125,
+     "fail_patient": 0.0002422332763671875,
+     "work_agent": 0.000640869140625,
+     "work_patient": 0.0002613067626953125
+    },
+    "46.29": {
+     "fail_agent": 0.002288818359375,
+     "fail_patient": 0.002288818359375,
+     "work_agent": 0.0023956298828125,
+     "work_patient": 0.001983642578125
+    },
+    "40.1": {
+     "fail_agent": 0.0111083984375,
+     "fail_patient": 0.013427734375,
+     "work_agent": 0.044921875,
+     "work_patient": 0.0164794921875
+    },
+    "41.14": {
+     "fail_agent": 0.0201416015625,
+     "fail_patient": 0.0213623046875,
+     "work_agent": 0.0274658203125,
+     "work_patient": 0.0089111328125
+    },
+    "49.31": {
+     "fail_agent": 1.2755393981933594e-05,
+     "fail_patient": 8.225440979003906e-06,
+     "work_agent": 2.8133392333984375e-05,
+     "work_patient": 8.046627044677734e-06
+    },
+    "57.13": {
+     "fail_agent": 0.0419921875,
+     "fail_patient": 0.049072265625,
+     "work_agent": 0.056640625,
+     "work_patient": 0.025146484375
+    }
+   }
+  },
+  {
+   "item_id": "Rose>Mark:chase:by_cleft:agent:active",
+   "family_id": "Mark|Rose",
+   "construction": "by_cleft",
+   "ld_failing": 11.875,
+   "ld_working": 34.0625,
+   "ld_patient_q": -33.25,
+   "heads_attention": {
+    "49.16": {
+     "fail_agent": 0.00017452239990234375,
+     "fail_patient": 0.0001544952392578125,
+     "work_agent": 2.1338462829589844e-05,
+     "work_patient": 1.7762184143066406e-05
+    },
+    "40.12": {
+     "fail_agent": 0.000286102294921875,
+     "fail_patient": 0.0002536773681640625,
+     "work_agent": 0.00124359130859375,
+     "work_patient": 0.0012054443359375
+    },
+    "39.23": {
+     "fail_agent": 0.001373291015625,
+     "fail_patient": 0.0038604736328125,
+     "work_agent": 0.006195068359375,
+     "work_patient": 0.00848388671875
+    },
+    "56.4": {
+     "fail_agent": 0.0002593994140625,
+     "fail_patient": 0.000682830810546875,
+     "work_agent": 0.0003795623779296875,
+     "work_patient": 0.0003566741943359375
+    },
+    "58.26": {
+     "fail_agent": 0.000682830810546875,
+     "fail_patient": 0.00024318695068359375,
+     "work_agent": 0.0008392333984375,
+     "work_patient": 0.0002498626708984375
+    },
+    "46.29": {
+     "fail_agent": 0.00171661376953125,
+     "fail_patient": 0.00194549560546875,
+     "work_agent": 0.00128173828125,
+     "work_patient": 0.00116729736328125
+    },
+    "40.1": {
+     "fail_agent": 0.013427734375,
+     "fail_patient": 0.0201416015625,
+     "work_agent": 0.03466796875,
+     "work_patient": 0.0306396484375
+    },
+    "41.14": {
+     "fail_agent": 0.016845703125,
+     "fail_patient": 0.0108642578125,
+     "work_agent": 0.02197265625,
+     "work_patient": 0.0103759765625
+    },
+    "49.31": {
+     "fail_agent": 1.5735626220703125e-05,
+     "fail_patient": 4.500150680541992e-06,
+     "work_agent": 1.6927719116210938e-05,
+     "work_patient": 7.063150405883789e-06
+    },
+    "57.13": {
+     "fail_agent": 0.0286865234375,
+     "fail_patient": 0.050537109375,
+     "work_agent": 0.043701171875,
+     "work_patient": 0.022705078125
+    }
+   }
+  },
+  {
+   "item_id": "Laura>James:praise:by_cleft:agent:active",
+   "family_id": "James|Laura",
+   "construction": "by_cleft",
+   "ld_failing": 14.125,
+   "ld_working": 33.3125,
+   "ld_patient_q": -35.375,
+   "heads_attention": {
+    "49.16": {
+     "fail_agent": 0.0003108978271484375,
+     "fail_patient": 0.0002002716064453125,
+     "work_agent": 6.198883056640625e-05,
+     "work_patient": 1.895427703857422e-05
+    },
+    "40.12": {
+     "fail_agent": 0.00018215179443359375,
+     "fail_patient": 0.00022983551025390625,
+     "work_agent": 0.00147247314453125,
+     "work_patient": 0.00119781494140625
+    },
+    "39.23": {
+     "fail_agent": 0.0020751953125,
+     "fail_patient": 0.0034637451171875,
+     "work_agent": 0.0086669921875,
+     "work_patient": 0.00823974609375
+    },
+    "56.4": {
+     "fail_agent": 0.001373291015625,
+     "fail_patient": 0.000942230224609375,
+     "work_agent": 0.00146484375,
+     "work_patient": 0.000476837158203125
+    },
+    "58.26": {
+     "fail_agent": 0.000537872314453125,
+     "fail_patient": 0.0002918243408203125,
+     "work_agent": 0.000629425048828125,
+     "work_patient": 0.000278472900390625
+    },
+    "46.29": {
+     "fail_agent": 0.003173828125,
+     "fail_patient": 0.0021209716796875,
+     "work_agent": 0.0017547607421875,
+     "work_patient": 0.00122833251953125
+    },
+    "40.1": {
+     "fail_agent": 0.01556396484375,
+     "fail_patient": 0.018798828125,
+     "work_agent": 0.041748046875,
+     "work_patient": 0.0286865234375
+    },
+    "41.14": {
+     "fail_agent": 0.0400390625,
+     "fail_patient": 0.011962890625,
+     "work_agent": 0.029052734375,
+     "work_patient": 0.00927734375
+    },
+    "49.31": {
+     "fail_agent": 1.2993812561035156e-05,
+     "fail_patient": 7.3909759521484375e-06,
+     "work_agent": 2.47955322265625e-05,
+     "work_patient": 7.092952728271484e-06
+    },
+    "57.13": {
+     "fail_agent": 0.055908203125,
+     "fail_patient": 0.076171875,
+     "work_agent": 0.055419921875,
+     "work_patient": 0.0286865234375
+    }
+   }
+  }
+ ],
+ "curves": {
+  "Anna>George:watch:active:agent:active": {
+   "read_question_fail": [
+    0.008016032064128256
+   ],
+   "read_names_fail": [
+    0.01603206412825651
+   ],
+   "read_question_work": [
+    -0.006012024048096192
+   ],
+   "read_names_work": [
+    -0.002004008016032064
+   ],
+   "swap_question": [
+    0.9158316633266533
+   ],
+   "swap_answer": [
+    0.012024048096192385
+   ],
+   "by_from_failing": [
+    0.6713426853707415
+   ],
+   "by_from_patient": [
+    0.036072144288577156
+   ]
+  },
+  "Kate>Grace:chase:active:agent:active": {
+   "read_question_fail": [
+    0.02911208151382824
+   ],
+   "read_names_fail": [
+    0.02911208151382824
+   ],
+   "read_question_work": [
+    0.0
+   ],
+   "read_names_work": [
+    -0.001455604075691412
+   ],
+   "swap_question": [
+    0.9796215429403202
+   ],
+   "swap_answer": [
+    0.026200873362445413
+   ],
+   "by_from_failing": [
+    0.5429403202328966
+   ],
+   "by_from_patient": [
+    0.01455604075691412
+   ]
+  },
+  "Michael>Frank:greet:active:agent:active": {
+   "read_question_fail": [
+    -0.030973451327433628
+   ],
+   "read_names_fail": [
+    -0.030973451327433628
+   ],
+   "read_question_work": [
+    0.0022123893805309734
+   ],
+   "read_names_work": [
+    0.0022123893805309734
+   ],
+   "swap_question": [
+    0.9557522123893806
+   ],
+   "swap_answer": [
+    -0.035398230088495575
+   ],
+   "by_from_failing": [
+    2.1172566371681416
+   ],
+   "by_from_patient": [
+    0.9646017699115044
+   ]
+  },
+  "Peter>Kate:chase:active:agent:active": {
+   "read_question_fail": [
+    -0.009501187648456057
+   ],
+   "read_names_fail": [
+    -0.006334125098970704
+   ],
+   "read_question_work": [
+    0.0023752969121140144
+   ],
+   "read_names_work": [
+    -0.000791765637371338
+   ],
+   "swap_question": [
+    0.9683293745051464
+   ],
+   "swap_answer": [
+    -0.009501187648456057
+   ],
+   "by_from_failing": [
+    0.5439429928741093
+   ],
+   "by_from_patient": [
+    0.011084718923198733
+   ]
+  },
+  "Alice>Tom:call:active:agent:active": {
+   "read_question_fail": [
+    0.019011406844106463
+   ],
+   "read_names_fail": [
+    0.019011406844106463
+   ],
+   "read_question_work": [
+    -0.0025348542458808617
+   ],
+   "read_names_work": [
+    0.0
+   ],
+   "swap_question": [
+    0.9797211660329531
+   ],
+   "swap_answer": [
+    0.015209125475285171
+   ],
+   "by_from_failing": [
+    0.6844106463878327
+   ],
+   "by_from_patient": [
+    0.02788339670468948
+   ]
+  },
+  "Julia>Paul:admire:active:agent:active": {
+   "read_question_fail": [
+    0.0029717682020802376
+   ],
+   "read_names_fail": [
+    0.005943536404160475
+   ],
+   "read_question_work": [
+    0.0
+   ],
+   "read_names_work": [
+    0.0029717682020802376
+   ],
+   "swap_question": [
+    0.9791976225854383
+   ],
+   "swap_answer": [
+    0.008915304606240713
+   ],
+   "by_from_failing": [
+    0.03417533432392273
+   ],
+   "by_from_patient": [
+    0.019316493313521546
+   ]
+  },
+  "Laura>James:warn:active:agent:active": {
+   "read_question_fail": [
+    -0.010309278350515464
+   ],
+   "read_names_fail": [
+    0.0
+   ],
+   "read_question_work": [
+    0.020618556701030927
+   ],
+   "read_names_work": [
+    0.0
+   ],
+   "swap_question": [
+    0.9278350515463918
+   ],
+   "swap_answer": [
+    0.041237113402061855
+   ],
+   "by_from_failing": [
+    10.237113402061855
+   ],
+   "by_from_patient": [
+    3.154639175257732
+   ]
+  },
+  "Frank>John:invite:active:agent:active": {
+   "read_question_fail": [
+    0.00872093023255814
+   ],
+   "read_names_fail": [
+    0.011627906976744186
+   ],
+   "read_question_work": [
+    0.0029069767441860465
+   ],
+   "read_names_work": [
+    0.0029069767441860465
+   ],
+   "swap_question": [
+    0.9709302325581395
+   ],
+   "swap_answer": [
+    0.011627906976744186
+   ],
+   "by_from_failing": [
+    0.05232558139534884
+   ],
+   "by_from_patient": [
+    0.0377906976744186
+   ]
+  },
+  "James>Anna:praise:active:agent:active": {
+   "read_question_fail": [
+    0.004796163069544364
+   ],
+   "read_names_fail": [
+    0.004796163069544364
+   ],
+   "read_question_work": [
+    0.002398081534772182
+   ],
+   "read_names_work": [
+    0.0
+   ],
+   "swap_question": [
+    0.9328537170263789
+   ],
+   "swap_answer": [
+    0.0
+   ],
+   "by_from_failing": [
+    0.23261390887290168
+   ],
+   "by_from_patient": [
+    0.03836930455635491
+   ]
+  },
+  "David>Laura:help:active:agent:active": {
+   "read_question_fail": [
+    -0.03938730853391685
+   ],
+   "read_names_fail": [
+    -0.03938730853391685
+   ],
+   "read_question_work": [
+    0.002188183807439825
+   ],
+   "read_names_work": [
+    0.002188183807439825
+   ],
+   "swap_question": [
+    0.9715536105032823
+   ],
+   "swap_answer": [
+    -0.04814004376367615
+   ],
+   "by_from_failing": [
+    0.08315098468271334
+   ],
+   "by_from_patient": [
+    0.010940919037199124
+   ]
+  },
+  "Anna>Daniel:watch:active:agent:active": {
+   "read_question_fail": [
+    -0.010101010101010102
+   ],
+   "read_names_fail": [
+    -0.010101010101010102
+   ],
+   "read_question_work": [
+    0.005050505050505051
+   ],
+   "read_names_work": [
+    0.005050505050505051
+   ],
+   "swap_question": [
+    0.9267676767676768
+   ],
+   "swap_answer": [
+    -0.010101010101010102
+   ],
+   "by_from_failing": [
+    1.0454545454545454
+   ],
+   "by_from_patient": [
+    0.030303030303030304
+   ]
+  },
+  "Paul>Michael:rescue:active:agent:active": {
+   "read_question_fail": [
+    -0.005
+   ],
+   "read_names_fail": [
+    -0.005
+   ],
+   "read_question_work": [
+    0.0075
+   ],
+   "read_names_work": [
+    0.005
+   ],
+   "swap_question": [
+    0.97
+   ],
+   "swap_answer": [
+    -0.015
+   ],
+   "by_from_failing": [
+    0.29875
+   ],
+   "by_from_patient": [
+    0.0125
+   ]
+  },
+  "Julia>Alice:praise:active:agent:active": {
+   "read_question_fail": [
+    0.009592326139088728
+   ],
+   "read_names_fail": [
+    0.009592326139088728
+   ],
+   "read_question_work": [
+    -0.004796163069544364
+   ],
+   "read_names_work": [
+    -0.007194244604316547
+   ],
+   "swap_question": [
+    0.9568345323741008
+   ],
+   "swap_answer": [
+    0.009592326139088728
+   ],
+   "by_from_failing": [
+    0.10071942446043165
+   ],
+   "by_from_patient": [
+    0.026378896882494004
+   ]
+  },
+  "David>Peter:blame:active:agent:active": {
+   "read_question_fail": [
+    -0.07142857142857142
+   ],
+   "read_names_fail": [
+    -0.07539682539682539
+   ],
+   "read_question_work": [
+    0.0
+   ],
+   "read_names_work": [
+    0.001984126984126984
+   ],
+   "swap_question": [
+    0.9543650793650794
+   ],
+   "swap_answer": [
+    -0.07142857142857142
+   ],
+   "by_from_failing": [
+    0.04563492063492063
+   ],
+   "by_from_patient": [
+    0.017857142857142856
+   ]
+  },
+  "Maria>Paul:call:active:agent:active": {
+   "read_question_fail": [
+    -0.007052186177715092
+   ],
+   "read_names_fail": [
+    -0.007052186177715092
+   ],
+   "read_question_work": [
+    -0.005641748942172073
+   ],
+   "read_names_work": [
+    -0.0028208744710860366
+   ],
+   "swap_question": [
+    0.9901269393511989
+   ],
+   "swap_answer": [
+    -0.012693935119887164
+   ],
+   "by_from_failing": [
+    0.6361071932299013
+   ],
+   "by_from_patient": [
+    0.02538787023977433
+   ]
+  },
+  "Laura>Helen:greet:active:agent:active": {
+   "read_question_fail": [
+    -0.029978586723768737
+   ],
+   "read_names_fail": [
+    -0.03854389721627409
+   ],
+   "read_question_work": [
+    -0.006423982869379015
+   ],
+   "read_names_work": [
+    -0.006423982869379015
+   ],
+   "swap_question": [
+    0.9635974304068522
+   ],
+   "swap_answer": [
+    -0.042826552462526764
+   ],
+   "by_from_failing": [
+    1.7130620985010707
+   ],
+   "by_from_patient": [
+    0.2259100642398287
+   ]
+  },
+  "George>Frank:tickle:object_cleft:agent:active": {
+   "read_question_fail": [
+    0.005917159763313609
+   ],
+   "read_names_fail": [
+    0.0029585798816568047
+   ],
+   "read_question_work": [
+    0.0014792899408284023
+   ],
+   "read_names_work": [
+    0.0
+   ],
+   "swap_question": [
+    0.9896449704142012
+   ],
+   "swap_answer": [
+    0.0029585798816568047
+   ],
+   "by_from_failing": [
+    0.2247596153846154
+   ],
+   "by_from_patient": [
+    0.04437869822485207
+   ]
+  },
+  "Michael>Rose:push:object_cleft:agent:active": {
+   "read_question_fail": [
+    0.002881844380403458
+   ],
+   "read_names_fail": [
+    -0.002881844380403458
+   ],
+   "read_question_work": [
+    -0.002881844380403458
+   ],
+   "read_names_work": [
+    0.005763688760806916
+   ],
+   "swap_question": [
+    0.9654178674351584
+   ],
+   "swap_answer": [
+    0.0
+   ],
+   "by_from_failing": [
+    0.06628242074927954
+   ],
+   "by_from_patient": [
+    0.037463976945244955
+   ]
+  },
+  "Kate>Peter:visit:object_cleft:agent:active": {
+   "read_question_fail": [
+    -0.008862629246676515
+   ],
+   "read_names_fail": [
+    -0.008862629246676515
+   ],
+   "read_question_work": [
+    0.0
+   ],
+   "read_names_work": [
+    -0.0029542097488921715
+   ],
+   "swap_question": [
+    0.9734121122599705
+   ],
+   "swap_answer": [
+    -0.0103397341211226
+   ],
+   "by_from_failing": [
+    0.03840472673559823
+   ],
+   "by_from_patient": [
+    0.011816838995568686
+   ]
+  },
+  "Helen>Paul:blame:object_cleft:agent:active": {
+   "read_question_fail": [
+    -0.014018691588785047
+   ],
+   "read_names_fail": [
+    -0.014018691588785047
+   ],
+   "read_question_work": [
+    -0.002336448598130841
+   ],
+   "read_names_work": [
+    -0.007009345794392523
+   ],
+   "swap_question": [
+    0.9485981308411215
+   ],
+   "swap_answer": [
+    -0.014018691588785047
+   ],
+   "by_from_failing": [
+    0.02570093457943925
+   ],
+   "by_from_patient": [
+    0.004672897196261682
+   ]
+  },
+  "Sarah>Julia:greet:object_cleft:agent:active": {
+   "read_question_fail": [
+    0.011730205278592375
+   ],
+   "read_names_fail": [
+    0.011730205278592375
+   ],
+   "read_question_work": [
+    0.002932551319648094
+   ],
+   "read_names_work": [
+    0.002932551319648094
+   ],
+   "swap_question": [
+    0.9750733137829912
+   ],
+   "swap_answer": [
+    0.008797653958944282
+   ],
+   "by_from_failing": [
+    0.1935483870967742
+   ],
+   "by_from_patient": [
+    0.05278592375366569
+   ]
+  },
+  "Peter>Kate:chase:object_cleft:agent:active": {
+   "read_question_fail": [
+    0.00995850622406639
+   ],
+   "read_names_fail": [
+    0.00995850622406639
+   ],
+   "read_question_work": [
+    -0.0024896265560165973
+   ],
+   "read_names_work": [
+    -0.0033195020746887966
+   ],
+   "swap_question": [
+    0.9784232365145228
+   ],
+   "swap_answer": [
+    0.00995850622406639
+   ],
+   "by_from_failing": [
+    0.08962655601659751
+   ],
+   "by_from_patient": [
+    0.008298755186721992
+   ]
+  },
+  "Michael>Robert:blame:object_cleft:agent:active": {
+   "read_question_fail": [
+    -0.003278688524590164
+   ],
+   "read_names_fail": [
+    -0.003278688524590164
+   ],
+   "read_question_work": [
+    -0.001639344262295082
+   ],
+   "read_names_work": [
+    -0.003278688524590164
+   ],
+   "swap_question": [
+    0.9688524590163935
+   ],
+   "swap_answer": [
+    0.0
+   ],
+   "by_from_failing": [
+    0.011475409836065573
+   ],
+   "by_from_patient": [
+    0.014754098360655738
+   ]
+  },
+  "Paul>Kate:thank:object_cleft:agent:active": {
+   "read_question_fail": [
+    0.018518518518518517
+   ],
+   "read_names_fail": [
+    0.014814814814814815
+   ],
+   "read_question_work": [
+    -0.003703703703703704
+   ],
+   "read_names_work": [
+    -0.006481481481481481
+   ],
+   "swap_question": [
+    0.975
+   ],
+   "swap_answer": [
+    0.022222222222222223
+   ],
+   "by_from_failing": [
+    0.046296296296296294
+   ],
+   "by_from_patient": [
+    0.013888888888888888
+   ]
+  },
+  "Maria>Paul:call:object_cleft:agent:active": {
+   "read_question_fail": [
+    0.0029154518950437317
+   ],
+   "read_names_fail": [
+    0.0058309037900874635
+   ],
+   "read_question_work": [
+    0.0029154518950437317
+   ],
+   "read_names_work": [
+    0.0
+   ],
+   "swap_question": [
+    0.9752186588921283
+   ],
+   "swap_answer": [
+    0.0029154518950437317
+   ],
+   "by_from_failing": [
+    0.11661807580174927
+   ],
+   "by_from_patient": [
+    0.03206997084548105
+   ]
+  },
+  "Peter>David:tickle:object_cleft:agent:active": {
+   "read_question_fail": [
+    -0.006920415224913495
+   ],
+   "read_names_fail": [
+    -0.010380622837370242
+   ],
+   "read_question_work": [
+    0.0
+   ],
+   "read_names_work": [
+    0.0
+   ],
+   "swap_question": [
+    1.0
+   ],
+   "swap_answer": [
+    -0.010380622837370242
+   ],
+   "by_from_failing": [
+    0.1797145328719723
+   ],
+   "by_from_patient": [
+    0.025951557093425604
+   ]
+  },
+  "Alice>Tom:call:object_cleft:agent:active": {
+   "read_question_fail": [
+    0.11419753086419752
+   ],
+   "read_names_fail": [
+    0.11419753086419752
+   ],
+   "read_question_work": [
+    0.0
+   ],
+   "read_names_work": [
+    -0.0030864197530864196
+   ],
+   "swap_question": [
+    0.9722222222222222
+   ],
+   "swap_answer": [
+    0.11419753086419752
+   ],
+   "by_from_failing": [
+    0.10185185185185185
+   ],
+   "by_from_patient": [
+    0.029320987654320986
+   ]
+  },
+  "Tom>Rose:praise:object_cleft:agent:active": {
+   "read_question_fail": [
+    0.0313588850174216
+   ],
+   "read_names_fail": [
+    0.0313588850174216
+   ],
+   "read_question_work": [
+    -0.010452961672473868
+   ],
+   "read_names_work": [
+    0.003484320557491289
+   ],
+   "swap_question": [
+    0.9790940766550522
+   ],
+   "swap_answer": [
+    0.03484320557491289
+   ],
+   "by_from_failing": [
+    0.041811846689895474
+   ],
+   "by_from_patient": [
+    0.006968641114982578
+   ]
+  },
+  "Julia>Robert:push:object_cleft:agent:active": {
+   "read_question_fail": [
+    0.004454342984409799
+   ],
+   "read_names_fail": [
+    0.004454342984409799
+   ],
+   "read_question_work": [
+    0.0
+   ],
+   "read_names_work": [
+    0.004454342984409799
+   ],
+   "swap_question": [
+    0.9599109131403119
+   ],
+   "swap_answer": [
+    0.008908685968819599
+   ],
+   "by_from_failing": [
+    0.09799554565701558
+   ],
+   "by_from_patient": [
+    0.053452115812917596
+   ]
+  },
+  "James>John:watch:object_cleft:agent:active": {
+   "read_question_fail": [
+    -0.026578073089700997
+   ],
+   "read_names_fail": [
+    -0.026578073089700997
+   ],
+   "read_question_work": [
+    0.006644518272425249
+   ],
+   "read_names_work": [
+    0.0033222591362126247
+   ],
+   "swap_question": [
+    0.9800664451827242
+   ],
+   "swap_answer": [
+    -0.029900332225913623
+   ],
+   "by_from_failing": [
+    0.018272425249169437
+   ],
+   "by_from_patient": [
+    0.011627906976744186
+   ]
+  },
+  "Julia>George:thank:object_cleft:agent:active": {
+   "read_question_fail": [
+    0.0
+   ],
+   "read_names_fail": [
+    0.0
+   ],
+   "read_question_work": [
+    0.0
+   ],
+   "read_names_work": [
+    -0.004219409282700422
+   ],
+   "swap_question": [
+    0.9943741209563994
+   ],
+   "swap_answer": [
+    0.0028129395218002813
+   ],
+   "by_from_failing": [
+    0.030942334739803096
+   ],
+   "by_from_patient": [
+    0.016877637130801686
+   ]
+  },
+  "Alice>Daniel:blame:object_cleft:agent:active": {
+   "read_question_fail": [
+    -0.055658627087198514
+   ],
+   "read_names_fail": [
+    -0.06307977736549165
+   ],
+   "read_question_work": [
+    -0.0055658627087198514
+   ],
+   "read_names_work": [
+    -0.0037105751391465678
+   ],
+   "swap_question": [
+    0.9499072356215214
+   ],
+   "swap_answer": [
+    -0.055658627087198514
+   ],
+   "by_from_failing": [
+    0.05009276437847866
+   ],
+   "by_from_patient": [
+    0.04081632653061224
+   ]
+  },
+  "Kate>Grace:chase:passive:agent:active": {
+   "read_question_fail": [
+    0.06526806526806526
+   ],
+   "read_names_fail": [
+    0.08391608391608392
+   ],
+   "read_question_work": [
+    -0.009324009324009324
+   ],
+   "read_names_work": [
+    -0.009324009324009324
+   ],
+   "swap_question": [
+    0.9627039627039627
+   ],
+   "swap_answer": [
+    0.12121212121212122
+   ],
+   "by_from_failing": [
+    1.5506993006993006
+   ],
+   "by_from_patient": [
+    0.3916083916083916
+   ]
+  },
+  "Rose>Robert:warn:passive:agent:active": {
+   "read_question_fail": [
+    -0.20689655172413793
+   ],
+   "read_names_fail": [
+    -0.15517241379310345
+   ],
+   "read_question_work": [
+    0.034482758620689655
+   ],
+   "read_names_work": [
+    0.06896551724137931
+   ],
+   "swap_question": [
+    1.0689655172413792
+   ],
+   "swap_answer": [
+    -0.05172413793103448
+   ],
+   "by_from_failing": [
+    21.24137931034483
+   ],
+   "by_from_patient": [
+    2.310344827586207
+   ]
+  },
+  "George>Julia:watch:passive:agent:active": {
+   "read_question_fail": [
+    -0.015
+   ],
+   "read_names_fail": [
+    -0.004
+   ],
+   "read_question_work": [
+    0.0
+   ],
+   "read_names_work": [
+    0.010666666666666666
+   ],
+   "swap_question": [
+    0.9893333333333333
+   ],
+   "swap_answer": [
+    0.008666666666666666
+   ],
+   "by_from_failing": [
+    0.88
+   ],
+   "by_from_patient": [
+    0.08533333333333333
+   ]
+  },
+  "George>Anna:thank:passive:agent:active": {
+   "read_question_fail": [
+    -0.0219256434699714
+   ],
+   "read_names_fail": [
+    -0.038449316809659996
+   ],
+   "read_question_work": [
+    -0.010168414362885288
+   ],
+   "read_names_work": [
+    -0.020336828725770577
+   ],
+   "swap_question": [
+    0.9796631712742294
+   ],
+   "swap_answer": [
+    -0.016841436288528758
+   ],
+   "by_from_failing": [
+    0.14235780108039403
+   ],
+   "by_from_patient": [
+    0.10676835081029552
+   ]
+  },
+  "Kate>Laura:push:passive:agent:active": {
+   "read_question_fail": [
+    0.12
+   ],
+   "read_names_fail": [
+    0.10666666666666667
+   ],
+   "read_question_work": [
+    -0.04
+   ],
+   "read_names_work": [
+    -0.04
+   ],
+   "swap_question": [
+    1.0133333333333334
+   ],
+   "swap_answer": [
+    0.16
+   ],
+   "by_from_failing": [
+    0.5866666666666667
+   ],
+   "by_from_patient": [
+    0.04
+   ]
+  },
+  "Sarah>Robert:thank:passive:agent:active": {
+   "read_question_fail": [
+    -0.08496732026143791
+   ],
+   "read_names_fail": [
+    -0.08333333333333333
+   ],
+   "read_question_work": [
+    0.0
+   ],
+   "read_names_work": [
+    0.013071895424836602
+   ],
+   "swap_question": [
+    0.9803921568627451
+   ],
+   "swap_answer": [
+    -0.05555555555555555
+   ],
+   "by_from_failing": [
+    0.26143790849673204
+   ],
+   "by_from_patient": [
+    0.16993464052287582
+   ]
+  },
+  "John>Frank:tickle:passive:agent:active": {
+   "read_question_fail": [
+    0.01858736059479554
+   ],
+   "read_names_fail": [
+    0.022304832713754646
+   ],
+   "read_question_work": [
+    0.0037174721189591076
+   ],
+   "read_names_work": [
+    0.0
+   ],
+   "swap_question": [
+    0.9442379182156134
+   ],
+   "swap_answer": [
+    0.022304832713754646
+   ],
+   "by_from_failing": [
+    0.040892193308550186
+   ],
+   "by_from_patient": [
+    0.02973977695167286
+   ]
+  },
+  "Michael>Paul:watch:passive:agent:active": {
+   "read_question_fail": [
+    0.025815014206669658
+   ],
+   "read_names_fail": [
+    0.01816958277254374
+   ],
+   "read_question_work": [
+    0.009570809032451024
+   ],
+   "read_names_work": [
+    0.009570809032451024
+   ],
+   "swap_question": [
+    0.9665021683864214
+   ],
+   "swap_answer": [
+    0.03962913114999252
+   ],
+   "by_from_failing": [
+    0.4785404516225512
+   ],
+   "by_from_patient": [
+    0.057424854194706144
+   ]
+  },
+  "Helen>Lisa:blame:passive:agent:active": {
+   "read_question_fail": [
+    -0.0109717868338558
+   ],
+   "read_names_fail": [
+    -0.009404388714733543
+   ],
+   "read_question_work": [
+    0.0
+   ],
+   "read_names_work": [
+    -0.006269592476489028
+   ],
+   "swap_question": [
+    1.0188087774294672
+   ],
+   "swap_answer": [
+    0.006269592476489028
+   ],
+   "by_from_failing": [
+    0.2225705329153605
+   ],
+   "by_from_patient": [
+    0.11912225705329153
+   ]
+  },
+  "Alice>Julia:call:passive:agent:active": {
+   "read_question_fail": [
+    -0.04048892284186402
+   ],
+   "read_names_fail": [
+    -0.03437738731856379
+   ],
+   "read_question_work": [
+    -0.012223071046600458
+   ],
+   "read_names_work": [
+    -0.030557677616501147
+   ],
+   "swap_question": [
+    1.0672268907563025
+   ],
+   "swap_answer": [
+    -0.0038197097020626434
+   ],
+   "by_from_failing": [
+    0.854087089381207
+   ],
+   "by_from_patient": [
+    0.07333842627960276
+   ]
+  },
+  "Julia>Peter:invite:passive:agent:active": {
+   "read_question_fail": [
+    0.05694760820045558
+   ],
+   "read_names_fail": [
+    0.05466970387243736
+   ],
+   "read_question_work": [
+    -0.009111617312072893
+   ],
+   "read_names_work": [
+    -0.004555808656036446
+   ],
+   "swap_question": [
+    1.0364464692482915
+   ],
+   "swap_answer": [
+    0.04441913439635535
+   ],
+   "by_from_failing": [
+    0.22779043280182232
+   ],
+   "by_from_patient": [
+    0.1958997722095672
+   ]
+  },
+  "Laura>David:rescue:passive:agent:active": {
+   "read_question_fail": [
+    0.0033333333333333335
+   ],
+   "read_names_fail": [
+    0.0033333333333333335
+   ],
+   "read_question_work": [
+    -0.013333333333333334
+   ],
+   "read_names_work": [
+    -0.01
+   ],
+   "swap_question": [
+    1.01
+   ],
+   "swap_answer": [
+    0.0033333333333333335
+   ],
+   "by_from_failing": [
+    0.23
+   ],
+   "by_from_patient": [
+    0.03
+   ]
+  },
+  "Julia>David:follow:passive:agent:active": {
+   "read_question_fail": [
+    -0.0031007751937984496
+   ],
+   "read_names_fail": [
+    -0.0031007751937984496
+   ],
+   "read_question_work": [
+    0.0
+   ],
+   "read_names_work": [
+    0.0
+   ],
+   "swap_question": [
+    0.9736434108527132
+   ],
+   "swap_answer": [
+    -0.009302325581395349
+   ],
+   "by_from_failing": [
+    0.21007751937984495
+   ],
+   "by_from_patient": [
+    0.3794573643410853
+   ]
+  },
+  "Alice>Tom:push:passive:agent:active": {
+   "read_question_fail": [
+    -0.06221198156682028
+   ],
+   "read_names_fail": [
+    -0.04435483870967742
+   ],
+   "read_question_work": [
+    -0.009216589861751152
+   ],
+   "read_names_work": [
+    -0.009216589861751152
+   ],
+   "swap_question": [
+    0.9815668202764977
+   ],
+   "swap_answer": [
+    -0.04723502304147465
+   ],
+   "by_from_failing": [
+    0.2488479262672811
+   ],
+   "by_from_patient": [
+    0.04608294930875576
+   ]
+  },
+  "Laura>Rose:admire:passive:agent:active": {
+   "read_question_fail": [
+    0.01488095238095238
+   ],
+   "read_names_fail": [
+    0.023809523809523808
+   ],
+   "read_question_work": [
+    -0.017857142857142856
+   ],
+   "read_names_work": [
+    -0.017857142857142856
+   ],
+   "swap_question": [
+    1.0238095238095237
+   ],
+   "swap_answer": [
+    0.011904761904761904
+   ],
+   "by_from_failing": [
+    0.19047619047619047
+   ],
+   "by_from_patient": [
+    0.06845238095238096
+   ]
+  },
+  "David>Michael:watch:passive:agent:active": {
+   "read_question_fail": [
+    0.0037174721189591076
+   ],
+   "read_names_fail": [
+    0.0022304832713754648
+   ],
+   "read_question_work": [
+    0.0
+   ],
+   "read_names_work": [
+    -0.011895910780669145
+   ],
+   "swap_question": [
+    0.9762081784386617
+   ],
+   "swap_answer": [
+    -0.0007434944237918215
+   ],
+   "by_from_failing": [
+    0.42825278810408923
+   ],
+   "by_from_patient": [
+    0.02973977695167286
+   ]
+  },
+  "Laura>Rose:admire:by_cleft:agent:active": {
+   "read_question_fail": [
+    -0.019417475728155338
+   ],
+   "read_names_fail": [
+    -0.019417475728155338
+   ],
+   "read_question_work": [
+    0.0
+   ],
+   "read_names_work": [
+    -0.0024271844660194173
+   ],
+   "swap_question": [
+    1.0194174757281553
+   ],
+   "swap_answer": [
+    -0.014563106796116505
+   ],
+   "by_from_failing": [
+    0.03398058252427184
+   ],
+   "by_from_patient": [
+    0.038834951456310676
+   ]
+  },
+  "James>Laura:call:by_cleft:agent:active": {
+   "read_question_fail": [
+    -0.01152073732718894
+   ],
+   "read_names_fail": [
+    -0.016129032258064516
+   ],
+   "read_question_work": [
+    0.004608294930875576
+   ],
+   "read_names_work": [
+    0.009216589861751152
+   ],
+   "swap_question": [
+    0.9493087557603687
+   ],
+   "swap_answer": [
+    -0.016129032258064516
+   ],
+   "by_from_failing": [
+    0.027649769585253458
+   ],
+   "by_from_patient": [
+    0.04838709677419355
+   ]
+  },
+  "Julia>Paul:visit:by_cleft:agent:active": {
+   "read_question_fail": [
+    0.004796163069544364
+   ],
+   "read_names_fail": [
+    0.004796163069544364
+   ],
+   "read_question_work": [
+    0.009592326139088728
+   ],
+   "read_names_work": [
+    0.002398081534772182
+   ],
+   "swap_question": [
+    0.9424460431654677
+   ],
+   "swap_answer": [
+    0.004796163069544364
+   ],
+   "by_from_failing": [
+    0.09832134292565947
+   ],
+   "by_from_patient": [
+    0.14388489208633093
+   ]
+  },
+  "Daniel>Helen:call:by_cleft:agent:active": {
+   "read_question_fail": [
+    -0.008797653958944282
+   ],
+   "read_names_fail": [
+    -0.008797653958944282
+   ],
+   "read_question_work": [
+    -0.005865102639296188
+   ],
+   "read_names_work": [
+    -0.005865102639296188
+   ],
+   "swap_question": [
+    0.9237536656891495
+   ],
+   "swap_answer": [
+    -0.01466275659824047
+   ],
+   "by_from_failing": [
+    0.04105571847507331
+   ],
+   "by_from_patient": [
+    0.11730205278592376
+   ]
+  },
+  "Helen>Emma:follow:by_cleft:agent:active": {
+   "read_question_fail": [
+    -0.005702066999287242
+   ],
+   "read_names_fail": [
+    -0.005702066999287242
+   ],
+   "read_question_work": [
+    -0.0021382751247327157
+   ],
+   "read_names_work": [
+    -0.002851033499643621
+   ],
+   "swap_question": [
+    1.0035637918745546
+   ],
+   "swap_answer": [
+    -0.005702066999287242
+   ],
+   "by_from_failing": [
+    0.03278688524590164
+   ],
+   "by_from_patient": [
+    0.05987170349251604
+   ]
+  },
+  "Daniel>Alice:tickle:by_cleft:agent:active": {
+   "read_question_fail": [
+    -0.014986376021798364
+   ],
+   "read_names_fail": [
+    -0.014986376021798364
+   ],
+   "read_question_work": [
+    0.0013623978201634877
+   ],
+   "read_names_work": [
+    -0.0013623978201634877
+   ],
+   "swap_question": [
+    0.9877384196185286
+   ],
+   "swap_answer": [
+    -0.01226158038147139
+   ],
+   "by_from_failing": [
+    0.01226158038147139
+   ],
+   "by_from_patient": [
+    0.013623978201634877
+   ]
+  },
+  "Julia>Alice:warn:by_cleft:agent:active": {
+   "read_question_fail": [
+    -0.021032504780114723
+   ],
+   "read_names_fail": [
+    -0.015296367112810707
+   ],
+   "read_question_work": [
+    -0.0076481835564053535
+   ],
+   "read_names_work": [
+    -0.0038240917782026767
+   ],
+   "swap_question": [
+    0.988527724665392
+   ],
+   "swap_answer": [
+    -0.017208413001912046
+   ],
+   "by_from_failing": [
+    0.030592734225621414
+   ],
+   "by_from_patient": [
+    0.19120458891013384
+   ]
+  },
+  "Laura>David:thank:by_cleft:agent:active": {
+   "read_question_fail": [
+    -0.003861003861003861
+   ],
+   "read_names_fail": [
+    0.0
+   ],
+   "read_question_work": [
+    0.007722007722007722
+   ],
+   "read_names_work": [
+    -0.003861003861003861
+   ],
+   "swap_question": [
+    1.0
+   ],
+   "swap_answer": [
+    0.0
+   ],
+   "by_from_failing": [
+    0.07722007722007722
+   ],
+   "by_from_patient": [
+    0.16216216216216217
+   ]
+  },
+  "Maria>John:follow:by_cleft:agent:active": {
+   "read_question_fail": [
+    0.006420545746388443
+   ],
+   "read_names_fail": [
+    0.006420545746388443
+   ],
+   "read_question_work": [
+    0.011235955056179775
+   ],
+   "read_names_work": [
+    0.011235955056179775
+   ],
+   "swap_question": [
+    1.0048154093097914
+   ],
+   "swap_answer": [
+    0.0032102728731942215
+   ],
+   "by_from_failing": [
+    0.1472712680577849
+   ],
+   "by_from_patient": [
+    0.2255467495987159
+   ]
+  },
+  "James>Tom:admire:by_cleft:agent:active": {
+   "read_question_fail": [
+    -0.00411522633744856
+   ],
+   "read_names_fail": [
+    0.0
+   ],
+   "read_question_work": [
+    0.00411522633744856
+   ],
+   "read_names_work": [
+    0.00411522633744856
+   ],
+   "swap_question": [
+    0.9691358024691358
+   ],
+   "swap_answer": [
+    -0.00411522633744856
+   ],
+   "by_from_failing": [
+    0.026748971193415638
+   ],
+   "by_from_patient": [
+    0.047325102880658436
+   ]
+  },
+  "John>Maria:invite:by_cleft:agent:active": {
+   "read_question_fail": [
+    -0.02321724709784411
+   ],
+   "read_names_fail": [
+    -0.02321724709784411
+   ],
+   "read_question_work": [
+    0.001658374792703151
+   ],
+   "read_names_work": [
+    -0.001658374792703151
+   ],
+   "swap_question": [
+    0.9850746268656716
+   ],
+   "swap_answer": [
+    -0.02321724709784411
+   ],
+   "by_from_failing": [
+    0.008291873963515755
+   ],
+   "by_from_patient": [
+    0.013266998341625208
+   ]
+  },
+  "Peter>Kate:chase:by_cleft:agent:active": {
+   "read_question_fail": [
+    0.0
+   ],
+   "read_names_fail": [
+    0.0
+   ],
+   "read_question_work": [
+    -0.0016051364365971107
+   ],
+   "read_names_work": [
+    -0.004815409309791332
+   ],
+   "swap_question": [
+    0.9935794542536116
+   ],
+   "swap_answer": [
+    0.0
+   ],
+   "by_from_failing": [
+    0.027287319422150885
+   ],
+   "by_from_patient": [
+    0.027287319422150885
+   ]
+  },
+  "Rose>Robert:warn:by_cleft:agent:active": {
+   "read_question_fail": [
+    -0.019305019305019305
+   ],
+   "read_names_fail": [
+    -0.019305019305019305
+   ],
+   "read_question_work": [
+    0.007722007722007722
+   ],
+   "read_names_work": [
+    0.007722007722007722
+   ],
+   "swap_question": [
+    1.001930501930502
+   ],
+   "swap_answer": [
+    -0.019305019305019305
+   ],
+   "by_from_failing": [
+    0.03088803088803089
+   ],
+   "by_from_patient": [
+    0.1891891891891892
+   ]
+  },
+  "Laura>Rose:visit:by_cleft:agent:active": {
+   "read_question_fail": [
+    -0.004987531172069825
+   ],
+   "read_names_fail": [
+    -0.00997506234413965
+   ],
+   "read_question_work": [
+    0.0024937655860349127
+   ],
+   "read_names_work": [
+    0.007481296758104738
+   ],
+   "swap_question": [
+    0.9875311720698254
+   ],
+   "swap_answer": [
+    -0.00997506234413965
+   ],
+   "by_from_failing": [
+    0.032418952618453865
+   ],
+   "by_from_patient": [
+    0.034912718204488775
+   ]
+  },
+  "Rose>Mark:chase:by_cleft:agent:active": {
+   "read_question_fail": [
+    -0.014084507042253521
+   ],
+   "read_names_fail": [
+    -0.016901408450704224
+   ],
+   "read_question_work": [
+    -0.0028169014084507044
+   ],
+   "read_names_work": [
+    -0.0028169014084507044
+   ],
+   "swap_question": [
+    1.008450704225352
+   ],
+   "swap_answer": [
+    -0.014084507042253521
+   ],
+   "by_from_failing": [
+    0.02535211267605634
+   ],
+   "by_from_patient": [
+    0.014084507042253521
+   ]
+  },
+  "Laura>James:praise:by_cleft:agent:active": {
+   "read_question_fail": [
+    -0.006514657980456026
+   ],
+   "read_names_fail": [
+    0.003257328990228013
+   ],
+   "read_question_work": [
+    -0.006514657980456026
+   ],
+   "read_names_work": [
+    -0.013029315960912053
+   ],
+   "swap_question": [
+    0.993485342019544
+   ],
+   "swap_answer": [
+    -0.009771986970684038
+   ],
+   "by_from_failing": [
+    0.016286644951140065
+   ],
+   "by_from_patient": [
+    0.029315960912052116
+   ]
+  }
+ },
+ "seconds": 47
+}
