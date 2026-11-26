@@ -101,7 +101,7 @@ class Trainer:
 @torch.inference_mode()
 def metrics(model,e,device):
     model.eval();a,ro,y,ch=e;parts=[]
-    for i in range(0,len(a),128):parts.append(model(a[i:i+128].to(device),ro[i:i+128].to(device)).double().cpu())
+    for i in range(0,len(a),128):parts.append(model(a[i:i+128].to(device),ro[i:i+128].to(device)).cpu().double())
     z=torch.cat(parts);ix=torch.arange(len(y));mate=y.reshape(-1,4)[:,[1,0,3,2]].reshape(-1);lp=z.log_softmax(1);event=(lp[ix,y].exp()+lp[ix,mate].exp());role=torch.sigmoid(z[ix,y]-z[ix,mate]);pr=z.argmax(1);rr=ch.gather(1,z.gather(1,ch).argmax(1,keepdim=True)).flatten();g=y.reshape(-1,4);q=rr.reshape(-1,4)
     collapse=(q[:,0]==q[:,1])&(q[:,2]==q[:,3]); avg=lambda x:float(x.double().mean())
     ev_nll,role_nll=loss_parts(z,y)
