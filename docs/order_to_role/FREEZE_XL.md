@@ -91,8 +91,14 @@ Scoring: `python scripts/otr_freeze_score.py --results results --split test0 --s
 
 ## 6. Pre-submission check (filled in before `--submit`)
 - Native read of 24 random dev prompts per language (Joel, 26 Nov; sample in `native_check_es_gl.md`, seed 2026):
-  es OK; gl OK; problems found: none. All items grammatical; some phrasing formal rather than colloquial
-  (e.g. "¿Por quién fue visitado alguien?"), kept unchanged so test0 matches dev.
+  es OK; gl OK; no item ungrammatical or with a wrong expected answer. Some phrasing formal rather than
+  colloquial (e.g. "¿Por quién fue visitado alguien?").
+- Galician notes (Joel, checked against the RAG norm): the items use the prepositional accusative with
+  persons ("Quen visitou a alguén?", "Rose admirou a Kate"), widespread in speech but non-normative (the norm
+  prefers no "a", tolerated with personal names and needed in object clefts); the periphrastic passive is
+  grammatical but less idiomatic; by-clefts are forced. Names are shared across languages (Julia, not Xulia).
+  None of this affects the failing question ("Por quen foi V-ado alguén?", no "a"). Kept unchanged so test0
+  matches dev; reported in the paper. A normative variant (no "a") may be run later as exploratory.
 - Queue empty when submitted: checked by `squeue --me` before `--submit` (job IDs in test0_attempts.md).
 
 ## 7. Dev files this addendum is frozen from (sha256)
