@@ -195,6 +195,44 @@ def test_smoke_otr03_and_otr09_spanish(monkeypatch, tmp_path):
     assert abs(r9["residual"]["all"]["repair"][-1] - 1.0) < 1e-3
 
 
+@pytest.mark.parametrize("lang,instr", [("es", "Responde con un solo nombre."), ("gl", "Responde cun só nome.")])
+def test_smoke_xl_test0_addendum_commands(monkeypatch, tmp_path, lang, instr):
+    """FREEZE_XL.md command shapes on test0: OTR-03 ordinary + failing run at one frozen layer (donors from
+    test0 only), OTR-09 with frozen heads, --skip-scan, --controls --controls-extra; then the scorer reads them."""
+    pytest.importorskip("transformers")
+    import importlib.util
+    from relational_lab.experiments import multilingual_stimuli as xl
+    from relational_lab.experiments import order_role_stimuli as ors
+    extra = [i.prompt + " " + instr for i in xl.generate_items(lang)[:4000]]
+    extra += [" " + n for n in ors.NAMES] * 50
+    _tiny_bx(monkeypatch, extra)
+    o3 = _script("otr03_code_transplant")
+    base = ["--model", "tiny", "--dtype", "float32", "--device", "cpu", "--stimuli", lang, "--split", "test0",
+            "--n-events", "6", "--layers", "1", "--n-boot", "0", "--out-dir", str(tmp_path)]
+    o3.main(base)
+    o3.main(base + ["--question-voices", "passive", "--roles", "agent", "--include-incorrect"])
+    runs = [json.loads(p.read_text()) for p in tmp_path.glob(f"otr03_*_test0_{lang}_*.json")]
+    assert len(runs) == 2 and all(r["layers"] == [1] and r["donor_pairs_restricted_to_split"] for r in runs)
+    prior = tmp_path / "prior.json"
+    prior.write_text(json.dumps({"head_scan": {"top20": [f"{li}.{h}" for li in range(3) for h in range(4)]}}))
+    o9 = _script("otr09_answer_patching")
+    o9.main(["--model", "tiny", "--dtype", "float32", "--stimuli", lang, "--split", "test0", "--n-per", "3",
+             "--layers", "0,2", "--top-k", "12", "--min-gap", "1e-4", "--instruction", instr,
+             "--rank-from", str(prior), "--skip-scan", "--n-random", "2", "--controls", "--controls-extra",
+             "--out-dir", str(tmp_path)])
+    r9 = json.loads(next(tmp_path.glob(f"otr09_*_test0_{lang}_*.json")).read_text())
+    tr = r9["transfer"]["by_k"]["12"]
+    assert r9["status"] == "TEST_SET_OPENED" and r9["residual_layers"] == [0, 2]
+    assert all("family_id" in x for x in tr["other_working"]["items"])
+    spec = importlib.util.spec_from_file_location("fs", ROOT / "scripts" / "otr_freeze_score.py")
+    fs = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(fs)
+    fz = dict(fs.FROZEN["microsoft/phi-4"], slug="tiny", role=1)
+    out, used = fs.c2_c3(str(tmp_path), "microsoft/phi-4", fz, "test0", __import__("numpy").random.default_rng(0),
+                         lang)
+    assert len(used) == 2  # both runs found by tag, the failing one recognised without --agent-question
+
+
 # ------------------------------------------------------------------ natural sentences (UD)
 
 def test_ud_items_are_natural_sentences_with_two_names():

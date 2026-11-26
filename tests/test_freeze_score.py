@@ -106,3 +106,58 @@ def test_scorer_rules_not_evaluable(tmp_path):
 
 def test_family_of():
     assert fs.family_of("Bob>Ann:help:active:agent:active") == "Ann|Bob"
+
+
+def test_scorer_xl_addendum(tmp_path):
+    """FREEZE_XL.md: es file tags, the es/gl failing run (passive agent question, no --agent-question),
+    C2 scored on role alone, C4 against the es handover layer, C5b from the other_working control."""
+    rng = random.Random(3)
+    lang = "es"
+    rows = []
+    for a, b in PAIRS:
+        for c in fs.XL_REPAIR[lang]:
+            for voice, p in (("active", .97), ("passive", .3)):
+                rows.append({"item_id": f"es:{a}>{b}:saludar:{c}:agent:{voice}", "construction": c, "role": "agent",
+                             "voice": voice, "correct": rng.random() < p})
+    _w(tmp_path, f"otrgen_{FZ['slug']}_test0_{lang}_20261201T000000.json",
+       {"instruction": fs.XL_INSTR[lang], "rows": rows})
+    # an English test0 file that must NOT be picked up for es ("test0" contains "es")
+    _otr03(tmp_path, False, -2.0, rng, True)
+
+    def otr03_xl(failing, role_effect, correct, stamp):
+        recs = []
+        for a, b in PAIRS:
+            fam = "|".join(sorted((a, b)))
+            for base in ("active", "passive"):
+                for k in ("first_name", "second_name"):
+                    for j, x in (("first_name", {"order": 1, "function": 0, "role": 0}),
+                                 ("second_name", {"order": 0, "function": 1, "role": 0}),
+                                 ("first_name", {"order": 0, "function": 0, "role": 1}),
+                                 ("second_name", {"order": 0, "function": 0, "role": 0})):
+                        # function as large as role: English C2 would fail on role - function, XL-C2 must not
+                        y = role_effect * (x["role"] + x["function"]) + rng.gauss(0, 0.2)
+                        recs.append({"base_id": f"es:{a}>{b}:saludar:{base}:agent:passive", "family_id": fam,
+                                     "k": k, "j": j, "role_asked": "agent", "x": x, "y": [y],
+                                     "base_correct": correct})
+        _w(tmp_path, f"otr03_{FZ['slug']}_test0_{lang}_{stamp}.json",
+           {"layers": [FZ["role"]], "agent_question": None, "include_incorrect": failing,
+            "question_voices": ["passive"] if failing else ["active"],
+            "roles": ["agent"] if failing else ["agent", "patient"], "records": recs})
+    otr03_xl(False, 0.5, True, "20261201T000001")
+    otr03_xl(True, -0.4, False, "20261201T000002")
+    h = fs.XL_HANDOVER[lang][M]
+    layers = list(range(0, 40, 2))
+    tr = {"all_items": {"repair": .6, "items": _items(rng, .6)},
+          "random_same_layers": {"repair": .02, "items": _items(rng, .02), "n_draws": 5},
+          "other_failing": {"repair": .3}, "random_nudge": {"repair": .0},
+          "mean_failing": {"repair": .3}, "other_working": {"repair": .25, "items": _items(rng, .25)}}
+    _w(tmp_path, f"otr09_{FZ['slug']}_test0_{lang}_20261201T000000.json",
+       {"residual_layers": layers, "residual": {"all": {"repair": [0.0 if L < h else 0.9 for L in layers]}},
+        "transfer": {"by_k": {"20": tr}}})
+    row = fs.score(str(tmp_path), "test0", models=[M], stimuli=lang)[0][M]
+    assert row["C1"]["verdict"] == "PASS" and row["C1"]["estimate"] > .5
+    assert row["C2"]["verdict"] == "PASS" and row["C2"]["role"] > 0      # English file (role -2) not used
+    assert row["C3"]["verdict"] == "PASS"
+    assert row["C4"]["verdict"] == "PASS" and row["C4"]["frozen"] == h
+    assert row["C5"]["verdict"] == "PASS"                                 # other_failing .3 not scored for XL
+    assert row["C5b"]["verdict"] == "PASS" and abs(row["C5b"]["top_minus_other_working"] - .35) < .05

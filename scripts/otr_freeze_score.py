@@ -26,7 +26,7 @@ from collections import defaultdict
 
 import numpy as np
 
-SCORER_VERSION = "1.0.0"
+SCORER_VERSION = "1.1.0"  # 1.1.0: Spanish/Galician addendum (FREEZE_XL.md); English scoring unchanged
 N_BOOT, SEED = 2000, 2026
 FAIL_Q, WORK_Q = "who-was-someone-past-by", "who-was-the-ing-done-by"
 MAIN = ("active", "passive", "object_cleft", "by_cleft")
@@ -47,6 +47,32 @@ FROZEN = {
                                         by=28, c7=True, rf="otr09_ibm-granite__granite-4.2-30b_dev_20261119T140015.json"),
 }
 OTHER_SETS = ("bx-", "_es_", "_gl_", "_sv_", "ud-en", "wiki-", "_aq_", "_instr", "byctl", "src2")
+
+# Spanish/Galician addendum (FREEZE_XL.md), frozen 2026-11-26 before any es/gl test run.
+XL = ("es", "gl")
+# Handover layer per language: the first layer with residual repair >= .5 in the dev es/gl runs
+# (otr09_*_dev_{es,gl}_20261121*.json). Not the English layer: dev already showed Gemma and Qwen
+# shift in Spanish/Galician, so the English layer is reported descriptively only.
+XL_HANDOVER = {
+    "es": {"google/gemma-4-31B-it": 46, "Qwen/Qwen3.8-27B": 50, "microsoft/phi-4": 22,
+           "allenai/Olmo-3.1-32B-Instruct": 24, "ibm-granite/granite-4.2-30b": 52},
+    "gl": {"google/gemma-4-31B-it": 46, "Qwen/Qwen3.8-27B": 50, "microsoft/phi-4": 22,
+           "allenai/Olmo-3.1-32B-Instruct": 26, "ibm-granite/granite-4.2-30b": 52},
+}
+
+
+def stim_tag_in(stimuli, name):
+    """True if the filename carries the stimulus tag as its own field (``_es_``, ``_bx-transitive_``)."""
+    return f"_{stimuli}_" in name
+
+
+def is_failing_run(D, stimuli=None):
+    """OTR-03 failing-question run. English/BX: --agent-question set. es/gl: the failing question is the
+    passive agent question, run with --question-voices passive --roles agent --include-incorrect."""
+    if D.get("agent_question") is not None:
+        return True
+    return (stimuli in XL and bool(D.get("include_incorrect")) and list(D.get("question_voices") or []) == ["passive"]
+            and list(D.get("roles") or []) == ["agent"])
 
 
 # ----------------------------------------------------------------------------- helpers
@@ -150,6 +176,35 @@ def c1(res, m, fz, split, rng):
                 failing=acc_f, working=acc_w, verdict=verdict(lo > 0)), [fail, work]
 
 
+XL_REPAIR = {"es": ("active", "passive", "object_cleft"), "gl": ("active", "passive")}
+XL_INSTR = {"es": "Responde con un solo nombre.", "gl": "Responde cun só nome."}
+
+
+def c1_xl(res, m, fz, split, rng, lang):
+    """XL-C1 (FREEZE_XL.md): agent questions on the language's repair constructions, same generation run;
+    accuracy of the active agent question (working) minus the passive agent question (failing); family
+    bootstrap on the paired per-family difference of means."""
+    f = find(res, f"otrgen_{fz['slug']}_{split}_{lang}_*.json", exclude=(),
+             keep=lambda p: load(p).get("instruction") == XL_INSTR[lang])
+    if not f:
+        return dict(verdict=verdict(None, "file missing")), []
+    rows = [r for r in load(f)["rows"] if r["role"] == "agent" and r["construction"] in XL_REPAIR[lang]]
+    fam = lambda r: "|".join(sorted(r["item_id"].split(":")[1].split(">")))  # noqa: E731  es:A>B:...
+    fams = sorted({fam(r) for r in rows})
+    pos = {x: i for i, x in enumerate(fams)}
+    S, N = np.zeros((2, len(fams))), np.zeros((2, len(fams)))
+    for r in rows:
+        v = 0 if r["voice"] == "active" else 1
+        S[v, pos[fam(r)]] += float(r["correct"] in (True, "True"))
+        N[v, pos[fam(r)]] += 1
+    counts = family_counts(fams, rng)
+    work, fail = S[0].sum() / N[0].sum(), S[1].sum() / N[1].sum()
+    dist = boot_mean(S[0], N[0], counts) - boot_mean(S[1], N[1], counts)
+    lo, hi = ci(dist)
+    return dict(working=float(work), failing=float(fail), estimate=float(work - fail), ci=[lo, hi],
+                n_rows=len(rows), n_families=len(fams), verdict=verdict(lo > 0)), [f]
+
+
 def _otr03_groups(recs, li, codes):
     """Per group (base_id, k): centred X (with intercept column) and y, plus the group's family."""
     groups = defaultdict(list)
@@ -195,11 +250,11 @@ def c2_c3(res, m, fz, split, rng, stimuli=None):
     """C2 from the ordinary-question OTR-03 run, C3 from the failing-question run (agent questions,
     wrong bases), both at the frozen role layer, resampled on the same families."""
     def is_aq(p):
-        return load(p).get("agent_question") is not None
+        return is_failing_run(load(p), stimuli)
 
     def stim_ok(p):
         name = os.path.basename(p)
-        return (stimuli in name) if stimuli else not any(t in name for t in ("bx-", "_es_", "_gl_", "_sv_"))
+        return stim_tag_in(stimuli, name) if stimuli else not any(t in name for t in ("bx-", "_es_", "_gl_", "_sv_"))
 
     f2 = find(res, f"otr03_{fz['slug']}_{split}*.json", exclude=(), keep=lambda p: stim_ok(p) and not is_aq(p))
     f3 = find(res, f"otr03_{fz['slug']}_{split}*.json", exclude=(), keep=lambda p: stim_ok(p) and is_aq(p))
@@ -243,7 +298,11 @@ def c2_c3(res, m, fz, split, rng, stimuli=None):
         return out, used
     out["C2"] = dict(layer=L, role=role, role_ci=[lo_r, hi_r], function=fun, role_minus_function=role - fun,
                      role_minus_function_ci=[lo_d, hi_d], n_families=len(fams2),
-                     verdict=verdict(lo_r > 0 and lo_d > 0))
+                     verdict=verdict(lo_r > 0 and (stimuli in XL or lo_d > 0)))
+    if stimuli in XL:
+        # FREEZE_XL.md: dev already showed grammatical function also carries signal in es/gl, so XL-C2 tests
+        # role > 0 with order and function in the same fit; role - function is reported, not scored.
+        out["C2"]["rule"] = "role CI > 0 (role - function reported only)"
     if not have3:
         out["C3"] = dict(verdict=verdict(None, "file missing" if D3 is None else f"layer {L} not in run"))
     elif n_wrong < 30 or not g3:
@@ -286,16 +345,19 @@ def c4_c5(res, m, fz, split, rng, stimuli=None):
     out = {}
     # C4: first sampled layer with residual repair >= .5 within +-2 of the frozen layer; all layers up to
     # frozen-4 below .5.
-    if stimuli:
+    hand = XL_HANDOVER[stimuli][m] if stimuli in XL else (None if stimuli else fz["handover"])
+    if hand is None:
         out["C4"] = dict(verdict="not tested (replication set)")
     else:
         try:
             layers, rep = D["residual_layers"], D["residual"]["all"]["repair"]
             first = next((L for L, v in zip(layers, rep) if v is not None and v >= .5), None)
-            early = [v for L, v in zip(layers, rep) if L <= fz["handover"] - 4 and v is not None]
-            ok = first is not None and abs(first - fz["handover"]) <= 2 and all(v < .5 for v in early)
-            out["C4"] = dict(frozen=fz["handover"], first_crossing=first, max_repair_up_to_frozen_minus_4=
+            early = [v for L, v in zip(layers, rep) if L <= hand - 4 and v is not None]
+            ok = first is not None and abs(first - hand) <= 2 and all(v < .5 for v in early)
+            out["C4"] = dict(frozen=hand, first_crossing=first, max_repair_up_to_frozen_minus_4=
                              max(early) if early else None, verdict=verdict(ok))
+            if stimuli in XL:
+                out["C4"]["english_layer"] = fz["handover"]  # descriptive only
         except (KeyError, TypeError):
             out["C4"] = dict(verdict=verdict(None, "residual curve missing"))
     # C5: frozen top-20 vs 20 random heads from the same layers (paired by item), plus controls.
@@ -320,7 +382,24 @@ def c4_c5(res, m, fz, split, rng, stimuli=None):
     controls_ok = of is not None and nu is not None and of <= .10 and nu <= .10
     res5.update(top_minus_random=est, top_minus_random_ci=[lo, hi], n_items=n, n_families=nf,
                 n_random_draws=rnd.get("n_draws"))
-    if stimuli:
+    if stimuli in XL:
+        # C5 as for BX, plus C5b (FREEZE_XL.md): the frozen heads must repair more with the item's own working-run
+        # content than with another item's working-run content (paired by item, family bootstrap). The other
+        # controls (other_failing, random_nudge, mean_failing) are reported, not scored: test0 showed in phi-4 that
+        # removing the heads' own output repairs on its own, so ``other_failing <= .10`` does not test content.
+        ok = lo > 0 and (top.get("repair") or 0) >= .25
+        ow = tr.get("other_working", {})
+        res5.update(mean_failing=tr.get("mean_failing", {}).get("repair"), other_working=ow.get("repair"))
+        if "items" in ow:
+            oi = {x["item_id"]: x for x in ow["items"]}
+            pairs = [(x.get("family_id") or family_of(x["item_id"]), x["repair"] - oi[x["item_id"]]["repair"])
+                     for x in top["items"] if x["item_id"] in oi and x["repair"] is not None
+                     and oi[x["item_id"]]["repair"] is not None]
+            e_b, (lo_b, hi_b), _, _ = item_mean_test(pairs, rng)
+            out["C5b"] = dict(top_minus_other_working=e_b, ci=[lo_b, hi_b], verdict=verdict(lo_b > 0))
+        else:
+            out["C5b"] = dict(verdict=verdict(None, "other_working control missing (--controls --controls-extra)"))
+    elif stimuli:
         ok = lo > 0 and (top.get("repair") or 0) >= .25
     else:
         ok = lo > 0 and (top.get("repair") or 0) >= .25 and controls_ok
@@ -389,8 +468,11 @@ def score(res, split, models=None, stimuli=None, seed=SEED):
         rng = np.random.default_rng(seed)
         row, used = {}, []
         if stimuli:
+            if stimuli in XL:
+                row["C1"], u = c1_xl(res, m, fz, split, rng, stimuli); used += u
             out, u = c2_c3(res, m, fz, split, rng, stimuli); row.update(out); used += u
-            out, u = c4_c5(res, m, fz, split, rng, stimuli); row["C5"] = out["C5"]; used += u
+            out, u = c4_c5(res, m, fz, split, rng, stimuli); used += u
+            row.update({k: v for k, v in out.items() if k in (("C4", "C5", "C5b") if stimuli in XL else ("C5",))})
         else:
             row["C1"], u = c1(res, m, fz, split, rng); used += u
             out, u = c2_c3(res, m, fz, split, rng); row.update(out); used += u
@@ -413,7 +495,7 @@ def markdown(table):
             r = table[m].get(c, {})
             v = r.get("verdict", "")
             est = next((r[k] for k in ("estimate", "role", "c2_minus_c3", "first_crossing", "top_minus_random",
-                                         "damage", "share_agent_after_prefix") if r.get(k) is not None), None)
+                                         "damage", "share_agent_after_prefix", "top_minus_other_working") if r.get(k) is not None), None)
             cells.append(v if est is None else f"{v} ({est:.2f})" if isinstance(est, float) else f"{v} ({est})")
         lines.append(f"| {c} | " + " | ".join(cells) + " |")
     return "\n".join(lines)
@@ -423,7 +505,7 @@ def main(argv=None):
     p = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     p.add_argument("--results", default="results")
     p.add_argument("--split", default="test0", choices=("dev", "test0", "test1", "test2", "test3"))
-    p.add_argument("--stimuli", default=None, help="replication set, e.g. bx-transitive (C2, C3, C5 only)")
+    p.add_argument("--stimuli", default=None, help="replication set: bx-transitive (C2, C3, C5) or es / gl (C2, C3, C4, C5, C5b; FREEZE_XL.md)")
     p.add_argument("--models", nargs="*", default=None)
     p.add_argument("--out", default=None)
     args = p.parse_args(argv)
