@@ -90,8 +90,10 @@ Scoring: `python scripts/otr_freeze_score.py --results results --split test0 --s
   every model and language.
 
 ## 6. Pre-submission check (filled in before `--submit`)
-- Native read of 24 random dev prompts per language (Joel): es ___ ; gl ___ ; problems found: ___
-- Queue empty when submitted: ___
+- Native read of 24 random dev prompts per language (Joel, 26 Nov; sample in `native_check_es_gl.md`, seed 2026):
+  es OK; gl OK; problems found: none. All items grammatical; some phrasing formal rather than colloquial
+  (e.g. "¿Por quién fue visitado alguien?"), kept unchanged so test0 matches dev.
+- Queue empty when submitted: checked by `squeue --me` before `--submit` (job IDs in test0_attempts.md).
 
 ## 7. Dev files this addendum is frozen from (sha256)
 ```
