@@ -10,7 +10,7 @@ Research communication across Model Linguistics: a dated archive of approved tal
 |:--|:--|
 | [Presentations and research updates](presentations/README.md) | Slides, seminar talks and programme-wide overviews approved for public release |
 | Posters and conference materials | To be indexed when approved materials are available |
-| Explanatory resources | To be indexed when standalone diagrams, glossaries or teaching materials are available |
+| [Existing research resources](research-resources.md) | Dated review packages, figures, supplementary analyses and research overviews already in the repository |
 
 ## Scientific sources
 
