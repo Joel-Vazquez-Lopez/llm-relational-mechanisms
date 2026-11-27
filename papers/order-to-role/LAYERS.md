@@ -2,11 +2,13 @@
 
 # Layers and mechanism: from the names to the answer
 
-**Summary.** In every model the computation has the same three stages in the same order:
+**Summary.** Causal interventions support a candidate three-stage account of how the answer is computed, with the stages in the same order in every model:
 
 1. The names carry their thematic role in the middle layers.
-2. The question, mainly through the word "by", sets which role to fetch.
-3. At a fixed depth, the answer position takes over, and about 20 attention heads fetch the name.
+2. The question, mainly through the word "by", sets which role is asked for.
+3. At a fixed depth, the answer position takes over. Patching about 20 attention heads there repairs a substantial share of the error, and how much depends on the model.
+
+The account is consistent with every intervention below, but it is not shown to be the models' unique native mechanism. The interventions establish sufficiency under patching, and necessity and exclusivity are only partly tested (§6).
 
 The stages sit at different depths in different models, but never in a different order. This page shows the evidence for each stage and what it does and does not establish. All curves are development data. The confirmatory tests for the layer claims are C2, C4, C6 and C8 ([evidence ledger](EVIDENCE.md#1-confirmatory-results-test-set-0)).
 
@@ -60,7 +62,7 @@ Two curves cross. Swapping the whole question from a layer upward repairs the fa
 
 ## 4. The heads at the handover
 
-From the handover layer on, 20 attention heads, ranked on part of the development families, repair most of the error. On the remaining families they repair .36 (Qwen3.8) to .82 (Gemma), against ≤ .11 for 20 random heads from the same layers. Frozen and applied unchanged to held-out names, Spanish, Galician and natural text, they keep each model's level of repair ([Results §4 and §6](RESULTS.md#4-a-small-set-of-heads-carries-the-answer)). The head lists are in [FREEZE.md §4](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/blob/9c437928f61351a72e8d7be4cac6d3a964844a7e/docs/order_to_role/FREEZE.md); most sit within a few layers of the handover.
+From the handover layer on, patching 20 attention heads, ranked on part of the development families, repairs a substantial, model-dependent share of the error. On the remaining families they repair .36 (Qwen3.8) to .82 (Gemma), against ≤ .11 for 20 random heads from the same layers. Frozen and applied unchanged to held-out names, Spanish, Galician and natural text, they keep each model's level of repair ([Results §4 and §6](RESULTS.md#4-twenty-heads-repair-a-substantial-model-dependent-share-of-the-error)). The head lists are in [FREEZE.md §4](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/blob/9c437928f61351a72e8d7be4cac6d3a964844a7e/docs/order_to_role/FREEZE.md); the heads were searched only in a window of late layers, which in OLMo began after its handover, so their location shows that late heads suffice, not where the read-out happens.
 
 ## 5. Across models: same order, different depths
 

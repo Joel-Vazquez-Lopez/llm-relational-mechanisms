@@ -61,7 +61,7 @@ At the frozen role layer (development peak), coefficients in logits of the name'
 
 ## 3. From storage to answer: the layer pipeline
 
-Three measurements trace the computation across depth. All three are development results, plotted on each model's own relative depth:
+Three interventions trace a candidate question-to-answer pathway across depth. It is an account that the interventions support, not a uniquely established mechanism (see §9). All three are development results, plotted on each model's own relative depth:
 
 - **Swap the whole question.** Replace all question tokens of the failing run with those of the working run, at one layer, from that layer up. Early on this repairs the answer; it stops working at the depth where the question's contribution has already been passed to the answer position (OTR-14).
 - **Patch the answer position.** Copy the residual stream at the answer position from the working run. This starts to repair the answer at the same depth (OTR-09, OTR-14).
@@ -85,7 +85,7 @@ The same order holds in all five models: **role peak and "by" peak first, answer
 
 These are the frozen development layers ([FREEZE.md §4](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/blob/9c437928f61351a72e8d7be4cac6d3a964844a7e/docs/order_to_role/FREEZE.md)); the script recomputes the handover and "by" layers from the raw curves and gets the same values. **The handover layer reappeared exactly on held-out names in all five models (C4) [test0]**, and on Wikipedia sentences in Gemma, Granite and phi-4 (OLMo 2–4 layers earlier; development). The temporal ordering is a description, not a proof of a serial causal chain; the per-token interventions are tested separately ([LAYERS](LAYERS.md)).
 
-## 4. A small set of heads carries the answer
+## 4. Twenty heads repair a substantial, model-dependent share of the error
 
 Ranking single attention heads by how much they repair the failing answer, on one part of the development families, gives a top-20 set per model. On the remaining development families:
 

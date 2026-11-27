@@ -28,7 +28,7 @@ On 12 November, a test built for those small models (choosing between two answer
 ## Stage 3 · Inside capable models (18–19 November)
 
 - **OTR-03 on Gemma** showed a mid-network role code on the names, larger than order or function: the central representational result.
-- **OTR-09** (`893ae00`) found that repair from the working run starts at a fixed depth, and that about 20 heads are enough to fix most of the error.
+- **OTR-09** (`893ae00`) found that repair from the working run starts at a fixed depth, and that patching about 20 heads repairs a substantial, model-dependent share of the error.
 - **The model set was widened** to phi-4, OLMo-3.1, Granite-4.2 and gpt-oss-20b with an inclusion gate; gpt-oss missed it. OTR-12 tested knockout and an averaged role vector.
 
 ## Stage 4 · Generalisation (20–24 November)
