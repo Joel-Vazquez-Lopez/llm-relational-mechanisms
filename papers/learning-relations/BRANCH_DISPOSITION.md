@@ -2,6 +2,8 @@
 
 # Branch disposition and consolidation register
 
+> **Coordinator status — 28 November 2026.** This register contains a dated 27 November source-tree census and scientific-disposition audit. Its original 57-branch count and references to unfinished Paper II PRs are historical snapshots, **not current repository status**. At this review, `main` is `f8fda8ab9f303177242527b6b6804d42c688aee5`, Paper II PRs #19, #20, #21, #25 and #26 are merged, and the remote contains 62 branch names (including `main` and temporary PR heads). Paper I PRs #5, #14, #22, #23 and #24 remain draft; #27 separately proposes source-grounded mechanistic notes. All five previously reviewed Paper I preservation packages have no path-level conflict with that `main`, but **file compatibility is not scientific, archival or rights clearance**. No branch has been authorised for retirement. Historical counts, exact source commits, blocked research dependencies and branch rows below are retained to preserve audit provenance. A fresh retirement-time census and source-content check are mandatory.
+
 **27 November 2026 · Draft for coordinating review.** This extends the prior tree inventory; it is not a new scientific phase, a release approval, or an authorisation to retire branches. Main at audit: `da7d463b10955f02cf342205e5e0a03f450cfcb1`. #14: `910c320a3696be4a4807ef554602adff3965d091`. #22: `0bb6c18af1e2f9f4371335ddc866c93a8f917e9a`. Branch census: 57 remote branch names, including shared/Paper II refs. Original scientific paths and the #18 reading order remain unchanged.
 
 ## Integration gates
