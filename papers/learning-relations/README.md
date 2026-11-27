@@ -18,6 +18,10 @@ Early controlled-exposure experiments repeatedly improved relational generalisat
 
 The emerging question is how distinct relational abilities emerge, diverge and selectively fail to develop during learning.
 
+## Start here
+
+[**Results and figures**](RESULTS.md) · [Methods](METHODS.md) · [Mechanistic investigations](MECHANISMS.md) · [Scientific development](DEVELOPMENT.md) · [Integration audit](INTEGRATION.md)
+
 ## Research progression
 
 | Stage | Question | Status |
