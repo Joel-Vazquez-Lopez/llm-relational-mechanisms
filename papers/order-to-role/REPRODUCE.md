@@ -10,28 +10,28 @@ There are three levels of reproduction, from cheapest to most expensive:
 
 ## Where the code and results are
 
-| What | Where (until the [integration](INTEGRATION.md) is merged) | Pinned commit |
-|:--|:--|:--|
-| OTR scripts, generators, freezes, scorer, tests | [`order-to-role/stimuli`](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/tree/order-to-role/stimuli) | `9c437928` |
-| Development, test0 and 70B result files | [`order-to-role/results-dev`](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/tree/order-to-role/results-dev), folder `results/` | `25c6914e` |
-| This section's tables, figures and scorer output | `papers/order-to-role/results/` on `main` | – |
+Everything is on `main`.
 
-Once the code integration is merged, the scripts are on `main`; only the result files stay on the results branch.
+| What | Where |
+|:--|:--|
+| OTR scripts, generators, frozen protocols, scorer, tests | `scripts/`, `src/relational_lab/`, `docs/order_to_role/`, `tests/`. Merged from `order-to-role/stimuli` @ `9c43792` with its history (PR #19); byte-identical to that snapshot apart from the relocated handoff note |
+| Development, test0 and 70B result files | `results/`. PR #12 brought the outputs up to 21 November; the results-consolidation PR brings the rest from `order-to-role/results-dev` @ `25c6914`, except four files of Wikipedia text |
+| The complete results-dev record, Wikipedia item sets included | The archive described in [`archive/README.md`](archive/README.md): inventory, SHA-256 checksums and a deterministic builder |
+| This section's tables, figures and scorer output | `papers/order-to-role/results/` and `papers/order-to-role/supplementary/` |
+
+The pinned links to `9c43792` throughout these pages stay valid, and every linked file is byte-identical on `main`.
 
 ## 1. Rebuild the results section
 
 ```bash
 git clone https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms.git
 cd llm-relational-mechanisms
-git fetch origin order-to-role/results-dev order-to-role/stimuli
-git worktree add ../otr-results 25c6914e29473e4b1a1063600c48743f68b705c3
-git worktree add ../otr-code 9c437928f61351a72e8d7be4cac6d3a964844a7e
 python -m pip install numpy matplotlib
-python papers/order-to-role/analysis/build_results.py --results ../otr-results/results --code ../otr-code --out papers/order-to-role/results --results-commit 25c6914e29473e4b1a1063600c48743f68b705c3 --code-commit 9c437928f61351a72e8d7be4cac6d3a964844a7e
+python papers/order-to-role/analysis/build_results.py --results results --code . --out papers/order-to-role/results --results-commit 25c6914e29473e4b1a1063600c48743f68b705c3 --code-commit 9c437928f61351a72e8d7be4cac6d3a964844a7e
 git diff --stat papers/order-to-role/results
 ```
 
-After the code integration is merged, `--code .` replaces `--code ../otr-code`.
+Run on `main`'s own `results/`, the script reproduces the committed tables, confirmatory output and manifest byte for byte; the supplement script does the same for its figures and tables. The `--results-commit` and `--code-commit` flags only label the manifest with the snapshots the committed outputs were built from. To rebuild from the original branches instead, use `git worktree add ../otr-results 25c6914e29473e4b1a1063600c48743f68b705c3` and pass `--results ../otr-results/results`.
 
 **What the script does:**
 
@@ -55,10 +55,10 @@ Identical inputs give identical tables. Figures can differ in font rendering onl
 ## 2. Re-score the frozen evaluation only
 
 ```bash
-python ../otr-code/scripts/otr_freeze_score.py --results ../otr-results/results --split test0
-python ../otr-code/scripts/otr_freeze_score.py --results ../otr-results/results --split test0 --stimuli bx-transitive
-python ../otr-code/scripts/otr_freeze_score.py --results ../otr-results/results --split test0 --stimuli es
-python ../otr-code/scripts/otr_freeze_score.py --results ../otr-results/results --split test0 --stimuli gl
+python scripts/otr_freeze_score.py --results results --split test0
+python scripts/otr_freeze_score.py --results results --split test0 --stimuli bx-transitive
+python scripts/otr_freeze_score.py --results results --split test0 --stimuli es
+python scripts/otr_freeze_score.py --results results --split test0 --stimuli gl
 ```
 
 The scorer reads only result files that already exist. Do not run any `--split test0` experiment again, do not open test sets 1–3, and do not change thresholds, layers or heads after seeing results. Any new analysis of test0 outputs is exploratory and must be labelled as such.
@@ -70,16 +70,17 @@ python -m pip install -e '.[dev]' numpy
 PYTHONPATH=src python -m pytest -q tests
 ```
 
-On a CPU-only machine with the integrated code, this gives 147 passed and 57 skipped. The skipped tests need `torch` or a GPU.
+This is CI's *lightweight* job: 147 passed, 61 skipped, 0 failed. The skipped tests need PyTorch. CI's *scientific CPU validation* job also installs CPU PyTorch, Transformers, Tokenizers, Accelerate and matplotlib, and runs the same suite on tiny random models with the Hugging Face hub offline: 214 passed, 3 skipped (spaCy parser), 0 failed (see `.github/workflows/ci.yml`).
 
 ## 4. Rerunning experiments
 
 Each experiment is a script in `scripts/` (see the [experiment map](EXPERIMENTS.md)) with a matching Slurm job in `scripts/slurm/`. One-time cluster setup is `scripts/slurm/setup_pelle.sh`. Every result file records:
 
-- the model and its Hugging Face revision
-- the generator version, seed and split
+- the model
+- the generator version and split
 - the chat-template setting and instruction
-- the script hash and library versions
+
+OTR-03 files also record the seed, model revision field, script hash and library versions. The model snapshots used are listed in FREEZE.md §4.
 
 Record the same for any new run. The 70B models use `--device-map auto` over two GPUs ([plan](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/blob/9c437928f61351a72e8d7be4cac6d3a964844a7e/docs/order_to_role/BIG_MODELS.md)). They are exploratory until a separate freeze addendum is committed.
 

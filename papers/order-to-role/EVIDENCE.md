@@ -67,7 +67,7 @@ Each cell gives the verdict, the frozen primary estimate and its 95% family-boot
 
 **Scale caveat for XL-C5b in Gemma.** The values 4.08 (Spanish) and 2.73 (Galician) are large because another item's working-run output pushes Gemma's answer strongly the wrong way (`other_failing` −3.36 and −1.93). The verdicts are valid, but the magnitudes are not comparable across models.
 
-**Provenance.** The canonical attempt logs are on the results branch (`results/test0_attempts.md`, `results/test0_attempts_pelle.md`). They list 48 English submissions at the freeze commit `f6ea0e1` (26 Nov, 10:10) and 40 Spanish/Galician submissions at `c40a1f7` (26 Nov, 19:11). `c40a1f7` only adds the native-speaker check that the addendum requires before submitting. No reruns are recorded. The copy of `test0_attempts.md` on the stimuli branch is an empty template.
+**Provenance.** The canonical attempt logs are in `results/` on `main` (`results/test0_attempts_pelle.md`, with `results/test0_attempts.md`), imported byte for byte from the results branch. They list 48 English submissions at the freeze commit `f6ea0e1` (26 Nov, 10:10) and 40 Spanish/Galician submissions at `c40a1f7` (26 Nov, 19:11). `c40a1f7` only adds the native-speaker check that the addendum requires before submitting. No reruns are recorded. `docs/order_to_role/test0_attempts.md` is the empty template that the submit script was meant to fill.
 
 ## 2. Exploratory findings (development only)
 
@@ -120,7 +120,7 @@ These shaped the frozen claims or extend them, but were not tested on held-out d
 
 - **Donor leak in development OTR-03.** Development donor name pairs were drawn from all pairs, including test families; donors are counterbalanced and no donor-level result was inspected. Test runs draw donors from their own split only and abort on a leak (FREEZE.md §0).
 - **The Spanish/Galician addendum was frozen after English test0 had been seen**, but before any Spanish or Galician test run. Its values come from development es/gl runs, listed with checksums.
-- **Some 16 November results were committed to the stimuli branch by mistake** (commits `91e66ca`, `e1bff8c`, `e725b8f`); they are identical to copies already on `main`.
+- **Some 16 November results were committed to the stimuli branch by mistake** (commits `91e66ca`, `e1bff8c`, `e725b8f`); their final versions are identical to copies on `main`, and the earlier versions (including the reverted 16 November run) remain in `main`'s history through the PR #19 merge.
 - **Repair is a conditional estimand.** It is computed on items with a working–failing gap above 1 logit, and is not an accuracy.
 - **No multiplicity correction** is applied to the replication criteria, as stated in the freeze.
 - **This ledger replaces an earlier statement** in the shared research guide that test0 scoring had not been audited.

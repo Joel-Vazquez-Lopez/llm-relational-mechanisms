@@ -34,8 +34,8 @@ Two inputs carry extra caveats. The Swedish stimuli have not been checked by a n
 
 | Source | Commit | Role |
 |:--|:--|:--|
-| Results archive, `order-to-role/results-dev` | `25c6914` | All result JSONs read by the script; not merged into `main` |
-| OTR code, `order-to-role/stimuli` | `9c43792` | Generators (stimulus counts), frozen scorer, FREEZE files |
+| Result files: `results/` on `main` (originally `order-to-role/results-dev`) | `25c6914` | All result JSONs read by the script; [inventory and archive](../archive/README.md) |
+| OTR code on `main` (originally `order-to-role/stimuli`) | `9c43792` | Generators (stimulus counts), frozen scorer, FREEZE files |
 | Main results, [`../results/`](../results/) | this branch | The frozen scorer's test0 summaries (`confirmatory/test0_*.json`), read here rather than recomputed |
 
 Rebuild steps are in [S6](S6-methods.md#rebuild). The script loads no model, runs no experiment and reads no test-split output beyond the frozen scorer's existing test0 summaries.

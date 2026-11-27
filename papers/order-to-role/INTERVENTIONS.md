@@ -61,4 +61,4 @@ An earlier version used a prefix that named the patient ("Mira was praised by").
 
 ## 7. Behaviour through an API
 
-Behaviour on hosted frontier models (generation only, no internals) was collected for an appendix ([`otr_generate_api.py`](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/blob/9c437928f61351a72e8d7be4cac6d3a964844a7e/scripts/otr_generate_api.py)). These results are behavioural only and outside the frozen claims.
+A runner for hosted frontier models (generation only, no internals) exists for a possible appendix ([`otr_generate_api.py`](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/blob/9c437928f61351a72e8d7be4cac6d3a964844a7e/scripts/otr_generate_api.py), with `api_behaviour.py` and their tests). No API result file is in the repository or in the results archive, so no API behaviour is part of the evidence. Any such results would be behavioural only and outside the frozen claims.
