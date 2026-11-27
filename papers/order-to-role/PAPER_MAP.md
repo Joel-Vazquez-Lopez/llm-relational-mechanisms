@@ -1,38 +1,32 @@
-[← Order-to-Role](README.md) · [Layer investigation](LAYERS.md) · [Evidence](EVIDENCE.md)
+[← Order-to-Role](README.md) · [Results](RESULTS.md) · [Evidence ledger](EVIDENCE.md)
 
-# Paper architecture
+# Manuscript map
 
-A reading guide to the [24 November manuscript draft (25 November state snapshot)](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/blob/9c437928f61351a72e8d7be4cac6d3a964844a7e/docs/order_to_role/state_2026-11-25/paper_draft.md), not a new manuscript or a change to the frozen claims. The live manuscript remains the author's canonical writing workspace.
+A guide from the working manuscript to the evidence on these pages. The manuscript itself is the author's writing workspace. The last archived version is the [24 November draft (25 November state snapshot)](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/blob/9c437928f61351a72e8d7be4cac6d3a964844a7e/docs/order_to_role/state_2026-11-25/paper_draft.md). This page does not change the frozen claims or the manuscript.
 
-## Proposed main-paper sequence
+**Target:** ACL Rolling Review (long paper: 8 pages, plus limitations and appendix).
 
-| Section | Scientific purpose | Experiments / evidence |
-|:--|:--|:--|
-| 1. Paradigm and measurement | Decorrelate order, grammatical function and thematic role; establish scoring validity | OTR-01, generation check, OTR-05/15; C1 |
-| 2. Participant representations | Test whether name-state transplants carry role-specific effects beyond order and function | OTR-03, OTR-08/10; C2/C3; psych-verb development contrasts |
-| 3. Computation across layers | Separate role-related name states, question-side effects and answer-position readout | OTR-02/04/06/13/14; C4/C6/C8 |
-| 4. Causal readout and failure | Test frozen head-set repair, matched controls, and neutral-prefix answer effects | OTR-07/09/11/12; C5/C7 |
-| 5. Generality | Transfer English-selected heads to new constructions, Spanish/Galician and natural sentences | OTR-03/09, BX, XL, UD, WIKI; [transfer map](TRANSFER.md) |
-| 6. Frozen evaluation | Report every prespecified model/claim result, failures and not-evaluable cells | [English freeze](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/blob/9c437928f61351a72e8d7be4cac6d3a964844a7e/docs/order_to_role/FREEZE.md); [XL addendum](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/blob/9c437928f61351a72e8d7be4cac6d3a964844a7e/docs/order_to_role/FREEZE_XL.md) |
-| 7. Discussion | Distinguish causal evidence from a unique native pathway; discuss linguistic, measurement and selection limits | [Evidence ledger](EVIDENCE.md) |
+## Sections, evidence and figures
 
-The existing draft already uses a related sequence. This table groups it for navigation, not to mandate a change in paper numbering.
+| Section | Argument | Evidence | Figure on these pages | Confirmatory |
+|:--|:--|:--|:--|:--|
+| 1 Introduction | Order, function and role usually travel together; which does a model use, and how does a question reach it? | Design | – | – |
+| 3 Paradigm and methods | Decorrelated constructions, causal transplants, answer and token patching, freeze | [Methods](METHODS.md) | – | – |
+| 4 What the names encode | Role is the largest transplant effect, mid-network; psych verbs | OTR-03 core, BX, psych | [Fig. 2](results/figures/fig2_role_code_by_layer.svg) | C2 |
+| 5 Development across layers | Role and "by" before the handover, at model-specific depths | OTR-03, 13, 09, 14 | [Fig. 3](results/figures/fig3_question_to_answer.svg), [Fig. 4](results/figures/fig4_layer_order.svg) | C4 |
+| 6 How a question reads the roles | 20 heads at the handover; shared across inputs | OTR-09 | [Fig. 5](results/figures/fig5_head_transfer.svg) | C5 |
+| 7 When retrieval fails | Identical stored states, different answers; "by"; the model still knows | Generation, OTR-03 failing, OTR-13/14, OTR-07 | [Fig. 1](results/figures/fig1_failing_question.svg) | C1, C3, C6, C7, C8 |
+| 8 Generality | Spanish, Galician, UD, Wikipedia; real vs neutral names | OTR-03, OTR-09 transfer | [Fig. 5](results/figures/fig5_head_transfer.svg) | BX, XL-C1–C5b |
+| 9 Held-out confirmation | All frozen claims, pass or fail | Frozen scorer | [Scorecards](EVIDENCE.md#1-confirmatory-results-test-set-0) | all |
+| 10 Discussion, limitations | Storage vs retrieval; sufficiency vs a unique pathway; measurement lessons | [Ledger](EVIDENCE.md) | – | – |
 
-## Proposed figure order (not generated here)
+## What changed since the 24 November draft
 
-| Figure | Purpose | Primary source |
-|:--|:--|:--|
-| 1 | Controlled linguistic design, matched behavioral contrast and generation validity | OTR-01 and generation runs |
-| 2 | Role, function and position transplant coefficients across depth; psych predicates | OTR-03 |
-| 3 | Layer pipeline: question states, attention blocking, answer-state repair | OTR-13/14; [layer guide](LAYERS.md) |
-| 4 | Frozen-head repair versus layer-matched and content controls | OTR-09; per-item uncertainty |
-| 5 | Transfer across BX, Spanish, Galician, UD and Wikipedia; separate development and test0 | [Transfer guide](TRANSFER.md) |
-| 6 or appendix | Complete frozen claim matrix, unsuccessful tests, sensitivity and limitations | Frozen scorer and result provenance |
+- **Section 9's empty table can now be filled** from the [scorecards](EVIDENCE.md#1-confirmatory-results-test-set-0): English 37/38 (phi-4 C5 fails on a control), BX 15/15, Spanish 29/30 (Gemma XL-C3 fails), Galician 30/30.
+- **Section 4's phrase "order and function coefficients are near zero or small" needs a correction.** Function is near zero, but order/focus is 0.45 in Gemma, 0.38 in phi-4 and 0.24 in Granite at the role layer (0.61 for Granite on BX). The supported claim is that role is the largest coefficient and exceeds function.
+- **The Qwen3.8 WIKI-ROLES v0.2 values are now available** (frozen-head repair .33 real, .35 neutral).
+- **Figures 2–5 exist** as development figures generated from the archived files; the manuscript versions still need family-bootstrap bands for the transplant curves.
 
-This is a proposed figure map, not a statement that all contrasts passed. Report original margins, effect sizes, denominators and intervals rather than mixing repair ratios with generation accuracy.
+## Open writing questions (from the draft)
 
-## Narrative boundaries
-
-The central hypothesis concerns role-sensitive representation and question-conditioned selection. A coherent set of interventions supports studying that hypothesis, but temporal ordering is not a causal chain by itself. Preserve the earlier forced-choice artifact correction, distinguish the conditional repair estimand from overall accuracy, and distinguish validated transfer from exploratory results. Cross-language generality does not establish language invariance of every component or representation.
-
-For anonymous submission, prepare a separate anonymized manuscript/artifact. The public repository guide is not a submission artifact.
+Final title; verify every citation; how to define "good / middle / poor" models for the layer figure; whether to include a sentence on implications for training or prompting.

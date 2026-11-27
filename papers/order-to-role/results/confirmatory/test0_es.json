@@ -1,0 +1,484 @@
+{
+ "scorer_version": "1.1.0",
+ "split": "test0",
+ "stimuli": "es",
+ "n_boot": 2000,
+ "seed": 2026,
+ "frozen": {
+  "google/gemma-4-31B-it": {
+   "slug": "google__gemma-4-31B-it",
+   "n_layers": 60,
+   "handover": 40,
+   "role": 28,
+   "by": 28,
+   "c7": true,
+   "rf": "otr09_google__gemma-4-31B-it_dev_20261118T164326.json"
+  },
+  "Qwen/Qwen3.8-27B": {
+   "slug": "Qwen__Qwen3.8-27B",
+   "n_layers": 64,
+   "handover": 54,
+   "role": 29,
+   "by": 30,
+   "c7": true,
+   "rf": "otr09_Qwen__Qwen3.8-27B_dev_20261118T162630.json"
+  },
+  "microsoft/phi-4": {
+   "slug": "microsoft__phi-4",
+   "n_layers": 40,
+   "handover": 22,
+   "role": 15,
+   "by": 8,
+   "c7": false,
+   "rf": "otr09_microsoft__phi-4_dev_20261119T093535.json"
+  },
+  "allenai/Olmo-3.1-32B-Instruct": {
+   "slug": "allenai__Olmo-3.1-32B-Instruct",
+   "n_layers": 64,
+   "handover": 26,
+   "role": 18,
+   "by": 8,
+   "c7": false,
+   "rf": "otr09_allenai__Olmo-3.1-32B-Instruct_dev_20261119T095922.json"
+  },
+  "ibm-granite/granite-4.2-30b": {
+   "slug": "ibm-granite__granite-4.2-30b",
+   "n_layers": 64,
+   "handover": 52,
+   "role": 37,
+   "by": 28,
+   "c7": true,
+   "rf": "otr09_ibm-granite__granite-4.2-30b_dev_20261119T140015.json"
+  }
+ },
+ "table": {
+  "google/gemma-4-31B-it": {
+   "C1": {
+    "working": 1.0,
+    "failing": 0.6991869918699187,
+    "estimate": 0.30081300813008127,
+    "ci": [
+     0.2510117425036696,
+     0.34783043478260867
+    ],
+    "n_rows": 492,
+    "n_families": 59,
+    "verdict": "PASS"
+   },
+   "C2": {
+    "layer": 28,
+    "role": 0.6686438456781383,
+    "role_ci": [
+     0.5652712141079336,
+     0.7733850397826296
+    ],
+    "function": 0.27859653237023585,
+    "role_minus_function": 0.39004731330790243,
+    "role_minus_function_ci": [
+     0.2648861497934545,
+     0.5009334104949326
+    ],
+    "n_families": 42,
+    "verdict": "PASS",
+    "rule": "role CI > 0 (role - function reported only)"
+   },
+   "C3": {
+    "layer": 28,
+    "role_failing_wrong": 0.5591207837301587,
+    "role_failing_wrong_ci": [
+     0.4707187339907787,
+     0.6617431778265944
+    ],
+    "c2_minus_c3": 0.10952306194797956,
+    "c2_minus_c3_ci": [
+     -0.010113223684183577,
+     0.22673860131671647
+    ],
+    "n_wrong_bases": 126,
+    "verdict": "FAIL"
+   },
+   "C4": {
+    "frozen": 46,
+    "first_crossing": 48,
+    "max_repair_up_to_frozen_minus_4": 0.3528,
+    "verdict": "PASS",
+    "english_layer": 40
+   },
+   "C5b": {
+    "top_minus_other_working": 4.080195977467411,
+    "ci": [
+     3.115613297845293,
+     5.046195298095854
+    ],
+    "verdict": "PASS"
+   },
+   "C5": {
+    "top": 0.7476,
+    "random": 0.0354,
+    "other_failing": -3.3567,
+    "random_nudge": -0.0108,
+    "top_minus_random": 0.7122043348213419,
+    "top_minus_random_ci": [
+     0.6894955557070904,
+     0.733555299172018
+    ],
+    "n_items": 180,
+    "n_families": 57,
+    "n_random_draws": 5,
+    "mean_failing": -2.5712,
+    "other_working": -3.3326,
+    "verdict": "PASS",
+    "file": "otr09_google__gemma-4-31B-it_test0_es_20261126T195002.json"
+   }
+  },
+  "Qwen/Qwen3.8-27B": {
+   "C1": {
+    "working": 1.0,
+    "failing": 0.6788617886178862,
+    "estimate": 0.32113821138211385,
+    "ci": [
+     0.25844731102052493,
+     0.3824762677684324
+    ],
+    "n_rows": 492,
+    "n_families": 59,
+    "verdict": "PASS"
+   },
+   "C2": {
+    "layer": 29,
+    "role": 0.7354923483981693,
+    "role_ci": [
+     0.6745058178203838,
+     0.7998103711970899
+    ],
+    "function": 0.5618921624713958,
+    "role_minus_function": 0.1736001859267735,
+    "role_minus_function_ci": [
+     0.1183299118790661,
+     0.23189228042012466
+    ],
+    "n_families": 42,
+    "verdict": "PASS",
+    "rule": "role CI > 0 (role - function reported only)"
+   },
+   "C3": {
+    "layer": 29,
+    "role_failing_wrong": 0.04797149122807018,
+    "role_failing_wrong_ci": [
+     -0.0016231761259191168,
+     0.09759652944711536
+    ],
+    "c2_minus_c3": 0.6875208571700991,
+    "c2_minus_c3_ci": [
+     0.6123767404887982,
+     0.7658838700171081
+    ],
+    "n_wrong_bases": 57,
+    "verdict": "PASS"
+   },
+   "C4": {
+    "frozen": 50,
+    "first_crossing": 50,
+    "max_repair_up_to_frozen_minus_4": 0.0836,
+    "verdict": "PASS",
+    "english_layer": 54
+   },
+   "C5b": {
+    "top_minus_other_working": 0.6216874963209273,
+    "ci": [
+     0.5451457541442004,
+     0.7109599208381842
+    ],
+    "verdict": "PASS"
+   },
+   "C5": {
+    "top": 0.3726,
+    "random": 0.0579,
+    "other_failing": -0.2119,
+    "random_nudge": -0.001,
+    "top_minus_random": 0.31478121096504835,
+    "top_minus_random_ci": [
+     0.30242594109307946,
+     0.32870946039144494
+    ],
+    "n_items": 185,
+    "n_families": 57,
+    "n_random_draws": 5,
+    "mean_failing": -0.2297,
+    "other_working": -0.249,
+    "verdict": "PASS",
+    "file": "otr09_Qwen__Qwen3.8-27B_test0_es_20261126T203135.json"
+   }
+  },
+  "microsoft/phi-4": {
+   "C1": {
+    "working": 1.0,
+    "failing": 0.2032520325203252,
+    "estimate": 0.7967479674796748,
+    "ci": [
+     0.7461507936507936,
+     0.8464876739077373
+    ],
+    "n_rows": 492,
+    "n_families": 59,
+    "verdict": "PASS"
+   },
+   "C2": {
+    "layer": 15,
+    "role": 0.35103588950511944,
+    "role_ci": [
+     0.3147865271818955,
+     0.3917551578826334
+    ],
+    "function": 0.3417702111774744,
+    "role_minus_function": 0.009265678327645022,
+    "role_minus_function_ci": [
+     -0.05216791239874116,
+     0.07130057366120142
+    ],
+    "n_families": 42,
+    "verdict": "PASS",
+    "rule": "role CI > 0 (role - function reported only)"
+   },
+   "C3": {
+    "layer": 15,
+    "role_failing_wrong": -0.31776041666666666,
+    "role_failing_wrong_ci": [
+     -0.3638274675170427,
+     -0.27449038810077625
+    ],
+    "c2_minus_c3": 0.6687963061717861,
+    "c2_minus_c3_ci": [
+     0.6034688663393041,
+     0.7362061948362351
+    ],
+    "n_wrong_bases": 225,
+    "verdict": "PASS"
+   },
+   "C4": {
+    "frozen": 22,
+    "first_crossing": 22,
+    "max_repair_up_to_frozen_minus_4": 0.0402,
+    "verdict": "PASS",
+    "english_layer": 22
+   },
+   "C5b": {
+    "top_minus_other_working": 0.46918034678064385,
+    "ci": [
+     0.43664942817587843,
+     0.5036637085289092
+    ],
+    "verdict": "PASS"
+   },
+   "C5": {
+    "top": 0.694,
+    "random": 0.0699,
+    "other_failing": 0.1676,
+    "random_nudge": 0.0019,
+    "top_minus_random": 0.6241749085706556,
+    "top_minus_random_ci": [
+     0.610636777357249,
+     0.6387194084514887
+    ],
+    "n_items": 192,
+    "n_families": 57,
+    "n_random_draws": 5,
+    "mean_failing": 0.2037,
+    "other_working": 0.2249,
+    "verdict": "PASS",
+    "file": "otr09_microsoft__phi-4_test0_es_20261126T201551.json"
+   }
+  },
+  "allenai/Olmo-3.1-32B-Instruct": {
+   "C1": {
+    "working": 0.959349593495935,
+    "failing": 0.2764227642276423,
+    "estimate": 0.6829268292682926,
+    "ci": [
+     0.6224418126228056,
+     0.741772366236853
+    ],
+    "n_rows": 492,
+    "n_families": 59,
+    "verdict": "PASS"
+   },
+   "C2": {
+    "layer": 18,
+    "role": 0.41052539733676974,
+    "role_ci": [
+     0.34997189707684545,
+     0.4796501067022895
+    ],
+    "function": 0.023793223797250858,
+    "role_minus_function": 0.3867321735395189,
+    "role_minus_function_ci": [
+     0.29264136044480743,
+     0.48726662723496156
+    ],
+    "n_families": 42,
+    "verdict": "PASS",
+    "rule": "role CI > 0 (role - function reported only)"
+   },
+   "C3": {
+    "layer": 18,
+    "role_failing_wrong": -0.23634178321678323,
+    "role_failing_wrong_ci": [
+     -0.29612623325020687,
+     -0.18286742493823074
+    ],
+    "c2_minus_c3": 0.646867180553553,
+    "c2_minus_c3_ci": [
+     0.5457942783465948,
+     0.7529680135195405
+    ],
+    "n_wrong_bases": 143,
+    "verdict": "PASS"
+   },
+   "C4": {
+    "frozen": 24,
+    "first_crossing": 24,
+    "max_repair_up_to_frozen_minus_4": 0.1761,
+    "verdict": "PASS",
+    "english_layer": 26
+   },
+   "C5b": {
+    "top_minus_other_working": 0.3881879323772673,
+    "ci": [
+     0.3413766172011039,
+     0.43861818188036444
+    ],
+    "verdict": "PASS"
+   },
+   "C5": {
+    "top": 0.4343,
+    "random": 0.0128,
+    "other_failing": 0.0366,
+    "random_nudge": -0.0019,
+    "top_minus_random": 0.42141991882087537,
+    "top_minus_random_ci": [
+     0.4055914573108901,
+     0.43740927303146915
+    ],
+    "n_items": 174,
+    "n_families": 56,
+    "n_random_draws": 5,
+    "mean_failing": 0.0303,
+    "other_working": 0.0461,
+    "verdict": "PASS",
+    "file": "otr09_allenai__Olmo-3.1-32B-Instruct_test0_es_20261126T204324.json"
+   }
+  },
+  "ibm-granite/granite-4.2-30b": {
+   "C1": {
+    "working": 0.9105691056910569,
+    "failing": 0.4105691056910569,
+    "estimate": 0.49999999999999994,
+    "ci": [
+     0.4329120710784314,
+     0.5696268778187475
+    ],
+    "n_rows": 492,
+    "n_families": 59,
+    "verdict": "PASS"
+   },
+   "C2": {
+    "layer": 37,
+    "role": 0.5013759482189973,
+    "role_ci": [
+     0.4487333252227353,
+     0.5488319762323943
+    ],
+    "function": 0.40094718832453824,
+    "role_minus_function": 0.1004287598944591,
+    "role_minus_function_ci": [
+     0.02755794195414144,
+     0.17549055602550245
+    ],
+    "n_families": 42,
+    "verdict": "PASS",
+    "rule": "role CI > 0 (role - function reported only)"
+   },
+   "C3": {
+    "layer": 37,
+    "role_failing_wrong": -0.0537644477739726,
+    "role_failing_wrong_ci": [
+     -0.09435435186033725,
+     -0.008847192133493716
+    ],
+    "c2_minus_c3": 0.5551403959929699,
+    "c2_minus_c3_ci": [
+     0.47768138616146605,
+     0.6251936828305664
+    ],
+    "n_wrong_bases": 146,
+    "verdict": "PASS"
+   },
+   "C4": {
+    "frozen": 52,
+    "first_crossing": 52,
+    "max_repair_up_to_frozen_minus_4": 0.0857,
+    "verdict": "PASS",
+    "english_layer": 52
+   },
+   "C5b": {
+    "top_minus_other_working": 0.48757928566247993,
+    "ci": [
+     0.4262214062455976,
+     0.5607064550327294
+    ],
+    "verdict": "PASS"
+   },
+   "C5": {
+    "top": 0.5836,
+    "random": 0.0304,
+    "other_failing": -0.0474,
+    "random_nudge": 0.0002,
+    "top_minus_random": 0.5532056649608418,
+    "top_minus_random_ci": [
+     0.5349622305223637,
+     0.5704594862394283
+    ],
+    "n_items": 154,
+    "n_families": 56,
+    "n_random_draws": 5,
+    "mean_failing": -0.0557,
+    "other_working": 0.096,
+    "verdict": "PASS",
+    "file": "otr09_ibm-granite__granite-4.2-30b_test0_es_20261126T210652.json"
+   }
+  }
+ },
+ "inputs_sha256": {
+  "google/gemma-4-31B-it": {
+   "otrgen_google__gemma-4-31B-it_test0_es_20261126T193427.json": "9f27932594aa9f6465a2ec2b6241fc09fbd4e60209de93f065283d1250353531",
+   "otr03_google__gemma-4-31B-it_test0_es_20261126T193855.json": "2714defe67b42ff9f205d84896a34e6de6f71f0363ed7afcb4acfc289d87a7a8",
+   "otr03_google__gemma-4-31B-it_test0_es_20261126T193515.json": "af02632ec707396da369de18d87b48bb3f44a1aff85ba5373fbbd38a00d52ab0",
+   "otr09_google__gemma-4-31B-it_test0_es_20261126T195002.json": "1b69f279d1104fb3849634366b530403f991de0ee3d78a234f39755a875227ab"
+  },
+  "Qwen/Qwen3.8-27B": {
+   "otrgen_Qwen__Qwen3.8-27B_test0_es_20261126T195317.json": "afb0614a78919e0389c1ddb5701fcd9410b8d9ff97f863c6792fb17fc6183276",
+   "otr03_Qwen__Qwen3.8-27B_test0_es_20261126T195825.json": "9a3d9d4f15e7638af06be362cf75ad9966ffe84af41e259cde23c64e0bd69adb",
+   "otr03_Qwen__Qwen3.8-27B_test0_es_20261126T195419.json": "60549876576f4bf8dc9c1e74964c019b0d9214e7a48ca131a13395c4b20a95b5",
+   "otr09_Qwen__Qwen3.8-27B_test0_es_20261126T203135.json": "05762b2e4db989c6468bbea54c8857ae8daac8c8e7125d09eb7d7b618ed43d5a"
+  },
+  "microsoft/phi-4": {
+   "otrgen_microsoft__phi-4_test0_es_20261126T201055.json": "607df83e4cb1601625064abba6a621abff9de79c693f8ec0255be40544f1703c",
+   "otr03_microsoft__phi-4_test0_es_20261126T200557.json": "24b855af9d2b35bb44427e416d9a5906c0652a03e2d6b90df4cb98c9a5bcbd02",
+   "otr03_microsoft__phi-4_test0_es_20261126T200818.json": "d72e72233399cb375874ae721bc1b229023892c01d6bfe9faefffd28c36932cc",
+   "otr09_microsoft__phi-4_test0_es_20261126T201551.json": "1f4ca01a884f8ef25702bf7252603e4122ba72f9c88b46772514ca854afdcb2b"
+  },
+  "allenai/Olmo-3.1-32B-Instruct": {
+   "otrgen_allenai__Olmo-3.1-32B-Instruct_test0_es_20261126T202244.json": "85857443f7c38773c5c4ea8e1c71c42df08c503cca1fc6dfa9d8ad0e33e04521",
+   "otr03_allenai__Olmo-3.1-32B-Instruct_test0_es_20261126T203257.json": "d681c4d124abacf33534ea9f9e35e2ffa0437c949f43d01e69638e84994d3661",
+   "otr03_allenai__Olmo-3.1-32B-Instruct_test0_es_20261126T203139.json": "9abf638284f9c99d1e3a39482e59df76bc23ea988358c095d7b12f7e48849c23",
+   "otr09_allenai__Olmo-3.1-32B-Instruct_test0_es_20261126T204324.json": "dc71a1dbe55f9e9e8d8afadbcea431efe21d46e25afb2de794397e4c165bf87c"
+  },
+  "ibm-granite/granite-4.2-30b": {
+   "otrgen_ibm-granite__granite-4.2-30b_test0_es_20261126T204746.json": "253a7060fd21448f7ac212b847af973a784be5648a3276b16b3efed88494c5c8",
+   "otr03_ibm-granite__granite-4.2-30b_test0_es_20261126T205130.json": "7fa27fe5477a3b5af8590a6fec8ac56e691c0d67e515341f0d8dc5b5ce7e83e0",
+   "otr03_ibm-granite__granite-4.2-30b_test0_es_20261126T204904.json": "c218b899b9f5becde19e347cb34750632f5d4377ae7a49430c2187f2bc67c374",
+   "otr09_ibm-granite__granite-4.2-30b_test0_es_20261126T210652.json": "269dc94636079d96825b2ff1ec6928da668a6574b8a3da3ec8a79af7125eb115"
+  }
+ },
+ "markdown": "| Claim | gemma | Qwen3.8 | phi | Olmo | granite |\n|---|---|---|---|---|---|\n| C1 | PASS (0.30) | PASS (0.32) | PASS (0.80) | PASS (0.68) | PASS (0.50) |\n| C2 | PASS (0.67) | PASS (0.74) | PASS (0.35) | PASS (0.41) | PASS (0.50) |\n| C3 | FAIL (0.11) | PASS (0.69) | PASS (0.67) | PASS (0.65) | PASS (0.56) |\n| C4 | PASS (48) | PASS (50) | PASS (22) | PASS (24) | PASS (52) |\n| C5 | PASS (0.71) | PASS (0.31) | PASS (0.62) | PASS (0.42) | PASS (0.55) |\n| C5b | PASS (4.08) | PASS (0.62) | PASS (0.47) | PASS (0.39) | PASS (0.49) |"
+}

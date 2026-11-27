@@ -1,0 +1,588 @@
+{
+ "scorer_version": "1.1.0",
+ "split": "test0",
+ "stimuli": null,
+ "n_boot": 2000,
+ "seed": 2026,
+ "frozen": {
+  "google/gemma-4-31B-it": {
+   "slug": "google__gemma-4-31B-it",
+   "n_layers": 60,
+   "handover": 40,
+   "role": 28,
+   "by": 28,
+   "c7": true,
+   "rf": "otr09_google__gemma-4-31B-it_dev_20261118T164326.json"
+  },
+  "Qwen/Qwen3.8-27B": {
+   "slug": "Qwen__Qwen3.8-27B",
+   "n_layers": 64,
+   "handover": 54,
+   "role": 29,
+   "by": 30,
+   "c7": true,
+   "rf": "otr09_Qwen__Qwen3.8-27B_dev_20261118T162630.json"
+  },
+  "microsoft/phi-4": {
+   "slug": "microsoft__phi-4",
+   "n_layers": 40,
+   "handover": 22,
+   "role": 15,
+   "by": 8,
+   "c7": false,
+   "rf": "otr09_microsoft__phi-4_dev_20261119T093535.json"
+  },
+  "allenai/Olmo-3.1-32B-Instruct": {
+   "slug": "allenai__Olmo-3.1-32B-Instruct",
+   "n_layers": 64,
+   "handover": 26,
+   "role": 18,
+   "by": 8,
+   "c7": false,
+   "rf": "otr09_allenai__Olmo-3.1-32B-Instruct_dev_20261119T095922.json"
+  },
+  "ibm-granite/granite-4.2-30b": {
+   "slug": "ibm-granite__granite-4.2-30b",
+   "n_layers": 64,
+   "handover": 52,
+   "role": 37,
+   "by": 28,
+   "c7": true,
+   "rf": "otr09_ibm-granite__granite-4.2-30b_dev_20261119T140015.json"
+  }
+ },
+ "table": {
+  "google/gemma-4-31B-it": {
+   "C1": {
+    "measure": "working - failing generation score",
+    "estimate": 0.279296875,
+    "ci": [
+     0.2297004339902681,
+     0.3267745092066586
+    ],
+    "n_items": 512,
+    "n_families": 59,
+    "failing": 0.720703125,
+    "working": 1.0,
+    "verdict": "PASS"
+   },
+   "C2": {
+    "layer": 28,
+    "role": 1.4216505289077759,
+    "role_ci": [
+     1.2700151021991457,
+     1.5710077647646559
+    ],
+    "function": 0.16888105869293213,
+    "role_minus_function": 1.2527694702148438,
+    "role_minus_function_ci": [
+     1.0717309039891425,
+     1.4364474945437822
+    ],
+    "n_families": 42,
+    "verdict": "PASS"
+   },
+   "C3": {
+    "layer": 28,
+    "role_failing_wrong": -0.1094178038758117,
+    "role_failing_wrong_ci": [
+     -0.2501746987981685,
+     0.04214888369495737
+    ],
+    "c2_minus_c3": 1.5310683327835877,
+    "c2_minus_c3_ci": [
+     1.3219052515429943,
+     1.722926168354904
+    ],
+    "n_wrong_bases": 154,
+    "verdict": "PASS"
+   },
+   "C4": {
+    "frozen": 40,
+    "first_crossing": 40,
+    "max_repair_up_to_frozen_minus_4": 0.0366,
+    "verdict": "PASS"
+   },
+   "C5": {
+    "top": 0.803,
+    "random": 0.048,
+    "other_failing": -0.7476,
+    "random_nudge": -0.0075,
+    "top_minus_random": 0.7549420512902375,
+    "top_minus_random_ci": [
+     0.7410794476289326,
+     0.7688522227908455
+    ],
+    "n_items": 128,
+    "n_families": 56,
+    "n_random_draws": 5,
+    "verdict": "PASS",
+    "file": "otr09_google__gemma-4-31B-it_test0_20261126T115920.json"
+   },
+   "C6": {
+    "layer": 28,
+    "damage": 0.7630450683669474,
+    "ci": [
+     0.25163908314240346,
+     1.573001631671054
+    ],
+    "n_items": 64,
+    "n_families": 40,
+    "verdict": "PASS"
+   },
+   "C8": {
+    "layer": 28,
+    "damage": 0.1648153743628391,
+    "ci": [
+     0.06696423945955526,
+     0.28021900627291946
+    ],
+    "n_items": 64,
+    "n_families": 40,
+    "verdict": "PASS"
+   },
+   "C7": {
+    "share_agent_after_prefix": 1.0,
+    "ci": [
+     1.0,
+     1.0
+    ],
+    "n_wrong": 275,
+    "n_families": 59,
+    "verdict": "PASS"
+   }
+  },
+  "Qwen/Qwen3.8-27B": {
+   "C1": {
+    "measure": "working - failing generation score",
+    "estimate": 0.46875,
+    "ci": [
+     0.4353153956445931,
+     0.5058174141749723
+    ],
+    "n_items": 512,
+    "n_families": 59,
+    "failing": 0.51171875,
+    "working": 0.98046875,
+    "verdict": "PASS"
+   },
+   "C2": {
+    "layer": 29,
+    "role": 0.6204723011363636,
+    "role_ci": [
+     0.579127887271,
+     0.6681139595435863
+    ],
+    "function": 0.15589065882034633,
+    "role_minus_function": 0.4645816423160173,
+    "role_minus_function_ci": [
+     0.39136980200066135,
+     0.5485002478560689
+    ],
+    "n_families": 42,
+    "verdict": "PASS"
+   },
+   "C3": {
+    "layer": 29,
+    "role_failing_wrong": -0.19634375,
+    "role_failing_wrong_ci": [
+     -0.2456627155172414,
+     -0.1554951563958917
+    ],
+    "c2_minus_c3": 0.8168160511363637,
+    "c2_minus_c3_ci": [
+     0.746357734086386,
+     0.9035520438031615
+    ],
+    "n_wrong_bases": 125,
+    "verdict": "PASS"
+   },
+   "C4": {
+    "frozen": 54,
+    "first_crossing": 54,
+    "max_repair_up_to_frozen_minus_4": 0.4602,
+    "verdict": "PASS"
+   },
+   "C5": {
+    "top": 0.3882,
+    "random": 0.0232,
+    "other_failing": -0.0989,
+    "random_nudge": 0.001,
+    "top_minus_random": 0.36502316805334334,
+    "top_minus_random_ci": [
+     0.33807268105130694,
+     0.39316474670334456
+    ],
+    "n_items": 121,
+    "n_families": 55,
+    "n_random_draws": 5,
+    "verdict": "PASS",
+    "file": "otr09_Qwen__Qwen3.8-27B_test0_20261126T125618.json"
+   },
+   "C6": {
+    "layer": 30,
+    "damage": 0.5683841363277342,
+    "ci": [
+     0.4500481358388913,
+     0.6658379083537006
+    ],
+    "n_items": 59,
+    "n_families": 38,
+    "verdict": "PASS"
+   },
+   "C8": {
+    "layer": 30,
+    "damage": 0.6072576649431748,
+    "ci": [
+     0.5074777485525792,
+     0.7128382615244728
+    ],
+    "n_items": 59,
+    "n_families": 38,
+    "verdict": "PASS"
+   },
+   "C7": {
+    "share_agent_after_prefix": 0.8209876543209876,
+    "ci": [
+     0.7991803278688525,
+     0.8418917851669392
+    ],
+    "n_wrong": 486,
+    "n_families": 59,
+    "verdict": "PASS"
+   }
+  },
+  "microsoft/phi-4": {
+   "C1": {
+    "measure": "working - failing generation score",
+    "estimate": 0.767578125,
+    "ci": [
+     0.728591175078525,
+     0.8054488086046494
+    ],
+    "n_items": 512,
+    "n_families": 59,
+    "failing": 0.134765625,
+    "working": 0.90234375,
+    "verdict": "PASS"
+   },
+   "C2": {
+    "layer": 15,
+    "role": 0.4487219024122807,
+    "role_ci": [
+     0.40283845056879714,
+     0.49507223985062315
+    ],
+    "function": -0.012375502558479532,
+    "role_minus_function": 0.46109740497076024,
+    "role_minus_function_ci": [
+     0.38391962212516584,
+     0.5349753802512591
+    ],
+    "n_families": 42,
+    "verdict": "PASS"
+   },
+   "C3": {
+    "layer": 15,
+    "role_failing_wrong": -0.6980307667525774,
+    "role_failing_wrong_ci": [
+     -0.7411756289902554,
+     -0.6519322129341877
+    ],
+    "c2_minus_c3": 1.146752669164858,
+    "c2_minus_c3_ci": [
+     1.065036467925513,
+     1.2254019668550724
+    ],
+    "n_wrong_bases": 194,
+    "verdict": "PASS"
+   },
+   "C4": {
+    "frozen": 22,
+    "first_crossing": 22,
+    "max_repair_up_to_frozen_minus_4": 0.1319,
+    "verdict": "PASS"
+   },
+   "C5": {
+    "top": 0.7224,
+    "random": 0.0051,
+    "other_failing": 0.2596,
+    "random_nudge": -0.003,
+    "top_minus_random": 0.7173445731637678,
+    "top_minus_random_ci": [
+     0.6958653291168914,
+     0.7410084768798263
+    ],
+    "n_items": 108,
+    "n_families": 53,
+    "n_random_draws": 5,
+    "verdict": "FAIL",
+    "file": "otr09_microsoft__phi-4_test0_20261126T124548.json"
+   },
+   "C6": {
+    "layer": 8,
+    "damage": 0.4088022039471292,
+    "ci": [
+     0.32400991861108547,
+     0.48788502278591467
+    ],
+    "n_items": 55,
+    "n_families": 37,
+    "verdict": "PASS"
+   },
+   "C8": {
+    "layer": 8,
+    "damage": 0.33080654526494757,
+    "ci": [
+     0.21775285656390808,
+     0.4187994481776826
+    ],
+    "n_items": 55,
+    "n_families": 37,
+    "verdict": "PASS"
+   },
+   "C7": {
+    "verdict": "no claim"
+   }
+  },
+  "allenai/Olmo-3.1-32B-Instruct": {
+   "C1": {
+    "measure": "working - failing generation score",
+    "estimate": 0.35546875,
+    "ci": [
+     0.3217900898340675,
+     0.388999431093396
+    ],
+    "n_items": 512,
+    "n_families": 59,
+    "failing": 0.640625,
+    "working": 0.99609375,
+    "verdict": "PASS"
+   },
+   "C2": {
+    "layer": 18,
+    "role": 0.49076746323529413,
+    "role_ci": [
+     0.4505865318408928,
+     0.5370227594913004
+    ],
+    "function": -0.02028952205882353,
+    "role_minus_function": 0.5110569852941177,
+    "role_minus_function_ci": [
+     0.4383568067370061,
+     0.5861802148942183
+    ],
+    "n_families": 42,
+    "verdict": "PASS"
+   },
+   "C3": {
+    "layer": 18,
+    "role_failing_wrong": -0.19204358552631579,
+    "role_failing_wrong_ci": [
+     -0.26428749132862056,
+     -0.11062557444852948
+    ],
+    "c2_minus_c3": 0.6828110487616099,
+    "c2_minus_c3_ci": [
+     0.5922263765970557,
+     0.7712604710124067
+    ],
+    "n_wrong_bases": 95,
+    "verdict": "PASS"
+   },
+   "C4": {
+    "frozen": 26,
+    "first_crossing": 26,
+    "max_repair_up_to_frozen_minus_4": 0.2981,
+    "verdict": "PASS"
+   },
+   "C5": {
+    "top": 0.3906,
+    "random": 0.0037,
+    "other_failing": -0.0795,
+    "random_nudge": -0.0026,
+    "top_minus_random": 0.38690918148990405,
+    "top_minus_random_ci": [
+     0.3617643745282168,
+     0.4115884147899215
+    ],
+    "n_items": 107,
+    "n_families": 55,
+    "n_random_draws": 5,
+    "verdict": "PASS",
+    "file": "otr09_allenai__Olmo-3.1-32B-Instruct_test0_20261126T132906.json"
+   },
+   "C6": {
+    "layer": 8,
+    "damage": 1.2696319135248078,
+    "ci": [
+     1.018888311699218,
+     1.5495788318422845
+    ],
+    "n_items": 54,
+    "n_families": 38,
+    "verdict": "PASS"
+   },
+   "C8": {
+    "layer": 8,
+    "damage": 1.0567202855871873,
+    "ci": [
+     0.8109818530953494,
+     1.3178314324314002
+    ],
+    "n_items": 54,
+    "n_families": 38,
+    "verdict": "PASS"
+   },
+   "C7": {
+    "verdict": "no claim"
+   }
+  },
+  "ibm-granite/granite-4.2-30b": {
+   "C1": {
+    "measure": "working - failing generation score",
+    "estimate": 0.162109375,
+    "ci": [
+     0.12524813734415932,
+     0.20000963391136797
+    ],
+    "n_items": 512,
+    "n_families": 59,
+    "failing": 0.828125,
+    "working": 0.990234375,
+    "verdict": "PASS"
+   },
+   "C2": {
+    "layer": 37,
+    "role": 0.5999039804469274,
+    "role_ci": [
+     0.5390654301242012,
+     0.6576343134408362
+    ],
+    "function": 0.36114263268156427,
+    "role_minus_function": 0.23876134776536312,
+    "role_minus_function_ci": [
+     0.15641735687918848,
+     0.32256019592417745
+    ],
+    "n_families": 42,
+    "verdict": "PASS"
+   },
+   "C3": {
+    "layer": 37,
+    "role_failing_wrong": 0.15342133620689655,
+    "role_failing_wrong_ci": [
+     0.07995845474288459,
+     0.24909845005156286
+    ],
+    "c2_minus_c3": 0.4464826442400308,
+    "c2_minus_c3_ci": [
+     0.3528702454184026,
+     0.5326683728710314
+    ],
+    "n_wrong_bases": 58,
+    "verdict": "PASS"
+   },
+   "C4": {
+    "frozen": 52,
+    "first_crossing": 52,
+    "max_repair_up_to_frozen_minus_4": 0.1667,
+    "verdict": "PASS"
+   },
+   "C5": {
+    "top": 0.5523,
+    "random": 0.0101,
+    "other_failing": -0.5206,
+    "random_nudge": 0.0153,
+    "top_minus_random": 0.5422025587049482,
+    "top_minus_random_ci": [
+     0.5032664726300569,
+     0.5813286312454644
+    ],
+    "n_items": 102,
+    "n_families": 54,
+    "n_random_draws": 5,
+    "verdict": "PASS",
+    "file": "otr09_ibm-granite__granite-4.2-30b_test0_20261126T135352.json"
+   },
+   "C6": {
+    "layer": 28,
+    "damage": 1.3266221205879722,
+    "ci": [
+     1.0001911753655763,
+     1.747317847591919
+    ],
+    "n_items": 59,
+    "n_families": 37,
+    "verdict": "PASS"
+   },
+   "C8": {
+    "layer": 28,
+    "damage": 0.9760030332729059,
+    "ci": [
+     0.677530751578332,
+     1.3745378440334164
+    ],
+    "n_items": 59,
+    "n_families": 37,
+    "verdict": "PASS"
+   },
+   "C7": {
+    "share_agent_after_prefix": 0.8373493975903614,
+    "ci": [
+     0.7749752824858758,
+     0.8970682503770739
+    ],
+    "n_wrong": 166,
+    "n_families": 53,
+    "verdict": "PASS"
+   }
+  }
+ },
+ "inputs_sha256": {
+  "google/gemma-4-31B-it": {
+   "otrgen_google__gemma-4-31B-it_test0_q-who-was-someone-past-by_20261126T111729.json": "55d03aef2d1b691297a9a5629138340d0d1d44fef4180230555bcda2d0da38ad",
+   "otrgen_google__gemma-4-31B-it_test0_q-who-was-the-ing-done-by_20261126T112844.json": "08c82a0098f0171b3fb243704d9125caf467ab54d8ffe4bca92a67c47e0b6eb7",
+   "otr03_google__gemma-4-31B-it_test0_20261126T112318.json": "0a11dc29a18f88d66ed502cb9baa43ed4a2a7354c20d5b271fd37826d66d3688",
+   "otr03_google__gemma-4-31B-it_test0_aq_20261126T114235.json": "5c001c4335ecfd80d9328634fa9c3c7085dac524a6d9f391c0c2b77fe01c3262",
+   "otr09_google__gemma-4-31B-it_test0_20261126T115920.json": "0c989155983acb9d2b6ef9aa8f440adf270a6a1aedf58767025657f2a0b29327",
+   "otr14_google__gemma-4-31B-it_test0_20261126T115533.json": "e4cd3bcfe9462cdc9d57ac9637cc09ff3fc978a4bc6fc106f7ab1425672bde85",
+   "otr07_google__gemma-4-31B-it_test0_instr_byctl_20261126T121203.json": "5e1be9467ca823cb5e1986580ece37c7ebaeceb7dfadab8f47c71cf98d76aee5"
+  },
+  "Qwen/Qwen3.8-27B": {
+   "otrgen_Qwen__Qwen3.8-27B_test0_q-who-was-someone-past-by_20261126T120925.json": "b9977749b81021db50b7be8252815fa515878460f0df87e11f842504dc511b1e",
+   "otrgen_Qwen__Qwen3.8-27B_test0_q-who-was-the-ing-done-by_20261126T120923.json": "15db039d74abe34adbce2cdb9a4671a5ced1773465a3702980510b0b87dda04a",
+   "otr03_Qwen__Qwen3.8-27B_test0_20261126T121641.json": "9398bf0c2bffa047af249415a0a345210f21db76b2cf476481af1736a4287100",
+   "otr03_Qwen__Qwen3.8-27B_test0_aq_20261126T122519.json": "562aabf74c08406a6a1af7218a8b607e77642a4c28e116e6e7359483cc18473e",
+   "otr09_Qwen__Qwen3.8-27B_test0_20261126T125618.json": "2d133e44369201779c75ef0d3720e01d02a2fcf8f6aa30bf6fd28cca28224e63",
+   "otr14_Qwen__Qwen3.8-27B_test0_20261126T122328.json": "56b49aeaaa52042077152b13dbd271c9be8debac6b16d097ec7d90cc860077da",
+   "otr07_Qwen__Qwen3.8-27B_test0_instr_byctl_20261126T122841.json": "93ea062894491b9defd5e56b6c2ffb01709fd36f327de569adbc7fcaf236771f"
+  },
+  "microsoft/phi-4": {
+   "otrgen_microsoft__phi-4_test0_q-who-was-someone-past-by_20261126T123305.json": "fb60005ba8989b6d4bb8abae1e85df2486ddcbd40f5c3998a8c62e6971ffc4bd",
+   "otrgen_microsoft__phi-4_test0_q-who-was-the-ing-done-by_20261126T123303.json": "85a175313ba5ddc81120ec9b00ee516eb4122a692970c46dcb2a73bcc0b95550",
+   "otr03_microsoft__phi-4_test0_20261126T123500.json": "d3104558fa11186f9390ce54f22d59d2075bf90503552cc22dee04a7dd3839dd",
+   "otr03_microsoft__phi-4_test0_aq_20261126T124001.json": "bef68a7e83ddef20e45d6c80e336a6bb6dcd348c40a3545c1dcaca0c54c299d0",
+   "otr09_microsoft__phi-4_test0_20261126T124548.json": "636237266359fab04a2cea72c9b55ea6652644a872fd2be91d76fc4f6485bac1",
+   "otr14_microsoft__phi-4_test0_20261126T123836.json": "6f90e5c709d5ce0e5636864864e8c9638894edc16080bd262a526ed7262ac9ac"
+  },
+  "allenai/Olmo-3.1-32B-Instruct": {
+   "otrgen_allenai__Olmo-3.1-32B-Instruct_test0_q-who-was-someone-past-by_20261126T130026.json": "9fb80425012cf3bdda795001f0373496e7f90af37aa27ded7839081c476354ef",
+   "otrgen_allenai__Olmo-3.1-32B-Instruct_test0_q-who-was-the-ing-done-by_20261126T130027.json": "c12714bb2ee6f8e6630559a50abf420dffa501f758ad88492a8768316a613da5",
+   "otr03_allenai__Olmo-3.1-32B-Instruct_test0_20261126T131310.json": "f7ce5e0bcd0c3ca09975377165444aefe2c5104c9ae5adf1ad41a3c311c49396",
+   "otr03_allenai__Olmo-3.1-32B-Instruct_test0_aq_20261126T131716.json": "4fe2b16ff62b65bfa5b453cd0f77c33665e1579907f60fefd2002b114b6ffc70",
+   "otr09_allenai__Olmo-3.1-32B-Instruct_test0_20261126T132906.json": "c6e70d1a797fcdfc9ee769b11ef0d345079e82815e7525b1cf6259bdec734e52",
+   "otr14_allenai__Olmo-3.1-32B-Instruct_test0_20261126T131739.json": "9156f6eebc23f06006634f407c2961c071cd93b6aa02ddae3eb557417373cac6"
+  },
+  "ibm-granite/granite-4.2-30b": {
+   "otrgen_ibm-granite__granite-4.2-30b_test0_q-who-was-someone-past-by_20261126T132945.json": "584d63204c4ddf44253a9ae4b4be8940fea4f2fb68089d2199cbe4da45b34176",
+   "otrgen_ibm-granite__granite-4.2-30b_test0_q-who-was-the-ing-done-by_20261126T132945.json": "8563b776aebadc39e55c7739fc7bfed74d5ff4e02e6ea42df4c43d71b83b572e",
+   "otr03_ibm-granite__granite-4.2-30b_test0_20261126T133357.json": "d3b47be2cd78f62ba6e9943bcfaeb7ff088caa335dfb60881c963dd4676738f3",
+   "otr03_ibm-granite__granite-4.2-30b_test0_aq_20261126T134633.json": "4ecc075a2a1ff8841a68d9fa418c969903ee08bb873c11002130654ff4791378",
+   "otr09_ibm-granite__granite-4.2-30b_test0_20261126T135352.json": "2d85ec0b8a136f626759e839833c40076cd02f1c48a9682ce0654d5d0790ee10",
+   "otr14_ibm-granite__granite-4.2-30b_test0_20261126T134124.json": "61c39a8b31603501f66157a9104c11cb29cd1a8a0ea92220447a47627241522f",
+   "otr07_ibm-granite__granite-4.2-30b_test0_instr_byctl_20261126T134609.json": "6fa57424cd93e9563ecf85b5775ffbb550fabec9a3e2ebd35d0e9fcb65499c6b"
+  }
+ },
+ "markdown": "| Claim | gemma | Qwen3.8 | phi | Olmo | granite |\n|---|---|---|---|---|---|\n| C1 | PASS (0.28) | PASS (0.47) | PASS (0.77) | PASS (0.36) | PASS (0.16) |\n| C2 | PASS (1.42) | PASS (0.62) | PASS (0.45) | PASS (0.49) | PASS (0.60) |\n| C3 | PASS (1.53) | PASS (0.82) | PASS (1.15) | PASS (0.68) | PASS (0.45) |\n| C4 | PASS (40) | PASS (54) | PASS (22) | PASS (26) | PASS (52) |\n| C5 | PASS (0.75) | PASS (0.37) | FAIL (0.72) | PASS (0.39) | PASS (0.54) |\n| C6 | PASS (0.76) | PASS (0.57) | PASS (0.41) | PASS (1.27) | PASS (1.33) |\n| C7 | PASS (1.00) | PASS (0.82) | no claim | no claim | PASS (0.84) |\n| C8 | PASS (0.16) | PASS (0.61) | PASS (0.33) | PASS (1.06) | PASS (0.98) |"
+}
