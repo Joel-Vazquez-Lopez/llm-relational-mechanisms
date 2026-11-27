@@ -20,7 +20,16 @@ The emerging question is how distinct relational abilities emerge, diverge and s
 
 ## Start here
 
-[**Results and figures**](RESULTS.md) · [Methods](METHODS.md) · [Mechanistic investigations](MECHANISMS.md) · [Scientific development](DEVELOPMENT.md) · [Integration audit](INTEGRATION.md)
+**Recommended reading order**
+
+1. [**Results and figures**](RESULTS.md) — main findings and visual summary
+2. [**Methods**](METHODS.md) — task design, models, and evaluation
+3. [**Mechanistic investigations**](MECHANISMS.md) — candidate explanations and analyses
+4. [**Scientific development**](DEVELOPMENT.md) — how the research direction evolved
+
+**Repository provenance**
+
+- [**Integration audit**](INTEGRATION.md) — source snapshots, merge boundaries, and validation status
 
 ## Research progression
 
