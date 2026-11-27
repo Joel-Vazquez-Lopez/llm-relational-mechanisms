@@ -210,6 +210,10 @@ def test_smoke_xl_test0_addendum_commands(monkeypatch, tmp_path, lang, instr):
     base = ["--model", "tiny", "--dtype", "float32", "--device", "cpu", "--stimuli", lang, "--split", "test0",
             "--n-events", "6", "--layers", "1", "--n-boot", "0", "--out-dir", str(tmp_path)]
     o3.main(base)
+    # Output names carry a timestamp to the second; on a fast machine two runs can finish within one second
+    # and the second would overwrite the first. Wait for the next second (test-only; real jobs take minutes).
+    import time
+    time.sleep(1.1)
     o3.main(base + ["--question-voices", "passive", "--roles", "agent", "--include-incorrect"])
     runs = [json.loads(p.read_text()) for p in tmp_path.glob(f"otr03_*_test0_{lang}_*.json")]
     assert len(runs) == 2 and all(r["layers"] == [1] and r["donor_pairs_restricted_to_split"] for r in runs)
