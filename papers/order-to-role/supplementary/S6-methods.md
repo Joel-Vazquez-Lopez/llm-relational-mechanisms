@@ -42,7 +42,7 @@ Model weights are the Hugging Face snapshots listed in FREEZE.md §4 (full revis
 
 ## 5. Evaluation boundaries
 
-- **Test set 0** was opened once, on 26 November: 48 English jobs at `f6ea0e1` and 40 Spanish/Galician jobs at `c40a1f7`, with no reruns. The canonical attempt logs are on the results branch.
+- **Test set 0** was opened once, on 26 November: 48 English jobs at `f6ea0e1` and 40 Spanish/Galician jobs at `c40a1f7`, with no reruns. The canonical attempt log is `results/test0_attempts_pelle.md` on `main`.
 - **Test sets 1–3 are closed.** No script in this supplement reads them. The generator counts in [S2 §4](S2-linguistic-controls.md#4-stimulus-inventory-and-design-checks) are design facts (families and items per split), not model outputs.
 - The supplement reads test0 only through the frozen scorer's summaries in `../results/confirmatory/`.
 
@@ -51,15 +51,14 @@ Model weights are the Hugging Face snapshots listed in FREEZE.md §4 (full revis
 From the repository root, with numpy and matplotlib installed (the main results must be built first, because S1 reads their confirmatory output):
 
 ```bash
-git worktree add /tmp/otr-results 25c6914e29473e4b1a1063600c48743f68b705c3   # order-to-role/results-dev
-python papers/order-to-role/analysis/build_results.py --results /tmp/otr-results/results --code . \
+python papers/order-to-role/analysis/build_results.py --results results --code . \
     --out papers/order-to-role/results \
-    --results-commit 25c6914e29473e4b1a1063600c48743f68b705c3 --code-commit "$(git rev-parse HEAD)"
-python papers/order-to-role/supplementary/analysis/build_supplement.py --results /tmp/otr-results/results \
+    --results-commit 25c6914e29473e4b1a1063600c48743f68b705c3 --code-commit 9c437928f61351a72e8d7be4cac6d3a964844a7e
+python papers/order-to-role/supplementary/analysis/build_supplement.py --results results \
     --code . --main-results papers/order-to-role/results --out papers/order-to-role/supplementary \
-    --results-commit 25c6914e29473e4b1a1063600c48743f68b705c3 --code-commit "$(git rev-parse HEAD)"
+    --results-commit 25c6914e29473e4b1a1063600c48743f68b705c3 --code-commit 9c437928f61351a72e8d7be4cac6d3a964844a7e
 ```
 
 **File selection rules.** Frozen development files are named in `build_results.py` and imported. The question-wording battery uses the 26 November runs only (one run per wording and model). BX blocks, Spanish and Galician use the earliest development run with the one-name instruction. OTR-15 uses the single run per model. The 70B models use their single OTR-09 run and the OTR-03 run without the `_aq_` suffix. Swedish uses the runs with the one-name instruction.
 
-`--code` must point to a checkout that contains the OTR code: `main` after the code-integration PR, or `order-to-role/stimuli`. The script prints the number of inputs read (133) and the number of handover mismatches (0). Every figure and table under `supplementary/` is overwritten. With the same inputs, a rebuild is byte-identical: SVG dates are stripped and element ids are seeded. Committed outputs were built from results `25c6914` and code `9c43792`.
+`--results results` is `main`'s own results folder, which holds every input after the results-consolidation PR; a checkout of `order-to-role/results-dev` @ `25c6914` gives the same output. The script prints the number of inputs read (133) and the number of handover mismatches (0). Every figure and table under `supplementary/` is overwritten. With the same inputs, a rebuild is byte-identical: SVG dates are stripped and element ids are seeded. Committed outputs were built from results `25c6914` and code `9c43792`.
