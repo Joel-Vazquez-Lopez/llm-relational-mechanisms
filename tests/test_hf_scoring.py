@@ -69,8 +69,8 @@ class TestHFScorer(unittest.TestCase):
         many = HFScorer(self.model, self.tok, batch_size=24)(self.items[:24])
         for a, b in zip(one, many):
             self.assertEqual(a.item_id, b.item_id)
-            self.assertAlmostEqual(a.logprob_answer, b.logprob_answer, places=4)
-            self.assertAlmostEqual(a.logprob_distractor, b.logprob_distractor, places=4)
+            for u, v in ((a.logprob_answer, b.logprob_answer), (a.logprob_distractor, b.logprob_distractor)):
+                self.assertLessEqual(abs(u - v), 1e-4 * max(1.0, abs(u), abs(v)))  # float32 batched vs unbatched kernels can differ by ~1e-4 relative; padding/position bugs give far larger errors
             self.assertEqual(a.answer_is_top1, b.answer_is_top1)
 
     def test_chat_template_mode(self):

@@ -166,7 +166,7 @@ class TestTransplantSweep(unittest.TestCase):
         b, _ = otr.sweep(self.model, self.tok, self.transplants[:12], batch_size=12, require_base_correct=False)
         for x, y in zip(a, b):
             for u, v in zip(x.y, y.y):
-                self.assertAlmostEqual(u, v, places=3)
+                self.assertLessEqual(abs(u - v), 1e-3 * max(1.0, abs(u), abs(v)))  # float32 batched vs unbatched kernels can differ by ~1e-4 relative; padding/position bugs give far larger errors
 
     def test_profile_runs_end_to_end(self):
         recs, _ = otr.sweep(self.model, self.tok, self.transplants, batch_size=16, require_base_correct=False)

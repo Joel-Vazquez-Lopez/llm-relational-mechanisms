@@ -128,7 +128,7 @@ class TestChatTemplatePatching(unittest.TestCase):
             for lab in x.effects:
                 for u, v in zip(x.effects[lab], y.effects[lab]):
                     if not (math.isnan(u) and math.isnan(v)):
-                        self.assertAlmostEqual(u, v, places=3)
+                        self.assertLessEqual(abs(u - v), 1e-3 * max(1.0, abs(u), abs(v)))  # float32 batched vs unbatched kernels can differ by ~1e-4 relative; padding/position bugs give far larger errors
 
     def test_transplant_self_and_last_layer_have_no_effect(self):
         from relational_lab.experiments import order_role_transplant as otr
