@@ -74,7 +74,7 @@ def load_for_run(model_id: str, dtype=None, device=None, device_map=None, revisi
         placed = sorted({str(d) for d in getattr(model, "hf_device_map", {}).values()})
         print(f"{model_id}: split over {placed}", flush=True)
     model.eval()
-    return model, model.get_input_embeddings().weight.device
+    return model, input_device(model)
 
 
 def name_token_ids(tokenizer, name: str, leading_space: bool = True) -> list[int]:
@@ -125,26 +125,19 @@ def _prompt_ids(tokenizer, prompt: str, use_chat_template: bool) -> list[int]:
         text, _ = chat_text(tokenizer, prompt)
         return list(tokenizer(text, add_special_tokens=False)["input_ids"])
     if use_chat_template:
-        msgs = [{"role": "user", "content": prompt}]
-        if chat.SYSTEM_PROMPT[0]:
-            msgs = [{"role": "system", "content": chat.SYSTEM_PROMPT[0]}] + msgs
-        try:
-            out = tokenizer.apply_chat_template(msgs, add_generation_prompt=True, tokenize=True,
-                                                **chat.CHAT_TEMPLATE_KWARGS)
-        except Exception:
-            if len(msgs) == 1:
-                raise
-            # template without a system role: put the system text in front of the user turn
-            out = tokenizer.apply_chat_template(
-                [{"role": "user", "content": chat.SYSTEM_PROMPT[0] + "\n\n" + prompt}],
-                add_generation_prompt=True, tokenize=True, **chat.CHAT_TEMPLATE_KWARGS)
-        # transformers >= 5 returns a BatchEncoding (dict-like); older versions a list.
-        if not isinstance(out, list):
-            out = out["input_ids"]
-        if out and isinstance(out[0], list):  # batched form [[...]]
-            out = out[0]
-        return list(out)
+        # chat.apply_template is shared with patching (system prompt, template kwargs,
+        # fallback for templates without a system role).
+        return chat.as_id_list(chat.apply_template(tokenizer, prompt, tokenize=True))
     return tokenizer.encode(prompt, add_special_tokens=True)
+
+
+def input_device(model):
+    """Device for input ids: the input embedding's device, as in ``ResidualPatcher.device`` and
+    ``load_for_run``. With a device map the first parameter can sit elsewhere (e.g. a vision tower)."""
+    try:
+        return model.get_input_embeddings().weight.device
+    except (AttributeError, NotImplementedError):
+        return next(model.parameters()).device
 
 
 class HFScorer:
@@ -164,7 +157,7 @@ class HFScorer:
         """Return, per (prompt_ids, cont_ids): (sum logprob of cont, top1 id at first cont position)."""
         import torch
 
-        device = next(self.model.parameters()).device
+        device = input_device(self.model)
         full = [p + c for p, c in sequences]
         width = max(len(x) for x in full)
         input_ids = torch.full((len(full), width), self.pad_id, dtype=torch.long)

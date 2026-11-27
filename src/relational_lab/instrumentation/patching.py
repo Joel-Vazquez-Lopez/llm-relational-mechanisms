@@ -50,15 +50,13 @@ def _replace_hidden(output, new_hidden):
 
 
 def chat_text(tokenizer, prompt: str) -> tuple[str, int]:
-    """The prompt wrapped in the tokenizer's chat template as one user turn, with the
-    generation prompt appended, plus the character offset of ``prompt`` inside it.
-    The same text that ``HFScorer`` scores in chat-template mode."""
+    """The prompt wrapped in the tokenizer's chat template (optional system turn from
+    ``chat.SYSTEM_PROMPT``, then the prompt as one user turn), with the generation prompt
+    and ``chat.assistant_prefix()`` appended, plus the character offset of ``prompt``
+    inside it. The same text that ``HFScorer`` scores in chat-template mode."""
     from relational_lab.instrumentation import chat
 
-    text = tokenizer.apply_chat_template(
-        [{"role": "user", "content": prompt}], add_generation_prompt=True, tokenize=False,
-        **chat.CHAT_TEMPLATE_KWARGS,
-    ) + chat.assistant_prefix()
+    text = chat.apply_template(tokenizer, prompt, tokenize=False) + chat.assistant_prefix()
     at = text.find(prompt)
     if at < 0 or text.find(prompt, at + 1) >= 0:
         raise ValueError("prompt must occur exactly once, verbatim, in the chat-templated text")
@@ -77,15 +75,7 @@ def _encode_one(tokenizer, prompt: str, chat_template: bool):
     ids = list(e["input_ids"])
     from relational_lab.instrumentation import chat
 
-    ref = tokenizer.apply_chat_template(
-        [{"role": "user", "content": prompt}], add_generation_prompt=True, tokenize=True,
-        **chat.CHAT_TEMPLATE_KWARGS,
-    )
-    if not isinstance(ref, list):  # transformers >= 5: BatchEncoding
-        ref = ref["input_ids"]
-    if ref and isinstance(ref[0], list):
-        ref = ref[0]
-    ref = list(ref)
+    ref = chat.as_id_list(chat.apply_template(tokenizer, prompt, tokenize=True))
     # With an assistant prefix the templated ids must be a prefix of the full sequence.
     if ids[: len(ref)] != ref or (not chat.assistant_prefix() and len(ids) != len(ref)):
         raise ValueError("re-tokenizing the templated text does not reproduce apply_chat_template's ids")
