@@ -1,4 +1,4 @@
-[← Learning Relations](README.md) · [Experiment index](EXPERIMENTS.md)
+[← Paper I](README.md) · [Experiment index](EXPERIMENTS.md)
 
 # Evidence and limitations
 
@@ -12,7 +12,7 @@ This page is a **reading aid**, not a replacement for the original protocols or 
 | Do proposed mechanistic interactions replicate? | [ML-087](../../reports/ml087/calibration_evaluation.json), [ML-099](../../reports/ml099_role_q/protected_evaluation.json), [ML-100](../../reports/ml100_source_access/exploratory_summary.json) | That a positive exploratory contrast is independently validated; several tested predictions failed |
 | Does a structural external benchmark validate the task? | [Manuscript's SLOG discussion](../../paper/manuscript.md) | Protected SLOG structural-generalization performance; the pilot was development-only |
 
-## Newer work outside `main`
+## Earlier bridge work outside `main`
 
 The experimental branch has newer work that should be reviewed against its own protocols before paper incorporation:
 
@@ -31,3 +31,35 @@ These are explicitly **branch-only references**. Their presence here does not me
 - Failed gates and inconclusive replications remain visible.
 
 Original evaluation details and limitations: [scratch checkpoint](../../investigations/scratch_transformers/CURRENT_FINDINGS.md) · [evidence policy](../../docs/EVIDENCE_POLICY.md).
+
+## Current programme — claim ledger, 27 November 2026
+
+The following outcomes follow the researcher-provided handover, not a new statistical audit. Consult the original sources in the [experiment map](EXPERIMENTS.md).
+
+| Observation | Status and interpretation |
+|:--|:--|
+| **TRAIN-SURFACE-FACTORIAL-v0** | Completed 12-seed factorial: bare 99.21%, prefixes 84.25%, adjuncts 97.01%, combined 26.73%. Joint complexity impaired acquisition under these conditions. |
+| **TRAIN-SURFACE-CROSS-EVAL-v0** | Exploratory cross-evaluation: changing surface decoration generally did not rescue unseen assignments; generalisation varied across seeds. |
+| **ROLE-DIVERSITY-COMPLEX-v0** | Completed prespecified factorial: 16 seeds, 1/2/4/8 assignments per quartet. Primary hypothesis not supported at 6,400 updates; 4/8 assignments caused acquisition difficulties. |
+| **ROLE-DIVERSITY-RECOVERY-v0** | Selected-cohort exploratory continuation: four seeds to 51,200 updates, fresh optimiser. Some recovered near-perfect competence; others remained collapsed. Not a population recovery rate. |
+| **ROLE-CIRCUIT-DIAGNOSTICS-v0** | Exploratory probability/loss decomposition: near-perfect event selection with near-equal participant probabilities in persistent collapse. Reported in handover; standalone assets not located at branch head. |
+| **ROLE-REPRESENTATION-LOCALISATION-v0** | Exploratory layerwise event, role and candidate profiles; decodability alone did not reliably predict competence. |
+| **ROLE-CAUSAL-ROUTING-v0** | Selected successful models: attention-head, MLP and residual interventions found selective event/role effects; locations varied by seed. |
+| **ROLE-CAUSAL-PATHWAYS-v0** | Joint event/role interventions, Q/K/V and positional decomposition, downstream restoration. Compositional causal control in selected models, not a universal native circuit. |
+| **ROLE-BINDING-CAUSAL-VALIDATION-v0** | Two selected successful models: cross-source, cross-voice and participant-identity interventions showed differing transfer, especially event selection. |
+| **ROLE-BINDING-LOCALISATION-v0** | Exploratory entity/non-entity token and distributed head effects; different computational organisations in individual successful models. |
+| **ROLE-MECHANISM-REPLICATION-v0** | Independent seeded replication (16 models, 51,200 updates): 9 successful, 3 intermediate, 4 fully collapsed. Near-perfect event selection but chance-like conditional role discrimination in collapsed models. Prespecified mechanism-category replication failed. |
+| **ROLE-MECHANISM-DISCOVERY-v1** | Exploratory expanded search over distributed heads and MLPs: recovered both positive controls, improved interventions in several new models, identified one additional source-dependent mechanism. Not retroactive confirmation. |
+| **ROLE-MECHANISM-REPAIR-v0** | Preliminary selected-cohort repair: substantial targeted recovery in 1/4 collapsed models; earlier observed recovery under role weighting in that model. Full-model and parameter-matched random controls. |
+| **ROLE-REPAIR-SPECIFICITY-v1** | Completed prespecified follow-up: 8 schedules from one checkpoint, 8 arms, 384 reports. Primary acceleration contrast at 1,600 updates = 0. At 6,400, targeted CE and weighted each 2/8; random and layer-matched controls 0/8. Approx. +25 pp, paired sign-flip p=.5; specificity inconclusive. |
+| **ROLE-LEARNING-ORIGINS-v0** | ONGOING locally as of 27 Nov; engineering pilot reported passed; no scientific results. Fully crossed 8 initialisation × 8 independent training-stream seeds, 64 models, 51,200 updates/model; dense development, event/conditional-role loss, gradient magnitudes/alignment, preserved snapshots and resumable checkpoints. |
+
+## What the dissociation establishes
+
+Correct-answer probability can be decomposed, under the task's defined participant sets, into probability mass on the correct event times conditional probability of its correct participant. The corresponding negative log-probabilities add when defined. Near-perfect event selection with chance-like conditional role discrimination identifies a functional dissociation, not a unique neural circuit.
+
+Distinguish initialisation seeds, training streams, matched arms, repeated continuation schedules, checkpoints and individual items. In particular, 384 checkpoint reports are not 384 independent replications. The eight repair schedules share a single checkpoint. A fresh optimiser in a continuation limits interpretations about the original training trajectory.
+
+The failed prespecified mechanistic replication remains failed regardless of subsequent expanded searches. The observed late repair contrast is inconclusive, and accelerated recovery did not replicate. The 64-model origins study has no scientific outcomes yet. Scope remains the studied synthetic grammar and architecture; generalisation beyond them is open.
+
+The existing manuscript remains unchanged. No direct mechanistic equivalence to Order-to-Role is established.

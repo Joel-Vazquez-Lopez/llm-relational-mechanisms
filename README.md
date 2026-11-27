@@ -16,8 +16,8 @@ For example, *"Anna praised Ben"* and *"Ben was praised by Anna"* describe the s
 | **01 · Research history** | **02 · Paper I** | **03 · Paper II** |
 |:--|:--|:--|
 | **[Historical Development](investigations/README.md)** | **[Relational Learning in Transformers](papers/learning-relations/README.md)** | **[Order-to-Role](papers/order-to-role/README.md)** |
-| How the original investigation evolved: experiments, discoveries, failed hypotheses and the emergence of the two paper directions. | How grammatical experience and training shape relational representations, role assignment, and generalization in scratch-trained Transformers. | How pretrained language models encode thematic roles and retrieve them across layers, constructions, languages and natural text. |
-| Research archive and chronology | Controlled learning and mechanism development | Mechanistic interpretability and multilingual transfer |
+| How the original investigation evolved: experiments, discoveries, failed hypotheses and the emergence of the two paper directions. | How relational abilities emerge during training, why learning trajectories diverge across seeds, and why event selection can succeed while participant-role binding remains unlearned. | How pretrained language models encode thematic roles and retrieve them across layers, constructions, languages and natural text. |
+| Research archive and chronology | Learning dynamics, selective collapse and causal mechanisms | Mechanistic interpretability and multilingual transfer |
 
 ---
 

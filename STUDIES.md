@@ -8,9 +8,9 @@ Understanding a sentence can require finding the relevant event, identifying its
 
 | | Relational Learning in Transformers | Order-to-Role |
 |:--|:--|:--|
-| **Object of study** | Acquisition under controlled training experience | Behavior and computation of pretrained LLMs |
-| **Core contrast** | Exposure, recombination and joint-role errors | Order, grammatical function, semantic role and response condition |
-| **Mechanistic angle** | Change across checkpoints and layers | Information at token positions, attention/MLP updates and answer selection |
+| **Object of study** | Emergence and divergence under matched training conditions | Behavior and computation of pretrained LLMs |
+| **Core contrast** | Exposure, event selection versus role binding, seed-dependent collapse | Order, grammatical function, semantic role and response condition |
+| **Mechanistic angle** | Developmental trajectories, causal mechanisms and repair | Information at token positions, attention/MLP updates and answer selection |
 | **External-validity limit** | A restricted synthetic grammar is not natural-language transfer | Marked constructions and answer formats can influence apparent errors |
 
 ---
@@ -19,14 +19,15 @@ Understanding a sentence can require finding the relevant event, identifying its
 
 **[Study overview](papers/learning-relations/README.md)**
 
-*Working manuscript: Targeted Experience, Relational Generalization, and Role-Assignment Errors in Transformers.*
+*Emerging direction (provisional): Learning to Bind: Seed-Dependent Emergence and Collapse of Relational Computation in Transformers.*
 
-Paired scratch-trained models allow carefully constrained comparisons of training experience. The research examines held-out recombination, complementary role questions, and which computational accounts survive prespecified tests.
+The original controlled-exposure studies motivated a new question: why do identically configured scratch-trained models develop different relational abilities? Some master the task while others identify events but fail to distinguish participant roles. The independent 16-model study reproduced behavioural heterogeneity (9 successful, 3 intermediate, 4 collapsed) but failed its prespecified mechanism-category criterion. Expanded discovery is exploratory; repair specificity is inconclusive.
 
-Some repeated exposure benefits are documented within one synthetic task family. The record also contains failed causal predictions and inconclusive external-language validation. Newer EXP and PHASE2 work on an experimental branch is linked separately rather than silently added to the manuscript.
+The ongoing ROLE-LEARNING-ORIGINS-v0 study crosses eight initialisation seeds with eight independent training streams (64 models). No scientific results are reported yet.
 
-**Read:** [Manuscript](paper/manuscript.md) · [Evidence and caveats](papers/learning-relations/EVIDENCE.md) · [Experiment index](papers/learning-relations/EXPERIMENTS.md) · [Reproducibility](papers/learning-relations/REPRODUCE.md)
+**Read:** [Current research direction](papers/learning-relations/README.md) · [Evidence](papers/learning-relations/EVIDENCE.md) · [Experiment map](papers/learning-relations/EXPERIMENTS.md) · [Reproducibility](papers/learning-relations/REPRODUCE.md)
 
+The [existing working manuscript](paper/manuscript.md) remains unchanged. This direction is not a formally revised manuscript.
 ---
 
 ## Paper II · Order-to-Role
