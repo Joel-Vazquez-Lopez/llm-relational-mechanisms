@@ -23,4 +23,10 @@ For example, *"Anna praised Ben"* and *"Ben was praised by Anna"* describe the s
 
 The two papers share a scientific motivation, but have distinct experiments, hypotheses and evaluation protocols. Their evidence is kept separate. The historical record preserves the work that led to both, including negative and inconclusive findings.
 
+## Supporting resources
+
+| [Scientific supplementary materials](supplementary/README.md) | [Research communications](communications/README.md) |
+|:--|:--|
+| Extended analyses, additional figures, controls and supporting evidence, indexed separately for each paper. | Approved presentations, posters, talks and research updates from across Model Linguistics. |
+
 *Active research programme · Working manuscripts · Reproducible experiments and frozen evaluation protocols*
