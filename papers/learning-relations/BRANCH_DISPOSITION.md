@@ -180,3 +180,70 @@ For each proposed historical tag, use an independent clean clone, not a protecte
 Estimated steady state: `main`, the protected origins branch for as long as needed, one active Paper II lineage if needed, and temporary reviewed PR branches. Exact active branch names/lifecycle subject to owners; no forced migration of ongoing work. Historic commits reside in verified archives, not indefinitely active branches.
 
 **Current completion state:** scientific gates, recovery of original local source, archive verification, residual decisions, canonical hub link update and coordinating approvals remain outstanding. No merges, branch deletions, protocol changes, training, checkpoint loads or protected evaluation performed in preparing this register.
+
+## Follow-up validation and preservation update — 27 November 2026
+
+This dated update supersedes the earlier uncertainty about the calibration archive and the eight evaluation-digest fields. It does not alter the original inventory or freeze records. Main remains `da7d463b10955f02cf342205e5e0a03f450cfcb1`; #14 and #22 heads are unchanged. New draft [#24](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/pull/24) contains three byte-preserving additions; its head is `bb303071f1ec434a98a2b8995d47fb8cf2c1e8b4`. The initial 30 absent paths are now 27 outside main and the three scientific candidate PRs (#14, #22, #24), with four of those 27 already in separate #5. No archived source ref has been retired.
+
+### PR #14: semantic evaluation-digest classification (read-only)
+
+Inspection of the original runner source shows that these fields hash serialized evaluation records, not standalone files. All eight references agree with the corresponding protocol or parent manifest value. Six available aggregate reports carry matching values; all 16 EXP109 seed/repeat reports also match their archived evaluation and protocol digests and record `no_protected_or_LI: true`. This is internal archive consistency, **not** independent reconstruction of evaluation material or evidence that the original split contents were regenerated. No evaluation examples were generated or scored.
+
+| Study | Evaluation SHA-256 (recorded) | Evidence checked |
+|---|---|---|
+| EXP109 | `5063bec0fceca42ce9a899ffeaa93c0e26a56b93734e80d5388e211e7c9e0b76` | protocol/audit agreement; all 16 per-run reports; runner lines 167, 227, 418 |
+| EXP114 | `15ca63f5c92a3d1481d4c3987d75f1c35dae0368738453942f2b3cb1e0c37910` | protocol/audit/summary; runner lines 167, 214, 400; parent EXP109 link |
+| EXP115 | `15ca63f5c92a3d1481d4c3987d75f1c35dae0368738453942f2b3cb1e0c37910` | copied EXP114 evaluation hash, agrees with parent and EXP115 summary; runner lines 75, 310, 321 |
+| PHASE2-01 | `f213243fad937d45aa7c149cebc30e4a4fb8d32f69aef6770aa146cdb20e1a08` | protocol/audit/summary; runner lines 156, 276, 451; prior EXP109/114 links |
+| PHASE2-02 | `ee40359d6f881d130e53f179d309165aba1650e7ff7fae41a9089e8dbfc9be65` | protocol/audit/summary; runner lines 211, 281, 504; prior PHASE2-01 link |
+| PHASE2-03 | `ea3563b04ba6cc7de9a66667f9009de5ab76c2ca90e438f59899aeaba2f9fc00` | protocol/audit/summary; runner lines 209, 364, 548; prior PHASE2 links |
+| POSITION-CB | `b8fc2d585bd573a8c24dc4018d41c07e0d75e0dcc28e6f71553b71d35e794de9` | protocol/audit/summary; runner lines 224, 253, 459; both manifest fields agree |
+
+Remaining: actual frozen EXP107 source bytes, original local EXP107/108 source/report inventory, 122 unmatched checkpoint/tensor references, independent evaluation-material hash verification where permitted and feasible, complete rights review and final isolated audit. No protected material should be generated to close these gates; document unavailable checks honestly.
+
+### Historical calibration package: independently validated, draft #24
+
+Source `4e90d91832806723ac166a4eb71921c596a92813`. The original 5,097,712-byte calibration observation blob was retrieved in full using its Git blob identity and parsed. Eight seeds × two arms × two voices × 96 observations = 3,072 source records; source sentence hashes agree across models within each voice. From archived 4x4 logits: 12,288 restricted argmax and 12,288 oracle-pair predictions match. Recomputed 1,792 within-model metrics, 144 cell means, 216 paired summary checks and 72 seeded bootstrap confidence intervals (20,000 draws each), all within 1.12e-16 of original values. Full-vocabulary prediction correctness was compared to stored gold IDs; full-vocabulary logits were not stored. No inference, checkpoint loads or evaluation generation.
+
+| Original path | Git blob (all mode 100644) | SHA-256 | Destination |
+|---|---|---|---|
+| scripts/paper_role_consistency_audit.py | `b5254e9bafe6613245860b886f405f33319c4e40` | `d3de66f0b3ec11c7af14a636c03e8f8567706f8fe2fd851edc68825397d49f52` | #24 |
+| reports/paper_role_consistency/frozen_plan.json | `dbcfd2a463a89abf3eecceab2c140304906f0b88` | `4ee3f29faaf9a6af045a8671cf84b2c30ba95ae7951450cbced421b260d16bed` | #24 |
+| reports/paper_role_consistency/summary.json | `828adb80554ba0a5f6198c1d810956bba92f9c96` | `5a9e973b185b01ab95afbdeb6c3870ba4d72918e99b36d8820c18a8c2497c57c` | #24 |
+| reports/paper_role_consistency/calibration_observations.json | `769db851ea56d8fa903afab3a4ce3ad950ee6e59` | `2db6d838a7e32a67714fdda73b8fc3ecebbc82a1247ea970d83838dfa788214f` | proposed verified external archive, or separately approved exact import |
+
+Frozen plan digest `e93564ca8bf56edb3648b734a5d650ca23c3bab8d79f19c3c0acdac4be75232e` independently reproduced. Original script and all three dependency SHA-256 values match; ML088/ML091 frozen protocol/plan IDs and sentence hash references agree. Those five dependencies also match current main byte-for-byte. No overlap with #14/#22/#19–21/#23. #24 retains exploratory same-cohort status, not ML097 prospective evidence. Raw observations contain synthetic semantic names, predicted IDs and item-level logits; owner rights clearance and durable archival reference/retrieval still required. Source branch remains; current retrieval by blob is not future archive protection. Do not merge #24 until the coordinator approves the raw-data preservation route, rights review and ordinary CI. No checkpoint availability claim. To reproduce summary after archive clearance, retrieve the original raw file to its relative path in an isolated checkout, verify checksum, and run only the original read-only summarize routine with output absent (do not overwrite existing summary).
+
+### Residual disposition (27 paths after #24)
+
+| Group | Count | Decision / blocker |
+|---|---:|---|
+| Original CI YAML | 9 | Archive original branch-specific triggers; separately approve any replacement CI; no activation in this phase |
+| Construction-shift additions | 7 | Preserve competing version until author approves selection; four same-path variants not overwritten |
+| EXP101 diagnostics | 4 | Archive old RC3/MPS engineering context and RC7 familiar diagnostic; source compatibility checked below |
+| ML090 correction / ML097 prospective design | 4 | Already in #5; withdrawn role-evidence claims; no reanalysis/new prospective execution |
+| Calibration raw observation file | 1 | Retrieved, checksum verified; durable archive/rights gate before #24 merge |
+| Isolated validation harness | 2 | Preserve audit source and run; CI coordination separate |
+| Total | 27 | No claim of local untracked completeness |
+
+EXP101 RC7 familiar diagnostic `scripts/exp101_familiar_readonly_diagnostic.py` (blob `4e4269395203193097983d526e972e9400fe1469`) imports four RC7 modules that match current main exactly, and the RC7 candidate manifest also matches. However the diagnostic explicitly requires HEAD `3ae081129b0c480bd6ac57cb8fa7f7b952f54b09`, original locally approved `reports/exp101/frozen_release.json` (absent from inspected trees), exact checkpoint files and MPS; it rejects main HEAD. Preserve this script at source `014c6fe75df2339d37187e4ef70b0878d07d1f23`; do not import as a runnable canonical entrypoint or relax its gate. RC3 engineering scripts depend on different versions of production and hardware fixture modules, so preserve their original snapshots. No execution.
+
+### Archival eligibility
+
+- `experiments/ml097-p0-archive`: integrate three candidate assets via #24; raw file independently retrieved and hashed, but no durable tag/archive yet; not retirement-ready.
+- `analysis/exp101-familiar-readonly-rc7` and historical MPS branches: preserve exact archival snapshots, not active canonical runners; required local artifacts unverified.
+- Cumulative branches remain conditional retirement candidates only after #14/#22 integration, exact refs, independent archive retrieval, original checkpoint archive validation and worktree/job confirmation.
+- No branch has a verified retirement status. No tag creation operation is available through the current GitHub connector. Proposed archive tag for calibration source: `archive/paper-i/experiments/ml097-p0-archive` at `4e90d91832806723ac166a4eb71921c596a92813`; must be created and independently fetched under separate approved archival procedure. No original branch deletion.
+
+### Exact completion checklist
+
+- [ ] Recover exact EXP107 bytes and verify frozen SHA-256; recover original EXP107/108 local archival records.
+- [ ] Verify original checkpoint/tensor references and any permitted independent evaluation-material hashes; log unsupported/not-run checks.
+- [ ] Complete publication/rights review and final isolated #14 audit on approved corrected candidate.
+- [ ] Coordinator approves #14, then #22; recheck current main and exact paths/modes before merging.
+- [ ] Coordinator approves #24 only after raw calibration archive retrieval and rights disposition; verify CI and exact blobs.
+- [ ] Resolve #5, construction-shift variants, RC3/RC7 diagnostics and historical CI/harness disposition without new science.
+- [ ] For every historical source, create durable approved tag or verified external archive, independently retrieve and verify; retain exact mapping and checksums.
+- [ ] Verify no active local worktrees/jobs/resume paths require each historical branch; leave origins protected.
+- [ ] Update research hub links to canonical assets and durable archives, preserve #18 reading order, validate links.
+- [ ] Separate coordinating retirement approval; no branch deletion in this phase.
