@@ -33,10 +33,10 @@ For scientific context and original reporting, use the existing [pretrained rese
 
 | Paper | Research question |
 |:--|:--|
-| **[Paper I — Relational Learning in Transformers](../papers/learning-relations/README.md)** | How controlled experience shapes relational abilities, errors and mechanisms during training. |
+| **[Paper I — Relational Learning in Transformers](../papers/learning-relations/README.md)** | How relational abilities emerge and diverge during training, including selective role-binding collapse. |
 | **[Paper II — Order-to-Role](../papers/order-to-role/README.md)** | How pretrained models represent participant roles and select answers under different linguistic conditions. |
 
-Newer paper-specific EXP, PHASE2 and OTR experiments belong in the corresponding paper's experiment map, not in the shared historical chronology.
+Newer paper-specific EXP, PHASE2, position/surface/diversity/mechanism/repair/origins studies and OTR experiments belong in the corresponding paper's experiment map, not in the shared historical chronology.
 
 ## Research infrastructure
 
