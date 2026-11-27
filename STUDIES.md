@@ -39,7 +39,11 @@ Development-only results include important **measurement artifacts**, unusual-qu
 
 **Read:** [Evidence and caveats](papers/order-to-role/EVIDENCE.md) · [Experiments](papers/order-to-role/EXPERIMENTS.md) · [Layer study](papers/order-to-role/LAYERS.md) · [Reproducibility](papers/order-to-role/REPRODUCE.md)
 
-**Current external research links:** [Code and stimulus branch](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/tree/order-to-role/stimuli) · [Development results branch](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/tree/order-to-role/results-dev/results) · [November review package](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/blob/order-to-role/stimuli/docs/order_to_role/review_2026-11/README.md)
+The November 25 manuscript snapshot organizes the investigation around name-state encoding, layerwise development, question-side readout and generality. English test0 was frozen on November 26, followed by a separate Spanish/Galician addendum; both have archived outputs. The full pass/fail audit is not asserted by this guide.
+
+**[Paper architecture](papers/order-to-role/PAPER_MAP.md)** · **[Transfer and generality](papers/order-to-role/TRANSFER.md)** · **[Validation status](papers/order-to-role/EVIDENCE.md)**
+
+**Current external research links:** [Code and stimulus branch](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/tree/order-to-role/stimuli) · [Development and test0 results branch](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/tree/order-to-role/results-dev/results) · [November review package](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/blob/order-to-role/stimuli/docs/order_to_role/review_2026-11/README.md)
 
 ---
 
@@ -52,4 +56,4 @@ Development-only results include important **measurement artifacts**, unusual-qu
 
 Every paper links to its own claims, controls, failure cases and experiment locations. Shared software is not shared experimental evidence.
 
-*Navigation revision: 21 November 2026. Research material and conclusions remain subject to the versions and evidence gates in their original protocols.*
+*Navigation revision: 27 November 2026. Research material and conclusions remain subject to the versions and evidence gates in their original protocols.*

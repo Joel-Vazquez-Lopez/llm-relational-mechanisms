@@ -7,7 +7,7 @@ The repository has **two paper-facing paths** under `papers/` and one shared tec
 | Entry point | Purpose |
 |:--|:--|
 | [Learning Relations](learning-relations/README.md) | Scratch-trained paper, evidence, experiment index, reproducibility |
-| [Order-to-Role](order-to-role/README.md) | Pretrained-LLM paper, evidence, experiment index, layer plan and reproducibility |
+| [Order-to-Role](order-to-role/README.md) | Pretrained-LLM paper architecture, evidence, experiment index, layer investigation, transfer and reproducibility |
 | [Scratch manuscript](../paper/manuscript.md) | Canonical editable working manuscript |
 | [Scratch investigation](../investigations/scratch_transformers/README.md) | Historical research narrative and checkpoints |
 | [Earlier pretrained investigations](../investigations/pretrained_llms/README.md) | Related ML studies, not an automatic part of OTR |
@@ -24,7 +24,7 @@ The repository has **two paper-facing paths** under `papers/` and one shared tec
 | `src/relational_lab/` | Shared package and instrumentation; OTR implementations live on its code branch |
 | `investigations/` | Historical track-level overviews and indexes |
 | `reports/` | Archived experiments, protocols, evidence and analysis summaries |
-| `results/` | Often local/gitignored outputs; some historical tracked outputs and a separate OTR archive |
+| `results/` | Local/gitignored outputs plus tracked historical outputs; PR #12 imported an earlier OTR results snapshot into `main`, with newer runs on the results branch |
 | `docs/` | Shared reproducibility policies; OTR review figures currently on the stimuli branch |
 | `tests/` | Root tests and branch-specific OTR tests |
 
@@ -35,7 +35,7 @@ The repository has **two paper-facing paths** under `papers/` and one shared tec
 | `main` | Public navigation and established canonical material |
 | [`experiments/exp102-clean-design`](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/tree/experiments/exp102-clean-design) | Review post-merge EXP-109–116 and PHASE2 additions independently |
 | [`order-to-role/stimuli`](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/tree/order-to-role/stimuli) | Integrate OTR implementations, lightweight tests and documentation selectively |
-| [`order-to-role/results-dev`](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/tree/order-to-role/results-dev) | Preserve development results for provenance; do not blindly copy all outputs to `main` |
+| [`order-to-role/results-dev`](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/tree/order-to-role/results-dev) | Preserve development and test0 results for provenance; audit PR #12's existing snapshot and avoid bulk-importing more outputs |
 | Other historical branches | Inspect whether they contain unique work before closing or archiving |
 
 Use the [integration plan](../docs/INTEGRATION_PLAN.md) for sequencing and preservation checks.

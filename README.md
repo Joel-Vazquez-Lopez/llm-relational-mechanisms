@@ -14,7 +14,7 @@
 | **Research question** | How does controlled grammatical exposure affect generalization, joint-role errors and developing computations? | How do pretrained LLMs use order, grammatical structure, question wording and response conditions to select participants? |
 | **Models** | Small Transformers trained from scratch | Pretrained language models |
 | **Approach** | Paired training conditions, synthetic recombination, behavioral error analysis and causal interventions | Linguistic counterfactuals, matched response conditions, layerwise readouts and activation interventions |
-| **Scope** | Evidence within specified synthetic grammars; external transfer remains a separate question | Development-stage behavioral and mechanistic findings; some effects depend on scoring or unusual questions |
+| **Scope** | Evidence within specified synthetic grammars; external transfer remains a separate question | Development evidence, frozen English and Spanish/Galician test0 protocols and archived runs; independent scoring review pending |
 | **Explore** | **[Study page](papers/learning-relations/README.md)** | **[Study page](papers/order-to-role/README.md)** |
 | **Inspect** | [Evidence](papers/learning-relations/EVIDENCE.md) · [Experiments](papers/learning-relations/EXPERIMENTS.md) | [Evidence](papers/order-to-role/EVIDENCE.md) · [Experiments](papers/order-to-role/EXPERIMENTS.md) |
 | **Reproduce** | [Guide](papers/learning-relations/REPRODUCE.md) | [Guide](papers/order-to-role/REPRODUCE.md) |
@@ -25,7 +25,8 @@ The studies have separate research questions and evidence records. A behavioral 
 
 - **[Research guide](STUDIES.md)** — the two paper directions, their status and how they connect.
 - **[Learning Relations manuscript](paper/manuscript.md)** — the existing working draft; preserved in its canonical location.
-- **[Order-to-Role layer investigation](papers/order-to-role/LAYERS.md)** — the distinction between accessible information, answer preferences and causal influence.
+- **[Order-to-Role layer investigation](papers/order-to-role/LAYERS.md)** — the candidate layer pipeline, question-token interventions and cross-layer readout.
+- **[Order-to-Role paper architecture](papers/order-to-role/PAPER_MAP.md)** — from thematic-role encoding through retrieval to multilingual and natural-text transfer.
 - **[Repository map](papers/MAP.md)** — ownership, branches and where code, protocols and results currently live.
 
 ## Repository status
@@ -33,7 +34,7 @@ The studies have separate research questions and evidence records. A behavioral 
 The navigation in `papers/` lives on `main`. Research material is still being integrated **without rewriting frozen experiments**:
 
 - The scratch-trained [EXP-109–116 and PHASE2 reports](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/tree/experiments/exp102-clean-design) currently remain on `experiments/exp102-clean-design`.
-- The active [Order-to-Role implementations](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/tree/order-to-role/stimuli) are on `order-to-role/stimuli`; the [development results archive](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/tree/order-to-role/results-dev/results) is separate.
+- The active [Order-to-Role implementations](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/tree/order-to-role/stimuli) are on `order-to-role/stimuli`; the [results archive](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/tree/order-to-role/results-dev/results) includes development and test0 runs. PR #12 merged an earlier results snapshot into `main`; the latest code and subsequent results are still on their research branches.
 - Earlier experimental records, shared analysis code and the working scratch manuscript already exist on `main`.
 
 These are navigation links, **not** claims that unmerged code is executable from `main` or that exploratory findings have passed independent confirmation. See the [integration plan](docs/INTEGRATION_PLAN.md).

@@ -2,7 +2,7 @@
 
 # Reproducibility guide — Order-to-Role
 
-**Repository status:** the current OTR implementation and full test collection are on `order-to-role/stimuli`; development results are principally on `order-to-role/results-dev`. A `main` checkout does not yet include those OTR entrypoints.
+**Repository status:** the current OTR implementation and full test collection are on `order-to-role/stimuli`; development and test0 results are principally on `order-to-role/results-dev`. PR #12 imported an earlier results snapshot into `main`; a `main` checkout does not yet include the latest OTR entrypoints.
 
 ## 1. Obtain the appropriate code
 
@@ -34,6 +34,12 @@ The [review package](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechan
 
 No held-out test material should be opened merely to check whether a hypothesis works. Follow the protocol-specific freeze and access rules.
 
-## 4. Validity checks
+## 4. Frozen evaluation and archival scoring
+
+English test0 is governed by the [November 26 freeze](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/blob/9c437928f61351a72e8d7be4cac6d3a964844a7e/docs/order_to_role/FREEZE.md); Spanish/Galician by the [separate XL addendum](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/blob/9c437928f61351a72e8d7be4cac6d3a964844a7e/docs/order_to_role/FREEZE_XL.md). Consult the exact scorer version and frozen output manifest. Archived test0 outputs already exist; this guide does not authorize rerunning test jobs or opening test1–3. Do not select new layers or heads from test0, change thresholds after observing results, or conflate the historical development log with frozen results.
+
+For audit, pin [code](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/tree/9c437928f61351a72e8d7be4cac6d3a964844a7e) and [results](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/tree/25c6914e29473e4b1a1063600c48743f68b705c3/results) separately. Compare all expected runs with the attempt log and report any missing outputs or technical failures. The newer 70B experiments are [exploratory until separately frozen](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/blob/9c437928f61351a72e8d7be4cac6d3a964844a7e/docs/order_to_role/BIG_MODELS.md).
+
+## 5. Validity checks
 
 Compare matched items across response formats; keep full sentence correctness distinct from first-token preference; validate question grammaticality; avoid treating probes as causal localization; align token positions properly across prompt conditions; and maintain all negative controls. See [evidence caveats](EVIDENCE.md) and the shared [evidence policy](../../docs/EVIDENCE_POLICY.md).

@@ -2,37 +2,38 @@
 
 # Order-to-Role
 
-### Grammatical roles, response conditions and answer selection in pretrained language models
+### Thematic roles, question-conditioned readout and answer selection in pretrained language models
 
-**Model class:** pretrained LLMs  
-**Stage:** exploratory, development-stage investigation  
-**Core question:** how do models distinguish linear order, grammatical function and semantic role—and what computations influence which participant becomes the answer?
+**Working paper:** *Thematic roles live on the names: how language models represent who did what* (provisional title)  
+**Research status:** development findings; frozen English and multilingual test0 runs archived; claim-by-claim scoring review pending  
+**Core models:** Gemma, Qwen, Phi, OLMo and Granite; 70B-class extensions exploratory
 
-The controlled stimuli deliberately separate first-mentioned position, syntactic subjecthood and thematic role. The project compares answer formats and question constructions, then examines representations and causal interventions across model layers.
+The central question is how a language model represents participant roles independently of word order and grammatical function, how a question accesses these representations, and which computations influence the answer. The research combines controlled linguistic contrasts, name-state transplants, layerwise and token-level interventions, head-level repair and transfer.
 
-## Read the study
+## Read in scientific order
 
-| Purpose | Document |
+| Research question | Start here |
 |:--|:--|
-| **What is actually supported?** | [Evidence and limitations](EVIDENCE.md) |
-| **What was tested?** | [OTR-01–12 experiment index](EXPERIMENTS.md) |
-| **What happens across layers?** | [Representations to answers](LAYERS.md) |
-| **How to inspect code and outputs?** | [Reproducibility and data guide](REPRODUCE.md) |
-| **External November review** | [Review package](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/blob/order-to-role/stimuli/docs/order_to_role/review_2026-11/README.md) |
-| **Critical questions** | [Reviewer brief](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/blob/order-to-role/stimuli/docs/order_to_role/review_2026-11/REVIEW_BRIEF.md) |
+| What is the paper's argument? | [Paper architecture](PAPER_MAP.md) |
+| Where is role information and how might it be read out? | [Layer investigation](LAYERS.md) |
+| Does the effect transfer across languages and natural text? | [Generality and transfer](TRANSFER.md) |
+| What has been frozen, and what remains exploratory? | [Evidence and validation status](EVIDENCE.md) |
+| Where are the implementations? | [Experiment map: OTR-01–15](EXPERIMENTS.md) |
+| How can the analyses be reproduced? | [Reproducibility guide](REPRODUCE.md) |
 
-## Three questions, three kinds of evidence
+## Current research documents
 
-**Behavioral measurement.** Does first-token candidate scoring measure the same response as generated names or full sentences? Are apparent errors affected by instruction wording and answer format?
+- [November 25 manuscript snapshot](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/blob/9c437928f61351a72e8d7be4cac6d3a964844a7e/docs/order_to_role/state_2026-11-25/paper_draft.md) — historical development draft; not updated by this navigation.
+- [Development results log](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/blob/9c437928f61351a72e8d7be4cac6d3a964844a7e/docs/order_to_role/state_2026-11-25/results_log.md) and [result index](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/blob/9c437928f61351a72e8d7be4cac6d3a964844a7e/docs/order_to_role/state_2026-11-25/result_index.md).
+- [English test0 freeze](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/blob/9c437928f61351a72e8d7be4cac6d3a964844a7e/docs/order_to_role/FREEZE.md) and [Spanish/Galician freeze addendum](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/blob/9c437928f61351a72e8d7be4cac6d3a964844a7e/docs/order_to_role/FREEZE_XL.md) — authoritative scope, criteria and exclusions.
+- [November 17 review](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/blob/9c437928f61351a72e8d7be4cac6d3a964844a7e/docs/order_to_role/review_2026-11/README.md) — earlier findings and corrections, not the latest manuscript.
 
-**Linguistic structure.** Which effects persist across actives, passives, clefts and newer vocabulary or grammatical families? Unusual questions and templated forms must not be silently treated as natural-language competence tests.
+The key distinction is between role information in participant states, question-dependent readout and the final answer preference. The experiments test parts of this account; neither a patch effect nor an ordered sequence of layer peaks establishes an entire unique native pathway by itself.
 
-**Internal computation.** Where is participant/role information accessible? Which changes influence the final selected participant? Probes, logit lenses, attention and MLP interventions answer related but **distinct** questions.
+## Where the work lives
 
-## Status and scope
+[Active code and documentation](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/tree/order-to-role/stimuli) · [Pinned results snapshot](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/tree/25c6914e29473e4b1a1063600c48743f68b705c3/results) · [Repository map](../MAP.md)
 
-The November development-only review reports both positive observations and important corrections. Several broad forced-choice error claims were dropped after generation checks exposed scoring artifacts. Within-item response differences are interesting, but do not by themselves prove that role knowledge is present and merely fails to be retrieved. The held-out test sets described in that review were unopened at the time of the review; inspect later experiment provenance before making any newer claim.
+PR #12 merged a November 21 results snapshot into main. Later runs and the current OTR implementations are still maintained on their research branches. No frozen file is changed by this navigation update.
 
-**Current work is split across branches:** [code/stimuli](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/tree/order-to-role/stimuli) and [development results](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/tree/order-to-role/results-dev/results). These are **not yet integrated into `main`**.
-
-**Next:** [Evidence](EVIDENCE.md) · [Experiments](EXPERIMENTS.md) · [Layer study](LAYERS.md) · [Reproduce](REPRODUCE.md).
+*Research navigation snapshot: 27 November 2026.*

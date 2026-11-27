@@ -1,30 +1,46 @@
-[← Order-to-Role](README.md) · [Experiments](EXPERIMENTS.md)
+[← Order-to-Role](README.md) · [Paper architecture](PAPER_MAP.md)
 
-# Evidence, corrections and limitations
+# Evidence and validation status
 
-This is a **navigation and interpretation ledger**, not a new statistical analysis. The source is the [November development-only review](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/blob/order-to-role/stimuli/docs/order_to_role/review_2026-11/README.md). Consult that package's provenance table and original model outputs before promoting a result to the manuscript.
+**Snapshot: 27 November 2026.** This is a navigation ledger, not an independent reproduction, statistical audit or pass/fail report.
 
-| Research observation | Review status / qualification | Primary source |
+## Research status
+
+| Evidence stage | Source | Status |
 |:--|:--|:--|
-| Apparent object-question failures under first-token forced choice | **Scoring artifact for several chat models.** A broad subject/object retrieval-failure claim was dropped; original and generated samples also differ in some comparisons. | [C1, review report](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/blob/order-to-role/stimuli/docs/order_to_role/review_2026-11/README.md) |
-| Strong variation for the marked question “Who was someone V-ed by?” | **Development effect under unusual wording.** Must distinguish question interpretation from grammatical role retrieval. | [C2, review report](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/blob/order-to-role/stimuli/docs/order_to_role/review_2026-11/README.md) |
-| Different answers for bare-name versus full-sentence instructions on matched items | **Development observation.** Format, instruction interpretation and intermediate computation remain confounded without more controls. | [C3, review report](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/blob/order-to-role/stimuli/docs/order_to_role/review_2026-11/README.md) |
-| Layerwise answer preference | **Descriptive.** A logit-lens readout at intermediate depth is not a causal trace or proof of absence of role information. | [C4, review report](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/blob/order-to-role/stimuli/docs/order_to_role/review_2026-11/README.md) |
-| Role and question-side causal measurements | **Mixed provenance.** Some earlier model comparisons used contaminated forced-choice prompts and need repeating. | [C5, review report](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/blob/order-to-role/stimuli/docs/order_to_role/review_2026-11/README.md) |
-| Stranding and general voice mismatch as explanations | **Counterevidence.** Several simple broad explanations were rejected or narrowed. | [C6–C7, review report](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/blob/order-to-role/stimuli/docs/order_to_role/review_2026-11/README.md) |
+| Early exploratory study and scoring corrections | [November 17 review](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/blob/9c437928f61351a72e8d7be4cac6d3a964844a7e/docs/order_to_role/review_2026-11/README.md) | Historical; some claims dropped |
+| Development synthesis | [Manuscript snapshot](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/blob/9c437928f61351a72e8d7be4cac6d3a964844a7e/docs/order_to_role/state_2026-11-25/paper_draft.md), [result log](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/blob/9c437928f61351a72e8d7be4cac6d3a964844a7e/docs/order_to_role/state_2026-11-25/results_log.md) | Exploratory |
+| English C1–C8 | [FREEZE.md](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/blob/9c437928f61351a72e8d7be4cac6d3a964844a7e/docs/order_to_role/FREEZE.md) | Frozen November 26; test0 files archived |
+| BX transitive replication | [FREEZE.md](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/blob/9c437928f61351a72e8d7be4cac6d3a964844a7e/docs/order_to_role/FREEZE.md) | Prespecified separate replication; outputs archived |
+| Spanish/Galician XL-C1–C5b | [FREEZE_XL.md](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/blob/9c437928f61351a72e8d7be4cac6d3a964844a7e/docs/order_to_role/FREEZE_XL.md) | Separate freeze after English test0; XL test0 files archived |
+| Layer-pipeline ordering, OTR-15, psych/ditransitive and UD/WIKI | [Development log](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/blob/9c437928f61351a72e8d7be4cac6d3a964844a7e/docs/order_to_role/state_2026-11-25/results_log.md), [freeze scope](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/blob/9c437928f61351a72e8d7be4cac6d3a964844a7e/docs/order_to_role/FREEZE.md) | Exploratory / external validation, not core test0 claims |
+| Larger models | [70B extension](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/blob/9c437928f61351a72e8d7be4cac6d3a964844a7e/docs/order_to_role/BIG_MODELS.md) | Development runs begun; separate freeze needed |
 
-## Newer research directions
+The output files exist. **This guide does not certify which claims passed**, which runs are complete, or whether every intended control was executed. The authoritative scoring rules and run-specific provenance remain in the source documents.
 
-The [OTR code branch](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/tree/order-to-role/stimuli) includes subsequent work on answer-state patching, head knockout/role vectors, multilingual stimuli and broader lexical/construction transfer. Its [development results branch](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/tree/order-to-role/results-dev) has later measurements.
+## Claim map (English freeze)
 
-These later experiments **exist**, but this navigation page does not certify their primary outcomes, independent validation, absence of test leakage or consistency with the earlier review. Audit the results against the exact code, prompts and split manifests.
+| Claim | Frozen question | Main evidence |
+|:--|:--|:--|
+| C1 | Selective generated-answer failure | Generation check |
+| C2 | Positive role effect beyond grammatical function at frozen layer | OTR-03 |
+| C3 | Weakened or reversed role readout in wrong-answer conditions | OTR-03 |
+| C4 | Prespecified answer handover depth | OTR-09 |
+| C5 | Frozen heads repair relative to random and specified controls | OTR-09 |
+| C6 | Failing-question `by` state damages working answer | OTR-14 |
+| C7 | Neutral-prefix preference on initially wrong items in specified models | OTR-07 |
+| C8 | Patient-question `by` state damages working answer | OTR-14 |
 
-## Stronger claims require stronger controls
+See the [English freeze](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/blob/9c437928f61351a72e8d7be4cac6d3a964844a7e/docs/order_to_role/FREEZE.md) for full estimands, minimum denominators, thresholds, C7 model scope and all reporting rules. The [XL addendum](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/blob/9c437928f61351a72e8d7be4cac6d3a964844a7e/docs/order_to_role/FREEZE_XL.md) has its own definitions, including the other-working-item content control (XL-C5b). Do not substitute the English criteria for XL or retroactively change a failed criterion.
 
-- Compare genuine generated answers, name-only answers and candidate-restricted scores on the same items.
-- Test conventional question formulations alongside marked or awkward formulations; do not conflate them.
-- Cluster uncertainty by independent stimulus family rather than counting paraphrases as independent samples.
-- Validate tokenization, answer extraction, prompt templates and source/target alignment across architectures.
-- Prespecify selected components, negative controls and held-out constructions before a prospective mechanistic prediction.
+## Interpretation boundaries and corrections
 
-See [the layer-plan interpretation boundaries](LAYERS.md), [experiment index](EXPERIMENTS.md) and [evidence policy](../../docs/EVIDENCE_POLICY.md).
+- First-token forced choice misrepresented some chat-model generations in the early investigation. Use matched generated-output measures for behavioral claims.
+- Identical pre-question states follow from causal masking, but this alone does not prove the required role information is stored or retrieved.
+- Normalized repair is conditional on the defined margin gap; it is not an overall accuracy improvement.
+- Role/function separation differs across languages; Galician materials include explicitly disclosed usage caveats.
+- Development OTR-03 donors included name-pair families assigned to test splits. The freeze discloses that and prescribes split-restricted test donors.
+- The English freeze reports no multiplicity correction for replication criteria. Report every model/claim, including failed and not-evaluable cells.
+- Causal intervention sensitivity is not proof of an exclusive native mechanism.
+
+[Result archive at inspection](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/tree/25c6914e29473e4b1a1063600c48743f68b705c3/results) · [Reproduce and score](REPRODUCE.md).

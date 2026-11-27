@@ -4,14 +4,14 @@
 
 This is a **plan**, not a statement that experimental branches are already merged. The documentation PR should introduce navigation without moving scientific files or changing frozen protocol content.
 
-## Reference snapshot — 21 November 2026
+## Reference snapshot — 27 November 2026
 
 | Reference | Head at inspection | Interpretation |
 |:--|:--|:--|
-| `main` | `4423683a` | Reader guide merged November 18 |
+| `main` | `5e8ab46c` | PR #12 merged the November 21 OTR results snapshot |
 | `experiments/exp102-clean-design` | `df82ab3a` | Post-PR #8 scratch experiments |
-| `order-to-role/stimuli` | `16e13d47` | OTR code, new constructions and tests |
-| `order-to-role/results-dev` | Verify live SHA before integration | OTR development result archive |
+| `order-to-role/stimuli` | `9c437928` | OTR-01–15, English/XL freezes, large-model extension |
+| `order-to-role/results-dev` | `25c6914e` | OTR development, test0 and 70B exploratory result archive |
 
 Branch heads can advance. Verify current refs, local uncommitted work, merge bases and existing releases immediately before each code or data PR.
 
@@ -39,6 +39,8 @@ Branch heads can advance. Verify current refs, local uncommitted work, merge bas
 - Update paper navigation links from the code branch to canonical paths **only after integration**.
 
 ## Phase D · Results stewardship
+
+PR #12 already imported an earlier results snapshot into `main`. Audit that import for size, rights and provenance; do not rewrite history or delete tracked results as part of this navigation PR. The name `results-dev` is historical: later commits contain held-out test0 outputs as well.
 
 - Retain `order-to-role/results-dev` as source provenance until raw outputs have been audited and released appropriately.
 - Generate curated rights-cleared summaries, figures and a manifest of exact source commits, checksums and analysis versions.
