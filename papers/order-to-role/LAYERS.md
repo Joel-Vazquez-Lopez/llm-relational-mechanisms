@@ -8,7 +8,7 @@
 2. The question, mainly through the word "by", sets which role is asked for.
 3. At a fixed depth, the answer position takes over. Patching about 20 attention heads there repairs a substantial share of the error, and how much depends on the model.
 
-The account is consistent with every intervention below, but it is not shown to be the models' unique native mechanism. The interventions establish sufficiency under patching. Knockout shows that the heads are needed for much of the agent margin, but not for the answer itself (development; [Interventions §4](INTERVENTIONS.md#4-knockout-and-steering-otr-12)). Exclusivity is not tested (§6).
+The account is consistent with every intervention below, but it is not shown to be the models' unique native mechanism. The interventions establish sufficiency under patching. Knockout shows that the heads contribute much of the agent margin and change some answers, but most answers survive ablation (development; [Interventions §4](INTERVENTIONS.md#4-knockout-and-steering-otr-12)). Exclusivity is not tested (§6).
 
 The stages sit at different depths in different models, but never in a different order. This page shows the evidence for each stage and what it does and does not establish. All curves are development data. The confirmatory tests for the layer claims are C2, C4, C6 and C8 ([evidence ledger](EVIDENCE.md#1-confirmatory-results-test-set-0)).
 
