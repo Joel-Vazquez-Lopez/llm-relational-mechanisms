@@ -1,0 +1,60 @@
+{
+  "experiment": "PAPER-ROLE-CONSISTENCY-CALIBRATION",
+  "type": "exploratory_posthoc_analysis",
+  "script_sha256": "d3de66f0b3ec11c7af14a636c03e8f8567706f8fe2fd851edc68825397d49f52",
+  "dependencies_sha256": {
+    "ml080": "827a22367605dc0db93165d53c022de4e007ff00729de75a9216e10c56a438e8",
+    "ml088": "51e495de46c8707c1bc8f23f4d59bb3b8ead041f08e13c12d39afdbdae1e65d1",
+    "ml091": "def271a91654962eb9b798699f92db71cf0e546d0bd157282eebe3d0bb55bf1a"
+  },
+  "ml088_protocol_sha256": "388c2b8d6b3739d98b64bdc9681f5b44d04dbeeb01a28af6fb15c671fe45ce7a",
+  "ml091_original_plan_sha256": "7ef603faa3ce313fc97faf918db26fb24a7078103db8936368645f8d591973f2",
+  "seeds": [
+    701,
+    709,
+    719,
+    727,
+    733,
+    739,
+    743,
+    751
+  ],
+  "arms": [
+    "familiar",
+    "target"
+  ],
+  "voices": [
+    "active",
+    "passive"
+  ],
+  "sentences_per_voice": 96,
+  "questions_per_sentence": 4,
+  "question_order": [
+    "first_agent",
+    "first_patient",
+    "second_agent",
+    "second_patient"
+  ],
+  "sentence_hashes": {
+    "active": "19528507ecc6fea126eafb220f16c4bde7a1c5b1ab8737a15f2215616922bfd7",
+    "passive": "73777e03def443d334142f4d3b78866ca49da4e9bfe38f8248213d8084c865be"
+  },
+  "scope": "Existing ML-088 models and already analyzed ML-091 calibration sentences; NEVER protected; not independent replication.",
+  "record": "Per-source 4x4 semantic logits, four-choice predictions, full-vocabulary predictions and oracle-event two-name predictions.",
+  "primary_descriptive": [
+    "agent_accuracy",
+    "patient_accuracy",
+    "both_accuracy",
+    "exactly_one_correct",
+    "same_prediction",
+    "both_select_correct_event",
+    "same_prediction_conditioned_both_select_correct_event"
+  ],
+  "nulls": {
+    "both_if_marginally_independent": "agent_accuracy * patient_accuracy (heuristic only; sentence difficulty not controlled)",
+    "same_if_independent_given_both_event": "pA*(1-pP)+(1-pA)*pP on the selected both-in-event subset (descriptive, conditioned selection)"
+  },
+  "statistics": "All seeds reported; seed-level paired means and bootstrap intervals; no hypothesis-search thresholds.",
+  "safety": "No training, no protected case generation, no protected result reads, no overwrite of output files.",
+  "sha256": "e93564ca8bf56edb3648b734a5d650ca23c3bab8d79f19c3c0acdac4be75232e"
+}
