@@ -1,65 +1,50 @@
-[← Order-to-Role overview](README.md) · [Research overview](../../STUDIES.md)
+[← Order-to-Role](README.md) · [Paper architecture](PAPER_MAP.md)
 
-# From representations to answers
+# Layer investigation: participant states to answers
 
-**Question:** when response conditions change participant selection, which internal
-computations change, and can interventions predictably change the outcome?
+The candidate computational account has three separable parts: role-related information associated with participant tokens, question-conditioned selection, and answer-position readout. OTR-14 puts multiple intervention curves on a common per-item scale.
 
-**Status:** proposed synthesis of the study direction, not a frozen protocol.
+## 1. Participant representation
 
-## Follow three signals
-
-| Signal | Measurement | Interpretation limit |
+| Measurement | Entry point | Interpretation |
 |:--|:--|:--|
-| Role, position and participant information | Held-out probes across names, verbs and constructions | Accessible to a decoder does not mean used by the model |
-| Answer preference | Logit lens and native output measurements | Intermediate readout is not causal localization |
-| Influence on selection | Counterfactual state, component and path interventions | Sensitivity alone does not identify a unique native mechanism |
+| Single-name causal transplants | [OTR-03](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/blob/9c437928f61351a72e8d7be4cac6d3a964844a7e/scripts/otr03_code_transplant.py) | Role, function and order effects on recipient-name preference |
+| Probes and incremental token states | [OTR-08](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/blob/9c437928f61351a72e8d7be4cac6d3a964844a7e/scripts/otr08_role_probes.py), [OTR-10](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/blob/9c437928f61351a72e8d7be4cac6d3a964844a7e/scripts/otr10_incremental_roles.py) | Decodability and emergence, not proof of causal use |
+| Role steering | [OTR-11](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/blob/9c437928f61351a72e8d7be4cac6d3a964844a7e/scripts/otr11_role_steering.py) | Sensitivity to a selected direction |
 
-## From a map to an explanation
+## 2. Question-side computation
 
-**A · Map depth.** Record participant, predicate, question and answer-position states
-across all layers on matched items. Keep consistent successes, failures and format-sensitive
-items visible; avoid selecting favorable cases from the final evaluation.
-
-**B · Locate influence.** Patch role-swapped and construction-matched donors. Include
-same-answer/different-relation and different-answer/same-role controls. State how spans
-are aligned when token lengths differ; never assume raw token offsets are equivalent.
-
-**C · Trace a candidate path.** Separate attention and MLP updates at candidate sites,
-then test sender-to-receiver paths. Query/key/value analysis is a follow-up where a
-specific selection-versus-content hypothesis warrants it, not a mandatory sweep.
-
-**D · Predict and confirm.** Freeze sites, controls, primary effects and evaluation
-before testing new lexical/template families. Evaluate disruption, restoration and
-specificity together. Report contradictory cases and architectural differences.
-
-## The response-format control
-
-Sentence answers may name the participant after additional generated tokens. Separate
-instruction wording, answer location and intermediate generated context before interpreting
-format differences as a retrieval failure. Compare explicitly defined readout positions;
-do not equate a first-token name score with full generated-answer correctness.
-
-## Script entry points on the OTR branch
-
-| Tool | Entry point |
+| Measurement | Entry point |
 |:--|:--|
-| Position × layer patching | [OTR-02](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/blob/order-to-role/stimuli/scripts/otr02_position_layer_patching.py) |
-| Code transplantation | [OTR-03](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/blob/order-to-role/stimuli/scripts/otr03_code_transplant.py) |
-| Question patching | [OTR-04](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/blob/order-to-role/stimuli/scripts/otr04_question_patching.py) |
-| Logit lens | [OTR-06](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/blob/order-to-role/stimuli/scripts/otr06_logit_lens.py) |
-| Answer processing | [OTR-07](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/blob/order-to-role/stimuli/scripts/otr07_answer_process.py) |
-| Role probes | [OTR-08](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/blob/order-to-role/stimuli/scripts/otr08_role_probes.py) |
-| Answer patching | [OTR-09](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/blob/order-to-role/stimuli/scripts/otr09_answer_patching.py) |
-| Incremental roles | [OTR-10](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/blob/order-to-role/stimuli/scripts/otr10_incremental_roles.py) |
-| Role steering | [OTR-11](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/blob/order-to-role/stimuli/scripts/otr11_role_steering.py) |
+| Position and question-state patching | [OTR-02](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/blob/9c437928f61351a72e8d7be4cac6d3a964844a7e/scripts/otr02_position_layer_patching.py), [OTR-04](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/blob/9c437928f61351a72e8d7be4cac6d3a964844a7e/scripts/otr04_question_patching.py) |
+| Interchange, mean ablation and reverse damage at question words | [OTR-13](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/blob/9c437928f61351a72e8d7be4cac6d3a964844a7e/scripts/otr13_question_words.py) |
+| Question/name attention blocking, joint-question and answer-state swaps, failing/patient `by` transfers | [OTR-14](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/blob/9c437928f61351a72e8d7be4cac6d3a964844a7e/scripts/otr14_layer_pipeline.py) |
 
-## Before calling an explanation supported
+OTR-14 reports family-bootstrap intervals and checks whether unmodified attention-mask hooks reproduce clean logits. Architectures without the necessary standard-attention interface may lack some curves; report missing data explicitly.
 
-- Measurement and extraction validated on development data.
-- Matched donors, self-patches, bidirectional swaps and perturbation checks reported.
-- Primary effect distinguishes role information from position and answer identity.
-- Confidence intervals respect the underlying stimulus-family dependence.
-- Selected explanation predicts a fresh evaluation without selecting a new best layer.
+## 3. Answer selection
 
-This checklist is a planning aid. Existing frozen protocol requirements take precedence.
+| Measurement | Entry point |
+|:--|:--|
+| Intermediate name preferences | [OTR-06](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/blob/9c437928f61351a72e8d7be4cac6d3a964844a7e/scripts/otr06_logit_lens.py) |
+| Answer generation and neutral by-slot prefix | [OTR-07](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/blob/9c437928f61351a72e8d7be4cac6d3a964844a7e/scripts/otr07_answer_process.py) |
+| Residual repair, frozen head sets, control patches | [OTR-09](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/blob/9c437928f61351a72e8d7be4cac6d3a964844a7e/scripts/otr09_answer_patching.py) |
+| Head knockout and averaged role vector | [OTR-12](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/blob/9c437928f61351a72e8d7be4cac6d3a964844a7e/scripts/otr12_knockout_and_role_vector.py) |
+
+## 4. Frozen layer hypotheses
+
+The following indices are **development-selected settings**, transcribed from the [English freeze, section 4](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/blob/9c437928f61351a72e8d7be4cac6d3a964844a7e/docs/order_to_role/FREEZE.md). They are physical layer indices, not post-test discoveries.
+
+| Model | Layers | Role layer | Question `by` layer | Answer handover |
+|:--|--:|--:|--:|--:|
+| Gemma 4 31B | 60 | 28 | 28 | 40 |
+| Qwen 3.8 27B | 64 | 29 | 30 | 54 |
+| Phi-4 | 40 | 15 | 8 | 22 |
+| OLMo 3.1 32B | 64 | 18 | 8 | 26 |
+| Granite 4.2 30B | 64 | 37 | 28 | 52 |
+
+Role layer, question-token layer and handover are defined by different measurements. Their order differs by model; do not force a universal serial order. The XL addendum freezes language-specific handover layers. OTR-14 pipeline ordering remains exploratory under the English freeze, even though specific token interventions are tested.
+
+## 5. What would establish a stronger pathway account?
+
+Report paired item/family uncertainty, split-specific donors, token alignment, source-content and layer-matched controls, selective disruption and restoration, model-specific exceptions, and behavior in generated answers. Frozen definitions govern the confirmatory tests; additional analyses remain exploratory. See [evidence and validation status](EVIDENCE.md).

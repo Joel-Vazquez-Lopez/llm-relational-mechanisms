@@ -1,56 +1,63 @@
-[← Research overview](../../STUDIES.md) · [Companion study →](../order-to-role/README.md)
+[← Model Linguistics](../../README.md) · [Research history](../../investigations/README.md) · [Paper II](../order-to-role/README.md)
 
-# Learning relations
+# Paper I · Relational Learning in Transformers
 
-> How does controlled experience change relational generalisation and the errors a Transformer makes?
+*Provisional navigation title.*
 
-**Scratch-trained Transformers** · **ML / EXP lineage** · **Existing assets frozen for preservation**
+### Emerging direction: Learning to Bind — Seed-Dependent Emergence and Collapse of Relational Computation in Transformers
 
-| Read | Inspect | Plan |
+**Research question:** Why can Transformers with the same architecture, objective, data-generating distribution and training budget acquire different relational abilities?
+
+**Model class:** Transformers trained from scratch on controlled synthetic relational tasks.
+
+**Status (27 November 2026):** completed studies, exploratory follow-ups and an ongoing factorial learning-origins study. The original [working manuscript](../../paper/manuscript.md) has not been replaced.
+
+## The scientific problem
+
+Early controlled-exposure experiments repeatedly improved relational generalisation, while joint-role errors could persist. Subsequent studies varied construction position, surface complexity and relational diversity. Extended training revealed divergent trajectories: some models mastered the task; others learned which event was relevant but remained unable to select the correct participant within it.
+
+The emerging question is how distinct relational abilities emerge, diverge and selectively fail to develop during learning.
+
+## Research progression
+
+| Stage | Question | Status |
 |:--|:--|:--|
-| [Working manuscript](../../paper/manuscript.md) | [Evidence checkpoint](../../investigations/scratch_transformers/CURRENT_FINDINGS.md) | [Next-study outline](#next-study-outline) |
-| [Research overview](../../investigations/scratch_transformers/README.md) | [Experiment index](../../investigations/scratch_transformers/EXPERIMENT_INDEX.md) | [Shared repository map](../MAP.md) |
+| A · Training conditions | How do surface complexity and role diversity affect acquisition? | Factorial results; primary diversity hypothesis not supported |
+| B · Structured collapse | Can event competence emerge without role discrimination; can delayed models recover? | Selected recovery cohort and diagnostic follow-up |
+| C · Computational organisation | Which representations and components support successful binding? | Exploratory localisation, causal routing, pathways and transfer |
+| D · Independent replication | Do behavioural outcomes and candidate mechanism categories replicate? | Behavioural heterogeneity reproduced; original mechanism criterion failed; expanded search exploratory |
+| E · Repair | Can targeted training restore role discrimination earlier or more specifically than controls? | Acceleration did not replicate; specificity inconclusive |
+| F · Origins | Is divergence associated with initialisation, training stream or their interaction? | Ongoing 64-model factorial; no scientific results yet |
 
-## The paper
+[All studies, source branches, protocols and implementations](EXPERIMENTS.md).
 
-*Targeted Experience, Relational Generalization, and Role-Assignment Errors in Transformers.*
-The existing working manuscript has a 15 December 2026 deadline. This hub does not
-replace its text, protocols or evidence record.
+## Current evidence
 
-The central behavioral question is how marginal accuracy, joint correctness and
-specific error patterns respond differently to training experience. Cohort replication
-within one synthetic grammar is distinct from transfer to new linguistic structures.
+In the independent replication, 9 of 16 models were successful, 3 intermediate and 4 fully collapsed at 51,200 updates. Collapsed models showed near-perfect event selection with approximately chance conditional role discrimination. These are outcomes in the studied task and cohort, not general prevalence estimates. The prespecified mechanistic classification failed; expanded discovery is exploratory. Targeted repair evidence remains limited and inconclusive.
 
-## Evidence → interpretation → next test
+These findings summarise the researcher-provided 27 November handover; see [evidence and limitations](EVIDENCE.md) for claim status and scope.
 
-| Evidence entry point | Supported scope | Next question |
-|:--|:--|:--|
-| [Cross-cohort audit](../../reports/paper_cross_cohort/archived_error_taxonomy.md) | Repeated exposure benefit and joint-error changes within the studied family | Which properties of experience explain the changes? |
-| [EXP-104 matched-source audit](../../reports/exp104/analysis/source_matched_dev_3200_audit.md) | No consistent final quartet advantage under this control | Is any benefit primarily about learning speed? |
-| [EXP-106 protocol](../../paper/EXP106_voice_recombination_protocol_v0.md) | Exploratory design for direct versus indirect voice exposure | Can the unseen voice combination be solved reliably across seeds? |
+## Active study: ROLE-LEARNING-ORIGINS-v0
 
-The existing manuscript records failed mechanistic predictions and a deferred external
-validation. Those remain part of the paper's evidential limits.
+Eight initialisation seeds crossed with eight independent training-stream seeds, 64 models, each scheduled for 51,200 updates. Dense developmental measurements, event/conditional-role loss decomposition, gradient magnitudes and alignment, preserved model snapshots and resumable checkpoints investigate the origins and timing of divergent learning trajectories.
 
-## Next-study outline
+**Ongoing locally. Engineering pilot reported passed; no scientific findings yet.** See [experiment record](EXPERIMENTS.md#stage-f--current-learning-origins-study). Do not disturb the active research worktree or training jobs.
 
-**Proposed, not frozen and not an instruction to launch experiments.**
+## Paper questions
 
-1. Audit execution variability and select one interpretable exposure contrast.
-2. Freeze evaluation, training budget, seed-level analysis and stopping rules.
-3. Track native individual and joint answers, event errors, reversals and duplicate
-   answers at fixed checkpoints. Keep oracle-restricted diagnostics separate.
-4. Map held-out role/position decoding and controlled intervention effects across
-   training time and depth. Decodability does not establish causal use.
-5. Freeze one computational prediction before testing new seeds and held-out structures.
+1. Why do matched models diverge in relational competence?
+2. Why can event selection develop without role binding?
+3. When do successful and unsuccessful trajectories diverge?
+4. Can early computational measurements predict collapse?
+5. Can principled training interventions prevent it?
+6. Does the phenomenon generalise beyond the studied synthetic grammar and architecture?
 
-## Paper figure sequence
+## Navigation
 
-| Figure | Purpose |
-|:--|:--|
-| 1 · Experience and transfer | Show the training contrast and every seed's generalisation outcome |
-| 2 · Errors through learning | Separate accuracy improvement from changes in joint-role errors |
-| 3 · Time × layer | Compare accessible information with intervention sensitivity |
-| 4 · Independent prediction | Test where a proposed explanation transfers or fails |
+- [Evidence and limitations](EVIDENCE.md): positive, negative and inconclusive results.
+- [Experiment index](EXPERIMENTS.md): foundations, position controls and all 15 handover studies.
+- [Reproducibility](REPRODUCE.md): source snapshots, safeguards and active-run protection.
+- [Existing manuscript](../../paper/manuscript.md): title and content unchanged.
+- [Historical research](../../investigations/README.md): shared origins, not a duplicate of current studies.
 
-These are figure plans; no new results or completed mechanism claims are implied.
+Paper II investigates existing pretrained models; Paper I studies the acquisition of relational abilities during training. Similar functional dissociations motivate comparison but do not establish mechanistic equivalence.
