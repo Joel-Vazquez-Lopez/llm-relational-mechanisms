@@ -15,7 +15,66 @@ from __future__ import annotations
 from collections.abc import Sequence
 
 from relational_lab.experiments.order_role_behavior import Score
+from relational_lab.instrumentation import chat
 from relational_lab.experiments.order_role_stimuli import Item
+
+
+def load_lm(model_id: str, revision=None, dtype=None, **load_kwargs):
+    """Load a decoder LM for text-only scoring. Multimodal checkpoints (e.g. Gemma 3/4,
+    tagged image-text-to-text) are not always registered for AutoModelForCausalLM;
+    fall back to AutoModelForImageTextToText, which accepts input_ids alone and
+    returns .logits over the text vocabulary."""
+    from transformers import AutoModelForCausalLM
+
+    try:
+        return AutoModelForCausalLM.from_pretrained(model_id, revision=revision, dtype=dtype, **load_kwargs)
+    except (ValueError, KeyError) as err:
+        print(f"AutoModelForCausalLM refused {model_id} ({type(err).__name__}); trying multimodal classes",
+              flush=True)
+    import transformers
+
+    last = None
+    # Newer multimodal checkpoints (e.g. Muse Glimmer, Qwen3.8) register under
+    # AutoModelForMultimodalLM; older ones (Gemma 3/4) under AutoModelForImageTextToText.
+    for cls_name in ("AutoModelForImageTextToText", "AutoModelForMultimodalLM"):
+        cls = getattr(transformers, cls_name, None)
+        if cls is None:
+            continue
+        try:
+            model = cls.from_pretrained(model_id, revision=revision, dtype=dtype, **load_kwargs)
+            print(f"Loaded {model_id} with {cls_name}", flush=True)
+            return model
+        except (ValueError, KeyError) as err:
+            last = err
+    raise ValueError(f"could not load {model_id} as a text LM") from last
+
+
+def load_for_run(model_id: str, dtype=None, device=None, device_map=None, revision=None):
+    """Load a model for a run and return (model in eval mode, device for input ids).
+
+    device_map None: the whole model on ``device`` (default: cuda if available), as before.
+    device_map "auto": split across all visible GPUs (Accelerate), for models too large for one GPU
+    (70B-class on 2 x H100); each GPU is filled to at most 85% so activations still fit.
+    device_map "cpu": the same dispatch code path on CPU (tests)."""
+    import torch
+
+    if not device_map:
+        model = load_lm(model_id, revision=revision, dtype=dtype)
+        model.to(device or ("cuda" if torch.cuda.is_available() else "cpu"))
+    else:
+        if device_map == "cpu":
+            kw = {"device_map": {"": "cpu"}}
+        else:
+            n = torch.cuda.device_count()
+            if n == 0:
+                raise SystemExit("--device-map auto needs at least one GPU")
+            kw = {"device_map": device_map, "max_memory": {
+                i: f"{int(torch.cuda.get_device_properties(i).total_memory * 0.85 / 2 ** 30)}GiB" for i in range(n)}}
+        model = load_lm(model_id, revision=revision, dtype=dtype, **kw)
+        placed = sorted({str(d) for d in getattr(model, "hf_device_map", {}).values()})
+        print(f"{model_id}: split over {placed}", flush=True)
+    model.eval()
+    return model, input_device(model)
 
 
 def name_token_ids(tokenizer, name: str, leading_space: bool = True) -> list[int]:
@@ -29,18 +88,56 @@ def single_token_checker(tokenizer, leading_space: bool = True):
     return lambda name: len(name_token_ids(tokenizer, name, leading_space)) == 1
 
 
+def check_names_for_patching(tokenizer, names, chat_template: bool = False) -> list[str]:
+    """Problems that make patching invalid for these names (empty list = fine).
+    Names inside the sentence follow a space and must be single tokens, so one
+    position holds the whole name. The answer is scored by its first token
+    (" Name" raw; "Name" in chat mode), so first tokens must be distinct."""
+    problems = [f"{n!r} is not a single token after a space" for n in names
+                if len(name_token_ids(tokenizer, n, True)) != 1]
+    firsts: dict[int, str] = {}
+    for n in names:
+        t = name_token_ids(tokenizer, n, not chat_template)[0]
+        if t in firsts:
+            problems.append(f"{firsts[t]!r} and {n!r} share their first answer token")
+        firsts[t] = n
+    return problems
+
+
+def load_tokenizer(model_id: str, revision=None):
+    """AutoTokenizer, plus the regex fix that Transformers asks for on Mistral
+    tokenizers (without it, pre-tokenization splits words incorrectly)."""
+    from transformers import AutoTokenizer
+
+    if "mistral" in model_id.lower():
+        try:
+            return AutoTokenizer.from_pretrained(model_id, revision=revision, fix_mistral_regex=True)
+        except TypeError:
+            pass
+    return AutoTokenizer.from_pretrained(model_id, revision=revision)
+
+
 def _prompt_ids(tokenizer, prompt: str, use_chat_template: bool) -> list[int]:
+    if use_chat_template and chat.assistant_prefix():
+        # Same text and tokenization as patching.chat_text / encode_batch.
+        from relational_lab.instrumentation.patching import chat_text
+
+        text, _ = chat_text(tokenizer, prompt)
+        return list(tokenizer(text, add_special_tokens=False)["input_ids"])
     if use_chat_template:
-        out = tokenizer.apply_chat_template(
-            [{"role": "user", "content": prompt}], add_generation_prompt=True, tokenize=True
-        )
-        # transformers >= 5 returns a BatchEncoding (dict-like); older versions a list.
-        if not isinstance(out, list):
-            out = out["input_ids"]
-        if out and isinstance(out[0], list):  # batched form [[...]]
-            out = out[0]
-        return list(out)
+        # chat.apply_template is shared with patching (system prompt, template kwargs,
+        # fallback for templates without a system role).
+        return chat.as_id_list(chat.apply_template(tokenizer, prompt, tokenize=True))
     return tokenizer.encode(prompt, add_special_tokens=True)
+
+
+def input_device(model):
+    """Device for input ids: the input embedding's device, as in ``ResidualPatcher.device`` and
+    ``load_for_run``. With a device map the first parameter can sit elsewhere (e.g. a vision tower)."""
+    try:
+        return model.get_input_embeddings().weight.device
+    except (AttributeError, NotImplementedError):
+        return next(model.parameters()).device
 
 
 class HFScorer:
@@ -60,7 +157,7 @@ class HFScorer:
         """Return, per (prompt_ids, cont_ids): (sum logprob of cont, top1 id at first cont position)."""
         import torch
 
-        device = next(self.model.parameters()).device
+        device = input_device(self.model)
         full = [p + c for p, c in sequences]
         width = max(len(x) for x in full)
         input_ids = torch.full((len(full), width), self.pad_id, dtype=torch.long)

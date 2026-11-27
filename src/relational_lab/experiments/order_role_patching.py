@@ -58,13 +58,6 @@ def normalized_effect(ld_base: float, ld_source: float, ld_patched: float) -> fl
     return (ld_base - ld_patched) / denom
 
 
-def _first_token(tokenizer, name: str) -> int:
-    ids = tokenizer.encode(" " + name, add_special_tokens=False)
-    if len(ids) != 1:
-        raise ValueError(f"name {name!r} is not a single token")
-    return ids[0]
-
-
 def sweep(
     model,
     tokenizer,
@@ -73,11 +66,16 @@ def sweep(
     layers: Sequence[int] | None = None,
     batch_size: int = 16,
     require_correct: bool = True,
+    chat_template: bool = False,
 ) -> tuple[list[PairRecord], dict[str, int]]:
-    """Patch every (label, layer) for every base item. Returns records and skip counts."""
+    """Patch every (label, layer) for every base item. Returns records and skip counts.
+
+    ``chat_template``: wrap each prompt as one user turn (as ``HFScorer`` does);
+    item spans are mapped into the templated sequence, and the answer token is
+    the name without a leading space."""
     import torch
 
-    from relational_lab.instrumentation.patching import ResidualPatcher, encode_batch, token_index
+    from relational_lab.instrumentation.patching import ResidualPatcher, answer_token, encode_batch, token_index
 
     patcher = ResidualPatcher(model)
     layer_list = list(range(patcher.n_layers)) if layers is None else list(layers)
@@ -88,8 +86,8 @@ def sweep(
     for start in range(0, len(items), batch_size):
         bases = list(items[start : start + batch_size])
         sources = [role_swapped(b) for b in bases]
-        b_ids, b_mask, b_len, b_off = encode_batch(tokenizer, [b.prompt for b in bases], pad)
-        s_ids, s_mask, s_len, s_off = encode_batch(tokenizer, [s.prompt for s in sources], pad)
+        b_ids, b_mask, b_len, b_off = encode_batch(tokenizer, [b.prompt for b in bases], pad, chat_template)
+        s_ids, s_mask, s_len, s_off = encode_batch(tokenizer, [s.prompt for s in sources], pad, chat_template)
         src_store, src_logits = patcher.capture(s_ids, s_mask)
         with torch.no_grad():
             base_logits = model(input_ids=b_ids.to(patcher.device), attention_mask=b_mask.to(patcher.device)).logits
@@ -113,7 +111,8 @@ def sweep(
             if not ok:
                 skipped["position_mismatch"] += 1
                 continue
-            a_id, d_id = _first_token(tokenizer, b.answer), _first_token(tokenizer, b.distractor)
+            space = not chat_template
+            a_id, d_id = answer_token(tokenizer, b.answer, space), answer_token(tokenizer, b.distractor, space)
             last = b_len[r] - 1
             ld_b = float(base_logits[r, last, a_id] - base_logits[r, last, d_id])
             ld_s = float(src_logits[r, last, a_id] - src_logits[r, last, d_id])
