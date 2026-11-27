@@ -30,7 +30,7 @@ Other OTR tests may require additional model or numerical dependencies; use each
 
 Choose a specific [OTR experiment](EXPERIMENTS.md), then record the exact code commit, stimulus-generator version, model/tokenizer revision, chat template, answer extraction, seed, split and decoding/scoring rule.
 
-The [review package](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/blob/order-to-role/stimuli/docs/order_to_role/review_2026-11/README.md) describes figure regeneration and the provenance table for its historical development results. The [results branch](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/tree/order-to-role/results-dev/results) contains additional run outputs. Avoid selecting a same-named run solely by a glob match when several revisions exist.
+The [review package](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/blob/9c437928f61351a72e8d7be4cac6d3a964844a7e/docs/order_to_role/review_2026-11/README.md) describes figure regeneration and the provenance table for its historical development results. The [results branch](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/tree/25c6914e29473e4b1a1063600c48743f68b705c3/results) contains additional run outputs. Avoid selecting a same-named run solely by a glob match when several revisions exist.
 
 No held-out test material should be opened merely to check whether a hypothesis works. Follow the protocol-specific freeze and access rules.
 

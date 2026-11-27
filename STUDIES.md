@@ -42,11 +42,11 @@ Development-only results include important **measurement artifacts**, unusual-qu
 
 **Read:** [Evidence and caveats](papers/order-to-role/EVIDENCE.md) · [Experiments](papers/order-to-role/EXPERIMENTS.md) · [Layer study](papers/order-to-role/LAYERS.md) · [Reproducibility](papers/order-to-role/REPRODUCE.md)
 
-The November 25 manuscript snapshot organizes the investigation around name-state encoding, layerwise development, question-side readout and generality. English test0 was frozen on November 26, followed by a separate Spanish/Galician addendum; both have archived outputs. The full pass/fail audit is not asserted by this guide.
+The 24 November manuscript draft (25 November state snapshot) organizes the investigation around name-state encoding, layerwise development, question-side readout and generality. English test0 was frozen on November 26, followed by a separate Spanish/Galician addendum; both have archived outputs. [FREEZE.md §6](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/blob/9c437928f61351a72e8d7be4cac6d3a964844a7e/docs/order_to_role/FREEZE.md#6-scoring-failures-log) records a development dry run (C5 not evaluable there); it is not a held-out pass/fail matrix. This guide does not assert an independent English or XL test0 scoring audit.
 
 **[Paper architecture](papers/order-to-role/PAPER_MAP.md)** · **[Transfer and generality](papers/order-to-role/TRANSFER.md)** · **[Validation status](papers/order-to-role/EVIDENCE.md)**
 
-**Current external research links:** [Code and stimulus branch](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/tree/order-to-role/stimuli) · [Development and test0 results branch](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/tree/order-to-role/results-dev/results) · [November review package](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/blob/order-to-role/stimuli/docs/order_to_role/review_2026-11/README.md)
+**Current external research links:** [Code and stimulus branch](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/tree/order-to-role/stimuli) · [Development and test0 results branch](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/tree/25c6914e29473e4b1a1063600c48743f68b705c3/results) · [November review package](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/blob/9c437928f61351a72e8d7be4cac6d3a964844a7e/docs/order_to_role/review_2026-11/README.md)
 
 ---
 

@@ -21,10 +21,10 @@ This is a **curated research map**, not an exhaustive inventory or an instructio
 
 | Series | What to inspect | Branch-only location |
 |:--|:--|:--|
-| EXP-109 | Prospective replication and construction contrast | [Results summary](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/blob/experiments/exp102-clean-design/paper/EXP109_results_summary_v0.md) |
-| EXP-110 | Read-only error audit | [Audit](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/blob/experiments/exp102-clean-design/paper/EXP110_readonly_error_analysis_v0.md) |
-| EXP-111–116 | Checkpoint evidence, patching, position factors, replication and head/MLP tests | [Protocols and result archives](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/tree/experiments/exp102-clean-design/paper) |
-| PHASE2-01–03 | Coverage, structural transfer and distractor-event binding | [Protocols](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/tree/experiments/exp102-clean-design/paper), [reports](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/tree/experiments/exp102-clean-design/reports) |
+| EXP-109 | Prospective replication and construction contrast | [Results summary](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/blob/df82ab3ad9db5e13db80cf47caf8f2142afa3dc7/paper/EXP109_results_summary_v0.md) |
+| EXP-110 | Read-only error audit | [Audit](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/blob/df82ab3ad9db5e13db80cf47caf8f2142afa3dc7/paper/EXP110_readonly_error_analysis_v0.md) |
+| EXP-111–116 | Checkpoint evidence, patching, position factors, replication and head/MLP tests | [Protocols and result archives](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/tree/df82ab3ad9db5e13db80cf47caf8f2142afa3dc7/paper) |
+| PHASE2-01–03 | Coverage, structural transfer and distractor-event binding | [Protocols](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/tree/df82ab3ad9db5e13db80cf47caf8f2142afa3dc7/paper), [reports](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/tree/df82ab3ad9db5e13db80cf47caf8f2142afa3dc7/reports) |
 
 **Before promoting any branch-only result:** compare its preregistration/freeze status, scripts, manifests, all seeds, uncertainty and evaluation scope with the manuscript's current claim. Do not interpret an exploratory follow-up as an independent confirmation.
 

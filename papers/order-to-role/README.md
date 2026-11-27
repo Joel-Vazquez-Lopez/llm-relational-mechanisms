@@ -5,7 +5,7 @@
 ### Thematic roles, question-conditioned readout and answer selection in pretrained language models
 
 **Working paper:** *Thematic roles live on the names: how language models represent who did what* (provisional title)  
-**Research status:** development findings; frozen English and multilingual test0 runs archived; claim-by-claim scoring review pending  
+**Research status:** development findings; frozen English and multilingual test0 runs archived; frozen English and XL claim-by-claim scoring review pending; [FREEZE.md §6](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/blob/9c437928f61351a72e8d7be4cac6d3a964844a7e/docs/order_to_role/FREEZE.md#6-scoring-failures-log) records the development dry run (C5 not evaluable there because k=20 transfer output was missing)  
 **Core models:** Gemma, Qwen, Phi, OLMo and Granite; 70B-class extensions exploratory
 
 The central question is how a language model represents participant roles independently of word order and grammatical function, how a question accesses these representations, and which computations influence the answer. The research combines controlled linguistic contrasts, name-state transplants, layerwise and token-level interventions, head-level repair and transfer.
@@ -23,7 +23,7 @@ The central question is how a language model represents participant roles indepe
 
 ## Current research documents
 
-- [November 25 manuscript snapshot](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/blob/9c437928f61351a72e8d7be4cac6d3a964844a7e/docs/order_to_role/state_2026-11-25/paper_draft.md) — historical development draft; not updated by this navigation.
+- [24 November manuscript draft (25 November state snapshot)](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/blob/9c437928f61351a72e8d7be4cac6d3a964844a7e/docs/order_to_role/state_2026-11-25/paper_draft.md) — historical development draft; not updated by this navigation.
 - [Development results log](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/blob/9c437928f61351a72e8d7be4cac6d3a964844a7e/docs/order_to_role/state_2026-11-25/results_log.md) and [result index](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/blob/9c437928f61351a72e8d7be4cac6d3a964844a7e/docs/order_to_role/state_2026-11-25/result_index.md).
 - [English test0 freeze](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/blob/9c437928f61351a72e8d7be4cac6d3a964844a7e/docs/order_to_role/FREEZE.md) and [Spanish/Galician freeze addendum](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/blob/9c437928f61351a72e8d7be4cac6d3a964844a7e/docs/order_to_role/FREEZE_XL.md) — authoritative scope, criteria and exclusions.
 - [November 17 review](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/blob/9c437928f61351a72e8d7be4cac6d3a964844a7e/docs/order_to_role/review_2026-11/README.md) — earlier findings and corrections, not the latest manuscript.

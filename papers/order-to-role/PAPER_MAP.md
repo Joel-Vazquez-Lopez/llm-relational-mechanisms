@@ -2,7 +2,7 @@
 
 # Paper architecture
 
-A reading guide to the [24 November manuscript snapshot](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/blob/9c437928f61351a72e8d7be4cac6d3a964844a7e/docs/order_to_role/state_2026-11-25/paper_draft.md), not a new manuscript or a change to the frozen claims. The live manuscript remains the author's canonical writing workspace.
+A reading guide to the [24 November manuscript draft (25 November state snapshot)](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/blob/9c437928f61351a72e8d7be4cac6d3a964844a7e/docs/order_to_role/state_2026-11-25/paper_draft.md), not a new manuscript or a change to the frozen claims. The live manuscript remains the author's canonical writing workspace.
 
 ## Proposed main-paper sequence
 

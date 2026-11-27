@@ -21,7 +21,7 @@ The repository has **two paper-facing paths** under `papers/` and one shared tec
 |:--|:--|
 | `paper/` | Scratch manuscript and historical ML/EXP plus newer branch-specific protocols; preserve frozen paths |
 | `scripts/ml*.py`, `scripts/exp*.py` | Existing experiment entrypoints; **prefix alone does not decide paper ownership** |
-| `scripts/otr*.py` | Order-to-Role entrypoints, currently on the [stimuli branch](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/tree/order-to-role/stimuli/scripts) |
+| `scripts/otr*.py` | Order-to-Role entrypoints: current versions on the [stimuli branch](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/tree/9c437928f61351a72e8d7be4cac6d3a964844a7e/scripts); earlier OTR-01/02 versions on `main` |
 | `src/relational_lab/` | Shared package and instrumentation; OTR implementations live on its code branch |
 | `investigations/` | Historical track-level overviews and indexes |
 | `reports/` | Archived experiments, protocols, evidence and analysis summaries |

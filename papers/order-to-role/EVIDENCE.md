@@ -16,7 +16,7 @@
 | Layer-pipeline ordering, OTR-15, psych/ditransitive and UD/WIKI | [Development log](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/blob/9c437928f61351a72e8d7be4cac6d3a964844a7e/docs/order_to_role/state_2026-11-25/results_log.md), [freeze scope](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/blob/9c437928f61351a72e8d7be4cac6d3a964844a7e/docs/order_to_role/FREEZE.md) | Exploratory / external validation, not core test0 claims |
 | Larger models | [70B extension](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/blob/9c437928f61351a72e8d7be4cac6d3a964844a7e/docs/order_to_role/BIG_MODELS.md) | Development runs begun; separate freeze needed |
 
-The output files exist. **This guide does not certify which claims passed**, which runs are complete, or whether every intended control was executed. The authoritative scoring rules and run-specific provenance remain in the source documents.
+The output files exist. [FREEZE.md §6](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/blob/9c437928f61351a72e8d7be4cac6d3a964844a7e/docs/order_to_role/FREEZE.md#6-scoring-failures-log) records the frozen scorer's **development dry run**, not held-out test0 scoring. C5 is not evaluable in that dry run for all five models because the k=20 transfer output was missing; test0 C5 status must be determined from the archived test0 outputs and frozen rules. **This guide does not certify which claims passed**, which runs are complete, or whether every intended control was executed. The authoritative scoring rules and run-specific provenance remain in the source documents.
 
 ## Claim map (English freeze)
 

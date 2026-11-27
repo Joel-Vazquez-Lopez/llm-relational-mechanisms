@@ -16,9 +16,9 @@ This page is a **reading aid**, not a replacement for the original protocols or 
 
 The experimental branch has newer work that should be reviewed against its own protocols before paper incorporation:
 
-- [EXP-109 prospective within-grammar replication](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/blob/experiments/exp102-clean-design/paper/EXP109_results_summary_v0.md) — a construction/position contrast, not general linguistic transfer.
-- [EXP-110 read-only error decomposition](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/blob/experiments/exp102-clean-design/paper/EXP110_readonly_error_analysis_v0.md) — post-hoc analysis of EXP-109, not an independent replication.
-- [PHASE2-03 fixed protocol](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/blob/experiments/exp102-clean-design/paper/PHASE2_03_distractor_event_binding_v0_protocol.md) — a specified within-project distractor sensitivity test; inspect the archived results and analysis before interpreting it.
+- [EXP-109 prospective within-grammar replication](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/blob/df82ab3ad9db5e13db80cf47caf8f2142afa3dc7/paper/EXP109_results_summary_v0.md) — a construction/position contrast, not general linguistic transfer.
+- [EXP-110 read-only error decomposition](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/blob/df82ab3ad9db5e13db80cf47caf8f2142afa3dc7/paper/EXP110_readonly_error_analysis_v0.md) — post-hoc analysis of EXP-109, not an independent replication.
+- [PHASE2-03 fixed protocol](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/blob/df82ab3ad9db5e13db80cf47caf8f2142afa3dc7/paper/PHASE2_03_distractor_event_binding_v0_protocol.md) — a specified within-project distractor sensitivity test; inspect the archived results and analysis before interpreting it.
 
 These are explicitly **branch-only references**. Their presence here does not mean that all materials have been merged or that the canonical manuscript has adopted their conclusions.
 
