@@ -127,7 +127,8 @@ class ResidualPatcher:
 
     @property
     def device(self):
-        return next(self.model.parameters()).device
+        """device for input ids (the embedding's device; also right for a model split over GPUs)"""
+        return self.model.get_input_embeddings().weight.device
 
     def capture(self, ids, mask) -> list:
         """Run once; return [n_layers] tensors of shape [B, T, D] (on CPU) plus logits."""
@@ -151,12 +152,13 @@ class ResidualPatcher:
         """Forward pass with block ``layer``'s output replaced at ``positions[b]`` by ``vectors[b]``."""
         import torch
 
-        rows = torch.arange(len(positions), device=self.device)
-        pos = torch.tensor(list(positions), device=self.device)
+        rows = torch.arange(len(positions))
+        pos = torch.tensor(list(positions))
 
         def hook(_m, _inp, out):
             h = _hidden(out).clone()
-            h[rows, pos] = vectors.to(h.dtype).to(h.device)
+            # with a model split over GPUs the layer may sit on another device than the inputs
+            h[rows.to(h.device), pos.to(h.device)] = vectors.to(h.dtype).to(h.device)
             return _replace_hidden(out, h)
 
         handle = self.layers[layer].register_forward_hook(hook)

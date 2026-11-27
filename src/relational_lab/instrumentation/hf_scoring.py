@@ -19,7 +19,7 @@ from relational_lab.instrumentation import chat
 from relational_lab.experiments.order_role_stimuli import Item
 
 
-def load_lm(model_id: str, revision=None, dtype=None):
+def load_lm(model_id: str, revision=None, dtype=None, **load_kwargs):
     """Load a decoder LM for text-only scoring. Multimodal checkpoints (e.g. Gemma 3/4,
     tagged image-text-to-text) are not always registered for AutoModelForCausalLM;
     fall back to AutoModelForImageTextToText, which accepts input_ids alone and
@@ -27,7 +27,7 @@ def load_lm(model_id: str, revision=None, dtype=None):
     from transformers import AutoModelForCausalLM
 
     try:
-        return AutoModelForCausalLM.from_pretrained(model_id, revision=revision, dtype=dtype)
+        return AutoModelForCausalLM.from_pretrained(model_id, revision=revision, dtype=dtype, **load_kwargs)
     except (ValueError, KeyError) as err:
         print(f"AutoModelForCausalLM refused {model_id} ({type(err).__name__}); trying multimodal classes",
               flush=True)
@@ -41,12 +41,40 @@ def load_lm(model_id: str, revision=None, dtype=None):
         if cls is None:
             continue
         try:
-            model = cls.from_pretrained(model_id, revision=revision, dtype=dtype)
+            model = cls.from_pretrained(model_id, revision=revision, dtype=dtype, **load_kwargs)
             print(f"Loaded {model_id} with {cls_name}", flush=True)
             return model
         except (ValueError, KeyError) as err:
             last = err
     raise ValueError(f"could not load {model_id} as a text LM") from last
+
+
+def load_for_run(model_id: str, dtype=None, device=None, device_map=None, revision=None):
+    """Load a model for a run and return (model in eval mode, device for input ids).
+
+    device_map None: the whole model on ``device`` (default: cuda if available), as before.
+    device_map "auto": split across all visible GPUs (Accelerate), for models too large for one GPU
+    (70B-class on 2 x H100); each GPU is filled to at most 85% so activations still fit.
+    device_map "cpu": the same dispatch code path on CPU (tests)."""
+    import torch
+
+    if not device_map:
+        model = load_lm(model_id, revision=revision, dtype=dtype)
+        model.to(device or ("cuda" if torch.cuda.is_available() else "cpu"))
+    else:
+        if device_map == "cpu":
+            kw = {"device_map": {"": "cpu"}}
+        else:
+            n = torch.cuda.device_count()
+            if n == 0:
+                raise SystemExit("--device-map auto needs at least one GPU")
+            kw = {"device_map": device_map, "max_memory": {
+                i: f"{int(torch.cuda.get_device_properties(i).total_memory * 0.85 / 2 ** 30)}GiB" for i in range(n)}}
+        model = load_lm(model_id, revision=revision, dtype=dtype, **kw)
+        placed = sorted({str(d) for d in getattr(model, "hf_device_map", {}).values()})
+        print(f"{model_id}: split over {placed}", flush=True)
+    model.eval()
+    return model, model.get_input_embeddings().weight.device
 
 
 def name_token_ids(tokenizer, name: str, leading_space: bool = True) -> list[int]:

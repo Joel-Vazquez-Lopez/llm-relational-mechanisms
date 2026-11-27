@@ -191,6 +191,8 @@ def main(argv=None):
     p.add_argument("--assistant-prefix", default="", help='forced start of the reply, e.g. gpt-oss "<|channel|>final<|message|>"')
     p.add_argument("--template-kwarg", action="append", default=[], metavar="KEY=VALUE")
     p.add_argument("--dtype", default="bfloat16")
+    p.add_argument("--device-map", default=None,
+                   help="'auto': split the model over all visible GPUs (70B-class models on 2 x H100)")
     p.add_argument("--seed", type=int, default=2026)
     p.add_argument("--out-dir", type=Path, default=ROOT / "results")
     args = p.parse_args(argv)
@@ -224,13 +226,11 @@ def main(argv=None):
                                   assistant_prefix=args.assistant_prefix)
     import torch
 
-    from relational_lab.instrumentation.hf_scoring import load_lm, load_tokenizer
+    from relational_lab.instrumentation.hf_scoring import load_for_run, load_tokenizer
     from relational_lab.instrumentation.patching import _encode_one, _hidden, _replace_hidden, answer_token, decoder_layers
 
     tok = load_tokenizer(args.model)
-    model = load_lm(args.model, dtype=getattr(torch, args.dtype))
-    device = "cuda" if torch.cuda.is_available() else "cpu"
-    model = model.to(device).eval()
+    model, device = load_for_run(args.model, dtype=getattr(torch, args.dtype), device_map=args.device_map)
     layers = decoder_layers(model)
     L = len(layers)
     if args.layers:
@@ -279,7 +279,7 @@ def main(argv=None):
 
             def rhook(_m, _i, out, vec=vec):
                 h = _hidden(out).clone()
-                h[0, -1] = vec.to(h.dtype)
+                h[0, -1] = vec.to(h.device, h.dtype)
                 return _replace_hidden(out, h)
             hs.append(layers[li].register_forward_hook(rhook))
         for li, heads in (head_patch or {}).items():
@@ -288,7 +288,7 @@ def main(argv=None):
             def phook(_m, a, heads=heads, hd=hd):
                 x = a[0].clone()
                 for h, v in heads.items():
-                    x[0, -1, h * hd:(h + 1) * hd] = v.to(x.dtype)
+                    x[0, -1, h * hd:(h + 1) * hd] = v.to(x.device, x.dtype)
                 return (x,) + tuple(a[1:])
             hs.append(o.register_forward_pre_hook(phook))
         try:

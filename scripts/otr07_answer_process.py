@@ -101,6 +101,8 @@ def main(argv=None):
     p.add_argument("--no-thinking", action="store_true")
     p.add_argument("--template-kwarg", action="append", default=[], metavar="KEY=VALUE")
     p.add_argument("--dtype", default="bfloat16")
+    p.add_argument("--device-map", default=None,
+                   help="'auto': split the model over all visible GPUs (70B-class models on 2 x H100)")
     p.add_argument("--seed", type=int, default=2026)
     p.add_argument("--split", default="dev", help="dev or test0..test3 (test only after FREEZE.md)")
     p.add_argument("--out-dir", type=Path, default=ROOT / "results")
@@ -113,19 +115,23 @@ def main(argv=None):
     chat_kwargs = _chat.configure(no_thinking=args.no_thinking, template_kwargs=args.template_kwarg)
     import torch
 
-    from relational_lab.instrumentation.hf_scoring import load_lm, load_tokenizer
+    from relational_lab.instrumentation.hf_scoring import load_for_run, load_lm, load_tokenizer
     from relational_lab.instrumentation.patching import _encode_one, _hidden, answer_token, decoder_layers
 
     tok = load_tokenizer(args.model)
-    model = load_lm(args.model, dtype=getattr(torch, args.dtype))
+    if args.device_map:
+        model, device = load_for_run(args.model, dtype=getattr(torch, args.dtype), device_map=args.device_map)
+    else:
+        model = load_lm(args.model, dtype=getattr(torch, args.dtype))
     try:
         model.set_attn_implementation("eager")
     except Exception:
         for cfg in (model.config, getattr(model.config, "text_config", None)):
             if cfg is not None:
                 cfg._attn_implementation = "eager"
-    device = "cuda" if torch.cuda.is_available() else "cpu"
-    model = model.to(device).eval()
+    if not args.device_map:
+        device = "cuda" if torch.cuda.is_available() else "cpu"
+        model = model.to(device).eval()
     layers = decoder_layers(model)
     L = len(layers)
     norm, head, cap = otr06.final_norm(model), model.get_output_embeddings(), otr06.softcap(model)
@@ -176,12 +182,14 @@ def main(argv=None):
                    "construction": it.construction, "role": it.role_asked}
             with torch.no_grad():
                 for pname, tids, sgn in (("bare", ids_bare, sign), ("by", ids_by, 1.0)):
-                    h = torch.stack([store[l][0, pos[pname]] for l in range(L)])
-                    lg = head(norm(h.to(head.weight.dtype))).float()
+                    h = torch.stack([store[l][0, pos[pname]].to(head.weight.device) for l in range(L)])
+                    nw = next(norm.parameters(), None)  # final norm and head may sit on different GPUs
+                    hn = norm(h.to(nw.device if nw is not None else h.device, head.weight.dtype))
+                    lg = head(hn.to(head.weight.device)).float()
                     if cap:
                         lg = cap * torch.tanh(lg / cap)
                     rec[f"lens_{pname}"] = [round(x, 3) for x in (sgn * (lg[:, tids[0]] - lg[:, tids[1]])).tolist()]
-                    am = torch.stack([a[0, :, pos[pname]] for a in att]).float()  # [L, H, T]
+                    am = torch.stack([a[0, :, pos[pname]].float().cpu() for a in att])  # [L, H, T]
                     rec[f"attn_agent_{pname}"] = [round(x, 4) for x in am[:, :, a_tok].sum(-1).mean(-1).tolist()]
                     rec[f"attn_patient_{pname}"] = [round(x, 4) for x in am[:, :, p_tok].sum(-1).mean(-1).tolist()]
                     rec[f"_attn_{pname}"] = (am[:, :, a_tok].sum(-1).cpu(), am[:, :, p_tok].sum(-1).cpu())

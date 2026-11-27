@@ -90,6 +90,8 @@ def main(argv=None):
     p.add_argument("--model", required=True)
     p.add_argument("--revision", default=None)
     p.add_argument("--dtype", default="bfloat16", choices=["bfloat16", "float16", "float32"])
+    p.add_argument("--device-map", default=None,
+                   help="'auto': split the model over all visible GPUs (70B-class models on 2 x H100)")
     p.add_argument("--device", default=None)
     p.add_argument("--split", default="dev", choices=SPLITS, help="test0..test3 only after FREEZE.md")
     p.add_argument("--stimuli", default="otr", choices=["otr", *bxa.STIMULI, *xla.STIMULI],
@@ -132,7 +134,7 @@ def main(argv=None):
     import transformers
     from transformers import AutoTokenizer
 
-    from relational_lab.instrumentation.hf_scoring import check_names_for_patching, load_lm, load_tokenizer
+    from relational_lab.instrumentation.hf_scoring import check_names_for_patching, load_for_run, load_tokenizer
 
     tok = load_tokenizer(args.model, revision=args.revision)
     if not tok.is_fast:
@@ -153,9 +155,8 @@ def main(argv=None):
         print(f"dropping {len(dropped_names)} names this tokenizer cannot patch: {dropped_names}", flush=True)
     if problems:
         raise SystemExit(f"Name list unusable for {args.model}: " + "; ".join(problems))
-    device = args.device or ("cuda" if torch.cuda.is_available() else "cpu")
-    model = load_lm(args.model, revision=args.revision, dtype=getattr(torch, args.dtype))
-    model.to(device).eval()
+    model, device = load_for_run(args.model, dtype=getattr(torch, args.dtype), device=args.device,
+                                 device_map=args.device_map, revision=args.revision)
 
     from relational_lab.instrumentation.patching import decoder_layers
 
@@ -252,7 +253,7 @@ def main(argv=None):
     out.write_text(json.dumps({
         "experiment": "OTR-03",
         "status": "EXPLORATORY" if args.split == "dev" else "TEST_SET_OPENED",
-        "model": args.model, "revision": args.revision, "dtype": args.dtype, "device": device,
+        "model": args.model, "revision": args.revision, "dtype": args.dtype, "device": str(device), "device_map": getattr(model, "hf_device_map", None) and sorted({str(v) for v in model.hf_device_map.values()}),
         "generator_version": ors.GENERATOR_VERSION, "stimuli": args.stimuli,
         "bx_generator_version": bx.BX_GENERATOR_VERSION if is_bx else None,
         "xl_generator_version": xl.XL_GENERATOR_VERSION if is_xl else None,

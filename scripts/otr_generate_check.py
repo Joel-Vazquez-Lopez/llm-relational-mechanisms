@@ -276,6 +276,8 @@ def main(argv=None):
     p.add_argument("--template-kwarg", action="append", default=[], metavar="KEY=VALUE")
     p.add_argument("--assistant-prefix", default="")
     p.add_argument("--dtype", default="bfloat16")
+    p.add_argument("--device-map", default=None,
+                   help="'auto': split the model over all visible GPUs (70B-class models on 2 x H100)")
     p.add_argument("--seed", type=int, default=2026)
     p.add_argument("--split", default="dev", choices=SPLITS, help="test0..test3 only after FREEZE.md")
     p.add_argument("--out-dir", type=Path, default=ROOT / "results")
@@ -287,11 +289,10 @@ def main(argv=None):
                                   assistant_prefix=args.assistant_prefix)
     import torch
 
-    from relational_lab.instrumentation.hf_scoring import _prompt_ids, load_lm, load_tokenizer
+    from relational_lab.instrumentation.hf_scoring import _prompt_ids, load_for_run, load_tokenizer
 
     tok = load_tokenizer(args.model)
-    model = load_lm(args.model, dtype=getattr(torch, args.dtype)).to("cuda" if torch.cuda.is_available() else "cpu").eval()
-    dev = next(model.parameters()).device
+    model, dev = load_for_run(args.model, dtype=getattr(torch, args.dtype), device_map=args.device_map)
     if args.stimuli == "sp" and args.question_template:
         p.error("--question-template applies to the otr, es, gl, sv and bx-* stimuli")
     t0 = time.time()
