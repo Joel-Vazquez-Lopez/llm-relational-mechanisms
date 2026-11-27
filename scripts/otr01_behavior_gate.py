@@ -64,28 +64,42 @@ def main(argv=None):
     p.add_argument("--limit", type=int, default=None, help="approximate number of prompts, whole events kept")
     p.add_argument("--batch-size", type=int, default=16)
     p.add_argument("--chat-template", action="store_true")
+    p.add_argument("--no-thinking", action="store_true",
+                   help="pass enable_thinking=False to the chat template (Qwen3-type / OLMo-3 Think models)")
+    p.add_argument("--template-kwarg", action="append", default=[], metavar="KEY=VALUE",
+                   help="extra chat-template variable, e.g. reasoning_strength=low (repeatable)")
+    p.add_argument("--assistant-prefix", default="",
+                   help="text appended after the generation prompt, e.g. ' to=user<|message|>' (Muse Glimmer)")
     p.add_argument("--seed", type=int, default=2026)
     p.add_argument("--out-dir", type=Path, default=ROOT / "results")
     args = p.parse_args(argv)
+    from relational_lab.instrumentation import chat as _chat
+    chat_kwargs = _chat.configure(no_thinking=args.no_thinking, template_kwargs=args.template_kwarg,
+                                  assistant_prefix=args.assistant_prefix)
 
     import torch
     import transformers
-    from transformers import AutoModelForCausalLM, AutoTokenizer
+    from transformers import AutoTokenizer
 
-    from relational_lab.instrumentation.hf_scoring import HFScorer, single_token_checker
+    from relational_lab.instrumentation.hf_scoring import HFScorer, load_lm, single_token_checker, load_tokenizer
 
-    tok = AutoTokenizer.from_pretrained(args.model, revision=args.revision)
+    tok = load_tokenizer(args.model, revision=args.revision)
     check = single_token_checker(tok, leading_space=not args.chat_template)
     multi = [n for n in ors.NAMES if not check(n)]
-    if multi:
+    if multi and not args.chat_template:
         raise SystemExit(
             f"These names are not single tokens for {args.model}: {multi}. "
             "Agree on one name list that is single-token for every model before running."
         )
+    if multi:
+        # After a chat template the answer has no leading space, so a few names split into
+        # two tokens. Scoring sums log-probabilities over all tokens of the name, so the item
+        # set stays identical to the base-model runs; top-1 checks use the first token only.
+        print(f"Note: multi-token names in chat mode (scored by summed log-prob): {multi}", flush=True)
 
     dtype = getattr(torch, args.dtype)
     device = args.device or ("cuda" if torch.cuda.is_available() else "cpu")
-    model = AutoModelForCausalLM.from_pretrained(args.model, revision=args.revision, dtype=dtype)
+    model = load_lm(args.model, revision=args.revision, dtype=dtype)
     model.to(device).eval()
 
     items = select_items(ors.generate_items(seed=args.seed), args.split, args.test_set, args.limit)
@@ -101,7 +115,8 @@ def main(argv=None):
         "revision": args.revision,
         "dtype": args.dtype,
         "device": device,
-        "chat_template": args.chat_template,
+        "chat_template": args.chat_template, "chat_template_kwargs": chat_kwargs,
+        "multi_token_names": multi,
         "split": args.split,
         "test_set": args.test_set,
         "generator_version": ors.GENERATOR_VERSION,

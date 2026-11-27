@@ -49,21 +49,74 @@ def _replace_hidden(output, new_hidden):
     return new_hidden
 
 
-def encode_batch(tokenizer, prompts: Sequence[str], pad_id: int):
-    """Right-padded batch plus per-row offset mappings (requires a fast tokenizer)."""
+def chat_text(tokenizer, prompt: str) -> tuple[str, int]:
+    """The prompt wrapped in the tokenizer's chat template as one user turn, with the
+    generation prompt appended, plus the character offset of ``prompt`` inside it.
+    The same text that ``HFScorer`` scores in chat-template mode."""
+    from relational_lab.instrumentation import chat
+
+    text = tokenizer.apply_chat_template(
+        [{"role": "user", "content": prompt}], add_generation_prompt=True, tokenize=False,
+        **chat.CHAT_TEMPLATE_KWARGS,
+    ) + chat.assistant_prefix()
+    at = text.find(prompt)
+    if at < 0 or text.find(prompt, at + 1) >= 0:
+        raise ValueError("prompt must occur exactly once, verbatim, in the chat-templated text")
+    return text, at
+
+
+def _encode_one(tokenizer, prompt: str, chat_template: bool):
+    """input_ids and offset mapping in PROMPT coordinates (template tokens get offsets
+    outside [0, len(prompt)), so item spans can be looked up unchanged)."""
+    if not chat_template:
+        e = tokenizer(prompt, add_special_tokens=True, return_offsets_mapping=True)
+        return list(e["input_ids"]), [tuple(o) for o in e["offset_mapping"]]
+    text, at = chat_text(tokenizer, prompt)
+    # The template already contains BOS and turn markers: add no special tokens.
+    e = tokenizer(text, add_special_tokens=False, return_offsets_mapping=True)
+    ids = list(e["input_ids"])
+    from relational_lab.instrumentation import chat
+
+    ref = tokenizer.apply_chat_template(
+        [{"role": "user", "content": prompt}], add_generation_prompt=True, tokenize=True,
+        **chat.CHAT_TEMPLATE_KWARGS,
+    )
+    if not isinstance(ref, list):  # transformers >= 5: BatchEncoding
+        ref = ref["input_ids"]
+    if ref and isinstance(ref[0], list):
+        ref = ref[0]
+    ref = list(ref)
+    # With an assistant prefix the templated ids must be a prefix of the full sequence.
+    if ids[: len(ref)] != ref or (not chat.assistant_prefix() and len(ids) != len(ref)):
+        raise ValueError("re-tokenizing the templated text does not reproduce apply_chat_template's ids")
+    offsets = [(a - at, b - at) if b > a else (a, b) for a, b in e["offset_mapping"]]
+    return ids, offsets
+
+
+def encode_batch(tokenizer, prompts: Sequence[str], pad_id: int, chat_template: bool = False):
+    """Right-padded batch plus per-row offset mappings (requires a fast tokenizer).
+    Offsets are always relative to the raw prompt string, also in chat-template mode."""
     import torch
 
-    enc = [tokenizer(p, add_special_tokens=True, return_offsets_mapping=True) for p in prompts]
-    width = max(len(e["input_ids"]) for e in enc)
-    ids = torch.full((len(enc), width), pad_id, dtype=torch.long)
+    enc = [_encode_one(tokenizer, p, chat_template) for p in prompts]
+    width = max(len(ids) for ids, _ in enc)
+    ids_t = torch.full((len(enc), width), pad_id, dtype=torch.long)
     mask = torch.zeros((len(enc), width), dtype=torch.long)
-    for i, e in enumerate(enc):
-        n = len(e["input_ids"])
-        ids[i, :n] = torch.tensor(e["input_ids"])
-        mask[i, :n] = 1
-    lengths = [len(e["input_ids"]) for e in enc]
-    offsets = [list(e["offset_mapping"]) for e in enc]
-    return ids, mask, lengths, offsets
+    for i, (ids, _) in enumerate(enc):
+        ids_t[i, : len(ids)] = torch.tensor(ids)
+        mask[i, : len(ids)] = 1
+    lengths = [len(ids) for ids, _ in enc]
+    offsets = [off for _, off in enc]
+    return ids_t, mask, lengths, offsets
+
+
+def answer_token(tokenizer, name: str, leading_space: bool = True) -> int:
+    """First token of the answer continuation: " Name" after "Answer:", "Name" at the
+    start of a chat assistant turn. Logit differences use this first token only."""
+    ids = tokenizer.encode((" " if leading_space else "") + name, add_special_tokens=False)
+    if not ids:
+        raise ValueError(f"name {name!r} encodes to nothing")
+    return ids[0]
 
 
 class ResidualPatcher:
@@ -74,7 +127,8 @@ class ResidualPatcher:
 
     @property
     def device(self):
-        return next(self.model.parameters()).device
+        """device for input ids (the embedding's device; also right for a model split over GPUs)"""
+        return self.model.get_input_embeddings().weight.device
 
     def capture(self, ids, mask) -> list:
         """Run once; return [n_layers] tensors of shape [B, T, D] (on CPU) plus logits."""
@@ -98,12 +152,13 @@ class ResidualPatcher:
         """Forward pass with block ``layer``'s output replaced at ``positions[b]`` by ``vectors[b]``."""
         import torch
 
-        rows = torch.arange(len(positions), device=self.device)
-        pos = torch.tensor(list(positions), device=self.device)
+        rows = torch.arange(len(positions))
+        pos = torch.tensor(list(positions))
 
         def hook(_m, _inp, out):
             h = _hidden(out).clone()
-            h[rows, pos] = vectors.to(h.dtype).to(h.device)
+            # with a model split over GPUs the layer may sit on another device than the inputs
+            h[rows.to(h.device), pos.to(h.device)] = vectors.to(h.dtype).to(h.device)
             return _replace_hidden(out, h)
 
         handle = self.layers[layer].register_forward_hook(hook)
