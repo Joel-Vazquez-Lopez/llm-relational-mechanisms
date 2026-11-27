@@ -2,7 +2,7 @@
 
 # Paper II · Scientific supplementary materials
 
-**Working supplement, 27 November 2026.** This collection extends the [Paper II results](../RESULTS.md) with full statistical tables, extended layerwise and head analyses, model-by-model results, linguistic controls, multilingual evidence and method details. Like the main results, every figure and table is rebuilt from archived result files by one script, [`analysis/build_supplement.py`](analysis/build_supplement.py). The source commits and the checksum of each of its 133 input files are recorded in [`MANIFEST.json`](MANIFEST.json).
+**Working supplement, 27 November 2026.** This collection extends the [Paper II results](../RESULTS.md) with full statistical tables, extended layerwise and head analyses, model-by-model results, linguistic controls, multilingual evidence and method details. Like the main results, every figure and table is rebuilt from archived result files by one script, [`analysis/build_supplement.py`](analysis/build_supplement.py). The source commits and the checksum of each of its 138 input files are recorded in [`MANIFEST.json`](MANIFEST.json).
 
 This is not yet a submission supplement, and its sections are not numbered as manuscript supplements. Presentations, posters and supervisor updates are kept in the programme-wide Research Communications collection, not here.
 
@@ -12,7 +12,7 @@ This is not yet a submission supplement, and its sections are not numbered as ma
 |:--|:--|:--|
 | [S1 · Statistics of the confirmatory evaluation](S1-statistics.md) | Every frozen claim on test set 0, with estimate, 95% CI, sample sizes and secondary fields, for English, BX, Spanish and Galician | [sfig01](figures/sfig01_confirmatory_estimates.svg) |
 | [S2 · Linguistic controls](S2-linguistic-controls.md) | Nine question wordings, the failure by construction, ditransitive and psych-verb blocks, prompt formats, stimulus inventory | [sfig02](figures/sfig02_question_wording.svg), [sfig03](figures/sfig03_bx_blocks.svg), [sfig04](figures/sfig04_prompt_formats.svg) |
-| [S3 · Layerwise and head analyses](S3-layerwise-and-heads.md) | Role and order codes with confidence bands (core vs BX), repair by construction, head counts and head locations, 70B curves | [sfig05](figures/sfig05_role_code_core_vs_bx.svg)–[sfig08](figures/sfig08_big_models.svg) |
+| [S3 · Layerwise and head analyses](S3-layerwise-and-heads.md) | Role and order codes with confidence bands (core vs BX), repair by construction, head counts and head locations, 70B curves, head knockout and the averaged direction (OTR-12) | [sfig05](figures/sfig05_role_code_core_vs_bx.svg)–[sfig08](figures/sfig08_big_models.svg), [sfig10](figures/sfig10_knockout.svg) |
 | [S4 · Model-by-model results](S4-models.md) | One card per model: frozen layers, behaviour, role code, heads, transfer, verdicts, known issues | — |
 | [S5 · Multilingual evidence](S5-multilingual.md) | Spanish and Galician behaviour by construction, handover by language, the Swedish pilot | [sfig09](figures/sfig09_handover_by_language.svg) |
 | [S6 · Methods and reproducibility](S6-methods.md) | Prompts, measures, bootstrap, frozen settings, input checksums, software, how to rebuild | — |

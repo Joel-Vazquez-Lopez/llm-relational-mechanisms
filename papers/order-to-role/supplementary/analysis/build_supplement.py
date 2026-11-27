@@ -35,7 +35,7 @@ import re
 import sys
 from collections import Counter, defaultdict
 
-VERSION = "1.0.0"
+VERSION = "1.1.0"  # 1.1.0: OTR-12 knockout and role-vector tables (st16, st17) and sfig10
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 _spec = importlib.util.spec_from_file_location("build_results", os.path.join(HERE, "..", "..", "analysis", "build_results.py"))
@@ -681,6 +681,85 @@ def software_versions(res):
     return [{"versions": k, "n_files": n} for k, n in seen.most_common()]
 
 
+# ------------------------------------------------------------------------------- S3 knockout (OTR-12)
+def knockout(res):
+    """OTR-12 (dev, exploratory): mean-ablate the top-k OTR-09 heads vs k random heads from the same layers at the
+    answer position, in the working and the ordinary agent question, on held-out evaluation families; and the
+    averaged "working - failing" residual vector at the layer nearest the frozen handover."""
+    k_rows, v_rows = [], []
+    for label, slug, nL, role, by, ho in MODELS:
+        f = pick(res, f"otr12_{slug}_dev_2*")
+        if not f:
+            continue
+        d = load_res(res, f)
+        for q, qname in (("working", d["source_question"]), ("normal", d["normal_question"])):
+            kd = d["knockout"][q]
+            base = kd["baseline"]
+            for k in d["top_k"]:
+                t, r = kd[f"top{k}"], kd[f"rand{k}"]
+                k_rows.append({"model": SHORT[slug], "question": q, "question_template": qname, "k": k,
+                               "baseline_margin": base["mean_ld"], "top_margin": t["mean_ld"], "random_margin": r["mean_ld"],
+                               "top_margin_retained": t["mean_ld"] / base["mean_ld"],
+                               "random_margin_retained": r["mean_ld"] / base["mean_ld"],
+                               "baseline_agent_share": base["agent_share"], "top_agent_share": t["agent_share"],
+                               "random_agent_share": r["agent_share"], "n_eval": base["n"],
+                               "heads_ranked_on": "OTR-09 fit folds 0-2 (" + d["otr09_file"] + ")", "file": f})
+        L = min(d["vector_layers"], key=lambda x: abs(x - ho))
+        st = d["steering"]
+        for alpha in d["alphas"]:
+            g = lambda key: st.get(f"{key}|{L}|{alpha}", {}).get("all", {})
+            v_rows.append({"model": SHORT[slug], "layer": L, "handover": ho, "alpha": alpha,
+                           "failing_base_agent_share": st["base"]["all"]["agent_share"],
+                           "failing_plus_v_repair": g("fail+v[all]").get("repair"),
+                           "failing_plus_v_agent_share": g("fail+v[all]").get("agent_share"),
+                           "failing_plus_random_repair": g("fail+rand").get("repair"),
+                           "failing_plus_random_agent_share": g("fail+rand").get("agent_share"),
+                           "patient_q_plus_v_agent_share": g("patient+v").get("agent_share"),
+                           "working_minus_v_agent_share": g("working-v").get("agent_share"),
+                           "active_fitted_v_on_other_constructions_repair":
+                               st.get(f"fail+v[active]|{L}|{alpha}", {}).get("non_active", {}).get("repair"),
+                           "n_eval": d["n_eval"], "file": f})
+    return k_rows, v_rows
+
+
+def fig_knockout(k_rows, path):
+    order = ["phi-4", "Gemma", "Qwen3.8", "Granite", "OLMo"]
+    fig, (ax, ax2) = plt.subplots(1, 2, figsize=(14, 4.2), gridspec_kw={"width_ratios": [1.2, 1]})
+    for m in order:
+        rs = sorted((r for r in k_rows if r["model"] == m and r["question"] == "working"), key=lambda r: r["k"])
+        if not rs:
+            continue
+        ax.plot([r["k"] for r in rs], [100 * r["top_margin_retained"] for r in rs], marker="o", color=MODEL_COL[m], lw=2, label=m)
+        ax.plot([r["k"] for r in rs], [100 * r["random_margin_retained"] for r in rs], color=MODEL_COL[m], lw=1, ls=(0, (2, 2)))
+    ax.set_xscale("log")
+    ax.set_xticks([1, 3, 5, 10, 20], ["1", "3", "5", "10", "20"])
+    ax.set_ylim(0, 110)
+    ax.set_yticks([0, 25, 50, 75, 100], ["0%", "25%", "50%", "75%", "100%"])
+    ax.set_xlabel("heads mean-ablated (k)")
+    ax.set_ylabel("agent margin retained (working question)")
+    ax.set_title("Ablating the top-k heads (solid) vs k random heads (dashed)", loc="left", fontsize=11)
+    style(ax)
+    ax.legend(frameon=False, fontsize=9, loc="lower left")
+    x = np.arange(len(order))
+    w = 0.26
+    for i, (key, col, lab) in enumerate((("baseline_agent_share", TEAL, "no ablation"),
+                                         ("random_agent_share", LIGHT, "20 random heads"),
+                                         ("top_agent_share", ORANGE, "top-20 heads"))):
+        vals = [next((r[key] for r in k_rows if r["model"] == m and r["question"] == "working" and r["k"] == 20), np.nan)
+                for m in order]
+        ax2.bar(x + (i - 1) * (w + 0.02), vals, w, color=col, label=lab)
+    ax2.set_xticks(x, order)
+    ax2.set_ylim(0, 1.05)
+    ax2.set_yticks([0, .25, .5, .75, 1], ["0%", "25%", "50%", "75%", "100%"])
+    ax2.set_title("Answers still naming the agent (working question)", loc="left", fontsize=11)
+    style(ax2)
+    ax2.legend(frameon=False, fontsize=9, ncol=3, loc="upper center", bbox_to_anchor=(0.5, -0.08))
+    fig.text(0.5, -0.06, "OTR-12, development split (51 held-out items per model; heads ranked on other families). "
+             "Exploratory; one random draw per k; no intervals stored.", ha="center", fontsize=9, color=MUTED)
+    fig.tight_layout()
+    save(fig, path)
+
+
 # ---------------------------------------------------------------------------------------------------
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -730,6 +809,11 @@ def main():
     fig_multilingual(mc, mh, os.path.join(F, "sfig09_handover_by_language.svg"))
     sv = swedish(a.results)
     write_csv(os.path.join(T, "st13_swedish_dev_unchecked.csv"), sv)
+
+    ko, kv = knockout(a.results)
+    write_csv(os.path.join(T, "st16_knockout_dev.csv"), ko)
+    write_csv(os.path.join(T, "st17_role_vector_dev.csv"), kv)
+    fig_knockout(ko, os.path.join(F, "sfig10_knockout.svg"))
 
     cards = model_cards(conf, kr, mh)
     write_csv(os.path.join(T, "st14_model_cards.csv"), cards)

@@ -70,3 +70,40 @@ Llama 3.3 70B and Qwen2.5 72B were run on development data only, with no frozen 
 - The handover is at L38 of 80 for Llama and L58 of 80 for Qwen2.5 72B. The same kind of step appears as in the five core models, at very different depths.
 - Llama's role coefficient peaks at L34 (1.61), with order 0.56 and function 0.16 at the same layer. The ordering role > order > function matches Gemma and Granite.
 - Qwen2.5 72B OTR-03 has not been run, so there is no role-code curve for it.
+
+## 5. Are the heads needed? Knockout (OTR-12)
+
+Patching (§3) shows that the heads are sufficient to repair the answer. OTR-12 tests whether they are needed. At the answer position it mean-ablates the top-k OTR-09 heads, replacing each head's output with its mean over the fit items. This is done in the working question ("Who was the V-ing done by?") and in an ordinary agent question ("Who V-ed someone?"), and compared with k random heads from the same layers. The heads were ranked on folds 0–2 of the development families; evaluation uses folds 3–4, 51 items per model. Source: [`st16_knockout_dev.csv`](tables/st16_knockout_dev.csv), with every k, both questions, margins and answer shares.
+
+<p align="center"><img src="figures/sfig10_knockout.svg" alt="Left: share of the agent margin kept as more of the top heads are ablated; it falls to 18-49 percent at 20 heads in phi-4, Gemma, Qwen3.8 and Granite and to 84 percent in OLMo, while random heads leave it at 100 percent. Right: answers still naming the agent stay high (65 to 100 percent) even after the top-20 heads are ablated." width="100%"></p>
+
+Share of the agent margin kept (working question):
+
+| Model | k = 1 | k = 3 | k = 5 | k = 10 | k = 20 | Random 20 | Agent answers, none / top-20 ablated |
+|:--|--:|--:|--:|--:|--:|--:|:--|
+| phi-4 | 82% | 61% | 47% | 28% | 18% | 100% | 90% / 65% |
+| Gemma | 87% | 83% | 82% | 59% | 38% | 100% | 100% / 92% |
+| Qwen3.8 | 97% | 78% | 77% | 64% | 40% | 100% | 100% / 86% |
+| Granite | 91% | 73% | 72% | 56% | 49% | 100% | 100% / 98% |
+| OLMo | 95% | 96% | 90% | 84% | 84% | 100% | 100% / 100% |
+
+- **Partial necessity.** The top heads carry 51–82% of the agent margin in four models, and the effect grows with k. Random heads from the same layers carry none of it, which rules out a generic effect of ablating any 20 heads in those layers.
+- **The ordinary question behaves the same** (21–49% of the margin kept in four models, 82% in OLMo). These heads take part in agent retrieval generally.
+- **The answers are robust.** Most items still name the agent after ablation, so redundant components carry the rest. This is consistent with §3: repair was not saturated at 20 heads.
+- **OLMo's weak effect matches its scan window.** Its heads were searched only from layer 35, after its handover at 26.
+
+### The averaged direction (OTR-12, part B)
+
+This adds α × the mean "working − failing" residual direction (fitted on folds 0–2) at the layer nearest the frozen handover. Source: [`st17_role_vector_dev.csv`](tables/st17_role_vector_dev.csv).
+
+| Model | Layer | Repair of failing question, α = 1 / 2 | Random direction, α = 1 | Patient question → agent, α = 1 | Working question still correct after −v, α = 1 |
+|:--|--:|:--|--:|--:|--:|
+| Gemma | 40 | .29 / .31 | −.75 | 0% | 100% |
+| Qwen3.8 | 54 | .13 / .27 | .00 | 4% | 100% |
+| phi-4 | 22 | .36 / .64 | .01 | 49% | 92% |
+| OLMo | 26 | .15 / .15 | −.03 | 20% | 98% |
+| Granite | 52 | .37 / .77 | .00 | 10% | 100% |
+
+One averaged direction partly repairs the failing question, but it does not behave like a switch between agent and patient retrieval. It rarely converts a patient question, and removing it rarely breaks the working question. In Gemma the margin repair (.29) comes with fewer agent answers than at baseline (63% against 71%), and random directions also move the margin strongly, so Gemma's numbers are not interpretable as targeted steering. A direction fitted on actives transfers inconsistently to the other constructions (−.40 to +.28 at α = 1).
+
+**Status and limits.** Development only, exploratory, not frozen. One random draw per k. No intervals, because the runs stored aggregates, not per-item records. Ablation acts at the answer position only.
