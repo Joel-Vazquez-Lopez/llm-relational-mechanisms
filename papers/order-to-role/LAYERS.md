@@ -8,7 +8,7 @@
 2. The question, mainly through the word "by", sets which role is asked for.
 3. At a fixed depth, the answer position takes over. Patching about 20 attention heads there repairs a substantial share of the error, and how much depends on the model.
 
-The account is consistent with every intervention below, but it is not shown to be the models' unique native mechanism. The interventions establish sufficiency under patching, and necessity and exclusivity are only partly tested (§6).
+The account is consistent with every intervention below, but it is not shown to be the models' unique native mechanism. The interventions establish sufficiency under patching. Knockout shows that the heads contribute much of the agent margin and change some answers, but most answers survive ablation (development; [Interventions §4](INTERVENTIONS.md#4-knockout-and-steering-otr-12)). Exclusivity is not tested (§6).
 
 The stages sit at different depths in different models, but never in a different order. This page shows the evidence for each stage and what it does and does not establish. All curves are development data. The confirmatory tests for the layer claims are C2, C4, C6 and C8 ([evidence ledger](EVIDENCE.md#1-confirmatory-results-test-set-0)).
 
@@ -72,7 +72,7 @@ In all five models the role peak and the "by" peak precede the handover. The dep
 
 ## 6. What the layer evidence does and does not show
 
-- **It shows sufficiency under intervention.** Patching a state or head from the working run is enough to change the answer. That is not proof that the model normally routes the information only this way.
+- **It shows sufficiency, and partial necessity.** Patching a state or head from the working run is enough to change the answer. Ablating the top-20 heads removes 51–82% of the agent margin in four models (16% in OLMo), while most answers stay correct (development, OTR-12). The heads are therefore an important route for the information, not the only one.
 - **The ordering of peaks is descriptive.** The serial account is supported by the crossing of the two swap curves and by the token-level tests, but "A peaks before B" alone is not a causal chain. The pipeline ordering (OTR-14) is exploratory under the freeze; the specific token interventions (C6, C8) are confirmatory.
 - **Depth fractions compare models with different architectures.** Qwen3.8 is a hybrid-attention model, so equal fractions do not mean equal computations.
 - **Some OTR-14 curves need standard attention interfaces.** Where a model lacks them, the curve is missing and is reported as missing.

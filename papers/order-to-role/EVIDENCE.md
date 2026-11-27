@@ -106,7 +106,7 @@ These shaped the frozen claims or extend them, but were not tested on held-out d
 - **Which questions fail, in general.** The study characterises one family of failing questions. A battery of natural wordings ("Who was Mary chased by?", "By whom was someone chased?") was running at the 24 November snapshot.
 - **BX `long_object_cleft` anomaly.** Several models score low on ordinary questions for this construction but high under the failing question. Raw outputs still need to be inspected before the construction is used.
 - **Qwen3.8's random-head baseline** is the highest among the models (.11 on held-out development items), and negative on several transfer sets.
-- **A complete native pathway.** Interventions show sufficiency under patching. Necessity and exclusivity are only partly addressed (OTR-12 knockout).
+- **A complete native pathway.** Interventions show sufficiency under patching. Knockout (OTR-12, development) shows partial necessity: 51–82% of the agent margin is lost in four models (16% in OLMo), but most answers survive. Exclusivity is not tested.
 
 ## 5. Ongoing
 

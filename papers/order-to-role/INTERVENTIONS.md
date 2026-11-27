@@ -47,7 +47,25 @@ The phi-4 result shows why the content control was revised. Replacing the heads'
 
 ## 4. Knockout and steering (OTR-12)
 
-OTR-12 zeroes the selected heads in the working run, to ask whether they are needed rather than only sufficient. Separately, it adds an averaged "role" direction to test whether one direction can steer the answer. These runs exist for all five models (development, 19 November). They are not part of the frozen claims, and this section does not summarise them numerically yet.
+Patching shows that the heads are *sufficient* to repair the answer. OTR-12 asks whether they are also *needed*. At the answer position, it mean-ablates the top-k OTR-09 heads, replacing each head's output with its mean over other items. It does this in the working question and in an ordinary agent question ("Who V-ed someone?"), and compares the result with ablating k random heads from the same layers. The heads were ranked on other development families, and evaluation uses 51 held-out items per model. Separately, OTR-12 adds one averaged "working − failing" direction to the residual stream. **Development only, exploratory.** These runs are not frozen claims; full tables are in [supplement S3 §5](supplementary/S3-layerwise-and-heads.md#5-are-the-heads-needed-knockout-otr-12).
+
+| Model | Agent margin kept after ablating the top-20 heads | … after 20 random heads | Answers still naming the agent: none ablated / top-20 ablated |
+|:--|--:|--:|:--|
+| phi-4 | 18% | 100% | 90% / 65% |
+| Gemma | 38% | 100% | 100% / 92% |
+| Qwen3.8 | 40% | 100% | 100% / 86% |
+| Granite | 49% | 100% | 100% / 98% |
+| OLMo | 84% | 100% | 100% / 100% |
+
+*Working question, k = 20. The ordinary agent question gives the same picture: 21%, 37%, 43%, 49% and 82% of the margin kept.*
+
+- **The heads are needed for much of the agent margin.** Ablating them removes 51–82% of the margin in four models; ablating random heads from the same layers removes none. The effect grows with k (supplement figure).
+- **They matter for ordinary agent questions too.** These heads are part of how the agent is retrieved in general, not only of the failing/working contrast.
+- **They are not universally necessary for a correct answer.** Most answers survive the ablation: 65% (phi-4) to 100% (OLMo) still name the agent, although removing these heads does change some answers. The heads are an important part of the read-out, but the evidence does not establish an exclusive pathway.
+- **OLMo is the exception, and it fits the scan window.** Only 16% of its margin goes, but its head scan began at layer 35, after its handover at layer 26, so its top heads are not the ones at the handover ([S3 §3](supplementary/S3-layerwise-and-heads.md#3-how-many-heads-and-where-they-are)).
+- **One averaged direction does not act as a "fetch the agent" switch.** Adding the averaged direction at the handover layer partly repairs the failing question: .13–.37 of the margin at strength 1, up to .77 at strength 2. But at strength 1 it barely turns a patient question into an agent question (≤ .20 of answers, except phi-4 at .49), and subtracting it from the working question rarely breaks it (≥ 92% still correct at strength 1). A direction fitted on actives transfers inconsistently to the other constructions. Random directions of the same norm do nothing, except in Gemma, where they push the margin the wrong way (−.75).
+
+**Limits.** Development data only. 51 items per model, one random draw per k, and no intervals, because the runs did not store per-item records. The ablation acts at the answer position only. The knockout therefore establishes partial necessity, not necessity of a complete circuit.
 
 ## 5. Question-token interventions (OTR-13, OTR-14)
 

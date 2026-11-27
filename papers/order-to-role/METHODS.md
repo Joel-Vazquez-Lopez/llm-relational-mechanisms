@@ -61,7 +61,7 @@ Eleven of the 48 BX names were dropped for non-Gemma tokenizers because they are
 - **Residual repair.** At one layer, copy the residual stream at the answer position from the working run into the failing run. Repair = (patched − failing) / (working − failing) on the first-token logit margin, per item, on items whose working–failing gap exceeds 1.0 logit. The **handover layer** is the first layer where mean repair reaches .5.
 - **Head repair.** Patch single attention-head outputs instead. Heads are ranked on part of the development families and evaluated on the rest. The top-20 set is compared with 20 random heads from the same layers (5 draws).
 - **Controls.** These are head outputs from another item's failing run (`other_failing`), a random push of the same size (`random_nudge`), and, in the addendum, another item's working-run output (C5b).
-- **Knockout and steering (OTR-12).** Zero the selected heads in the working run, or add an averaged role direction.
+- **Knockout and steering (OTR-12).** Mean-ablate the top-k heads at the answer position (each head's output is replaced by its mean over the fit items) against k random heads from the same layers, in the working and in an ordinary agent question. Separately, add α × the averaged working − failing residual direction at one layer, against a random direction of the same norm.
 
 ## 6. Question-token patching and attention blocking (OTR-13, OTR-14)
 

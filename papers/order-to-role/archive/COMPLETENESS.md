@@ -22,7 +22,7 @@ This page checks, after the results-consolidation PR, that `main` together with 
 | OTR-09 answer-position and head patching | `scripts/otr09_answer_patching.py` | 69 dev (core, BX ×3, es, gl, UD, WIKI real/neutral; 70B) + 20 test0 | five core + both 70B | **Confirmatory** C4, C5 (English 9/10), BX C5 (5/5), XL-C4/C5/C5b (es 15/15, gl 15/15). **Failed**: phi-4 C5 (`other_failing` control) |
 | OTR-10 incremental role probes | `scripts/otr10_incremental_roles.py` | 4 dev | Gemma, Qwen3.8 | Exploratory (not summarised) |
 | OTR-11 role steering | `scripts/otr11_role_steering.py` | 2 dev | Gemma, Qwen3.8 | Exploratory (not summarised) |
-| OTR-12 knockout and role vector | `scripts/otr12_knockout_and_role_vector.py` | 5 dev | five core | Exploratory (runs exist; not summarised numerically; necessity only partly tested) |
+| OTR-12 knockout and role vector | `scripts/otr12_knockout_and_role_vector.py` | 5 dev | five core | Exploratory, summarised: partial necessity (supplement S3 §5, Interventions §4) |
 | OTR-13 question-token patching | `scripts/otr13_question_words.py` | 15 dev (core, second working question, BX) | five core | Completed (development); frozen "by" layers taken from it |
 | OTR-14 layer pipeline | `scripts/otr14_layer_pipeline.py` | 10 dev (core, BX) + 5 test0 | five core | **Confirmatory** C6, C8 (10/10); pipeline ordering exploratory |
 | OTR-15 prompt formats | `scripts/otr15_prompt_robustness.py` | 5 dev | five core | Exploratory (supplement S2 §3) |
@@ -54,7 +54,7 @@ FREEZE.md, FREEZE_XL.md, `freeze_inputs.sha256`, `test0_attempts.md` (template) 
 - **Native-speaker check of the Swedish stimuli**: pending.
 - **Normative Galician variant** (without the prepositional "a"): may be run later as exploratory work (FREEZE_XL.md §6). Not run.
 - **Psych-verb class coefficients**: quoted in RESULTS §2 from the 20 November development log. The underlying OTR-03 BX-psych outputs are on `main` (10 files), but the class-level split has not been recomputed by a build script.
-- **Numerical summaries of OTR-05, OTR-10, OTR-11 and OTR-12**: the runs exist and are not summarised on the Paper II pages.
+- **Numerical summaries of OTR-05, OTR-10 and OTR-11**: the runs exist and are not summarised on the Paper II pages. OTR-12 was summarised on 28 November from its existing outputs.
 - **Complete or unique circuit**: not claimed (see RESULTS §9).
 
 ## Where each part of the record lives

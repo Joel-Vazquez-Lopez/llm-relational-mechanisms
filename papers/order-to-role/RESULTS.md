@@ -101,6 +101,8 @@ Ranking single attention heads by how much they repair the failing answer, on on
 
 **[test0]** The frozen heads beat random heads from the same layers in all five models (C5: top − random .36 to .75, all intervals above zero). phi-4 **fails C5** on its second frozen control. Replacing the heads' outputs with those from another item's failing run repaired .26 on its own, against a frozen limit of .10. This control turned out not to test item-specific content, so the Spanish/Galician addendum replaced it (C5b); [details](EVIDENCE.md#phi-4-c5).
 
+**Are the heads also needed? (development, exploratory).** Mean-ablating the same top-20 heads in correctly answered questions removes 51–82% of the agent margin in phi-4, Gemma, Qwen3.8 and Granite, and 16% in OLMo, whose head scan started after its handover. Twenty random heads from the same layers remove none of it. Most answers still name the agent (65–100%), so the heads carry much of the read-out but not all of it ([Interventions §4](INTERVENTIONS.md#4-knockout-and-steering-otr-12)).
+
 ## 5. Stored correctly, retrieved wrongly
 
 This is the study's sharpest result. **The models attend only to earlier tokens and the sentence comes before the question, so the hidden states of the names are identical under the working and the failing question, at every layer.** Whatever goes wrong happens when the question retrieves them.
@@ -153,7 +155,7 @@ The pattern seen in the five core models appears here too, but nothing about the
 
 ## 9. What these results do not show
 
-- **They do not show a complete or unique native pathway.** Interventions show that information at a layer or head is sufficient to change the answer under that intervention; the layer order is descriptive.
+- **They do not show a complete or unique native pathway.** Interventions show that information at a layer or head is sufficient to change the answer. Knockout reduces much of the margin and changes some answers, while most answers survive (development only). The layer order is descriptive.
 - **They do not show that models "have" thematic roles in a theoretical sense.** The states are organised by role, and psych verbs point to thematic rather than subject coding (development only).
 - **The repair numbers are not accuracies.** They are per-item shares of a logit-margin gap, computed on items with a large enough gap.
 - **The natural-text sets (UD, WIKI-ROLES) have no held-out split.** They are validation, not confirmation.
