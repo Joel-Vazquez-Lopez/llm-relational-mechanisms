@@ -155,7 +155,7 @@ The pattern seen in the five core models appears here too, but nothing about the
 
 ## 9. What these results do not show
 
-- **They do not show a complete or unique native pathway.** Interventions show that information at a layer or head is sufficient to change the answer. Knockout shows that the heads are needed for much of the margin, not for the answer itself (development only). The layer order is descriptive.
+- **They do not show a complete or unique native pathway.** Interventions show that information at a layer or head is sufficient to change the answer. Knockout reduces much of the margin and changes some answers, while most answers survive (development only). The layer order is descriptive.
 - **They do not show that models "have" thematic roles in a theoretical sense.** The states are organised by role, and psych verbs point to thematic rather than subject coding (development only).
 - **The repair numbers are not accuracies.** They are per-item shares of a logit-margin gap, computed on items with a large enough gap.
 - **The natural-text sets (UD, WIKI-ROLES) have no held-out split.** They are validation, not confirmation.
