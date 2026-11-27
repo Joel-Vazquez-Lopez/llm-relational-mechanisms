@@ -1,10 +1,12 @@
 ![Model Linguistics — Experience / Computation / Generalization](assets/model-linguistics-banner.svg)
 
-# Two studies of relational computation
+# Research guide — two studies of relational computation
+
+[← Model Linguistics](README.md) · [Historical Development](investigations/README.md)
 
 Understanding a sentence can require finding the relevant event, identifying its participants and selecting the role requested by a question. These studies approach that problem from **different experimental directions**.
 
-| | Learning Relations | Order-to-Role |
+| | Relational Learning in Transformers | Order-to-Role |
 |:--|:--|:--|
 | **Object of study** | Acquisition under controlled training experience | Behavior and computation of pretrained LLMs |
 | **Core contrast** | Exposure, recombination and joint-role errors | Order, grammatical function, semantic role and response condition |
@@ -13,7 +15,7 @@ Understanding a sentence can require finding the relevant event, identifying its
 
 ---
 
-## 01 · Learning Relations
+## Paper I · Relational Learning in Transformers
 
 **[Study overview](papers/learning-relations/README.md)**
 
@@ -27,7 +29,7 @@ Some repeated exposure benefits are documented within one synthetic task family.
 
 ---
 
-## 02 · Order-to-Role
+## Paper II · Order-to-Role
 
 **[Study overview](papers/order-to-role/README.md)**
 

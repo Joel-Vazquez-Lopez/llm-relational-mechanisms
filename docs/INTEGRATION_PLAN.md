@@ -17,7 +17,8 @@ Branch heads can advance. Verify current refs, local uncommitted work, merge bas
 
 ## Phase A · Documentation only
 
-- Main README points to both study hubs and clearly identifies the separate research scopes.
+- Main README introduces the shared Model Linguistics concept and has three primary entrances: historical development, Paper I, and Paper II.
+- Historical navigation includes a complete tracked ML-series inventory; later transition studies are marked without inventing an exact split cutoff. Paper I uses a provisional navigation title, not a manuscript rename.
 - Each hub links to evidence, experiments and reproducibility, with branch-only paths labeled.
 - No frozen scripts, raw results, model weights, protected items or existing research data modified.
 - Run Markdown/link checks and review scientific wording before merging.

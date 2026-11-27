@@ -1,6 +1,8 @@
-[← Two studies](../../STUDIES.md) · [Companion study](../order-to-role/README.md)
+[← Model Linguistics](../../README.md) · [Research history](../../investigations/README.md) · [Paper II](../order-to-role/README.md)
 
-# Learning Relations
+# Paper I · Relational Learning in Transformers
+
+*Provisional navigation title; manuscript title remains unchanged.*
 
 ### Targeted experience, relational generalization and role-assignment errors in Transformers
 

@@ -6,8 +6,9 @@ The repository has **two paper-facing paths** under `papers/` and one shared tec
 
 | Entry point | Purpose |
 |:--|:--|
-| [Learning Relations](learning-relations/README.md) | Scratch-trained paper, evidence, experiment index, reproducibility |
-| [Order-to-Role](order-to-role/README.md) | Pretrained-LLM paper architecture, evidence, experiment index, layer investigation, transfer and reproducibility |
+| [Historical Development](../investigations/README.md) | Original research chronology and complete tracked ML-series index |
+| [Paper I — Relational Learning in Transformers](learning-relations/README.md) | Scratch-trained paper, evidence, experiment index, reproducibility |
+| [Paper II — Order-to-Role](order-to-role/README.md) | Pretrained-LLM paper architecture, evidence, experiment index, layer investigation, transfer and reproducibility |
 | [Scratch manuscript](../paper/manuscript.md) | Canonical editable working manuscript |
 | [Scratch investigation](../investigations/scratch_transformers/README.md) | Historical research narrative and checkpoints |
 | [Earlier pretrained investigations](../investigations/pretrained_llms/README.md) | Related ML studies, not an automatic part of OTR |

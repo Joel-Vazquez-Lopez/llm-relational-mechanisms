@@ -1,6 +1,6 @@
-[← Two studies](../../STUDIES.md) · [Companion study](../learning-relations/README.md)
+[← Model Linguistics](../../README.md) · [Research history](../../investigations/README.md) · [Paper I](../learning-relations/README.md)
 
-# Order-to-Role
+# Paper II · Order-to-Role
 
 ### Thematic roles, question-conditioned readout and answer selection in pretrained language models
 
