@@ -18,7 +18,6 @@ Active scripts reside on **[`order-to-role/stimuli`](https://github.com/Joel-Vaz
 | OTR-10 | How does role information arise during incremental processing? | [Incremental roles](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/blob/order-to-role/stimuli/scripts/otr10_incremental_roles.py) |
 | OTR-11 | Can role-directed intervention steer answers selectively? | [Role steering](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/blob/order-to-role/stimuli/scripts/otr11_role_steering.py) |
 | OTR-12 | Which head contributions are necessary, and can role vectors transfer? | [Head knockout and role vector](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/blob/order-to-role/stimuli/scripts/otr12_knockout_and_role_vector.py) |
-
 | OTR-13 | Which question-word states affect the output? | [Question-word patching](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/blob/9c437928f61351a72e8d7be4cac6d3a964844a7e/scripts/otr13_question_words.py) |
 | OTR-14 | When are question/name states accessed; how do the intervention curves relate? | [Layer pipeline](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/blob/9c437928f61351a72e8d7be4cac6d3a964844a7e/scripts/otr14_layer_pipeline.py) |
 | OTR-15 | Does the generation effect survive prompt-format changes? | [Prompt robustness](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/blob/9c437928f61351a72e8d7be4cac6d3a964844a7e/scripts/otr15_prompt_robustness.py) |
