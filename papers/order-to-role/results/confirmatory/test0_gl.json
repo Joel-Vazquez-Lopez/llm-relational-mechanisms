@@ -1,0 +1,484 @@
+{
+ "scorer_version": "1.1.0",
+ "split": "test0",
+ "stimuli": "gl",
+ "n_boot": 2000,
+ "seed": 2026,
+ "frozen": {
+  "google/gemma-4-31B-it": {
+   "slug": "google__gemma-4-31B-it",
+   "n_layers": 60,
+   "handover": 40,
+   "role": 28,
+   "by": 28,
+   "c7": true,
+   "rf": "otr09_google__gemma-4-31B-it_dev_20261118T164326.json"
+  },
+  "Qwen/Qwen3.8-27B": {
+   "slug": "Qwen__Qwen3.8-27B",
+   "n_layers": 64,
+   "handover": 54,
+   "role": 29,
+   "by": 30,
+   "c7": true,
+   "rf": "otr09_Qwen__Qwen3.8-27B_dev_20261118T162630.json"
+  },
+  "microsoft/phi-4": {
+   "slug": "microsoft__phi-4",
+   "n_layers": 40,
+   "handover": 22,
+   "role": 15,
+   "by": 8,
+   "c7": false,
+   "rf": "otr09_microsoft__phi-4_dev_20261119T093535.json"
+  },
+  "allenai/Olmo-3.1-32B-Instruct": {
+   "slug": "allenai__Olmo-3.1-32B-Instruct",
+   "n_layers": 64,
+   "handover": 26,
+   "role": 18,
+   "by": 8,
+   "c7": false,
+   "rf": "otr09_allenai__Olmo-3.1-32B-Instruct_dev_20261119T095922.json"
+  },
+  "ibm-granite/granite-4.2-30b": {
+   "slug": "ibm-granite__granite-4.2-30b",
+   "n_layers": 64,
+   "handover": 52,
+   "role": 37,
+   "by": 28,
+   "c7": true,
+   "rf": "otr09_ibm-granite__granite-4.2-30b_dev_20261119T140015.json"
+  }
+ },
+ "table": {
+  "google/gemma-4-31B-it": {
+   "C1": {
+    "working": 1.0,
+    "failing": 0.5,
+    "estimate": 0.5,
+    "ci": [
+     0.44370744333550977,
+     0.5515203761755486
+    ],
+    "n_rows": 328,
+    "n_families": 59,
+    "verdict": "PASS"
+   },
+   "C2": {
+    "layer": 28,
+    "role": 0.8998581013351521,
+    "role_ci": [
+     0.8020353769522909,
+     0.9948398381448724
+    ],
+    "function": -0.09225770657655423,
+    "role_minus_function": 0.9921158079117063,
+    "role_minus_function_ci": [
+     0.8166689936193714,
+     1.1966212552782267
+    ],
+    "n_families": 42,
+    "verdict": "PASS",
+    "rule": "role CI > 0 (role - function reported only)"
+   },
+   "C3": {
+    "layer": 28,
+    "role_failing_wrong": -0.5745901188380281,
+    "role_failing_wrong_ci": [
+     -0.7025024431985024,
+     -0.4519573808782045
+    ],
+    "c2_minus_c3": 1.4744482201731803,
+    "c2_minus_c3_ci": [
+     1.320200970587753,
+     1.634367038375656
+    ],
+    "n_wrong_bases": 142,
+    "verdict": "PASS"
+   },
+   "C4": {
+    "frozen": 46,
+    "first_crossing": 48,
+    "max_repair_up_to_frozen_minus_4": 0.2374,
+    "verdict": "PASS",
+    "english_layer": 40
+   },
+   "C5b": {
+    "top_minus_other_working": 2.72680221474514,
+    "ci": [
+     1.9992133789941098,
+     3.5266797075499237
+    ],
+    "verdict": "PASS"
+   },
+   "C5": {
+    "top": 0.7619,
+    "random": 0.0265,
+    "other_failing": -1.9282,
+    "random_nudge": 0.0057,
+    "top_minus_random": 0.7353825519836186,
+    "top_minus_random_ci": [
+     0.7162028612036174,
+     0.7531998780486834
+    ],
+    "n_items": 124,
+    "n_families": 52,
+    "n_random_draws": 5,
+    "mean_failing": -1.2959,
+    "other_working": -1.9649,
+    "verdict": "PASS",
+    "file": "otr09_google__gemma-4-31B-it_test0_gl_20261126T213536.json"
+   }
+  },
+  "Qwen/Qwen3.8-27B": {
+   "C1": {
+    "working": 0.9451219512195121,
+    "failing": 0.5548780487804879,
+    "estimate": 0.3902439024390243,
+    "ci": [
+     0.3176197862703886,
+     0.4624715937857666
+    ],
+    "n_rows": 328,
+    "n_families": 59,
+    "verdict": "PASS"
+   },
+   "C2": {
+    "layer": 29,
+    "role": 0.7517346247146118,
+    "role_ci": [
+     0.690793930394389,
+     0.8234510257023717
+    ],
+    "function": 0.5264831264269406,
+    "role_minus_function": 0.22525149828767121,
+    "role_minus_function_ci": [
+     0.16965110501114625,
+     0.29161691856691335
+    ],
+    "n_families": 42,
+    "verdict": "PASS",
+    "rule": "role CI > 0 (role - function reported only)"
+   },
+   "C3": {
+    "layer": 29,
+    "role_failing_wrong": 0.018485915492957746,
+    "role_failing_wrong_ci": [
+     -0.03789202008928571,
+     0.08777760288171596
+    ],
+    "c2_minus_c3": 0.7332487092216541,
+    "c2_minus_c3_ci": [
+     0.6556998189025527,
+     0.8115523048424489
+    ],
+    "n_wrong_bases": 71,
+    "verdict": "PASS"
+   },
+   "C4": {
+    "frozen": 50,
+    "first_crossing": 50,
+    "max_repair_up_to_frozen_minus_4": 0.0474,
+    "verdict": "PASS",
+    "english_layer": 54
+   },
+   "C5b": {
+    "top_minus_other_working": 0.43054000327177533,
+    "ci": [
+     0.36588387687073864,
+     0.4978719193716688
+    ],
+    "verdict": "PASS"
+   },
+   "C5": {
+    "top": 0.3464,
+    "random": 0.0529,
+    "other_failing": -0.1362,
+    "random_nudge": -0.005,
+    "top_minus_random": 0.29354816397487,
+    "top_minus_random_ci": [
+     0.27730872250921934,
+     0.31014031226835265
+    ],
+    "n_items": 105,
+    "n_families": 51,
+    "n_random_draws": 5,
+    "mean_failing": -0.1137,
+    "other_working": -0.0841,
+    "verdict": "PASS",
+    "file": "otr09_Qwen__Qwen3.8-27B_test0_gl_20261126T220418.json"
+   }
+  },
+  "microsoft/phi-4": {
+   "C1": {
+    "working": 0.975609756097561,
+    "failing": 0.4817073170731707,
+    "estimate": 0.49390243902439024,
+    "ci": [
+     0.4108239381333161,
+     0.5734923159902151
+    ],
+    "n_rows": 328,
+    "n_families": 59,
+    "verdict": "PASS"
+   },
+   "C2": {
+    "layer": 15,
+    "role": 0.35440538194444443,
+    "role_ci": [
+     0.31961718235417885,
+     0.387012426860095
+    ],
+    "function": 0.11224681712962963,
+    "role_minus_function": 0.2421585648148148,
+    "role_minus_function_ci": [
+     0.18435021804653715,
+     0.30010857401825153
+    ],
+    "n_families": 42,
+    "verdict": "PASS",
+    "rule": "role CI > 0 (role - function reported only)"
+   },
+   "C3": {
+    "layer": 15,
+    "role_failing_wrong": -0.17042557565789473,
+    "role_failing_wrong_ci": [
+     -0.1986130916262136,
+     -0.14047772305118886
+    ],
+    "c2_minus_c3": 0.5248309576023391,
+    "c2_minus_c3_ci": [
+     0.466936206742419,
+     0.5776265293449022
+    ],
+    "n_wrong_bases": 190,
+    "verdict": "PASS"
+   },
+   "C4": {
+    "frozen": 22,
+    "first_crossing": 22,
+    "max_repair_up_to_frozen_minus_4": 0.1167,
+    "verdict": "PASS",
+    "english_layer": 22
+   },
+   "C5b": {
+    "top_minus_other_working": 0.6105784888144641,
+    "ci": [
+     0.4922143034441841,
+     0.7377771915349524
+    ],
+    "verdict": "PASS"
+   },
+   "C5": {
+    "top": 0.6395,
+    "random": 0.0416,
+    "other_failing": -0.0807,
+    "random_nudge": 0.0039,
+    "top_minus_random": 0.5978592353320068,
+    "top_minus_random_ci": [
+     0.56685846004048,
+     0.6300069236601676
+    ],
+    "n_items": 124,
+    "n_families": 52,
+    "n_random_draws": 5,
+    "mean_failing": -0.0041,
+    "other_working": 0.0289,
+    "verdict": "PASS",
+    "file": "otr09_microsoft__phi-4_test0_gl_20261126T215356.json"
+   }
+  },
+  "allenai/Olmo-3.1-32B-Instruct": {
+   "C1": {
+    "working": 0.9695121951219512,
+    "failing": 0.43902439024390244,
+    "estimate": 0.5304878048780488,
+    "ci": [
+     0.4644770115761701,
+     0.5983836604291026
+    ],
+    "n_rows": 328,
+    "n_families": 59,
+    "verdict": "PASS"
+   },
+   "C2": {
+    "layer": 18,
+    "role": 0.18658380681818182,
+    "role_ci": [
+     0.1538064555249183,
+     0.22233027086325616
+    ],
+    "function": -0.09790482954545454,
+    "role_minus_function": 0.28448863636363636,
+    "role_minus_function_ci": [
+     0.23365000907927502,
+     0.35056925233425035
+    ],
+    "n_families": 42,
+    "verdict": "PASS",
+    "rule": "role CI > 0 (role - function reported only)"
+   },
+   "C3": {
+    "layer": 18,
+    "role_failing_wrong": -0.07953621748554913,
+    "role_failing_wrong_ci": [
+     -0.10185689494837469,
+     -0.05684560703861215
+    ],
+    "c2_minus_c3": 0.26612002430373094,
+    "c2_minus_c3_ci": [
+     0.2201996175202993,
+     0.3112440389039472
+    ],
+    "n_wrong_bases": 173,
+    "verdict": "PASS"
+   },
+   "C4": {
+    "frozen": 26,
+    "first_crossing": 26,
+    "max_repair_up_to_frozen_minus_4": 0.1677,
+    "verdict": "PASS",
+    "english_layer": 26
+   },
+   "C5b": {
+    "top_minus_other_working": 0.3362079399162661,
+    "ci": [
+     0.2857206579072016,
+     0.3835768283690037
+    ],
+    "verdict": "PASS"
+   },
+   "C5": {
+    "top": 0.3764,
+    "random": 0.0085,
+    "other_failing": 0.0165,
+    "random_nudge": -0.0004,
+    "top_minus_random": 0.3679344183995681,
+    "top_minus_random_ci": [
+     0.345709849331859,
+     0.3908914124331606
+    ],
+    "n_items": 124,
+    "n_families": 52,
+    "n_random_draws": 5,
+    "mean_failing": 0.0369,
+    "other_working": 0.0402,
+    "verdict": "PASS",
+    "file": "otr09_allenai__Olmo-3.1-32B-Instruct_test0_gl_20261126T222234.json"
+   }
+  },
+  "ibm-granite/granite-4.2-30b": {
+   "C1": {
+    "working": 0.9512195121951219,
+    "failing": 0.573170731707317,
+    "estimate": 0.3780487804878049,
+    "ci": [
+     0.30564265505356475,
+     0.45498358801876776
+    ],
+    "n_rows": 328,
+    "n_families": 59,
+    "verdict": "PASS"
+   },
+   "C2": {
+    "layer": 37,
+    "role": 0.44615400598404253,
+    "role_ci": [
+     0.40098138487568913,
+     0.4927802127204719
+    ],
+    "function": 0.08677900598404255,
+    "role_minus_function": 0.359375,
+    "role_minus_function_ci": [
+     0.2871004074548235,
+     0.4289323440442057
+    ],
+    "n_families": 42,
+    "verdict": "PASS",
+    "rule": "role CI > 0 (role - function reported only)"
+   },
+   "C3": {
+    "layer": 37,
+    "role_failing_wrong": 0.15093524639423078,
+    "role_failing_wrong_ci": [
+     0.10578845262839941,
+     0.19831390380859368
+    ],
+    "c2_minus_c3": 0.29521875958981175,
+    "c2_minus_c3_ci": [
+     0.2443504323882519,
+     0.3442776196017048
+    ],
+    "n_wrong_bases": 104,
+    "verdict": "PASS"
+   },
+   "C4": {
+    "frozen": 52,
+    "first_crossing": 52,
+    "max_repair_up_to_frozen_minus_4": 0.0901,
+    "verdict": "PASS",
+    "english_layer": 52
+   },
+   "C5b": {
+    "top_minus_other_working": 0.6862532563294573,
+    "ci": [
+     0.5462640798424128,
+     0.8346361513608731
+    ],
+    "verdict": "PASS"
+   },
+   "C5": {
+    "top": 0.5841,
+    "random": 0.0266,
+    "other_failing": -0.1465,
+    "random_nudge": 0.0108,
+    "top_minus_random": 0.5574714149781959,
+    "top_minus_random_ci": [
+     0.5328638896116737,
+     0.5832948439545779
+    ],
+    "n_items": 107,
+    "n_families": 52,
+    "n_random_draws": 5,
+    "mean_failing": -0.1794,
+    "other_working": -0.1021,
+    "verdict": "PASS",
+    "file": "otr09_ibm-granite__granite-4.2-30b_test0_gl_20261126T223433.json"
+   }
+  }
+ },
+ "inputs_sha256": {
+  "google/gemma-4-31B-it": {
+   "otrgen_google__gemma-4-31B-it_test0_gl_20261126T211053.json": "0214ef355e70eb36b193714665034312ccba576963dd9c0343e5b64d34c77e38",
+   "otr03_google__gemma-4-31B-it_test0_gl_20261126T211435.json": "5d8d0440b1320131a3a88f95de00174a65d745cad0fa8530bff8ab745ad1db50",
+   "otr03_google__gemma-4-31B-it_test0_gl_20261126T212647.json": "a25a54f9c17423d6e5aa69bd6ba36a8068191f7d70eb682568dcc81f15df2a2e",
+   "otr09_google__gemma-4-31B-it_test0_gl_20261126T213536.json": "408de6cc78ae78ffbe52dcdf9a64b2477e30574eb22ea474f56b565f7e2efb15"
+  },
+  "Qwen/Qwen3.8-27B": {
+   "otrgen_Qwen__Qwen3.8-27B_test0_gl_20261126T213317.json": "852c6760103a7d184c6600425a1096f9a098f3eafaf904c98b6804e6be23d7c8",
+   "otr03_Qwen__Qwen3.8-27B_test0_gl_20261126T213832.json": "df450f75869f36c4f0a627bdfa0afc83aab199a678f6a3c24917a5c7337bb681",
+   "otr03_Qwen__Qwen3.8-27B_test0_gl_20261126T214430.json": "e0f09d9a3a70eedb54eb8d3eb9b091f209cac12ae318645744f95bf2f8df8b1c",
+   "otr09_Qwen__Qwen3.8-27B_test0_gl_20261126T220418.json": "518f638f99bd8e7f704bb2a2692c8bfa5ed7849ac19e39228adc1b289332c054"
+  },
+  "microsoft/phi-4": {
+   "otrgen_microsoft__phi-4_test0_gl_20261126T214357.json": "f66049414eae1283fa8dd5ef22e581f251670ad808d4055f26c7ba44a85eee83",
+   "otr03_microsoft__phi-4_test0_gl_20261126T214746.json": "3b92e034f2876549324f51a8a154f45e2082dfc13c251d13b6b9b16d8a784c6c",
+   "otr03_microsoft__phi-4_test0_gl_20261126T215246.json": "f2fdcbc7da08a1d6c8e8c4558ce8017339ef7712179e69e056368076b5b164e3",
+   "otr09_microsoft__phi-4_test0_gl_20261126T215356.json": "e270479fb71f8263e59bd25380fc9278a03708bfaacf4947c2d60060c501ef59"
+  },
+  "allenai/Olmo-3.1-32B-Instruct": {
+   "otrgen_allenai__Olmo-3.1-32B-Instruct_test0_gl_20261126T220546.json": "f9974059ee8380a323a69b5b1d57eef8a0f88530ce7b7b4c73b88db2eb157418",
+   "otr03_allenai__Olmo-3.1-32B-Instruct_test0_gl_20261126T221931.json": "ee85f3058453e458a09baf5df82ee90c6dc71418bdf0000ebd40ef63f40cfb8f",
+   "otr03_allenai__Olmo-3.1-32B-Instruct_test0_gl_20261126T221451.json": "bdf6901999b131b3838e9145130b4c6defc6519d48ee1ae46c34393c714760e1",
+   "otr09_allenai__Olmo-3.1-32B-Instruct_test0_gl_20261126T222234.json": "f3fc094bcd4cf0650a11395cf44fdd5aa9575129936e0957b23821692f970863"
+  },
+  "ibm-granite/granite-4.2-30b": {
+   "otrgen_ibm-granite__granite-4.2-30b_test0_gl_20261126T221924.json": "8c594f35d6ccf78fe97421d375b7c4301e9caa573859afa8b07315bde0ae5c67",
+   "otr03_ibm-granite__granite-4.2-30b_test0_gl_20261126T222929.json": "14bd1176843875d6db0d0f457bd59c803124981b065de37e5b5477450b20254a",
+   "otr03_ibm-granite__granite-4.2-30b_test0_gl_20261126T223255.json": "5f7afb18ee3f5748f5581d3cc7b37401b66067eda99dd87c82ff8e76538c770b",
+   "otr09_ibm-granite__granite-4.2-30b_test0_gl_20261126T223433.json": "df85dfe27d4cefda6d0fa8713864d12e890a176ab4ed2aaa38d57bc0f9225fe2"
+  }
+ },
+ "markdown": "| Claim | gemma | Qwen3.8 | phi | Olmo | granite |\n|---|---|---|---|---|---|\n| C1 | PASS (0.50) | PASS (0.39) | PASS (0.49) | PASS (0.53) | PASS (0.38) |\n| C2 | PASS (0.90) | PASS (0.75) | PASS (0.35) | PASS (0.19) | PASS (0.45) |\n| C3 | PASS (1.47) | PASS (0.73) | PASS (0.52) | PASS (0.27) | PASS (0.30) |\n| C4 | PASS (48) | PASS (50) | PASS (22) | PASS (26) | PASS (52) |\n| C5 | PASS (0.74) | PASS (0.29) | PASS (0.60) | PASS (0.37) | PASS (0.56) |\n| C5b | PASS (2.73) | PASS (0.43) | PASS (0.61) | PASS (0.34) | PASS (0.69) |"
+}
