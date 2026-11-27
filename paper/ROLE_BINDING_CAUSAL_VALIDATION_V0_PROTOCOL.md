@@ -1,0 +1,21 @@
+# ROLE-BINDING-CAUSAL-VALIDATION-v0 — exploratory discovery
+
+## Question
+Do previously identified query-control heads transmit signals that can be used with a different source-side entity assignment, including across voice constructions? Which readout attention components are sensitive to source-name K/V changes? This is not a claim of full circuit sufficiency or independent replication.
+
+## Frozen design
+Use all 16 eight-role recovery checkpoints (four selected seeds × four steps), existing candidate/control head coordinates from ROLE-CAUSAL-PATHWAYS-v0. No fitting or training. Sample 128 withheld-quartet rich sources, excluding both earlier causal samples for both voices, with fixed seed 20261128. Retain all four queries. AP and PA sources share semantic labels and sample indices. Underlying quartets and lexical inventory are not new. Parent manifests and summary are checked; freeze script, protocol and sample manifest before inference. Original checkpoints and frozen parent studies remain unchanged.
+
+Create three deterministic bijections of the four entity names: within-event role exchange (1,0,3,2), event exchange (2,3,0,1), mixed cycle (1,2,3,0), zero-indexed. Rename **every** occurrence of each name simultaneously, including modifier names, to preserve grammatical and semantic consistency. Gold labels follow the renaming, candidate pool and query are unchanged; verify that all changes precede the answer position and that query pairs still differ by one token. This is identity reassignment, not a novel vocabulary or arbitrary structural rewrite. The mixed cycle is an additional non-involutive control against a simple XOR coincidence.
+
+## Conditions and outcomes
+For each permutation and voice:
+* Original and renamed native baseline.
+* Role, event and joint swaps of fixed head outputs within renamed source, from original assignment, from original assignment in opposite voice, and from matched control heads in original assignment. Recipient labels define targets. Also transfer both candidate heads with unchanged query from original and opposite voice; correct output should remain recipient entity, not donor entity.
+* Source-side K, V, and KV replacements at name-token positions, independently for each of three layers and across all heads at that layer. Other-position KV replacement is a contextual-information comparison, not a null control. Individual head KV replacement at name positions in every layer. Donor uses original assignment with same query; recipient uses renamed assignment. Target is original source gold; alternate target accuracy is renamed source gold. Only readout attention is modified; earlier states and all other token positions follow recipient. Failure of a single-layer patch does not show absence of distributed binding.
+* Target accuracy (restricted candidate), strict four-query correctness, full-vocabulary target probability, target event mass, target conditional role probability, original query metrics, and alternate-source target accuracy. Report per voice, permutation, seed and checkpoint. 40 conditions per permutation, 240 rows per checkpoint, 3840 total. Do not pool queries as independent model replicates.
+
+Primary descriptive contrast at 51200 for both successful seeds: cross-source joint and cross-voice-source joint target correctness relative to within-source joint, matched control heads and alternate-source target accuracy. All conditions and all checkpoints reported. Strong support requires high recipient target accuracy and low donor target accuracy after cross-source interventions; partial or failed transfer is reported without selecting successful subsets. Entity patch effects are exploratory localisation only. No cross-model activation transplantation.
+
+## Validation
+Native forward equality and full-population parent native-score verification; per-head reconstruction tolerance inherited from parent; self-patches at candidate heads and each layer's name KV intervention; finite logits, source permutation audits, checkpoint identity and manifest integrity. CPU toy smoke exercises both head layouts. Actual MPS integration is verified at run time. Compact CSV files are split per checkpoint. This study does not test targeted repair, fresh model seeds, unseen lexical identities or broader grammar. Those need separately frozen prospective protocols.

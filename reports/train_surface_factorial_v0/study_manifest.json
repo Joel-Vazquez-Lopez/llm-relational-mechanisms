@@ -1,0 +1,88 @@
+{
+  "protocol": {
+    "architecture": "3-layer width96 4-head causal attention 48-position",
+    "arms": [
+      "bare",
+      "frame_only",
+      "adjunct_only",
+      "frame_adjunct"
+    ],
+    "common_primary_test": "same bare/no-frame 16 never-trained role arrangements on each of the 240 training quartets, 2 familiar voices",
+    "common_secondary_test": "same bare/no-frame 24 arrangements on each of 60 withheld name quartets, 2 familiar voices",
+    "dependency_sha256": {
+      "core_diversity_v1_preflight.py": "80c11b2d73a1520e23c8a6dd497023dc12a61dbe6800826ad75aec5a43304324",
+      "exp105_generator_preflight.py": "b9bd315ed46e365a96c1d7fc2fffdccbd2e9db0bdaf182d4a9a63f68462022ba",
+      "exp105_position_control_preflight_v1.py": "a9eb006832336de5dbe265557fdb9346ac832bfabe7acb31b6cb39cef5b60903",
+      "train_surface_factorial_v0_preflight.py": "ac365332a5621ae75488023488a0310734152ec8cde479d27fecdd5a88e24895"
+    },
+    "factorial": "bare / five neutral frames / nine bare-L-I adjunct pairs / both",
+    "gated_secondary": "same contrast on 60 withheld quartets, CI lower>0 only if primary passes",
+    "held_ids_sha256": "a50b4803a680e1035c6f719fe3cada7f91dba9d9c34ca3a3195e9e814b97061d",
+    "identical_initial_weights_within_seed": true,
+    "known_unmatched_features": [
+      "source token length",
+      "participant name mention count",
+      "absolute participant-name positions",
+      "prefix tokens",
+      "adjunct name-bearing words",
+      "syntactic modifier complexity"
+    ],
+    "launcher_sha256": "6ec058228aaedfd7f605f2be94af20af7a8e6af27fcecde8ee004de8a7af8303",
+    "no_old_dev_reserved_protected_LI": true,
+    "no_seed_filtering_or_optional_stopping": true,
+    "optimizer": "AdamW lr=0.002 wd=0.01 6400 updates, final checkpoint only",
+    "prefix_effect_and_factorial_interaction": "exploratory",
+    "primary_contrast": "0.5*((bare-adjunct_only)+(frame_only-frame_adjunct))",
+    "protocol_sha256": "d10197e7d7f0aa24373ee2d8aaaf6c285ff5f84b54f4921f778aec8ac32588d1",
+    "reuses_old_240_60_train_quartet_split": true,
+    "schedule_sha256": {
+      "14901": "228a0b5315a7d75d971b9aaeb9064dfda69713ad2154dbe36c7ee7e9f32d360c",
+      "14903": "3241b2b66df02c364664a2c73473a7774232a9d299f06351624ea511118ede12",
+      "14907": "bd5a63e96b316b7b2a2e5153b5ae3562d31de28f3b62ab7dc9980a625199ad3a",
+      "14909": "1c7d0f496ff8054c6d2099981888a433435e3851c872138af0c5ecceb1a3cc7c",
+      "14913": "52d7a56615e95a3d2510a86a27fac29c04f6839ca78c974196e31acb0af50bee",
+      "14919": "e4f73adaf0c0aa6f3e57c08c358a862e67ebb2af6f3acd352e8a36eb16d11361",
+      "14921": "5259bd0fd416f736b748c5fac8e6e0eec1b7903e636a6e7fa5821422b58e8617",
+      "14927": "33223c902d9a9e9e646d5311506ebc56e4b9c923101233ad570ce7c906a6414c",
+      "14931": "bc7dd203b6fcaeafe2279053b9ed885afa65a6927a5b301402a6b9c3afb54dd8",
+      "14933": "9bcbfad3ff1cff30b828ee24061109f2c6dbdfc86495a106588e081cd1f89bb0",
+      "14939": "63357ebb6d3788a66f7d3f54a44da905eaa6ee4e522d676ac06c81cde29cbb3d",
+      "14943": "4c311f0b5360adaa7460936651a5561cba8247db6a727f97ea72ce7ff4327085"
+    },
+    "script_sha256": "a2e01a4be684618080e894d0f9b835f7eb10884c58f2790b78232edcf7723d6b",
+    "seeds": [
+      14901,
+      14903,
+      14907,
+      14909,
+      14913,
+      14919,
+      14921,
+      14927,
+      14931,
+      14933,
+      14939,
+      14943
+    ],
+    "shared_quartet_and_45_cell_schedule": true,
+    "source_manifest_sha256": "10ad988f8db4506c2bcaa29ba978ab2c7dac8ba625839f67a63452d2c3f0a018",
+    "sources": {
+      "test_unseen_quartets": "6b9326461887d0f613347f6c7f36a23f059288a056a16f02d182a1d241b4010e",
+      "test_unseen_roles": "63a1ef32a93608b49ec5d2c02320b6678b160877fcbcd8135385cca22ccca459",
+      "train_variants": "a445fe3625b50abf62081be1b04e4edfa31892e238c7dd65cb1900d5d2716402"
+    },
+    "status": "FROZEN_AFTER_COMMIT_NOT_RUN",
+    "steps": 6400,
+    "study": "TRAIN-SURFACE-FACTORIAL-v0",
+    "success_all": "two-sided seed t CI lower>0, mean >= +0.10, positive in >=9/12 independent new seeds",
+    "train_ids_sha256": "0e2f74120b6b547ecdd2a7b3a065f32a3a198db218cb23dc14a300ce174e90b7",
+    "training": "240 original fixed role cores; 8 name quartets per update, 2 matched AP/PA voice sources per quartet; 64 label targets",
+    "training_competence": "original train core bare/no-frame accuracy",
+    "vocab_sha256": "8ad05a3a8a5e47d7977909fd364f3d4449e465d11abd0d07d599be11ae7aff4e",
+    "voice_pair": [
+      "AP",
+      "PA"
+    ]
+  },
+  "protocol_digest": "e765a55d7f4bd5a8cb80a4a17a0bd34156ff7018a6e90968781b6722893c516f"
+}

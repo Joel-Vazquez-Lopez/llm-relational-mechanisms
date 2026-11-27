@@ -1,0 +1,3430 @@
+{
+  "arm": "direct_pa_ap",
+  "caveat": "Moves entire SOURCE-CLAUSE residual states across positions: cannot isolate abstract binding vs position/context, and may induce off-manifold interventions.",
+  "checkpoint_sha256": "859bc5f575ec59f075c12e368786cb49b5c44874415e539f9f16a43c0bf0e622",
+  "depths": [
+    "embed",
+    "block1",
+    "block2",
+    "block3"
+  ],
+  "device": "mps",
+  "evaluation_sha256": "5063bec0fceca42ce9a899ffeaa93c0e26a56b93734e80d5388e211e7c9e0b76",
+  "no_model_training": true,
+  "no_protected_or_LI": true,
+  "outcomes": {
+    "AP": {
+      "native": {
+        "C_query": 0.2430555522441864,
+        "accuracy4": 0.6805555820465088,
+        "by_query": {
+          "first_agent": {
+            "native_correct": 0.6736111044883728,
+            "positive_role_margin": 0.8680555820465088,
+            "role_margin": 3.884364128112793,
+            "wrong_event": 0.2430555522441864,
+            "wrong_role": 0.0833333358168602
+          },
+          "first_patient": {
+            "native_correct": 0.5833333134651184,
+            "positive_role_margin": 0.6597222089767456,
+            "role_margin": 1.8285601139068604,
+            "wrong_event": 0.1041666641831398,
+            "wrong_role": 0.3125
+          },
+          "second_agent": {
+            "native_correct": 0.7847222089767456,
+            "positive_role_margin": 0.7847222089767456,
+            "role_margin": 2.99454665184021,
+            "wrong_event": 0.0,
+            "wrong_role": 0.2152777761220932
+          },
+          "second_patient": {
+            "native_correct": 0.6805555820465088,
+            "positive_role_margin": 0.7916666865348816,
+            "role_margin": 4.888570785522461,
+            "wrong_event": 0.1388888955116272,
+            "wrong_role": 0.1805555522441864
+          }
+        },
+        "full_vocab_accuracy": 0.6493055820465088
+      },
+      "patches": {
+        "block1__active": {
+          "C_query": 0.2430555522441864,
+          "accuracy4": 0.6753472089767456,
+          "by_query": {
+            "first_agent": {
+              "native_correct": 0.7847222089767456,
+              "positive_role_margin": 0.875,
+              "role_margin": 5.160340309143066,
+              "wrong_event": 0.1041666641831398,
+              "wrong_role": 0.1111111119389534
+            },
+            "first_patient": {
+              "native_correct": 0.6388888955116272,
+              "positive_role_margin": 0.8055555820465088,
+              "role_margin": 4.356337547302246,
+              "wrong_event": 0.2152777761220932,
+              "wrong_role": 0.1458333283662796
+            },
+            "second_agent": {
+              "native_correct": 0.6805555820465088,
+              "positive_role_margin": 0.6944444179534912,
+              "role_margin": 2.044947385787964,
+              "wrong_event": 0.0347222238779068,
+              "wrong_role": 0.2847222089767456
+            },
+            "second_patient": {
+              "native_correct": 0.5972222089767456,
+              "positive_role_margin": 0.8125,
+              "role_margin": 4.9160542488098145,
+              "wrong_event": 0.2777777910232544,
+              "wrong_role": 0.125
+            }
+          },
+          "change": {
+            "C_query_pp": 0.0,
+            "accuracy4_pp": -0.5208373069763184,
+            "by_query": {
+              "first_agent": {
+                "native_correct_delta": 0.1111111044883728,
+                "role_margin_delta": 1.2759761810302734,
+                "wrong_event_delta": -0.1388888880610466,
+                "wrong_role_delta": 0.0277777761220932
+              },
+              "first_patient": {
+                "native_correct_delta": 0.05555558204650879,
+                "role_margin_delta": 2.5277774333953857,
+                "wrong_event_delta": 0.1111111119389534,
+                "wrong_role_delta": -0.1666666716337204
+              },
+              "second_agent": {
+                "native_correct_delta": -0.10416662693023682,
+                "role_margin_delta": -0.9495992660522461,
+                "wrong_event_delta": 0.0347222238779068,
+                "wrong_role_delta": 0.0694444328546524
+              },
+              "second_patient": {
+                "native_correct_delta": -0.08333337306976318,
+                "role_margin_delta": 0.027483463287353516,
+                "wrong_event_delta": 0.1388888955116272,
+                "wrong_role_delta": -0.0555555522441864
+              }
+            }
+          },
+          "changed_query_outcomes": {
+            "first_agent": {
+              "correct_to_incorrect": 15,
+              "incorrect_to_correct": 31
+            },
+            "first_patient": {
+              "correct_to_incorrect": 18,
+              "incorrect_to_correct": 26
+            },
+            "second_agent": {
+              "correct_to_incorrect": 30,
+              "incorrect_to_correct": 15
+            },
+            "second_patient": {
+              "correct_to_incorrect": 24,
+              "incorrect_to_correct": 12
+            }
+          },
+          "full_vocab_accuracy": 0.6493055820465088
+        },
+        "block1__both": {
+          "C_query": 0.1527777761220932,
+          "accuracy4": 0.6024305820465088,
+          "by_query": {
+            "first_agent": {
+              "native_correct": 0.4930555522441864,
+              "positive_role_margin": 0.9305555820465088,
+              "role_margin": 5.395168304443359,
+              "wrong_event": 0.4930555522441864,
+              "wrong_role": 0.013888888992369175
+            },
+            "first_patient": {
+              "native_correct": 0.5,
+              "positive_role_margin": 0.6736111044883728,
+              "role_margin": 2.7338545322418213,
+              "wrong_event": 0.3402777910232544,
+              "wrong_role": 0.1597222238779068
+            },
+            "second_agent": {
+              "native_correct": 0.7569444179534912,
+              "positive_role_margin": 0.8333333134651184,
+              "role_margin": 4.79000186920166,
+              "wrong_event": 0.1111111119389534,
+              "wrong_role": 0.1319444477558136
+            },
+            "second_patient": {
+              "native_correct": 0.6597222089767456,
+              "positive_role_margin": 0.9027777910232544,
+              "role_margin": 8.59822940826416,
+              "wrong_event": 0.2638888955116272,
+              "wrong_role": 0.0763888880610466
+            }
+          },
+          "change": {
+            "C_query_pp": -9.02777761220932,
+            "accuracy4_pp": -7.8125,
+            "by_query": {
+              "first_agent": {
+                "native_correct_delta": -0.1805555522441864,
+                "role_margin_delta": 1.5108041763305664,
+                "wrong_event_delta": 0.25,
+                "wrong_role_delta": -0.06944444682449102
+              },
+              "first_patient": {
+                "native_correct_delta": -0.08333331346511841,
+                "role_margin_delta": 0.9052944183349609,
+                "wrong_event_delta": 0.2361111268401146,
+                "wrong_role_delta": -0.1527777761220932
+              },
+              "second_agent": {
+                "native_correct_delta": -0.027777791023254395,
+                "role_margin_delta": 1.7954552173614502,
+                "wrong_event_delta": 0.1111111119389534,
+                "wrong_role_delta": -0.0833333283662796
+              },
+              "second_patient": {
+                "native_correct_delta": -0.020833373069763184,
+                "role_margin_delta": 3.709658622741699,
+                "wrong_event_delta": 0.125,
+                "wrong_role_delta": -0.1041666641831398
+              }
+            }
+          },
+          "changed_query_outcomes": {
+            "first_agent": {
+              "correct_to_incorrect": 45,
+              "incorrect_to_correct": 19
+            },
+            "first_patient": {
+              "correct_to_incorrect": 33,
+              "incorrect_to_correct": 21
+            },
+            "second_agent": {
+              "correct_to_incorrect": 24,
+              "incorrect_to_correct": 20
+            },
+            "second_patient": {
+              "correct_to_incorrect": 25,
+              "incorrect_to_correct": 22
+            }
+          },
+          "full_vocab_accuracy": 0.5868055820465088
+        },
+        "block1__identity": {
+          "C_query": 0.2430555522441864,
+          "accuracy4": 0.6805555820465088,
+          "by_query": {
+            "first_agent": {
+              "native_correct": 0.6736111044883728,
+              "positive_role_margin": 0.8680555820465088,
+              "role_margin": 3.884364128112793,
+              "wrong_event": 0.2430555522441864,
+              "wrong_role": 0.0833333358168602
+            },
+            "first_patient": {
+              "native_correct": 0.5833333134651184,
+              "positive_role_margin": 0.6597222089767456,
+              "role_margin": 1.8285601139068604,
+              "wrong_event": 0.1041666641831398,
+              "wrong_role": 0.3125
+            },
+            "second_agent": {
+              "native_correct": 0.7847222089767456,
+              "positive_role_margin": 0.7847222089767456,
+              "role_margin": 2.99454665184021,
+              "wrong_event": 0.0,
+              "wrong_role": 0.2152777761220932
+            },
+            "second_patient": {
+              "native_correct": 0.6805555820465088,
+              "positive_role_margin": 0.7916666865348816,
+              "role_margin": 4.888570785522461,
+              "wrong_event": 0.1388888955116272,
+              "wrong_role": 0.1805555522441864
+            }
+          },
+          "change": {
+            "C_query_pp": 0.0,
+            "accuracy4_pp": 0.0,
+            "by_query": {
+              "first_agent": {
+                "native_correct_delta": 0.0,
+                "role_margin_delta": 0.0,
+                "wrong_event_delta": 0.0,
+                "wrong_role_delta": 0.0
+              },
+              "first_patient": {
+                "native_correct_delta": 0.0,
+                "role_margin_delta": 0.0,
+                "wrong_event_delta": 0.0,
+                "wrong_role_delta": 0.0
+              },
+              "second_agent": {
+                "native_correct_delta": 0.0,
+                "role_margin_delta": 0.0,
+                "wrong_event_delta": 0.0,
+                "wrong_role_delta": 0.0
+              },
+              "second_patient": {
+                "native_correct_delta": 0.0,
+                "role_margin_delta": 0.0,
+                "wrong_event_delta": 0.0,
+                "wrong_role_delta": 0.0
+              }
+            }
+          },
+          "changed_query_outcomes": {
+            "first_agent": {
+              "correct_to_incorrect": 0,
+              "incorrect_to_correct": 0
+            },
+            "first_patient": {
+              "correct_to_incorrect": 0,
+              "incorrect_to_correct": 0
+            },
+            "second_agent": {
+              "correct_to_incorrect": 0,
+              "incorrect_to_correct": 0
+            },
+            "second_patient": {
+              "correct_to_incorrect": 0,
+              "incorrect_to_correct": 0
+            }
+          },
+          "full_vocab_accuracy": 0.6493055820465088
+        },
+        "block1__passive": {
+          "C_query": 0.1458333283662796,
+          "accuracy4": 0.6163194179534912,
+          "by_query": {
+            "first_agent": {
+              "native_correct": 0.3819444477558136,
+              "positive_role_margin": 0.8958333134651184,
+              "role_margin": 4.278656959533691,
+              "wrong_event": 0.5972222089767456,
+              "wrong_role": 0.02083333395421505
+            },
+            "first_patient": {
+              "native_correct": 0.4097222089767456,
+              "positive_role_margin": 0.5138888955116272,
+              "role_margin": 0.5662932991981506,
+              "wrong_event": 0.2083333283662796,
+              "wrong_role": 0.3819444477558136
+            },
+            "second_agent": {
+              "native_correct": 0.8611111044883728,
+              "positive_role_margin": 0.8819444179534912,
+              "role_margin": 5.876559734344482,
+              "wrong_event": 0.02777777798473835,
+              "wrong_role": 0.1111111119389534
+            },
+            "second_patient": {
+              "native_correct": 0.8125,
+              "positive_role_margin": 0.8888888955116272,
+              "role_margin": 8.820741653442383,
+              "wrong_event": 0.1111111119389534,
+              "wrong_role": 0.0763888880610466
+            }
+          },
+          "change": {
+            "C_query_pp": -9.72222238779068,
+            "accuracy4_pp": -6.423616409301758,
+            "by_query": {
+              "first_agent": {
+                "native_correct_delta": -0.2916666567325592,
+                "role_margin_delta": 0.39429283142089844,
+                "wrong_event_delta": 0.3541666567325592,
+                "wrong_role_delta": -0.06250000186264515
+              },
+              "first_patient": {
+                "native_correct_delta": -0.1736111044883728,
+                "role_margin_delta": -1.2622668147087097,
+                "wrong_event_delta": 0.1041666641831398,
+                "wrong_role_delta": 0.0694444477558136
+              },
+              "second_agent": {
+                "native_correct_delta": 0.0763888955116272,
+                "role_margin_delta": 2.8820130825042725,
+                "wrong_event_delta": 0.02777777798473835,
+                "wrong_role_delta": -0.1041666641831398
+              },
+              "second_patient": {
+                "native_correct_delta": 0.1319444179534912,
+                "role_margin_delta": 3.932170867919922,
+                "wrong_event_delta": -0.027777783572673798,
+                "wrong_role_delta": -0.1041666641831398
+              }
+            }
+          },
+          "changed_query_outcomes": {
+            "first_agent": {
+              "correct_to_incorrect": 47,
+              "incorrect_to_correct": 5
+            },
+            "first_patient": {
+              "correct_to_incorrect": 29,
+              "incorrect_to_correct": 4
+            },
+            "second_agent": {
+              "correct_to_incorrect": 8,
+              "incorrect_to_correct": 19
+            },
+            "second_patient": {
+              "correct_to_incorrect": 5,
+              "incorrect_to_correct": 24
+            }
+          },
+          "full_vocab_accuracy": 0.5920138955116272
+        },
+        "block1__passive_misaligned": {
+          "C_query": 0.1388888955116272,
+          "accuracy4": 0.6076388955116272,
+          "by_query": {
+            "first_agent": {
+              "native_correct": 0.3888888955116272,
+              "positive_role_margin": 0.9027777910232544,
+              "role_margin": 4.3140130043029785,
+              "wrong_event": 0.5902777910232544,
+              "wrong_role": 0.02083333395421505
+            },
+            "first_patient": {
+              "native_correct": 0.3958333432674408,
+              "positive_role_margin": 0.5138888955116272,
+              "role_margin": 0.5768864750862122,
+              "wrong_event": 0.2291666716337204,
+              "wrong_role": 0.375
+            },
+            "second_agent": {
+              "native_correct": 0.8333333134651184,
+              "positive_role_margin": 0.8541666865348816,
+              "role_margin": 5.887813568115234,
+              "wrong_event": 0.02777777798473835,
+              "wrong_role": 0.1388888955116272
+            },
+            "second_patient": {
+              "native_correct": 0.8125,
+              "positive_role_margin": 0.8888888955116272,
+              "role_margin": 9.088053703308105,
+              "wrong_event": 0.1111111119389534,
+              "wrong_role": 0.0763888880610466
+            }
+          },
+          "change": {
+            "C_query_pp": -10.41666567325592,
+            "accuracy4_pp": -7.291668653488159,
+            "by_query": {
+              "first_agent": {
+                "native_correct_delta": -0.2847222089767456,
+                "role_margin_delta": 0.42964887619018555,
+                "wrong_event_delta": 0.347222238779068,
+                "wrong_role_delta": -0.06250000186264515
+              },
+              "first_patient": {
+                "native_correct_delta": -0.1874999701976776,
+                "role_margin_delta": -1.2516736388206482,
+                "wrong_event_delta": 0.1250000074505806,
+                "wrong_role_delta": 0.0625
+              },
+              "second_agent": {
+                "native_correct_delta": 0.0486111044883728,
+                "role_margin_delta": 2.8932669162750244,
+                "wrong_event_delta": 0.02777777798473835,
+                "wrong_role_delta": -0.076388880610466
+              },
+              "second_patient": {
+                "native_correct_delta": 0.1319444179534912,
+                "role_margin_delta": 4.1994829177856445,
+                "wrong_event_delta": -0.027777783572673798,
+                "wrong_role_delta": -0.1041666641831398
+              }
+            }
+          },
+          "changed_query_outcomes": {
+            "first_agent": {
+              "correct_to_incorrect": 46,
+              "incorrect_to_correct": 5
+            },
+            "first_patient": {
+              "correct_to_incorrect": 30,
+              "incorrect_to_correct": 3
+            },
+            "second_agent": {
+              "correct_to_incorrect": 10,
+              "incorrect_to_correct": 17
+            },
+            "second_patient": {
+              "correct_to_incorrect": 6,
+              "incorrect_to_correct": 25
+            }
+          },
+          "full_vocab_accuracy": 0.5850694179534912
+        },
+        "block2__active": {
+          "C_query": 0.2430555522441864,
+          "accuracy4": 0.6753472089767456,
+          "by_query": {
+            "first_agent": {
+              "native_correct": 0.7222222089767456,
+              "positive_role_margin": 0.8819444179534912,
+              "role_margin": 4.12326192855835,
+              "wrong_event": 0.1944444477558136,
+              "wrong_role": 0.0833333358168602
+            },
+            "first_patient": {
+              "native_correct": 0.6111111044883728,
+              "positive_role_margin": 0.6875,
+              "role_margin": 2.605199098587036,
+              "wrong_event": 0.1111111119389534,
+              "wrong_role": 0.2777777910232544
+            },
+            "second_agent": {
+              "native_correct": 0.6875,
+              "positive_role_margin": 0.6875,
+              "role_margin": 2.0660176277160645,
+              "wrong_event": 0.0069444444961845875,
+              "wrong_role": 0.3055555522441864
+            },
+            "second_patient": {
+              "native_correct": 0.6805555820465088,
+              "positive_role_margin": 0.7847222089767456,
+              "role_margin": 5.039863109588623,
+              "wrong_event": 0.1319444477558136,
+              "wrong_role": 0.1875
+            }
+          },
+          "change": {
+            "C_query_pp": 0.0,
+            "accuracy4_pp": -0.5208373069763184,
+            "by_query": {
+              "first_agent": {
+                "native_correct_delta": 0.0486111044883728,
+                "role_margin_delta": 0.23889780044555664,
+                "wrong_event_delta": -0.0486111044883728,
+                "wrong_role_delta": 0.0
+              },
+              "first_patient": {
+                "native_correct_delta": 0.027777791023254395,
+                "role_margin_delta": 0.7766389846801758,
+                "wrong_event_delta": 0.006944447755813599,
+                "wrong_role_delta": -0.034722208976745605
+              },
+              "second_agent": {
+                "native_correct_delta": -0.0972222089767456,
+                "role_margin_delta": -0.9285290241241455,
+                "wrong_event_delta": 0.0069444444961845875,
+                "wrong_role_delta": 0.0902777761220932
+              },
+              "second_patient": {
+                "native_correct_delta": 0.0,
+                "role_margin_delta": 0.1512923240661621,
+                "wrong_event_delta": -0.006944447755813599,
+                "wrong_role_delta": 0.006944447755813599
+              }
+            }
+          },
+          "changed_query_outcomes": {
+            "first_agent": {
+              "correct_to_incorrect": 5,
+              "incorrect_to_correct": 12
+            },
+            "first_patient": {
+              "correct_to_incorrect": 9,
+              "incorrect_to_correct": 13
+            },
+            "second_agent": {
+              "correct_to_incorrect": 16,
+              "incorrect_to_correct": 2
+            },
+            "second_patient": {
+              "correct_to_incorrect": 6,
+              "incorrect_to_correct": 6
+            }
+          },
+          "full_vocab_accuracy": 0.6510416865348816
+        },
+        "block2__both": {
+          "C_query": 0.2291666716337204,
+          "accuracy4": 0.6840277910232544,
+          "by_query": {
+            "first_agent": {
+              "native_correct": 0.6666666865348816,
+              "positive_role_margin": 0.9027777910232544,
+              "role_margin": 4.35060977935791,
+              "wrong_event": 0.2708333432674408,
+              "wrong_role": 0.0625
+            },
+            "first_patient": {
+              "native_correct": 0.6111111044883728,
+              "positive_role_margin": 0.6736111044883728,
+              "role_margin": 2.4100751876831055,
+              "wrong_event": 0.1041666641831398,
+              "wrong_role": 0.2847222089767456
+            },
+            "second_agent": {
+              "native_correct": 0.7569444179534912,
+              "positive_role_margin": 0.7916666865348816,
+              "role_margin": 2.7819433212280273,
+              "wrong_event": 0.0625,
+              "wrong_role": 0.1805555522441864
+            },
+            "second_patient": {
+              "native_correct": 0.7013888955116272,
+              "positive_role_margin": 0.8263888955116272,
+              "role_margin": 6.924338340759277,
+              "wrong_event": 0.1666666716337204,
+              "wrong_role": 0.1319444477558136
+            }
+          },
+          "change": {
+            "C_query_pp": -1.3888880610466003,
+            "accuracy4_pp": 0.34722089767456055,
+            "by_query": {
+              "first_agent": {
+                "native_correct_delta": -0.006944417953491211,
+                "role_margin_delta": 0.4662456512451172,
+                "wrong_event_delta": 0.027777791023254395,
+                "wrong_role_delta": -0.0208333358168602
+              },
+              "first_patient": {
+                "native_correct_delta": 0.027777791023254395,
+                "role_margin_delta": 0.5815150737762451,
+                "wrong_event_delta": 0.0,
+                "wrong_role_delta": -0.027777791023254395
+              },
+              "second_agent": {
+                "native_correct_delta": -0.027777791023254395,
+                "role_margin_delta": -0.21260333061218262,
+                "wrong_event_delta": 0.0625,
+                "wrong_role_delta": -0.0347222238779068
+              },
+              "second_patient": {
+                "native_correct_delta": 0.020833313465118408,
+                "role_margin_delta": 2.0357675552368164,
+                "wrong_event_delta": 0.0277777761220932,
+                "wrong_role_delta": -0.0486111044883728
+              }
+            }
+          },
+          "changed_query_outcomes": {
+            "first_agent": {
+              "correct_to_incorrect": 12,
+              "incorrect_to_correct": 11
+            },
+            "first_patient": {
+              "correct_to_incorrect": 11,
+              "incorrect_to_correct": 15
+            },
+            "second_agent": {
+              "correct_to_incorrect": 14,
+              "incorrect_to_correct": 10
+            },
+            "second_patient": {
+              "correct_to_incorrect": 10,
+              "incorrect_to_correct": 13
+            }
+          },
+          "full_vocab_accuracy": 0.65625
+        },
+        "block2__identity": {
+          "C_query": 0.2430555522441864,
+          "accuracy4": 0.6805555820465088,
+          "by_query": {
+            "first_agent": {
+              "native_correct": 0.6736111044883728,
+              "positive_role_margin": 0.8680555820465088,
+              "role_margin": 3.884364128112793,
+              "wrong_event": 0.2430555522441864,
+              "wrong_role": 0.0833333358168602
+            },
+            "first_patient": {
+              "native_correct": 0.5833333134651184,
+              "positive_role_margin": 0.6597222089767456,
+              "role_margin": 1.8285601139068604,
+              "wrong_event": 0.1041666641831398,
+              "wrong_role": 0.3125
+            },
+            "second_agent": {
+              "native_correct": 0.7847222089767456,
+              "positive_role_margin": 0.7847222089767456,
+              "role_margin": 2.99454665184021,
+              "wrong_event": 0.0,
+              "wrong_role": 0.2152777761220932
+            },
+            "second_patient": {
+              "native_correct": 0.6805555820465088,
+              "positive_role_margin": 0.7916666865348816,
+              "role_margin": 4.888570785522461,
+              "wrong_event": 0.1388888955116272,
+              "wrong_role": 0.1805555522441864
+            }
+          },
+          "change": {
+            "C_query_pp": 0.0,
+            "accuracy4_pp": 0.0,
+            "by_query": {
+              "first_agent": {
+                "native_correct_delta": 0.0,
+                "role_margin_delta": 0.0,
+                "wrong_event_delta": 0.0,
+                "wrong_role_delta": 0.0
+              },
+              "first_patient": {
+                "native_correct_delta": 0.0,
+                "role_margin_delta": 0.0,
+                "wrong_event_delta": 0.0,
+                "wrong_role_delta": 0.0
+              },
+              "second_agent": {
+                "native_correct_delta": 0.0,
+                "role_margin_delta": 0.0,
+                "wrong_event_delta": 0.0,
+                "wrong_role_delta": 0.0
+              },
+              "second_patient": {
+                "native_correct_delta": 0.0,
+                "role_margin_delta": 0.0,
+                "wrong_event_delta": 0.0,
+                "wrong_role_delta": 0.0
+              }
+            }
+          },
+          "changed_query_outcomes": {
+            "first_agent": {
+              "correct_to_incorrect": 0,
+              "incorrect_to_correct": 0
+            },
+            "first_patient": {
+              "correct_to_incorrect": 0,
+              "incorrect_to_correct": 0
+            },
+            "second_agent": {
+              "correct_to_incorrect": 0,
+              "incorrect_to_correct": 0
+            },
+            "second_patient": {
+              "correct_to_incorrect": 0,
+              "incorrect_to_correct": 0
+            }
+          },
+          "full_vocab_accuracy": 0.6493055820465088
+        },
+        "block2__passive": {
+          "C_query": 0.2083333283662796,
+          "accuracy4": 0.6597222089767456,
+          "by_query": {
+            "first_agent": {
+              "native_correct": 0.6041666865348816,
+              "positive_role_margin": 0.875,
+              "role_margin": 4.085296154022217,
+              "wrong_event": 0.3194444477558136,
+              "wrong_role": 0.0763888880610466
+            },
+            "first_patient": {
+              "native_correct": 0.5416666865348816,
+              "positive_role_margin": 0.6041666865348816,
+              "role_margin": 1.6264368295669556,
+              "wrong_event": 0.1041666641831398,
+              "wrong_role": 0.3541666567325592
+            },
+            "second_agent": {
+              "native_correct": 0.7847222089767456,
+              "positive_role_margin": 0.8263888955116272,
+              "role_margin": 3.576988697052002,
+              "wrong_event": 0.0555555559694767,
+              "wrong_role": 0.1597222238779068
+            },
+            "second_patient": {
+              "native_correct": 0.7083333134651184,
+              "positive_role_margin": 0.8194444179534912,
+              "role_margin": 6.702480316162109,
+              "wrong_event": 0.1458333283662796,
+              "wrong_role": 0.1458333283662796
+            }
+          },
+          "change": {
+            "C_query_pp": -3.47222238779068,
+            "accuracy4_pp": -2.0833373069763184,
+            "by_query": {
+              "first_agent": {
+                "native_correct_delta": -0.06944441795349121,
+                "role_margin_delta": 0.20093202590942383,
+                "wrong_event_delta": 0.0763888955116272,
+                "wrong_role_delta": -0.006944447755813599
+              },
+              "first_patient": {
+                "native_correct_delta": -0.041666626930236816,
+                "role_margin_delta": -0.20212328433990479,
+                "wrong_event_delta": 0.0,
+                "wrong_role_delta": 0.041666656732559204
+              },
+              "second_agent": {
+                "native_correct_delta": 0.0,
+                "role_margin_delta": 0.582442045211792,
+                "wrong_event_delta": 0.0555555559694767,
+                "wrong_role_delta": -0.0555555522441864
+              },
+              "second_patient": {
+                "native_correct_delta": 0.02777773141860962,
+                "role_margin_delta": 1.8139095306396484,
+                "wrong_event_delta": 0.006944432854652405,
+                "wrong_role_delta": -0.0347222238779068
+              }
+            }
+          },
+          "changed_query_outcomes": {
+            "first_agent": {
+              "correct_to_incorrect": 11,
+              "incorrect_to_correct": 1
+            },
+            "first_patient": {
+              "correct_to_incorrect": 8,
+              "incorrect_to_correct": 2
+            },
+            "second_agent": {
+              "correct_to_incorrect": 6,
+              "incorrect_to_correct": 6
+            },
+            "second_patient": {
+              "correct_to_incorrect": 7,
+              "incorrect_to_correct": 11
+            }
+          },
+          "full_vocab_accuracy": 0.6336805820465088
+        },
+        "block2__passive_misaligned": {
+          "C_query": 0.2083333283662796,
+          "accuracy4": 0.6597222089767456,
+          "by_query": {
+            "first_agent": {
+              "native_correct": 0.6041666865348816,
+              "positive_role_margin": 0.875,
+              "role_margin": 4.085296154022217,
+              "wrong_event": 0.3194444477558136,
+              "wrong_role": 0.0763888880610466
+            },
+            "first_patient": {
+              "native_correct": 0.5416666865348816,
+              "positive_role_margin": 0.6041666865348816,
+              "role_margin": 1.6264368295669556,
+              "wrong_event": 0.1041666641831398,
+              "wrong_role": 0.3541666567325592
+            },
+            "second_agent": {
+              "native_correct": 0.7847222089767456,
+              "positive_role_margin": 0.8263888955116272,
+              "role_margin": 3.576988697052002,
+              "wrong_event": 0.0555555559694767,
+              "wrong_role": 0.1597222238779068
+            },
+            "second_patient": {
+              "native_correct": 0.7083333134651184,
+              "positive_role_margin": 0.8194444179534912,
+              "role_margin": 6.702479839324951,
+              "wrong_event": 0.1458333283662796,
+              "wrong_role": 0.1458333283662796
+            }
+          },
+          "change": {
+            "C_query_pp": -3.47222238779068,
+            "accuracy4_pp": -2.0833373069763184,
+            "by_query": {
+              "first_agent": {
+                "native_correct_delta": -0.06944441795349121,
+                "role_margin_delta": 0.20093202590942383,
+                "wrong_event_delta": 0.0763888955116272,
+                "wrong_role_delta": -0.006944447755813599
+              },
+              "first_patient": {
+                "native_correct_delta": -0.041666626930236816,
+                "role_margin_delta": -0.20212328433990479,
+                "wrong_event_delta": 0.0,
+                "wrong_role_delta": 0.041666656732559204
+              },
+              "second_agent": {
+                "native_correct_delta": 0.0,
+                "role_margin_delta": 0.582442045211792,
+                "wrong_event_delta": 0.0555555559694767,
+                "wrong_role_delta": -0.0555555522441864
+              },
+              "second_patient": {
+                "native_correct_delta": 0.02777773141860962,
+                "role_margin_delta": 1.8139090538024902,
+                "wrong_event_delta": 0.006944432854652405,
+                "wrong_role_delta": -0.0347222238779068
+              }
+            }
+          },
+          "changed_query_outcomes": {
+            "first_agent": {
+              "correct_to_incorrect": 11,
+              "incorrect_to_correct": 1
+            },
+            "first_patient": {
+              "correct_to_incorrect": 8,
+              "incorrect_to_correct": 2
+            },
+            "second_agent": {
+              "correct_to_incorrect": 6,
+              "incorrect_to_correct": 6
+            },
+            "second_patient": {
+              "correct_to_incorrect": 7,
+              "incorrect_to_correct": 11
+            }
+          },
+          "full_vocab_accuracy": 0.6336805820465088
+        },
+        "block3__active": {
+          "C_query": 0.2430555522441864,
+          "accuracy4": 0.6805555820465088,
+          "by_query": {
+            "first_agent": {
+              "native_correct": 0.6736111044883728,
+              "positive_role_margin": 0.8680555820465088,
+              "role_margin": 3.884364128112793,
+              "wrong_event": 0.2430555522441864,
+              "wrong_role": 0.0833333358168602
+            },
+            "first_patient": {
+              "native_correct": 0.5833333134651184,
+              "positive_role_margin": 0.6597222089767456,
+              "role_margin": 1.8285601139068604,
+              "wrong_event": 0.1041666641831398,
+              "wrong_role": 0.3125
+            },
+            "second_agent": {
+              "native_correct": 0.7847222089767456,
+              "positive_role_margin": 0.7847222089767456,
+              "role_margin": 2.99454665184021,
+              "wrong_event": 0.0,
+              "wrong_role": 0.2152777761220932
+            },
+            "second_patient": {
+              "native_correct": 0.6805555820465088,
+              "positive_role_margin": 0.7916666865348816,
+              "role_margin": 4.888570785522461,
+              "wrong_event": 0.1388888955116272,
+              "wrong_role": 0.1805555522441864
+            }
+          },
+          "change": {
+            "C_query_pp": 0.0,
+            "accuracy4_pp": 0.0,
+            "by_query": {
+              "first_agent": {
+                "native_correct_delta": 0.0,
+                "role_margin_delta": 0.0,
+                "wrong_event_delta": 0.0,
+                "wrong_role_delta": 0.0
+              },
+              "first_patient": {
+                "native_correct_delta": 0.0,
+                "role_margin_delta": 0.0,
+                "wrong_event_delta": 0.0,
+                "wrong_role_delta": 0.0
+              },
+              "second_agent": {
+                "native_correct_delta": 0.0,
+                "role_margin_delta": 0.0,
+                "wrong_event_delta": 0.0,
+                "wrong_role_delta": 0.0
+              },
+              "second_patient": {
+                "native_correct_delta": 0.0,
+                "role_margin_delta": 0.0,
+                "wrong_event_delta": 0.0,
+                "wrong_role_delta": 0.0
+              }
+            }
+          },
+          "changed_query_outcomes": {
+            "first_agent": {
+              "correct_to_incorrect": 0,
+              "incorrect_to_correct": 0
+            },
+            "first_patient": {
+              "correct_to_incorrect": 0,
+              "incorrect_to_correct": 0
+            },
+            "second_agent": {
+              "correct_to_incorrect": 0,
+              "incorrect_to_correct": 0
+            },
+            "second_patient": {
+              "correct_to_incorrect": 0,
+              "incorrect_to_correct": 0
+            }
+          },
+          "full_vocab_accuracy": 0.6493055820465088
+        },
+        "block3__both": {
+          "C_query": 0.2430555522441864,
+          "accuracy4": 0.6805555820465088,
+          "by_query": {
+            "first_agent": {
+              "native_correct": 0.6736111044883728,
+              "positive_role_margin": 0.8680555820465088,
+              "role_margin": 3.884364128112793,
+              "wrong_event": 0.2430555522441864,
+              "wrong_role": 0.0833333358168602
+            },
+            "first_patient": {
+              "native_correct": 0.5833333134651184,
+              "positive_role_margin": 0.6597222089767456,
+              "role_margin": 1.8285601139068604,
+              "wrong_event": 0.1041666641831398,
+              "wrong_role": 0.3125
+            },
+            "second_agent": {
+              "native_correct": 0.7847222089767456,
+              "positive_role_margin": 0.7847222089767456,
+              "role_margin": 2.99454665184021,
+              "wrong_event": 0.0,
+              "wrong_role": 0.2152777761220932
+            },
+            "second_patient": {
+              "native_correct": 0.6805555820465088,
+              "positive_role_margin": 0.7916666865348816,
+              "role_margin": 4.888570785522461,
+              "wrong_event": 0.1388888955116272,
+              "wrong_role": 0.1805555522441864
+            }
+          },
+          "change": {
+            "C_query_pp": 0.0,
+            "accuracy4_pp": 0.0,
+            "by_query": {
+              "first_agent": {
+                "native_correct_delta": 0.0,
+                "role_margin_delta": 0.0,
+                "wrong_event_delta": 0.0,
+                "wrong_role_delta": 0.0
+              },
+              "first_patient": {
+                "native_correct_delta": 0.0,
+                "role_margin_delta": 0.0,
+                "wrong_event_delta": 0.0,
+                "wrong_role_delta": 0.0
+              },
+              "second_agent": {
+                "native_correct_delta": 0.0,
+                "role_margin_delta": 0.0,
+                "wrong_event_delta": 0.0,
+                "wrong_role_delta": 0.0
+              },
+              "second_patient": {
+                "native_correct_delta": 0.0,
+                "role_margin_delta": 0.0,
+                "wrong_event_delta": 0.0,
+                "wrong_role_delta": 0.0
+              }
+            }
+          },
+          "changed_query_outcomes": {
+            "first_agent": {
+              "correct_to_incorrect": 0,
+              "incorrect_to_correct": 0
+            },
+            "first_patient": {
+              "correct_to_incorrect": 0,
+              "incorrect_to_correct": 0
+            },
+            "second_agent": {
+              "correct_to_incorrect": 0,
+              "incorrect_to_correct": 0
+            },
+            "second_patient": {
+              "correct_to_incorrect": 0,
+              "incorrect_to_correct": 0
+            }
+          },
+          "full_vocab_accuracy": 0.6493055820465088
+        },
+        "block3__identity": {
+          "C_query": 0.2430555522441864,
+          "accuracy4": 0.6805555820465088,
+          "by_query": {
+            "first_agent": {
+              "native_correct": 0.6736111044883728,
+              "positive_role_margin": 0.8680555820465088,
+              "role_margin": 3.884364128112793,
+              "wrong_event": 0.2430555522441864,
+              "wrong_role": 0.0833333358168602
+            },
+            "first_patient": {
+              "native_correct": 0.5833333134651184,
+              "positive_role_margin": 0.6597222089767456,
+              "role_margin": 1.8285601139068604,
+              "wrong_event": 0.1041666641831398,
+              "wrong_role": 0.3125
+            },
+            "second_agent": {
+              "native_correct": 0.7847222089767456,
+              "positive_role_margin": 0.7847222089767456,
+              "role_margin": 2.99454665184021,
+              "wrong_event": 0.0,
+              "wrong_role": 0.2152777761220932
+            },
+            "second_patient": {
+              "native_correct": 0.6805555820465088,
+              "positive_role_margin": 0.7916666865348816,
+              "role_margin": 4.888570785522461,
+              "wrong_event": 0.1388888955116272,
+              "wrong_role": 0.1805555522441864
+            }
+          },
+          "change": {
+            "C_query_pp": 0.0,
+            "accuracy4_pp": 0.0,
+            "by_query": {
+              "first_agent": {
+                "native_correct_delta": 0.0,
+                "role_margin_delta": 0.0,
+                "wrong_event_delta": 0.0,
+                "wrong_role_delta": 0.0
+              },
+              "first_patient": {
+                "native_correct_delta": 0.0,
+                "role_margin_delta": 0.0,
+                "wrong_event_delta": 0.0,
+                "wrong_role_delta": 0.0
+              },
+              "second_agent": {
+                "native_correct_delta": 0.0,
+                "role_margin_delta": 0.0,
+                "wrong_event_delta": 0.0,
+                "wrong_role_delta": 0.0
+              },
+              "second_patient": {
+                "native_correct_delta": 0.0,
+                "role_margin_delta": 0.0,
+                "wrong_event_delta": 0.0,
+                "wrong_role_delta": 0.0
+              }
+            }
+          },
+          "changed_query_outcomes": {
+            "first_agent": {
+              "correct_to_incorrect": 0,
+              "incorrect_to_correct": 0
+            },
+            "first_patient": {
+              "correct_to_incorrect": 0,
+              "incorrect_to_correct": 0
+            },
+            "second_agent": {
+              "correct_to_incorrect": 0,
+              "incorrect_to_correct": 0
+            },
+            "second_patient": {
+              "correct_to_incorrect": 0,
+              "incorrect_to_correct": 0
+            }
+          },
+          "full_vocab_accuracy": 0.6493055820465088
+        },
+        "block3__passive": {
+          "C_query": 0.2430555522441864,
+          "accuracy4": 0.6805555820465088,
+          "by_query": {
+            "first_agent": {
+              "native_correct": 0.6736111044883728,
+              "positive_role_margin": 0.8680555820465088,
+              "role_margin": 3.884364128112793,
+              "wrong_event": 0.2430555522441864,
+              "wrong_role": 0.0833333358168602
+            },
+            "first_patient": {
+              "native_correct": 0.5833333134651184,
+              "positive_role_margin": 0.6597222089767456,
+              "role_margin": 1.8285601139068604,
+              "wrong_event": 0.1041666641831398,
+              "wrong_role": 0.3125
+            },
+            "second_agent": {
+              "native_correct": 0.7847222089767456,
+              "positive_role_margin": 0.7847222089767456,
+              "role_margin": 2.99454665184021,
+              "wrong_event": 0.0,
+              "wrong_role": 0.2152777761220932
+            },
+            "second_patient": {
+              "native_correct": 0.6805555820465088,
+              "positive_role_margin": 0.7916666865348816,
+              "role_margin": 4.888570785522461,
+              "wrong_event": 0.1388888955116272,
+              "wrong_role": 0.1805555522441864
+            }
+          },
+          "change": {
+            "C_query_pp": 0.0,
+            "accuracy4_pp": 0.0,
+            "by_query": {
+              "first_agent": {
+                "native_correct_delta": 0.0,
+                "role_margin_delta": 0.0,
+                "wrong_event_delta": 0.0,
+                "wrong_role_delta": 0.0
+              },
+              "first_patient": {
+                "native_correct_delta": 0.0,
+                "role_margin_delta": 0.0,
+                "wrong_event_delta": 0.0,
+                "wrong_role_delta": 0.0
+              },
+              "second_agent": {
+                "native_correct_delta": 0.0,
+                "role_margin_delta": 0.0,
+                "wrong_event_delta": 0.0,
+                "wrong_role_delta": 0.0
+              },
+              "second_patient": {
+                "native_correct_delta": 0.0,
+                "role_margin_delta": 0.0,
+                "wrong_event_delta": 0.0,
+                "wrong_role_delta": 0.0
+              }
+            }
+          },
+          "changed_query_outcomes": {
+            "first_agent": {
+              "correct_to_incorrect": 0,
+              "incorrect_to_correct": 0
+            },
+            "first_patient": {
+              "correct_to_incorrect": 0,
+              "incorrect_to_correct": 0
+            },
+            "second_agent": {
+              "correct_to_incorrect": 0,
+              "incorrect_to_correct": 0
+            },
+            "second_patient": {
+              "correct_to_incorrect": 0,
+              "incorrect_to_correct": 0
+            }
+          },
+          "full_vocab_accuracy": 0.6493055820465088
+        },
+        "block3__passive_misaligned": {
+          "C_query": 0.2430555522441864,
+          "accuracy4": 0.6805555820465088,
+          "by_query": {
+            "first_agent": {
+              "native_correct": 0.6736111044883728,
+              "positive_role_margin": 0.8680555820465088,
+              "role_margin": 3.884364128112793,
+              "wrong_event": 0.2430555522441864,
+              "wrong_role": 0.0833333358168602
+            },
+            "first_patient": {
+              "native_correct": 0.5833333134651184,
+              "positive_role_margin": 0.6597222089767456,
+              "role_margin": 1.8285601139068604,
+              "wrong_event": 0.1041666641831398,
+              "wrong_role": 0.3125
+            },
+            "second_agent": {
+              "native_correct": 0.7847222089767456,
+              "positive_role_margin": 0.7847222089767456,
+              "role_margin": 2.99454665184021,
+              "wrong_event": 0.0,
+              "wrong_role": 0.2152777761220932
+            },
+            "second_patient": {
+              "native_correct": 0.6805555820465088,
+              "positive_role_margin": 0.7916666865348816,
+              "role_margin": 4.888570785522461,
+              "wrong_event": 0.1388888955116272,
+              "wrong_role": 0.1805555522441864
+            }
+          },
+          "change": {
+            "C_query_pp": 0.0,
+            "accuracy4_pp": 0.0,
+            "by_query": {
+              "first_agent": {
+                "native_correct_delta": 0.0,
+                "role_margin_delta": 0.0,
+                "wrong_event_delta": 0.0,
+                "wrong_role_delta": 0.0
+              },
+              "first_patient": {
+                "native_correct_delta": 0.0,
+                "role_margin_delta": 0.0,
+                "wrong_event_delta": 0.0,
+                "wrong_role_delta": 0.0
+              },
+              "second_agent": {
+                "native_correct_delta": 0.0,
+                "role_margin_delta": 0.0,
+                "wrong_event_delta": 0.0,
+                "wrong_role_delta": 0.0
+              },
+              "second_patient": {
+                "native_correct_delta": 0.0,
+                "role_margin_delta": 0.0,
+                "wrong_event_delta": 0.0,
+                "wrong_role_delta": 0.0
+              }
+            }
+          },
+          "changed_query_outcomes": {
+            "first_agent": {
+              "correct_to_incorrect": 0,
+              "incorrect_to_correct": 0
+            },
+            "first_patient": {
+              "correct_to_incorrect": 0,
+              "incorrect_to_correct": 0
+            },
+            "second_agent": {
+              "correct_to_incorrect": 0,
+              "incorrect_to_correct": 0
+            },
+            "second_patient": {
+              "correct_to_incorrect": 0,
+              "incorrect_to_correct": 0
+            }
+          },
+          "full_vocab_accuracy": 0.6493055820465088
+        },
+        "embed__active": {
+          "C_query": 0.125,
+          "accuracy4": 0.5850694179534912,
+          "by_query": {
+            "first_agent": {
+              "native_correct": 0.5763888955116272,
+              "positive_role_margin": 0.7986111044883728,
+              "role_margin": 3.42124080657959,
+              "wrong_event": 0.3055555522441864,
+              "wrong_role": 0.1180555522441864
+            },
+            "first_patient": {
+              "native_correct": 0.5138888955116272,
+              "positive_role_margin": 0.5902777910232544,
+              "role_margin": 1.787178874015808,
+              "wrong_event": 0.1388888955116272,
+              "wrong_role": 0.3472222089767456
+            },
+            "second_agent": {
+              "native_correct": 0.7013888955116272,
+              "positive_role_margin": 0.7083333134651184,
+              "role_margin": 2.4078543186187744,
+              "wrong_event": 0.0069444444961845875,
+              "wrong_role": 0.2916666567325592
+            },
+            "second_patient": {
+              "native_correct": 0.5486111044883728,
+              "positive_role_margin": 0.6597222089767456,
+              "role_margin": 2.8691658973693848,
+              "wrong_event": 0.1597222238779068,
+              "wrong_role": 0.2916666567325592
+            }
+          },
+          "change": {
+            "C_query_pp": -11.80555522441864,
+            "accuracy4_pp": -9.548616409301758,
+            "by_query": {
+              "first_agent": {
+                "native_correct_delta": -0.0972222089767456,
+                "role_margin_delta": -0.4631233215332031,
+                "wrong_event_delta": 0.0625,
+                "wrong_role_delta": 0.0347222164273262
+              },
+              "first_patient": {
+                "native_correct_delta": -0.06944441795349121,
+                "role_margin_delta": -0.041381239891052246,
+                "wrong_event_delta": 0.034722231328487396,
+                "wrong_role_delta": 0.034722208976745605
+              },
+              "second_agent": {
+                "native_correct_delta": -0.08333331346511841,
+                "role_margin_delta": -0.5866923332214355,
+                "wrong_event_delta": 0.0069444444961845875,
+                "wrong_role_delta": 0.076388880610466
+              },
+              "second_patient": {
+                "native_correct_delta": -0.131944477558136,
+                "role_margin_delta": -2.019404888153076,
+                "wrong_event_delta": 0.020833328366279602,
+                "wrong_role_delta": 0.1111111044883728
+              }
+            }
+          },
+          "changed_query_outcomes": {
+            "first_agent": {
+              "correct_to_incorrect": 32,
+              "incorrect_to_correct": 18
+            },
+            "first_patient": {
+              "correct_to_incorrect": 17,
+              "incorrect_to_correct": 7
+            },
+            "second_agent": {
+              "correct_to_incorrect": 17,
+              "incorrect_to_correct": 5
+            },
+            "second_patient": {
+              "correct_to_incorrect": 26,
+              "incorrect_to_correct": 7
+            }
+          },
+          "full_vocab_accuracy": 0.5642361044883728
+        },
+        "embed__both": {
+          "C_query": 0.1805555522441864,
+          "accuracy4": 0.6631944179534912,
+          "by_query": {
+            "first_agent": {
+              "native_correct": 0.4930555522441864,
+              "positive_role_margin": 0.7083333134651184,
+              "role_margin": 1.9489481449127197,
+              "wrong_event": 0.3472222089767456,
+              "wrong_role": 0.1597222238779068
+            },
+            "first_patient": {
+              "native_correct": 0.5069444179534912,
+              "positive_role_margin": 0.5833333134651184,
+              "role_margin": 1.3070334196090698,
+              "wrong_event": 0.1111111119389534,
+              "wrong_role": 0.3819444477558136
+            },
+            "second_agent": {
+              "native_correct": 0.8541666865348816,
+              "positive_role_margin": 0.8541666865348816,
+              "role_margin": 4.806789398193359,
+              "wrong_event": 0.0,
+              "wrong_role": 0.1458333283662796
+            },
+            "second_patient": {
+              "native_correct": 0.7986111044883728,
+              "positive_role_margin": 0.875,
+              "role_margin": 6.959479331970215,
+              "wrong_event": 0.1111111119389534,
+              "wrong_role": 0.0902777761220932
+            }
+          },
+          "change": {
+            "C_query_pp": -6.25,
+            "accuracy4_pp": -1.7361164093017578,
+            "by_query": {
+              "first_agent": {
+                "native_correct_delta": -0.1805555522441864,
+                "role_margin_delta": -1.9354159832000732,
+                "wrong_event_delta": 0.1041666567325592,
+                "wrong_role_delta": 0.0763888880610466
+              },
+              "first_patient": {
+                "native_correct_delta": -0.0763888955116272,
+                "role_margin_delta": -0.5215266942977905,
+                "wrong_event_delta": 0.006944447755813599,
+                "wrong_role_delta": 0.0694444477558136
+              },
+              "second_agent": {
+                "native_correct_delta": 0.06944447755813599,
+                "role_margin_delta": 1.8122427463531494,
+                "wrong_event_delta": 0.0,
+                "wrong_role_delta": -0.0694444477558136
+              },
+              "second_patient": {
+                "native_correct_delta": 0.11805552244186401,
+                "role_margin_delta": 2.070908546447754,
+                "wrong_event_delta": -0.027777783572673798,
+                "wrong_role_delta": -0.0902777761220932
+              }
+            }
+          },
+          "changed_query_outcomes": {
+            "first_agent": {
+              "correct_to_incorrect": 47,
+              "incorrect_to_correct": 21
+            },
+            "first_patient": {
+              "correct_to_incorrect": 23,
+              "incorrect_to_correct": 12
+            },
+            "second_agent": {
+              "correct_to_incorrect": 7,
+              "incorrect_to_correct": 17
+            },
+            "second_patient": {
+              "correct_to_incorrect": 4,
+              "incorrect_to_correct": 21
+            }
+          },
+          "full_vocab_accuracy": 0.6475694179534912
+        },
+        "embed__identity": {
+          "C_query": 0.2430555522441864,
+          "accuracy4": 0.6805555820465088,
+          "by_query": {
+            "first_agent": {
+              "native_correct": 0.6736111044883728,
+              "positive_role_margin": 0.8680555820465088,
+              "role_margin": 3.884364128112793,
+              "wrong_event": 0.2430555522441864,
+              "wrong_role": 0.0833333358168602
+            },
+            "first_patient": {
+              "native_correct": 0.5833333134651184,
+              "positive_role_margin": 0.6597222089767456,
+              "role_margin": 1.8285601139068604,
+              "wrong_event": 0.1041666641831398,
+              "wrong_role": 0.3125
+            },
+            "second_agent": {
+              "native_correct": 0.7847222089767456,
+              "positive_role_margin": 0.7847222089767456,
+              "role_margin": 2.99454665184021,
+              "wrong_event": 0.0,
+              "wrong_role": 0.2152777761220932
+            },
+            "second_patient": {
+              "native_correct": 0.6805555820465088,
+              "positive_role_margin": 0.7916666865348816,
+              "role_margin": 4.888570785522461,
+              "wrong_event": 0.1388888955116272,
+              "wrong_role": 0.1805555522441864
+            }
+          },
+          "change": {
+            "C_query_pp": 0.0,
+            "accuracy4_pp": 0.0,
+            "by_query": {
+              "first_agent": {
+                "native_correct_delta": 0.0,
+                "role_margin_delta": 0.0,
+                "wrong_event_delta": 0.0,
+                "wrong_role_delta": 0.0
+              },
+              "first_patient": {
+                "native_correct_delta": 0.0,
+                "role_margin_delta": 0.0,
+                "wrong_event_delta": 0.0,
+                "wrong_role_delta": 0.0
+              },
+              "second_agent": {
+                "native_correct_delta": 0.0,
+                "role_margin_delta": 0.0,
+                "wrong_event_delta": 0.0,
+                "wrong_role_delta": 0.0
+              },
+              "second_patient": {
+                "native_correct_delta": 0.0,
+                "role_margin_delta": 0.0,
+                "wrong_event_delta": 0.0,
+                "wrong_role_delta": 0.0
+              }
+            }
+          },
+          "changed_query_outcomes": {
+            "first_agent": {
+              "correct_to_incorrect": 0,
+              "incorrect_to_correct": 0
+            },
+            "first_patient": {
+              "correct_to_incorrect": 0,
+              "incorrect_to_correct": 0
+            },
+            "second_agent": {
+              "correct_to_incorrect": 0,
+              "incorrect_to_correct": 0
+            },
+            "second_patient": {
+              "correct_to_incorrect": 0,
+              "incorrect_to_correct": 0
+            }
+          },
+          "full_vocab_accuracy": 0.6493055820465088
+        },
+        "embed__passive": {
+          "C_query": 0.2986111044883728,
+          "accuracy4": 0.7204861044883728,
+          "by_query": {
+            "first_agent": {
+              "native_correct": 0.6805555820465088,
+              "positive_role_margin": 0.8125,
+              "role_margin": 3.3574252128601074,
+              "wrong_event": 0.1666666716337204,
+              "wrong_role": 0.1527777761220932
+            },
+            "first_patient": {
+              "native_correct": 0.5277777910232544,
+              "positive_role_margin": 0.5347222089767456,
+              "role_margin": 0.6101410388946533,
+              "wrong_event": 0.0486111119389534,
+              "wrong_role": 0.4236111044883728
+            },
+            "second_agent": {
+              "native_correct": 0.8611111044883728,
+              "positive_role_margin": 0.8611111044883728,
+              "role_margin": 4.446812152862549,
+              "wrong_event": 0.0,
+              "wrong_role": 0.1388888955116272
+            },
+            "second_patient": {
+              "native_correct": 0.8125,
+              "positive_role_margin": 0.875,
+              "role_margin": 6.677684783935547,
+              "wrong_event": 0.0694444477558136,
+              "wrong_role": 0.1180555522441864
+            }
+          },
+          "change": {
+            "C_query_pp": 5.55555522441864,
+            "accuracy4_pp": 3.9930522441864014,
+            "by_query": {
+              "first_agent": {
+                "native_correct_delta": 0.006944477558135986,
+                "role_margin_delta": -0.5269389152526855,
+                "wrong_event_delta": -0.076388880610466,
+                "wrong_role_delta": 0.069444440305233
+              },
+              "first_patient": {
+                "native_correct_delta": -0.055555522441864014,
+                "role_margin_delta": -1.218419075012207,
+                "wrong_event_delta": -0.0555555522441864,
+                "wrong_role_delta": 0.1111111044883728
+              },
+              "second_agent": {
+                "native_correct_delta": 0.0763888955116272,
+                "role_margin_delta": 1.4522655010223389,
+                "wrong_event_delta": 0.0,
+                "wrong_role_delta": -0.076388880610466
+              },
+              "second_patient": {
+                "native_correct_delta": 0.1319444179534912,
+                "role_margin_delta": 1.789113998413086,
+                "wrong_event_delta": -0.0694444477558136,
+                "wrong_role_delta": -0.0625
+              }
+            }
+          },
+          "changed_query_outcomes": {
+            "first_agent": {
+              "correct_to_incorrect": 17,
+              "incorrect_to_correct": 18
+            },
+            "first_patient": {
+              "correct_to_incorrect": 12,
+              "incorrect_to_correct": 4
+            },
+            "second_agent": {
+              "correct_to_incorrect": 9,
+              "incorrect_to_correct": 20
+            },
+            "second_patient": {
+              "correct_to_incorrect": 1,
+              "incorrect_to_correct": 20
+            }
+          },
+          "full_vocab_accuracy": 0.7013888955116272
+        },
+        "embed__passive_misaligned": {
+          "C_query": 0.0763888880610466,
+          "accuracy4": 0.4184027910232544,
+          "by_query": {
+            "first_agent": {
+              "native_correct": 0.5625,
+              "positive_role_margin": 0.6875,
+              "role_margin": 2.6709604263305664,
+              "wrong_event": 0.1944444477558136,
+              "wrong_role": 0.2430555522441864
+            },
+            "first_patient": {
+              "native_correct": 0.5208333134651184,
+              "positive_role_margin": 0.5486111044883728,
+              "role_margin": 0.3439795672893524,
+              "wrong_event": 0.0555555559694767,
+              "wrong_role": 0.4236111044883728
+            },
+            "second_agent": {
+              "native_correct": 0.3333333432674408,
+              "positive_role_margin": 0.3402777910232544,
+              "role_margin": -2.14353084564209,
+              "wrong_event": 0.013888888992369175,
+              "wrong_role": 0.6527777910232544
+            },
+            "second_patient": {
+              "native_correct": 0.2569444477558136,
+              "positive_role_margin": 0.2847222089767456,
+              "role_margin": -3.115780830383301,
+              "wrong_event": 0.0902777761220932,
+              "wrong_role": 0.6527777910232544
+            }
+          },
+          "change": {
+            "C_query_pp": -16.66666641831398,
+            "accuracy4_pp": -26.21527910232544,
+            "by_query": {
+              "first_agent": {
+                "native_correct_delta": -0.1111111044883728,
+                "role_margin_delta": -1.2134037017822266,
+                "wrong_event_delta": -0.0486111044883728,
+                "wrong_role_delta": 0.1597222164273262
+              },
+              "first_patient": {
+                "native_correct_delta": -0.0625,
+                "role_margin_delta": -1.484580546617508,
+                "wrong_event_delta": -0.0486111082136631,
+                "wrong_role_delta": 0.1111111044883728
+              },
+              "second_agent": {
+                "native_correct_delta": -0.4513888657093048,
+                "role_margin_delta": -5.1380774974823,
+                "wrong_event_delta": 0.013888888992369175,
+                "wrong_role_delta": 0.4375000149011612
+              },
+              "second_patient": {
+                "native_correct_delta": -0.4236111342906952,
+                "role_margin_delta": -8.004351615905762,
+                "wrong_event_delta": -0.048611119389534,
+                "wrong_role_delta": 0.472222238779068
+              }
+            }
+          },
+          "changed_query_outcomes": {
+            "first_agent": {
+              "correct_to_incorrect": 30,
+              "incorrect_to_correct": 14
+            },
+            "first_patient": {
+              "correct_to_incorrect": 20,
+              "incorrect_to_correct": 11
+            },
+            "second_agent": {
+              "correct_to_incorrect": 67,
+              "incorrect_to_correct": 2
+            },
+            "second_patient": {
+              "correct_to_incorrect": 62,
+              "incorrect_to_correct": 1
+            }
+          },
+          "full_vocab_accuracy": 0.4010416567325592
+        }
+      }
+    },
+    "PA_literal": {
+      "native": {
+        "C_query": 0.5486111044883728,
+        "accuracy4": 0.875,
+        "by_query": {
+          "first_agent": {
+            "native_correct": 0.9444444179534912,
+            "positive_role_margin": 0.9791666865348816,
+            "role_margin": 5.922495365142822,
+            "wrong_event": 0.0347222238779068,
+            "wrong_role": 0.02083333395421505
+          },
+          "first_patient": {
+            "native_correct": 0.7916666865348816,
+            "positive_role_margin": 0.8888888955116272,
+            "role_margin": 6.630891799926758,
+            "wrong_event": 0.1111111119389534,
+            "wrong_role": 0.0972222238779068
+          },
+          "second_agent": {
+            "native_correct": 0.9722222089767456,
+            "positive_role_margin": 0.9791666865348816,
+            "role_margin": 6.876372337341309,
+            "wrong_event": 0.0069444444961845875,
+            "wrong_role": 0.02083333395421505
+          },
+          "second_patient": {
+            "native_correct": 0.7916666865348816,
+            "positive_role_margin": 0.8541666865348816,
+            "role_margin": 7.215333938598633,
+            "wrong_event": 0.0625,
+            "wrong_role": 0.1458333283662796
+          }
+        },
+        "full_vocab_accuracy": 0.8680555820465088
+      },
+      "patches": {
+        "block1__active": {
+          "C_query": 0.3194444477558136,
+          "accuracy4": 0.7065972089767456,
+          "by_query": {
+            "first_agent": {
+              "native_correct": 0.9166666865348816,
+              "positive_role_margin": 0.9583333134651184,
+              "role_margin": 5.979469299316406,
+              "wrong_event": 0.0763888880610466,
+              "wrong_role": 0.0069444444961845875
+            },
+            "first_patient": {
+              "native_correct": 0.5972222089767456,
+              "positive_role_margin": 0.9097222089767456,
+              "role_margin": 7.028380870819092,
+              "wrong_event": 0.3541666567325592,
+              "wrong_role": 0.0486111119389534
+            },
+            "second_agent": {
+              "native_correct": 0.7222222089767456,
+              "positive_role_margin": 0.8402777910232544,
+              "role_margin": 4.8441386222839355,
+              "wrong_event": 0.1597222238779068,
+              "wrong_role": 0.1180555522441864
+            },
+            "second_patient": {
+              "native_correct": 0.5902777910232544,
+              "positive_role_margin": 0.6666666865348816,
+              "role_margin": 3.0108554363250732,
+              "wrong_event": 0.125,
+              "wrong_role": 0.2847222089767456
+            }
+          },
+          "change": {
+            "C_query_pp": -22.91666567325592,
+            "accuracy4_pp": -16.84027910232544,
+            "by_query": {
+              "first_agent": {
+                "native_correct_delta": -0.02777773141860962,
+                "role_margin_delta": 0.056973934173583984,
+                "wrong_event_delta": 0.0416666641831398,
+                "wrong_role_delta": -0.013888889458030462
+              },
+              "first_patient": {
+                "native_correct_delta": -0.194444477558136,
+                "role_margin_delta": 0.397489070892334,
+                "wrong_event_delta": 0.2430555447936058,
+                "wrong_role_delta": -0.0486111119389534
+              },
+              "second_agent": {
+                "native_correct_delta": -0.25,
+                "role_margin_delta": -2.032233715057373,
+                "wrong_event_delta": 0.1527777793817222,
+                "wrong_role_delta": 0.09722221828997135
+              },
+              "second_patient": {
+                "native_correct_delta": -0.2013888955116272,
+                "role_margin_delta": -4.20447850227356,
+                "wrong_event_delta": 0.0625,
+                "wrong_role_delta": 0.138888880610466
+              }
+            }
+          },
+          "changed_query_outcomes": {
+            "first_agent": {
+              "correct_to_incorrect": 8,
+              "incorrect_to_correct": 4
+            },
+            "first_patient": {
+              "correct_to_incorrect": 33,
+              "incorrect_to_correct": 5
+            },
+            "second_agent": {
+              "correct_to_incorrect": 37,
+              "incorrect_to_correct": 1
+            },
+            "second_patient": {
+              "correct_to_incorrect": 35,
+              "incorrect_to_correct": 6
+            }
+          },
+          "full_vocab_accuracy": 0.6961805820465088
+        },
+        "block1__both": {
+          "C_query": 0.0625,
+          "accuracy4": 0.5069444179534912,
+          "by_query": {
+            "first_agent": {
+              "native_correct": 0.5347222089767456,
+              "positive_role_margin": 0.6736111044883728,
+              "role_margin": 2.2118406295776367,
+              "wrong_event": 0.2083333283662796,
+              "wrong_role": 0.2569444477558136
+            },
+            "first_patient": {
+              "native_correct": 0.3125,
+              "positive_role_margin": 0.7291666865348816,
+              "role_margin": 3.2506954669952393,
+              "wrong_event": 0.5625,
+              "wrong_role": 0.125
+            },
+            "second_agent": {
+              "native_correct": 0.6111111044883728,
+              "positive_role_margin": 0.7430555820465088,
+              "role_margin": 3.3075380325317383,
+              "wrong_event": 0.2291666716337204,
+              "wrong_role": 0.1597222238779068
+            },
+            "second_patient": {
+              "native_correct": 0.5694444179534912,
+              "positive_role_margin": 0.625,
+              "role_margin": 3.7930972576141357,
+              "wrong_event": 0.1111111119389534,
+              "wrong_role": 0.3194444477558136
+            }
+          },
+          "change": {
+            "C_query_pp": -48.61111044883728,
+            "accuracy4_pp": -36.80555820465088,
+            "by_query": {
+              "first_agent": {
+                "native_correct_delta": -0.4097222089767456,
+                "role_margin_delta": -3.7106547355651855,
+                "wrong_event_delta": 0.1736111044883728,
+                "wrong_role_delta": 0.23611111380159855
+              },
+              "first_patient": {
+                "native_correct_delta": -0.4791666865348816,
+                "role_margin_delta": -3.3801963329315186,
+                "wrong_event_delta": 0.4513888880610466,
+                "wrong_role_delta": 0.0277777761220932
+              },
+              "second_agent": {
+                "native_correct_delta": -0.3611111044883728,
+                "role_margin_delta": -3.5688343048095703,
+                "wrong_event_delta": 0.2222222271375358,
+                "wrong_role_delta": 0.13888888992369175
+              },
+              "second_patient": {
+                "native_correct_delta": -0.22222226858139038,
+                "role_margin_delta": -3.422236680984497,
+                "wrong_event_delta": 0.0486111119389534,
+                "wrong_role_delta": 0.173611119389534
+              }
+            }
+          },
+          "changed_query_outcomes": {
+            "first_agent": {
+              "correct_to_incorrect": 60,
+              "incorrect_to_correct": 1
+            },
+            "first_patient": {
+              "correct_to_incorrect": 70,
+              "incorrect_to_correct": 1
+            },
+            "second_agent": {
+              "correct_to_incorrect": 53,
+              "incorrect_to_correct": 1
+            },
+            "second_patient": {
+              "correct_to_incorrect": 40,
+              "incorrect_to_correct": 8
+            }
+          },
+          "full_vocab_accuracy": 0.4895833432674408
+        },
+        "block1__identity": {
+          "C_query": 0.5486111044883728,
+          "accuracy4": 0.875,
+          "by_query": {
+            "first_agent": {
+              "native_correct": 0.9444444179534912,
+              "positive_role_margin": 0.9791666865348816,
+              "role_margin": 5.922495365142822,
+              "wrong_event": 0.0347222238779068,
+              "wrong_role": 0.02083333395421505
+            },
+            "first_patient": {
+              "native_correct": 0.7916666865348816,
+              "positive_role_margin": 0.8888888955116272,
+              "role_margin": 6.630891799926758,
+              "wrong_event": 0.1111111119389534,
+              "wrong_role": 0.0972222238779068
+            },
+            "second_agent": {
+              "native_correct": 0.9722222089767456,
+              "positive_role_margin": 0.9791666865348816,
+              "role_margin": 6.876372337341309,
+              "wrong_event": 0.0069444444961845875,
+              "wrong_role": 0.02083333395421505
+            },
+            "second_patient": {
+              "native_correct": 0.7916666865348816,
+              "positive_role_margin": 0.8541666865348816,
+              "role_margin": 7.215333938598633,
+              "wrong_event": 0.0625,
+              "wrong_role": 0.1458333283662796
+            }
+          },
+          "change": {
+            "C_query_pp": 0.0,
+            "accuracy4_pp": 0.0,
+            "by_query": {
+              "first_agent": {
+                "native_correct_delta": 0.0,
+                "role_margin_delta": 0.0,
+                "wrong_event_delta": 0.0,
+                "wrong_role_delta": 0.0
+              },
+              "first_patient": {
+                "native_correct_delta": 0.0,
+                "role_margin_delta": 0.0,
+                "wrong_event_delta": 0.0,
+                "wrong_role_delta": 0.0
+              },
+              "second_agent": {
+                "native_correct_delta": 0.0,
+                "role_margin_delta": 0.0,
+                "wrong_event_delta": 0.0,
+                "wrong_role_delta": 0.0
+              },
+              "second_patient": {
+                "native_correct_delta": 0.0,
+                "role_margin_delta": 0.0,
+                "wrong_event_delta": 0.0,
+                "wrong_role_delta": 0.0
+              }
+            }
+          },
+          "changed_query_outcomes": {
+            "first_agent": {
+              "correct_to_incorrect": 0,
+              "incorrect_to_correct": 0
+            },
+            "first_patient": {
+              "correct_to_incorrect": 0,
+              "incorrect_to_correct": 0
+            },
+            "second_agent": {
+              "correct_to_incorrect": 0,
+              "incorrect_to_correct": 0
+            },
+            "second_patient": {
+              "correct_to_incorrect": 0,
+              "incorrect_to_correct": 0
+            }
+          },
+          "full_vocab_accuracy": 0.8680555820465088
+        },
+        "block1__passive": {
+          "C_query": 0.2083333283662796,
+          "accuracy4": 0.6857638955116272,
+          "by_query": {
+            "first_agent": {
+              "native_correct": 0.6111111044883728,
+              "positive_role_margin": 0.6736111044883728,
+              "role_margin": 2.39920711517334,
+              "wrong_event": 0.1597222238779068,
+              "wrong_role": 0.2291666716337204
+            },
+            "first_patient": {
+              "native_correct": 0.5347222089767456,
+              "positive_role_margin": 0.6944444179534912,
+              "role_margin": 2.8749334812164307,
+              "wrong_event": 0.2361111044883728,
+              "wrong_role": 0.2291666716337204
+            },
+            "second_agent": {
+              "native_correct": 0.8055555820465088,
+              "positive_role_margin": 0.8472222089767456,
+              "role_margin": 5.694822788238525,
+              "wrong_event": 0.0763888880610466,
+              "wrong_role": 0.1180555522441864
+            },
+            "second_patient": {
+              "native_correct": 0.7916666865348816,
+              "positive_role_margin": 0.8611111044883728,
+              "role_margin": 8.087757110595703,
+              "wrong_event": 0.0694444477558136,
+              "wrong_role": 0.1388888955116272
+            }
+          },
+          "change": {
+            "C_query_pp": -34.02777761220932,
+            "accuracy4_pp": -18.92361044883728,
+            "by_query": {
+              "first_agent": {
+                "native_correct_delta": -0.3333333134651184,
+                "role_margin_delta": -3.5232882499694824,
+                "wrong_event_delta": 0.125,
+                "wrong_role_delta": 0.20833333767950535
+              },
+              "first_patient": {
+                "native_correct_delta": -0.256944477558136,
+                "role_margin_delta": -3.755958318710327,
+                "wrong_event_delta": 0.1249999925494194,
+                "wrong_role_delta": 0.1319444477558136
+              },
+              "second_agent": {
+                "native_correct_delta": -0.16666662693023682,
+                "role_margin_delta": -1.1815495491027832,
+                "wrong_event_delta": 0.06944444356486201,
+                "wrong_role_delta": 0.09722221828997135
+              },
+              "second_patient": {
+                "native_correct_delta": 0.0,
+                "role_margin_delta": 0.8724231719970703,
+                "wrong_event_delta": 0.006944447755813599,
+                "wrong_role_delta": -0.006944432854652405
+              }
+            }
+          },
+          "changed_query_outcomes": {
+            "first_agent": {
+              "correct_to_incorrect": 49,
+              "incorrect_to_correct": 1
+            },
+            "first_patient": {
+              "correct_to_incorrect": 40,
+              "incorrect_to_correct": 3
+            },
+            "second_agent": {
+              "correct_to_incorrect": 26,
+              "incorrect_to_correct": 2
+            },
+            "second_patient": {
+              "correct_to_incorrect": 13,
+              "incorrect_to_correct": 13
+            }
+          },
+          "full_vocab_accuracy": 0.6649305820465088
+        },
+        "block1__passive_misaligned": {
+          "C_query": 0.2083333283662796,
+          "accuracy4": 0.6996527910232544,
+          "by_query": {
+            "first_agent": {
+              "native_correct": 0.6597222089767456,
+              "positive_role_margin": 0.7291666865348816,
+              "role_margin": 2.8116350173950195,
+              "wrong_event": 0.1527777761220932,
+              "wrong_role": 0.1875
+            },
+            "first_patient": {
+              "native_correct": 0.5277777910232544,
+              "positive_role_margin": 0.7152777910232544,
+              "role_margin": 3.3224058151245117,
+              "wrong_event": 0.2569444477558136,
+              "wrong_role": 0.2152777761220932
+            },
+            "second_agent": {
+              "native_correct": 0.7777777910232544,
+              "positive_role_margin": 0.8125,
+              "role_margin": 5.218260288238525,
+              "wrong_event": 0.0972222238779068,
+              "wrong_role": 0.125
+            },
+            "second_patient": {
+              "native_correct": 0.8333333134651184,
+              "positive_role_margin": 0.8888888955116272,
+              "role_margin": 8.36872673034668,
+              "wrong_event": 0.0555555559694767,
+              "wrong_role": 0.1111111119389534
+            }
+          },
+          "change": {
+            "C_query_pp": -34.02777761220932,
+            "accuracy4_pp": -17.53472089767456,
+            "by_query": {
+              "first_agent": {
+                "native_correct_delta": -0.2847222089767456,
+                "role_margin_delta": -3.1108603477478027,
+                "wrong_event_delta": 0.1180555522441864,
+                "wrong_role_delta": 0.16666666604578495
+              },
+              "first_patient": {
+                "native_correct_delta": -0.2638888955116272,
+                "role_margin_delta": -3.308485984802246,
+                "wrong_event_delta": 0.1458333358168602,
+                "wrong_role_delta": 0.1180555522441864
+              },
+              "second_agent": {
+                "native_correct_delta": -0.1944444179534912,
+                "role_margin_delta": -1.6581120491027832,
+                "wrong_event_delta": 0.09027777938172221,
+                "wrong_role_delta": 0.10416666604578495
+              },
+              "second_patient": {
+                "native_correct_delta": 0.041666626930236816,
+                "role_margin_delta": 1.1533927917480469,
+                "wrong_event_delta": -0.0069444440305233,
+                "wrong_role_delta": -0.0347222164273262
+              }
+            }
+          },
+          "changed_query_outcomes": {
+            "first_agent": {
+              "correct_to_incorrect": 42,
+              "incorrect_to_correct": 1
+            },
+            "first_patient": {
+              "correct_to_incorrect": 41,
+              "incorrect_to_correct": 3
+            },
+            "second_agent": {
+              "correct_to_incorrect": 30,
+              "incorrect_to_correct": 2
+            },
+            "second_patient": {
+              "correct_to_incorrect": 10,
+              "incorrect_to_correct": 16
+            }
+          },
+          "full_vocab_accuracy": 0.671875
+        },
+        "block2__active": {
+          "C_query": 0.4791666567325592,
+          "accuracy4": 0.796875,
+          "by_query": {
+            "first_agent": {
+              "native_correct": 0.9722222089767456,
+              "positive_role_margin": 0.9861111044883728,
+              "role_margin": 6.022329330444336,
+              "wrong_event": 0.013888888992369175,
+              "wrong_role": 0.013888888992369175
+            },
+            "first_patient": {
+              "native_correct": 0.7916666865348816,
+              "positive_role_margin": 0.9097222089767456,
+              "role_margin": 6.670508861541748,
+              "wrong_event": 0.1527777761220932,
+              "wrong_role": 0.0555555559694767
+            },
+            "second_agent": {
+              "native_correct": 0.7847222089767456,
+              "positive_role_margin": 0.8958333134651184,
+              "role_margin": 5.841541290283203,
+              "wrong_event": 0.1666666716337204,
+              "wrong_role": 0.0486111119389534
+            },
+            "second_patient": {
+              "native_correct": 0.6388888955116272,
+              "positive_role_margin": 0.7916666865348816,
+              "role_margin": 5.193775653839111,
+              "wrong_event": 0.1875,
+              "wrong_role": 0.1736111044883728
+            }
+          },
+          "change": {
+            "C_query_pp": -6.94444477558136,
+            "accuracy4_pp": -7.8125,
+            "by_query": {
+              "first_agent": {
+                "native_correct_delta": 0.027777791023254395,
+                "role_margin_delta": 0.09983396530151367,
+                "wrong_event_delta": -0.020833334885537624,
+                "wrong_role_delta": -0.006944444961845875
+              },
+              "first_patient": {
+                "native_correct_delta": 0.0,
+                "role_margin_delta": 0.039617061614990234,
+                "wrong_event_delta": 0.0416666641831398,
+                "wrong_role_delta": -0.0416666679084301
+              },
+              "second_agent": {
+                "native_correct_delta": -0.1875,
+                "role_margin_delta": -1.0348310470581055,
+                "wrong_event_delta": 0.1597222271375358,
+                "wrong_role_delta": 0.02777777798473835
+              },
+              "second_patient": {
+                "native_correct_delta": -0.1527777910232544,
+                "role_margin_delta": -2.0215582847595215,
+                "wrong_event_delta": 0.125,
+                "wrong_role_delta": 0.0277777761220932
+              }
+            }
+          },
+          "changed_query_outcomes": {
+            "first_agent": {
+              "correct_to_incorrect": 0,
+              "incorrect_to_correct": 4
+            },
+            "first_patient": {
+              "correct_to_incorrect": 6,
+              "incorrect_to_correct": 6
+            },
+            "second_agent": {
+              "correct_to_incorrect": 27,
+              "incorrect_to_correct": 0
+            },
+            "second_patient": {
+              "correct_to_incorrect": 27,
+              "incorrect_to_correct": 5
+            }
+          },
+          "full_vocab_accuracy": 0.7916666865348816
+        },
+        "block2__both": {
+          "C_query": 0.375,
+          "accuracy4": 0.7291666865348816,
+          "by_query": {
+            "first_agent": {
+              "native_correct": 0.9236111044883728,
+              "positive_role_margin": 0.9722222089767456,
+              "role_margin": 5.237420082092285,
+              "wrong_event": 0.0486111119389534,
+              "wrong_role": 0.02777777798473835
+            },
+            "first_patient": {
+              "native_correct": 0.7361111044883728,
+              "positive_role_margin": 0.8819444179534912,
+              "role_margin": 5.311568737030029,
+              "wrong_event": 0.1805555522441864,
+              "wrong_role": 0.0833333358168602
+            },
+            "second_agent": {
+              "native_correct": 0.6597222089767456,
+              "positive_role_margin": 0.7986111044883728,
+              "role_margin": 4.8797783851623535,
+              "wrong_event": 0.2291666716337204,
+              "wrong_role": 0.1111111119389534
+            },
+            "second_patient": {
+              "native_correct": 0.5972222089767456,
+              "positive_role_margin": 0.7777777910232544,
+              "role_margin": 5.563249588012695,
+              "wrong_event": 0.2291666716337204,
+              "wrong_role": 0.1736111044883728
+            }
+          },
+          "change": {
+            "C_query_pp": -17.36111044883728,
+            "accuracy4_pp": -14.58333134651184,
+            "by_query": {
+              "first_agent": {
+                "native_correct_delta": -0.020833313465118408,
+                "role_margin_delta": -0.6850752830505371,
+                "wrong_event_delta": 0.0138888880610466,
+                "wrong_role_delta": 0.0069444440305233
+              },
+              "first_patient": {
+                "native_correct_delta": -0.05555558204650879,
+                "role_margin_delta": -1.3193230628967285,
+                "wrong_event_delta": 0.069444440305233,
+                "wrong_role_delta": -0.0138888880610466
+              },
+              "second_agent": {
+                "native_correct_delta": -0.3125,
+                "role_margin_delta": -1.996593952178955,
+                "wrong_event_delta": 0.2222222271375358,
+                "wrong_role_delta": 0.09027777798473835
+              },
+              "second_patient": {
+                "native_correct_delta": -0.194444477558136,
+                "role_margin_delta": -1.6520843505859375,
+                "wrong_event_delta": 0.1666666716337204,
+                "wrong_role_delta": 0.0277777761220932
+              }
+            }
+          },
+          "changed_query_outcomes": {
+            "first_agent": {
+              "correct_to_incorrect": 7,
+              "incorrect_to_correct": 4
+            },
+            "first_patient": {
+              "correct_to_incorrect": 12,
+              "incorrect_to_correct": 4
+            },
+            "second_agent": {
+              "correct_to_incorrect": 45,
+              "incorrect_to_correct": 0
+            },
+            "second_patient": {
+              "correct_to_incorrect": 32,
+              "incorrect_to_correct": 4
+            }
+          },
+          "full_vocab_accuracy": 0.7256944179534912
+        },
+        "block2__identity": {
+          "C_query": 0.5486111044883728,
+          "accuracy4": 0.875,
+          "by_query": {
+            "first_agent": {
+              "native_correct": 0.9444444179534912,
+              "positive_role_margin": 0.9791666865348816,
+              "role_margin": 5.922495365142822,
+              "wrong_event": 0.0347222238779068,
+              "wrong_role": 0.02083333395421505
+            },
+            "first_patient": {
+              "native_correct": 0.7916666865348816,
+              "positive_role_margin": 0.8888888955116272,
+              "role_margin": 6.630891799926758,
+              "wrong_event": 0.1111111119389534,
+              "wrong_role": 0.0972222238779068
+            },
+            "second_agent": {
+              "native_correct": 0.9722222089767456,
+              "positive_role_margin": 0.9791666865348816,
+              "role_margin": 6.876372337341309,
+              "wrong_event": 0.0069444444961845875,
+              "wrong_role": 0.02083333395421505
+            },
+            "second_patient": {
+              "native_correct": 0.7916666865348816,
+              "positive_role_margin": 0.8541666865348816,
+              "role_margin": 7.215333938598633,
+              "wrong_event": 0.0625,
+              "wrong_role": 0.1458333283662796
+            }
+          },
+          "change": {
+            "C_query_pp": 0.0,
+            "accuracy4_pp": 0.0,
+            "by_query": {
+              "first_agent": {
+                "native_correct_delta": 0.0,
+                "role_margin_delta": 0.0,
+                "wrong_event_delta": 0.0,
+                "wrong_role_delta": 0.0
+              },
+              "first_patient": {
+                "native_correct_delta": 0.0,
+                "role_margin_delta": 0.0,
+                "wrong_event_delta": 0.0,
+                "wrong_role_delta": 0.0
+              },
+              "second_agent": {
+                "native_correct_delta": 0.0,
+                "role_margin_delta": 0.0,
+                "wrong_event_delta": 0.0,
+                "wrong_role_delta": 0.0
+              },
+              "second_patient": {
+                "native_correct_delta": 0.0,
+                "role_margin_delta": 0.0,
+                "wrong_event_delta": 0.0,
+                "wrong_role_delta": 0.0
+              }
+            }
+          },
+          "changed_query_outcomes": {
+            "first_agent": {
+              "correct_to_incorrect": 0,
+              "incorrect_to_correct": 0
+            },
+            "first_patient": {
+              "correct_to_incorrect": 0,
+              "incorrect_to_correct": 0
+            },
+            "second_agent": {
+              "correct_to_incorrect": 0,
+              "incorrect_to_correct": 0
+            },
+            "second_patient": {
+              "correct_to_incorrect": 0,
+              "incorrect_to_correct": 0
+            }
+          },
+          "full_vocab_accuracy": 0.8680555820465088
+        },
+        "block2__passive": {
+          "C_query": 0.4236111044883728,
+          "accuracy4": 0.8107638955116272,
+          "by_query": {
+            "first_agent": {
+              "native_correct": 0.8958333134651184,
+              "positive_role_margin": 0.9583333134651184,
+              "role_margin": 5.107081890106201,
+              "wrong_event": 0.0694444477558136,
+              "wrong_role": 0.0347222238779068
+            },
+            "first_patient": {
+              "native_correct": 0.75,
+              "positive_role_margin": 0.8611111044883728,
+              "role_margin": 5.348936080932617,
+              "wrong_event": 0.125,
+              "wrong_role": 0.125
+            },
+            "second_agent": {
+              "native_correct": 0.8263888955116272,
+              "positive_role_margin": 0.8958333134651184,
+              "role_margin": 5.601332664489746,
+              "wrong_event": 0.1041666641831398,
+              "wrong_role": 0.0694444477558136
+            },
+            "second_patient": {
+              "native_correct": 0.7708333134651184,
+              "positive_role_margin": 0.8680555820465088,
+              "role_margin": 7.321638107299805,
+              "wrong_event": 0.1041666641831398,
+              "wrong_role": 0.125
+            }
+          },
+          "change": {
+            "C_query_pp": -12.5,
+            "accuracy4_pp": -6.42361044883728,
+            "by_query": {
+              "first_agent": {
+                "native_correct_delta": -0.0486111044883728,
+                "role_margin_delta": -0.8154134750366211,
+                "wrong_event_delta": 0.0347222238779068,
+                "wrong_role_delta": 0.01388888992369175
+              },
+              "first_patient": {
+                "native_correct_delta": -0.04166668653488159,
+                "role_margin_delta": -1.2819557189941406,
+                "wrong_event_delta": 0.0138888880610466,
+                "wrong_role_delta": 0.0277777761220932
+              },
+              "second_agent": {
+                "native_correct_delta": -0.1458333134651184,
+                "role_margin_delta": -1.2750396728515625,
+                "wrong_event_delta": 0.09722221968695521,
+                "wrong_role_delta": 0.04861111380159855
+              },
+              "second_patient": {
+                "native_correct_delta": -0.020833373069763184,
+                "role_margin_delta": 0.10630416870117188,
+                "wrong_event_delta": 0.0416666641831398,
+                "wrong_role_delta": -0.020833328366279602
+              }
+            }
+          },
+          "changed_query_outcomes": {
+            "first_agent": {
+              "correct_to_incorrect": 9,
+              "incorrect_to_correct": 2
+            },
+            "first_patient": {
+              "correct_to_incorrect": 6,
+              "incorrect_to_correct": 0
+            },
+            "second_agent": {
+              "correct_to_incorrect": 21,
+              "incorrect_to_correct": 0
+            },
+            "second_patient": {
+              "correct_to_incorrect": 8,
+              "incorrect_to_correct": 5
+            }
+          },
+          "full_vocab_accuracy": 0.8003472089767456
+        },
+        "block2__passive_misaligned": {
+          "C_query": 0.4236111044883728,
+          "accuracy4": 0.8107638955116272,
+          "by_query": {
+            "first_agent": {
+              "native_correct": 0.8958333134651184,
+              "positive_role_margin": 0.9583333134651184,
+              "role_margin": 5.107081890106201,
+              "wrong_event": 0.0694444477558136,
+              "wrong_role": 0.0347222238779068
+            },
+            "first_patient": {
+              "native_correct": 0.75,
+              "positive_role_margin": 0.8611111044883728,
+              "role_margin": 5.348936080932617,
+              "wrong_event": 0.125,
+              "wrong_role": 0.125
+            },
+            "second_agent": {
+              "native_correct": 0.8263888955116272,
+              "positive_role_margin": 0.8958333134651184,
+              "role_margin": 5.601332664489746,
+              "wrong_event": 0.1041666641831398,
+              "wrong_role": 0.0694444477558136
+            },
+            "second_patient": {
+              "native_correct": 0.7708333134651184,
+              "positive_role_margin": 0.8680555820465088,
+              "role_margin": 7.321638107299805,
+              "wrong_event": 0.1041666641831398,
+              "wrong_role": 0.125
+            }
+          },
+          "change": {
+            "C_query_pp": -12.5,
+            "accuracy4_pp": -6.42361044883728,
+            "by_query": {
+              "first_agent": {
+                "native_correct_delta": -0.0486111044883728,
+                "role_margin_delta": -0.8154134750366211,
+                "wrong_event_delta": 0.0347222238779068,
+                "wrong_role_delta": 0.01388888992369175
+              },
+              "first_patient": {
+                "native_correct_delta": -0.04166668653488159,
+                "role_margin_delta": -1.2819557189941406,
+                "wrong_event_delta": 0.0138888880610466,
+                "wrong_role_delta": 0.0277777761220932
+              },
+              "second_agent": {
+                "native_correct_delta": -0.1458333134651184,
+                "role_margin_delta": -1.2750396728515625,
+                "wrong_event_delta": 0.09722221968695521,
+                "wrong_role_delta": 0.04861111380159855
+              },
+              "second_patient": {
+                "native_correct_delta": -0.020833373069763184,
+                "role_margin_delta": 0.10630416870117188,
+                "wrong_event_delta": 0.0416666641831398,
+                "wrong_role_delta": -0.020833328366279602
+              }
+            }
+          },
+          "changed_query_outcomes": {
+            "first_agent": {
+              "correct_to_incorrect": 9,
+              "incorrect_to_correct": 2
+            },
+            "first_patient": {
+              "correct_to_incorrect": 6,
+              "incorrect_to_correct": 0
+            },
+            "second_agent": {
+              "correct_to_incorrect": 21,
+              "incorrect_to_correct": 0
+            },
+            "second_patient": {
+              "correct_to_incorrect": 8,
+              "incorrect_to_correct": 5
+            }
+          },
+          "full_vocab_accuracy": 0.8003472089767456
+        },
+        "block3__active": {
+          "C_query": 0.5486111044883728,
+          "accuracy4": 0.875,
+          "by_query": {
+            "first_agent": {
+              "native_correct": 0.9444444179534912,
+              "positive_role_margin": 0.9791666865348816,
+              "role_margin": 5.922495365142822,
+              "wrong_event": 0.0347222238779068,
+              "wrong_role": 0.02083333395421505
+            },
+            "first_patient": {
+              "native_correct": 0.7916666865348816,
+              "positive_role_margin": 0.8888888955116272,
+              "role_margin": 6.630891799926758,
+              "wrong_event": 0.1111111119389534,
+              "wrong_role": 0.0972222238779068
+            },
+            "second_agent": {
+              "native_correct": 0.9722222089767456,
+              "positive_role_margin": 0.9791666865348816,
+              "role_margin": 6.876372337341309,
+              "wrong_event": 0.0069444444961845875,
+              "wrong_role": 0.02083333395421505
+            },
+            "second_patient": {
+              "native_correct": 0.7916666865348816,
+              "positive_role_margin": 0.8541666865348816,
+              "role_margin": 7.215333938598633,
+              "wrong_event": 0.0625,
+              "wrong_role": 0.1458333283662796
+            }
+          },
+          "change": {
+            "C_query_pp": 0.0,
+            "accuracy4_pp": 0.0,
+            "by_query": {
+              "first_agent": {
+                "native_correct_delta": 0.0,
+                "role_margin_delta": 0.0,
+                "wrong_event_delta": 0.0,
+                "wrong_role_delta": 0.0
+              },
+              "first_patient": {
+                "native_correct_delta": 0.0,
+                "role_margin_delta": 0.0,
+                "wrong_event_delta": 0.0,
+                "wrong_role_delta": 0.0
+              },
+              "second_agent": {
+                "native_correct_delta": 0.0,
+                "role_margin_delta": 0.0,
+                "wrong_event_delta": 0.0,
+                "wrong_role_delta": 0.0
+              },
+              "second_patient": {
+                "native_correct_delta": 0.0,
+                "role_margin_delta": 0.0,
+                "wrong_event_delta": 0.0,
+                "wrong_role_delta": 0.0
+              }
+            }
+          },
+          "changed_query_outcomes": {
+            "first_agent": {
+              "correct_to_incorrect": 0,
+              "incorrect_to_correct": 0
+            },
+            "first_patient": {
+              "correct_to_incorrect": 0,
+              "incorrect_to_correct": 0
+            },
+            "second_agent": {
+              "correct_to_incorrect": 0,
+              "incorrect_to_correct": 0
+            },
+            "second_patient": {
+              "correct_to_incorrect": 0,
+              "incorrect_to_correct": 0
+            }
+          },
+          "full_vocab_accuracy": 0.8680555820465088
+        },
+        "block3__both": {
+          "C_query": 0.5486111044883728,
+          "accuracy4": 0.875,
+          "by_query": {
+            "first_agent": {
+              "native_correct": 0.9444444179534912,
+              "positive_role_margin": 0.9791666865348816,
+              "role_margin": 5.922495365142822,
+              "wrong_event": 0.0347222238779068,
+              "wrong_role": 0.02083333395421505
+            },
+            "first_patient": {
+              "native_correct": 0.7916666865348816,
+              "positive_role_margin": 0.8888888955116272,
+              "role_margin": 6.630891799926758,
+              "wrong_event": 0.1111111119389534,
+              "wrong_role": 0.0972222238779068
+            },
+            "second_agent": {
+              "native_correct": 0.9722222089767456,
+              "positive_role_margin": 0.9791666865348816,
+              "role_margin": 6.876372337341309,
+              "wrong_event": 0.0069444444961845875,
+              "wrong_role": 0.02083333395421505
+            },
+            "second_patient": {
+              "native_correct": 0.7916666865348816,
+              "positive_role_margin": 0.8541666865348816,
+              "role_margin": 7.215333938598633,
+              "wrong_event": 0.0625,
+              "wrong_role": 0.1458333283662796
+            }
+          },
+          "change": {
+            "C_query_pp": 0.0,
+            "accuracy4_pp": 0.0,
+            "by_query": {
+              "first_agent": {
+                "native_correct_delta": 0.0,
+                "role_margin_delta": 0.0,
+                "wrong_event_delta": 0.0,
+                "wrong_role_delta": 0.0
+              },
+              "first_patient": {
+                "native_correct_delta": 0.0,
+                "role_margin_delta": 0.0,
+                "wrong_event_delta": 0.0,
+                "wrong_role_delta": 0.0
+              },
+              "second_agent": {
+                "native_correct_delta": 0.0,
+                "role_margin_delta": 0.0,
+                "wrong_event_delta": 0.0,
+                "wrong_role_delta": 0.0
+              },
+              "second_patient": {
+                "native_correct_delta": 0.0,
+                "role_margin_delta": 0.0,
+                "wrong_event_delta": 0.0,
+                "wrong_role_delta": 0.0
+              }
+            }
+          },
+          "changed_query_outcomes": {
+            "first_agent": {
+              "correct_to_incorrect": 0,
+              "incorrect_to_correct": 0
+            },
+            "first_patient": {
+              "correct_to_incorrect": 0,
+              "incorrect_to_correct": 0
+            },
+            "second_agent": {
+              "correct_to_incorrect": 0,
+              "incorrect_to_correct": 0
+            },
+            "second_patient": {
+              "correct_to_incorrect": 0,
+              "incorrect_to_correct": 0
+            }
+          },
+          "full_vocab_accuracy": 0.8680555820465088
+        },
+        "block3__identity": {
+          "C_query": 0.5486111044883728,
+          "accuracy4": 0.875,
+          "by_query": {
+            "first_agent": {
+              "native_correct": 0.9444444179534912,
+              "positive_role_margin": 0.9791666865348816,
+              "role_margin": 5.922495365142822,
+              "wrong_event": 0.0347222238779068,
+              "wrong_role": 0.02083333395421505
+            },
+            "first_patient": {
+              "native_correct": 0.7916666865348816,
+              "positive_role_margin": 0.8888888955116272,
+              "role_margin": 6.630891799926758,
+              "wrong_event": 0.1111111119389534,
+              "wrong_role": 0.0972222238779068
+            },
+            "second_agent": {
+              "native_correct": 0.9722222089767456,
+              "positive_role_margin": 0.9791666865348816,
+              "role_margin": 6.876372337341309,
+              "wrong_event": 0.0069444444961845875,
+              "wrong_role": 0.02083333395421505
+            },
+            "second_patient": {
+              "native_correct": 0.7916666865348816,
+              "positive_role_margin": 0.8541666865348816,
+              "role_margin": 7.215333938598633,
+              "wrong_event": 0.0625,
+              "wrong_role": 0.1458333283662796
+            }
+          },
+          "change": {
+            "C_query_pp": 0.0,
+            "accuracy4_pp": 0.0,
+            "by_query": {
+              "first_agent": {
+                "native_correct_delta": 0.0,
+                "role_margin_delta": 0.0,
+                "wrong_event_delta": 0.0,
+                "wrong_role_delta": 0.0
+              },
+              "first_patient": {
+                "native_correct_delta": 0.0,
+                "role_margin_delta": 0.0,
+                "wrong_event_delta": 0.0,
+                "wrong_role_delta": 0.0
+              },
+              "second_agent": {
+                "native_correct_delta": 0.0,
+                "role_margin_delta": 0.0,
+                "wrong_event_delta": 0.0,
+                "wrong_role_delta": 0.0
+              },
+              "second_patient": {
+                "native_correct_delta": 0.0,
+                "role_margin_delta": 0.0,
+                "wrong_event_delta": 0.0,
+                "wrong_role_delta": 0.0
+              }
+            }
+          },
+          "changed_query_outcomes": {
+            "first_agent": {
+              "correct_to_incorrect": 0,
+              "incorrect_to_correct": 0
+            },
+            "first_patient": {
+              "correct_to_incorrect": 0,
+              "incorrect_to_correct": 0
+            },
+            "second_agent": {
+              "correct_to_incorrect": 0,
+              "incorrect_to_correct": 0
+            },
+            "second_patient": {
+              "correct_to_incorrect": 0,
+              "incorrect_to_correct": 0
+            }
+          },
+          "full_vocab_accuracy": 0.8680555820465088
+        },
+        "block3__passive": {
+          "C_query": 0.5486111044883728,
+          "accuracy4": 0.875,
+          "by_query": {
+            "first_agent": {
+              "native_correct": 0.9444444179534912,
+              "positive_role_margin": 0.9791666865348816,
+              "role_margin": 5.922495365142822,
+              "wrong_event": 0.0347222238779068,
+              "wrong_role": 0.02083333395421505
+            },
+            "first_patient": {
+              "native_correct": 0.7916666865348816,
+              "positive_role_margin": 0.8888888955116272,
+              "role_margin": 6.630891799926758,
+              "wrong_event": 0.1111111119389534,
+              "wrong_role": 0.0972222238779068
+            },
+            "second_agent": {
+              "native_correct": 0.9722222089767456,
+              "positive_role_margin": 0.9791666865348816,
+              "role_margin": 6.876372337341309,
+              "wrong_event": 0.0069444444961845875,
+              "wrong_role": 0.02083333395421505
+            },
+            "second_patient": {
+              "native_correct": 0.7916666865348816,
+              "positive_role_margin": 0.8541666865348816,
+              "role_margin": 7.215333938598633,
+              "wrong_event": 0.0625,
+              "wrong_role": 0.1458333283662796
+            }
+          },
+          "change": {
+            "C_query_pp": 0.0,
+            "accuracy4_pp": 0.0,
+            "by_query": {
+              "first_agent": {
+                "native_correct_delta": 0.0,
+                "role_margin_delta": 0.0,
+                "wrong_event_delta": 0.0,
+                "wrong_role_delta": 0.0
+              },
+              "first_patient": {
+                "native_correct_delta": 0.0,
+                "role_margin_delta": 0.0,
+                "wrong_event_delta": 0.0,
+                "wrong_role_delta": 0.0
+              },
+              "second_agent": {
+                "native_correct_delta": 0.0,
+                "role_margin_delta": 0.0,
+                "wrong_event_delta": 0.0,
+                "wrong_role_delta": 0.0
+              },
+              "second_patient": {
+                "native_correct_delta": 0.0,
+                "role_margin_delta": 0.0,
+                "wrong_event_delta": 0.0,
+                "wrong_role_delta": 0.0
+              }
+            }
+          },
+          "changed_query_outcomes": {
+            "first_agent": {
+              "correct_to_incorrect": 0,
+              "incorrect_to_correct": 0
+            },
+            "first_patient": {
+              "correct_to_incorrect": 0,
+              "incorrect_to_correct": 0
+            },
+            "second_agent": {
+              "correct_to_incorrect": 0,
+              "incorrect_to_correct": 0
+            },
+            "second_patient": {
+              "correct_to_incorrect": 0,
+              "incorrect_to_correct": 0
+            }
+          },
+          "full_vocab_accuracy": 0.8680555820465088
+        },
+        "block3__passive_misaligned": {
+          "C_query": 0.5486111044883728,
+          "accuracy4": 0.875,
+          "by_query": {
+            "first_agent": {
+              "native_correct": 0.9444444179534912,
+              "positive_role_margin": 0.9791666865348816,
+              "role_margin": 5.922495365142822,
+              "wrong_event": 0.0347222238779068,
+              "wrong_role": 0.02083333395421505
+            },
+            "first_patient": {
+              "native_correct": 0.7916666865348816,
+              "positive_role_margin": 0.8888888955116272,
+              "role_margin": 6.630891799926758,
+              "wrong_event": 0.1111111119389534,
+              "wrong_role": 0.0972222238779068
+            },
+            "second_agent": {
+              "native_correct": 0.9722222089767456,
+              "positive_role_margin": 0.9791666865348816,
+              "role_margin": 6.876372337341309,
+              "wrong_event": 0.0069444444961845875,
+              "wrong_role": 0.02083333395421505
+            },
+            "second_patient": {
+              "native_correct": 0.7916666865348816,
+              "positive_role_margin": 0.8541666865348816,
+              "role_margin": 7.215333938598633,
+              "wrong_event": 0.0625,
+              "wrong_role": 0.1458333283662796
+            }
+          },
+          "change": {
+            "C_query_pp": 0.0,
+            "accuracy4_pp": 0.0,
+            "by_query": {
+              "first_agent": {
+                "native_correct_delta": 0.0,
+                "role_margin_delta": 0.0,
+                "wrong_event_delta": 0.0,
+                "wrong_role_delta": 0.0
+              },
+              "first_patient": {
+                "native_correct_delta": 0.0,
+                "role_margin_delta": 0.0,
+                "wrong_event_delta": 0.0,
+                "wrong_role_delta": 0.0
+              },
+              "second_agent": {
+                "native_correct_delta": 0.0,
+                "role_margin_delta": 0.0,
+                "wrong_event_delta": 0.0,
+                "wrong_role_delta": 0.0
+              },
+              "second_patient": {
+                "native_correct_delta": 0.0,
+                "role_margin_delta": 0.0,
+                "wrong_event_delta": 0.0,
+                "wrong_role_delta": 0.0
+              }
+            }
+          },
+          "changed_query_outcomes": {
+            "first_agent": {
+              "correct_to_incorrect": 0,
+              "incorrect_to_correct": 0
+            },
+            "first_patient": {
+              "correct_to_incorrect": 0,
+              "incorrect_to_correct": 0
+            },
+            "second_agent": {
+              "correct_to_incorrect": 0,
+              "incorrect_to_correct": 0
+            },
+            "second_patient": {
+              "correct_to_incorrect": 0,
+              "incorrect_to_correct": 0
+            }
+          },
+          "full_vocab_accuracy": 0.8680555820465088
+        },
+        "embed__active": {
+          "C_query": 0.3541666567325592,
+          "accuracy4": 0.78125,
+          "by_query": {
+            "first_agent": {
+              "native_correct": 0.9375,
+              "positive_role_margin": 0.9722222089767456,
+              "role_margin": 5.611032485961914,
+              "wrong_event": 0.0347222238779068,
+              "wrong_role": 0.02777777798473835
+            },
+            "first_patient": {
+              "native_correct": 0.7569444179534912,
+              "positive_role_margin": 0.875,
+              "role_margin": 6.495656967163086,
+              "wrong_event": 0.1388888955116272,
+              "wrong_role": 0.1041666641831398
+            },
+            "second_agent": {
+              "native_correct": 0.7916666865348816,
+              "positive_role_margin": 0.8055555820465088,
+              "role_margin": 2.864596128463745,
+              "wrong_event": 0.02083333395421505,
+              "wrong_role": 0.1875
+            },
+            "second_patient": {
+              "native_correct": 0.6388888955116272,
+              "positive_role_margin": 0.7291666865348816,
+              "role_margin": 3.2816250324249268,
+              "wrong_event": 0.1041666641831398,
+              "wrong_role": 0.2569444477558136
+            }
+          },
+          "change": {
+            "C_query_pp": -19.44444477558136,
+            "accuracy4_pp": -9.375,
+            "by_query": {
+              "first_agent": {
+                "native_correct_delta": -0.006944417953491211,
+                "role_margin_delta": -0.3114628791809082,
+                "wrong_event_delta": 0.0,
+                "wrong_role_delta": 0.0069444440305233
+              },
+              "first_patient": {
+                "native_correct_delta": -0.03472226858139038,
+                "role_margin_delta": -0.13523483276367188,
+                "wrong_event_delta": 0.027777783572673798,
+                "wrong_role_delta": 0.006944440305233002
+              },
+              "second_agent": {
+                "native_correct_delta": -0.180555522441864,
+                "role_margin_delta": -4.0117762088775635,
+                "wrong_event_delta": 0.013888889458030462,
+                "wrong_role_delta": 0.16666666604578495
+              },
+              "second_patient": {
+                "native_correct_delta": -0.1527777910232544,
+                "role_margin_delta": -3.933708906173706,
+                "wrong_event_delta": 0.0416666641831398,
+                "wrong_role_delta": 0.111111119389534
+              }
+            }
+          },
+          "changed_query_outcomes": {
+            "first_agent": {
+              "correct_to_incorrect": 5,
+              "incorrect_to_correct": 4
+            },
+            "first_patient": {
+              "correct_to_incorrect": 13,
+              "incorrect_to_correct": 8
+            },
+            "second_agent": {
+              "correct_to_incorrect": 27,
+              "incorrect_to_correct": 1
+            },
+            "second_patient": {
+              "correct_to_incorrect": 28,
+              "incorrect_to_correct": 6
+            }
+          },
+          "full_vocab_accuracy": 0.7638888955116272
+        },
+        "embed__both": {
+          "C_query": 0.2638888955116272,
+          "accuracy4": 0.7152777910232544,
+          "by_query": {
+            "first_agent": {
+              "native_correct": 0.8472222089767456,
+              "positive_role_margin": 0.8888888955116272,
+              "role_margin": 5.16533899307251,
+              "wrong_event": 0.0625,
+              "wrong_role": 0.0902777761220932
+            },
+            "first_patient": {
+              "native_correct": 0.6180555820465088,
+              "positive_role_margin": 0.875,
+              "role_margin": 5.550187110900879,
+              "wrong_event": 0.2916666567325592,
+              "wrong_role": 0.0902777761220932
+            },
+            "second_agent": {
+              "native_correct": 0.7638888955116272,
+              "positive_role_margin": 0.7847222089767456,
+              "role_margin": 3.4739773273468018,
+              "wrong_event": 0.02777777798473835,
+              "wrong_role": 0.2083333283662796
+            },
+            "second_patient": {
+              "native_correct": 0.6319444179534912,
+              "positive_role_margin": 0.7291666865348816,
+              "role_margin": 3.5555903911590576,
+              "wrong_event": 0.1111111119389534,
+              "wrong_role": 0.2569444477558136
+            }
+          },
+          "change": {
+            "C_query_pp": -28.47222089767456,
+            "accuracy4_pp": -15.97222089767456,
+            "by_query": {
+              "first_agent": {
+                "native_correct_delta": -0.0972222089767456,
+                "role_margin_delta": -0.7571563720703125,
+                "wrong_event_delta": 0.0277777761220932,
+                "wrong_role_delta": 0.06944444216787815
+              },
+              "first_patient": {
+                "native_correct_delta": -0.1736111044883728,
+                "role_margin_delta": -1.080704689025879,
+                "wrong_event_delta": 0.1805555447936058,
+                "wrong_role_delta": -0.006944447755813599
+              },
+              "second_agent": {
+                "native_correct_delta": -0.2083333134651184,
+                "role_margin_delta": -3.402395009994507,
+                "wrong_event_delta": 0.020833333488553762,
+                "wrong_role_delta": 0.18749999441206455
+              },
+              "second_patient": {
+                "native_correct_delta": -0.15972226858139038,
+                "role_margin_delta": -3.659743547439575,
+                "wrong_event_delta": 0.0486111119389534,
+                "wrong_role_delta": 0.111111119389534
+              }
+            }
+          },
+          "changed_query_outcomes": {
+            "first_agent": {
+              "correct_to_incorrect": 17,
+              "incorrect_to_correct": 3
+            },
+            "first_patient": {
+              "correct_to_incorrect": 35,
+              "incorrect_to_correct": 10
+            },
+            "second_agent": {
+              "correct_to_incorrect": 31,
+              "incorrect_to_correct": 1
+            },
+            "second_patient": {
+              "correct_to_incorrect": 32,
+              "incorrect_to_correct": 9
+            }
+          },
+          "full_vocab_accuracy": 0.6996527910232544
+        },
+        "embed__identity": {
+          "C_query": 0.5486111044883728,
+          "accuracy4": 0.875,
+          "by_query": {
+            "first_agent": {
+              "native_correct": 0.9444444179534912,
+              "positive_role_margin": 0.9791666865348816,
+              "role_margin": 5.922495365142822,
+              "wrong_event": 0.0347222238779068,
+              "wrong_role": 0.02083333395421505
+            },
+            "first_patient": {
+              "native_correct": 0.7916666865348816,
+              "positive_role_margin": 0.8888888955116272,
+              "role_margin": 6.630891799926758,
+              "wrong_event": 0.1111111119389534,
+              "wrong_role": 0.0972222238779068
+            },
+            "second_agent": {
+              "native_correct": 0.9722222089767456,
+              "positive_role_margin": 0.9791666865348816,
+              "role_margin": 6.876372337341309,
+              "wrong_event": 0.0069444444961845875,
+              "wrong_role": 0.02083333395421505
+            },
+            "second_patient": {
+              "native_correct": 0.7916666865348816,
+              "positive_role_margin": 0.8541666865348816,
+              "role_margin": 7.215333938598633,
+              "wrong_event": 0.0625,
+              "wrong_role": 0.1458333283662796
+            }
+          },
+          "change": {
+            "C_query_pp": 0.0,
+            "accuracy4_pp": 0.0,
+            "by_query": {
+              "first_agent": {
+                "native_correct_delta": 0.0,
+                "role_margin_delta": 0.0,
+                "wrong_event_delta": 0.0,
+                "wrong_role_delta": 0.0
+              },
+              "first_patient": {
+                "native_correct_delta": 0.0,
+                "role_margin_delta": 0.0,
+                "wrong_event_delta": 0.0,
+                "wrong_role_delta": 0.0
+              },
+              "second_agent": {
+                "native_correct_delta": 0.0,
+                "role_margin_delta": 0.0,
+                "wrong_event_delta": 0.0,
+                "wrong_role_delta": 0.0
+              },
+              "second_patient": {
+                "native_correct_delta": 0.0,
+                "role_margin_delta": 0.0,
+                "wrong_event_delta": 0.0,
+                "wrong_role_delta": 0.0
+              }
+            }
+          },
+          "changed_query_outcomes": {
+            "first_agent": {
+              "correct_to_incorrect": 0,
+              "incorrect_to_correct": 0
+            },
+            "first_patient": {
+              "correct_to_incorrect": 0,
+              "incorrect_to_correct": 0
+            },
+            "second_agent": {
+              "correct_to_incorrect": 0,
+              "incorrect_to_correct": 0
+            },
+            "second_patient": {
+              "correct_to_incorrect": 0,
+              "incorrect_to_correct": 0
+            }
+          },
+          "full_vocab_accuracy": 0.8680555820465088
+        },
+        "embed__passive": {
+          "C_query": 0.2916666567325592,
+          "accuracy4": 0.7152777910232544,
+          "by_query": {
+            "first_agent": {
+              "native_correct": 0.7986111044883728,
+              "positive_role_margin": 0.9097222089767456,
+              "role_margin": 5.404320240020752,
+              "wrong_event": 0.125,
+              "wrong_role": 0.0763888880610466
+            },
+            "first_patient": {
+              "native_correct": 0.6597222089767456,
+              "positive_role_margin": 0.8402777910232544,
+              "role_margin": 5.262969493865967,
+              "wrong_event": 0.2430555522441864,
+              "wrong_role": 0.0972222238779068
+            },
+            "second_agent": {
+              "native_correct": 0.7708333134651184,
+              "positive_role_margin": 0.8125,
+              "role_margin": 3.718322277069092,
+              "wrong_event": 0.0486111119389534,
+              "wrong_role": 0.1805555522441864
+            },
+            "second_patient": {
+              "native_correct": 0.6319444179534912,
+              "positive_role_margin": 0.7083333134651184,
+              "role_margin": 4.015158653259277,
+              "wrong_event": 0.1041666641831398,
+              "wrong_role": 0.2638888955116272
+            }
+          },
+          "change": {
+            "C_query_pp": -25.69444477558136,
+            "accuracy4_pp": -15.97222089767456,
+            "by_query": {
+              "first_agent": {
+                "native_correct_delta": -0.1458333134651184,
+                "role_margin_delta": -0.5181751251220703,
+                "wrong_event_delta": 0.0902777761220932,
+                "wrong_role_delta": 0.05555555410683155
+              },
+              "first_patient": {
+                "native_correct_delta": -0.131944477558136,
+                "role_margin_delta": -1.367922306060791,
+                "wrong_event_delta": 0.131944440305233,
+                "wrong_role_delta": 0.0
+              },
+              "second_agent": {
+                "native_correct_delta": -0.2013888955116272,
+                "role_margin_delta": -3.158050060272217,
+                "wrong_event_delta": 0.04166666744276881,
+                "wrong_role_delta": 0.15972221828997135
+              },
+              "second_patient": {
+                "native_correct_delta": -0.15972226858139038,
+                "role_margin_delta": -3.2001752853393555,
+                "wrong_event_delta": 0.0416666641831398,
+                "wrong_role_delta": 0.1180555671453476
+              }
+            }
+          },
+          "changed_query_outcomes": {
+            "first_agent": {
+              "correct_to_incorrect": 22,
+              "incorrect_to_correct": 1
+            },
+            "first_patient": {
+              "correct_to_incorrect": 28,
+              "incorrect_to_correct": 9
+            },
+            "second_agent": {
+              "correct_to_incorrect": 30,
+              "incorrect_to_correct": 1
+            },
+            "second_patient": {
+              "correct_to_incorrect": 29,
+              "incorrect_to_correct": 6
+            }
+          },
+          "full_vocab_accuracy": 0.6961805820465088
+        },
+        "embed__passive_misaligned": {
+          "C_query": 0.0,
+          "accuracy4": 0.3506944477558136,
+          "by_query": {
+            "first_agent": {
+              "native_correct": 0.02777777798473835,
+              "positive_role_margin": 0.1875,
+              "role_margin": -4.016411304473877,
+              "wrong_event": 0.4583333432674408,
+              "wrong_role": 0.5138888955116272
+            },
+            "first_patient": {
+              "native_correct": 0.3055555522441864,
+              "positive_role_margin": 0.4027777910232544,
+              "role_margin": -1.2353545427322388,
+              "wrong_event": 0.25,
+              "wrong_role": 0.4444444477558136
+            },
+            "second_agent": {
+              "native_correct": 0.5625,
+              "positive_role_margin": 0.6041666865348816,
+              "role_margin": 0.9363169074058533,
+              "wrong_event": 0.2361111044883728,
+              "wrong_role": 0.2013888955116272
+            },
+            "second_patient": {
+              "native_correct": 0.5069444179534912,
+              "positive_role_margin": 0.625,
+              "role_margin": 2.2424440383911133,
+              "wrong_event": 0.2916666567325592,
+              "wrong_role": 0.2013888955116272
+            }
+          },
+          "change": {
+            "C_query_pp": -54.86111044883728,
+            "accuracy4_pp": -52.43055522441864,
+            "by_query": {
+              "first_agent": {
+                "native_correct_delta": -0.9166666399687529,
+                "role_margin_delta": -9.9389066696167,
+                "wrong_event_delta": 0.423611119389534,
+                "wrong_role_delta": 0.49305556155741215
+              },
+              "first_patient": {
+                "native_correct_delta": -0.4861111342906952,
+                "role_margin_delta": -7.866246342658997,
+                "wrong_event_delta": 0.1388888880610466,
+                "wrong_role_delta": 0.3472222238779068
+              },
+              "second_agent": {
+                "native_correct_delta": -0.4097222089767456,
+                "role_margin_delta": -5.940055429935455,
+                "wrong_event_delta": 0.22916665999218822,
+                "wrong_role_delta": 0.18055556155741215
+              },
+              "second_patient": {
+                "native_correct_delta": -0.2847222685813904,
+                "role_margin_delta": -4.9728899002075195,
+                "wrong_event_delta": 0.2291666567325592,
+                "wrong_role_delta": 0.055555567145347595
+              }
+            }
+          },
+          "changed_query_outcomes": {
+            "first_agent": {
+              "correct_to_incorrect": 132,
+              "incorrect_to_correct": 0
+            },
+            "first_patient": {
+              "correct_to_incorrect": 76,
+              "incorrect_to_correct": 6
+            },
+            "second_agent": {
+              "correct_to_incorrect": 60,
+              "incorrect_to_correct": 1
+            },
+            "second_patient": {
+              "correct_to_incorrect": 49,
+              "incorrect_to_correct": 8
+            }
+          },
+          "full_vocab_accuracy": 0.3385416567325592
+        }
+      }
+    }
+  },
+  "patches": [
+    "identity",
+    "passive",
+    "active",
+    "both",
+    "passive_misaligned"
+  ],
+  "protocol_digest": "bd5eafe3bc1958878c63e4ce41c8bc1e29b1585b8458814f46ac516f18aa209f",
+  "repeat": 2,
+  "script_sha256": "ee783e72f1047d78577fc7f5131eb209ca42c21089a9265f3d55c6af8fef991d",
+  "seed": 10901,
+  "source": "frozen EXP109 already-evaluated development examples",
+  "source_report_sha256": "1dfe397afa3e4893d747b93472393995ee7926851e183c73ed45e515dfd44e87",
+  "status": "POST_HOC_EXPLORATORY_CAUSAL_INTERVENTION",
+  "study": "EXP-112"
+}
