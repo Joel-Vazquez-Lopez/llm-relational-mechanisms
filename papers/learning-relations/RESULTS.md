@@ -6,16 +6,18 @@
 
 ## 1. Surface complexity reveals a generalisation failure
 
-![Surface factorial](figures/results_surface.svg)
+![Strict four-query joint C_query on unseen roles, common bare test surfaces](figures/results_surface.svg)
 
-| Training arm | Train original | Unseen roles | Unseen quartets |
+All three columns are mean strict four-query joint correctness (C_query, %), not individual-answer accuracy. Every arm is evaluated on the same bare/no-frame test surfaces (AP and PA).
+
+| Training arm | Train original C_query (%) | Unseen roles C_query (%) | Unseen quartets C_query (%) |
 |---|---:|---:|---:|
 | bare | 100.00% | 99.21% | 99.43% |
 | frame_only | 100.00% | 84.25% | 85.05% |
 | adjunct_only | 99.93% | 97.01% | 97.85% |
 | frame_adjunct | 99.86% | 26.73% | 27.90% |
 
-All arms learn original mappings; the combined surface arm often fails transfer. The frozen factorial primary and gated secondary passed, but this does not mean increased surface complexity improves transfer. See the exact contrast definitions in the [protocol](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/blob/9c7146f88f96ad1c38de179c4ca8c3f26ebf1702/paper/TRAIN_SURFACE_FACTORIAL_V0_PROTOCOL.md) and [train_surface_factorial_v0](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/blob/9c7146f88f96ad1c38de179c4ca8c3f26ebf1702/reports/train_surface_factorial_v0/analysis_summary.json). Cross-surface evaluation and the [role-anchor audit](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/blob/10ab4c7bf2b56d3e8c8e396eee22e2e732a41910/paper/ROLE_ANCHOR_PROBE_V0_RESULT_AUDIT.md) suggest a quartet-specific original mapping shortcut: eight selected failing combined-arm seeds reproduced their original tuple on 87.74% of sampled bare test items. This is a post-hoc behavioural signature, not a proven lookup circuit.
+All arms learn original mappings; the combined surface arm often fails transfer. The prespecified adjunct-associated degradation contrast, 0.5 × [(bare − adjunct_only) + (frame_only − frame_adjunct)], was **+29.86 pp** (95% seed-level t CI [13.46, 46.26], 9/12 positive); primary passed. The gated withheld-quartet contrast also passed (+29.37 pp, 95% t CI [13.56, 45.18]). Neither is an individual-answer accuracy contrast. See the exact contrast definitions in the [protocol](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/blob/9c7146f88f96ad1c38de179c4ca8c3f26ebf1702/paper/TRAIN_SURFACE_FACTORIAL_V0_PROTOCOL.md) and [train_surface_factorial_v0](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/blob/9c7146f88f96ad1c38de179c4ca8c3f26ebf1702/reports/train_surface_factorial_v0/analysis_summary.json). Cross-surface evaluation and the [role-anchor audit](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/blob/10ab4c7bf2b56d3e8c8e396eee22e2e732a41910/paper/ROLE_ANCHOR_PROBE_V0_RESULT_AUDIT.md) suggest a quartet-specific original mapping shortcut: eight selected failing combined-arm seeds reproduced their original tuple on 87.74% of sampled bare test items. This is a post-hoc behavioural signature, not a proven lookup circuit.
 
 ## 2. More relational diversity did not solve acquisition at fixed budget
 
@@ -25,20 +27,20 @@ The prospective 16-seed four-arm diversity study compared 8 versus 1 trained map
 
 ![Selected recovery trajectories](figures/results_recovery.svg)
 
-| Selected seed | Final event mass | Final conditional role probability | Final strict joint |
+| Selected seed | Final event mass | Final conditional role probability | Final strict four-query C_query (%) |
 |---|---:|---:|---:|
 | 16101 | 99.97% | 100.00% | 100.00% |
 | 16127 | 100.00% | 100.00% | 100.00% |
 | 16143 | 99.55% | 50.00% | 0.07% |
 | 16167 | 99.92% | 50.00% | 0.00% |
 
-These are exploratory roles_8 trajectories on rich unseen roles, averaged across voices. Recovery used a fresh optimiser from 6,400-step weights. Two models reached near-perfect event mass yet conditional role probability remained near 0.5. The other two recovered, and seed 16127 temporarily regressed. The selected four seeds are not a population estimate. [role_circuit_diagnostics_v0](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/blob/9c7146f88f96ad1c38de179c4ca8c3f26ebf1702/reports/role_circuit_diagnostics_v0/analysis_summary.json).
+Event mass and conditional role probability are full-vocabulary-derived probabilities, not accuracy measures; C_query requires all four restricted-candidate answers to be correct. These are exploratory roles_8 trajectories on rich unseen roles, averaged across voices. Recovery used a fresh optimiser from 6,400-step weights. Two models reached near-perfect event mass yet conditional role probability remained near 0.5. The other two recovered, and seed 16127 temporarily regressed. The selected four seeds are not a population estimate. [role_circuit_diagnostics_v0](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/blob/9c7146f88f96ad1c38de179c4ca8c3f26ebf1702/reports/role_circuit_diagnostics_v0/analysis_summary.json).
 
 ## 4. Divergence recurs in fresh training runs
 
 ![Independent replication](figures/results_replication.svg)
 
-| Seed | Mean strict joint (%) | All four groups ≥95% |
+| Seed | Mean strict four-query C_query (%) | All four groups ≥95% |
 |---|---:|---|
 | 27101 | 100.00 | Yes |
 | 27105 | 100.00 | Yes |
@@ -57,13 +59,15 @@ These are exploratory roles_8 trajectories on rich unseen roles, averaged across
 | 27109 | 0.00 | No |
 | 27114 | 0.00 | No |
 
-At 51,200 uninterrupted updates: **9/16 passed the frozen behavioural threshold**, 3 were intermediate and 4 had zero strict joint correctness. Intermediate/zero are descriptive subdivisions, not frozen mechanism classes. The original mechanism replication criterion failed (0 transferable, 0 source-dependent event; 7 successful but unresolved, 2 successful other). The expanded exploratory search recovered both old positive controls and one additional source-dependent model; it did not change that failed primary. [role_mechanism_replication_v0](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/blob/9c7146f88f96ad1c38de179c4ca8c3f26ebf1702/reports/role_mechanism_replication_v0/analysis_summary.json) · [role_mechanism_discovery_v1](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/blob/9c7146f88f96ad1c38de179c4ca8c3f26ebf1702/reports/role_mechanism_discovery_v1/analysis_summary.json).
+The plotted and tabulated mean is equally averaged across four held-out population/voice groups. The success gate applies to each group separately, not the plotted mean. At 51,200 uninterrupted updates: **9/16 passed the frozen behavioural threshold**, 3 were intermediate and 4 had zero strict joint correctness. Intermediate/zero are descriptive subdivisions, not frozen mechanism classes. The original mechanism replication criterion failed (0 transferable, 0 source-dependent event; 7 successful but unresolved, 2 successful other). The expanded exploratory search recovered both old positive controls and one additional source-dependent model; it did not change that failed primary. [role_mechanism_replication_v0](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/blob/9c7146f88f96ad1c38de179c4ca8c3f26ebf1702/reports/role_mechanism_replication_v0/analysis_summary.json) · [role_mechanism_discovery_v1](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/blob/9c7146f88f96ad1c38de179c4ca8c3f26ebf1702/reports/role_mechanism_discovery_v1/analysis_summary.json).
 
 ## 5. Repair is possible, but reliable acceleration is unestablished
 
 The first repair study found substantial recovery in one of four selected collapsed models. A follow-up varied eight continuation schedules from that same checkpoint; all targeted weighted runs remained below recovery threshold at 1,600 updates, and the primary contrast versus layer-matched weighted controls was zero (sign-flip p=1).
 
-| Arm | Recovered by 6,400 / 8 |
+Recovery here means first observed checkpoint with mean restricted strict four-query C_query ≥95%, equally averaged across both held-out populations and voices; it is not individual-answer accuracy.
+
+| Arm | Schedules reaching C_query ≥95% by 6,400 / 8 |
 |---|---:|
 | full_ce | 4/8 |
 | full_weighted | 3/8 |

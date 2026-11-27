@@ -12,10 +12,10 @@ Three causal blocks, width 96, four heads, 48 token positions. AdamW lr .002, we
 
 ## Metrics
 
-- **C_query:** strict four-query joint correctness under four-candidate readout. All four must be correct. Separate from full-vocabulary argmax or generated text.
+- **C_query:** strict four-query joint correctness under four-candidate readout. All four must be correct. Separate from individual-answer accuracy (accuracy4), full-vocabulary argmax, full-vocabulary joint correctness or generated text.
 - **Event mass:** P(gold participant)+P(other participant of gold event), on full vocabulary.
 - **Conditional role probability:** P(gold participant)/event mass; not a binary accuracy.
-- **Conditional role accuracy:** gold participant logit exceeds event mate; ties matter.
+- **Conditional role accuracy:** gold participant versus event-mate logit comparison. Circuit diagnostics gives half credit for ties; later repair/origins implementations use strict greater-than. Consult the original protocol rather than pooling these definitions.
 - **Both-pair collapse:** same candidate predicted for both role queries in each event.
 
 For a gold participant a and event mate b, token cross-entropy decomposes exactly as −log(P(a)+P(b)) − log(P(a)/(P(a)+P(b))). The second term approaches log 2 under equal role probability. A high event mass alone does not imply correct binding.
