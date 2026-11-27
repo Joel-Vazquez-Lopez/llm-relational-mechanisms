@@ -1,8 +1,8 @@
 [← Supplementary materials](README.md) · [Model Linguistics](../README.md)
 
-# Existing research resources
+# Existing scientific resources
 
-A curated index of material already present in the public research repository, including research branches. Source snapshots remain at their original paths. These are **research resources, not an archive of formally released presentations or an additional paper**. Historical drafts and review figures must be interpreted at their original date and evidence status.
+A curated index of material already present in the public research repository, including research branches. Source snapshots remain at their original paths. These are **dated scientific resources, not final submission supplements or a communication archive**. Historical drafts and review figures must be interpreted at their original date and evidence status.
 
 ## Paper I — Relational Learning in Transformers
 
@@ -22,7 +22,7 @@ Earlier manuscript and reproducible figure bundle, prepared on 21 November and s
 | [Supplement S1](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/blob/a261bd847b4119dcc10b26a0f9890c22f17780b5/papers/learning-relations/construction-shift/figures/supp_phase2_followups.svg) | PHASE2 boundary tests, including unsuccessful primary hypotheses |
 | [Supplement S2](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/blob/a261bd847b4119dcc10b26a0f9890c22f17780b5/papers/learning-relations/construction-shift/figures/supp_shortcut_baselines.svg) | Exploratory positional shortcut baselines |
 
-### Current results presentation
+### Current results and figures
 
 The Paper I [results page and figures (PR #13)](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/pull/13) are under independent research-track review. They cover surface complexity, selected learning trajectories and the independent seed replication. After merge, use the [Paper I hub](../papers/learning-relations/README.md) for the authoritative current navigation, rather than maintaining duplicate scientific tables here.
 
@@ -54,4 +54,4 @@ The [25 November research snapshot](https://github.com/Joel-Vazquez-Lopez/llm-re
 
 ## Maintenance
 
-The paper tracks own their figures, methods, results and scientific claims. This collection only provides stable entrances to existing resources. Do not copy raw results or supersede a paper's evidence ledger here. Update the links after reviewed integration, preserving dated snapshots as historical records.
+The paper tracks own their figures, methods, results, scientific claims and final supplementary materials. This collection only indexes existing scientific resources. Do not copy raw results or supersede a paper's evidence ledger here. Update the links after reviewed integration, preserving dated snapshots as historical records.
