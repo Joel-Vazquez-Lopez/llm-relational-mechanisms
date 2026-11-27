@@ -48,6 +48,10 @@ Identical inputs give identical tables. Figures can differ in font rendering onl
 - BX, Spanish, Galician and UD use the single development run per model.
 - WIKI-ROLES uses the earliest v0.2 run that includes the full head scan.
 
+### Supplementary materials
+
+`supplementary/analysis/build_supplement.py` rebuilds every supplementary figure and table from the same two inputs, and reads the confirmatory output above. Commands and file-selection rules are in [S6 · Methods and reproducibility](supplementary/S6-methods.md#rebuild).
+
 ## 2. Re-score the frozen evaluation only
 
 ```bash

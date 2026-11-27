@@ -66,6 +66,7 @@ Failing question: *"Who was someone V-ed by?"*; working question: *"Who was the 
 | 9 | [Manuscript map](PAPER_MAP.md) | Section and figure plan of the working manuscript |
 | 10 | [Reproduce](REPRODUCE.md) | Rebuilding every table and figure, and re-scoring the frozen evaluation |
 | 11 | [Integration](INTEGRATION.md) | Where the code and results live now, and the plan to unify them on `main` |
+| 12 | **[Supplementary materials](supplementary/README.md)** | Full test0 statistics, linguistic controls, extended layer and head analyses, model cards, multilingual evidence, method details, historical packages |
 
 ## Models and scope
 
