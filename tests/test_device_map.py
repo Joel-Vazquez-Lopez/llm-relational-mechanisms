@@ -123,3 +123,22 @@ def test_otr07_runs_with_device_map(monkeypatch, tmp_path):
     r = json.loads(next(tmp_path.glob("*.json")).read_text())
     for rec in r["records"]:
         assert abs(rec["lens_bare"][-1] - rec["ld_model_bare"]) < 1e-3
+
+
+def test_otr16_same_with_device_map(monkeypatch, tmp_path):
+    from test_logit_lens import _tiny
+    _tiny(monkeypatch)
+    _dispatching(monkeypatch)
+    prior = tmp_path / "prior.json"
+    prior.write_text(json.dumps({"head_scan": {"top20": ["1.0", "2.1"]}}))
+    out = {}
+    for tag, extra in (("plain", []), ("split", ["--device-map", "cpu"])):
+        d = tmp_path / tag
+        _script("otr16_by_to_heads").main(
+            ["--model", "tiny", "--dtype", "float32", "--n-per", "3", "--instruction", "", "--min-gap=-1e9",
+             "--min-by-effect=-1e9", "--by-layer", "0", "--rank-from", str(prior), "--k", "2", "--n-random", "2",
+             "--out-dir", str(d)] + extra)
+        out[tag] = json.loads(next(d.glob("otr16_*.json")).read_text())
+    for a, b in zip(out["plain"]["items"], out["split"]["items"]):
+        for k in ("ld_failing", "ld_by", "ld_mediated", "ld_blocked"):
+            assert a[k] == pytest.approx(b[k], abs=1e-5)
