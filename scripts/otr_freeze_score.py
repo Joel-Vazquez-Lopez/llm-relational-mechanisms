@@ -26,7 +26,7 @@ from collections import defaultdict
 
 import numpy as np
 
-SCORER_VERSION = "1.1.0"  # 1.1.0: Spanish/Galician addendum (FREEZE_XL.md); English scoring unchanged
+SCORER_VERSION = "1.2.0"  # 1.2.0: 70B addendum (FREEZE_70B.md); 1.1.0: es/gl addendum; core scoring unchanged
 N_BOOT, SEED = 2000, 2026
 FAIL_Q, WORK_Q = "who-was-someone-past-by", "who-was-the-ing-done-by"
 MAIN = ("active", "passive", "object_cleft", "by_cleft")
@@ -46,6 +46,17 @@ FROZEN = {
     "ibm-granite/granite-4.2-30b": dict(slug="ibm-granite__granite-4.2-30b", n_layers=64, handover=52, role=37,
                                         by=28, c7=True, rf="otr09_ibm-granite__granite-4.2-30b_dev_20261119T140015.json"),
 }
+# 70B addendum (FREEZE_70B.md), frozen 2026-11-28 from the dev pass on branch paper2/70b-dev-results @ 56b7651,
+# before any 70B test command. Same rules as FREEZE.md section 4. Scored only when named (--set 70b or --models),
+# so the default (core five) report is unchanged.
+FROZEN_70B = {
+    "meta-llama/Llama-3.3-70B-Instruct": dict(slug="meta-llama__Llama-3.3-70B-Instruct", n_layers=80, handover=38,
+                                              role=34, by=14, c7=True,
+                                              rf="otr09_meta-llama__Llama-3.3-70B-Instruct_dev_20261127T121453.json"),
+    "Qwen/Qwen2.5-72B-Instruct": dict(slug="Qwen__Qwen2.5-72B-Instruct", n_layers=80, handover=58, role=48, by=30,
+                                      c7=True, rf="otr09_Qwen__Qwen2.5-72B-Instruct_dev_20261127T121538.json"),
+}
+ALL_FROZEN = {**FROZEN, **FROZEN_70B}
 OTHER_SETS = ("bx-", "_es_", "_gl_", "_sv_", "ud-en", "wiki-", "_aq_", "_instr", "byctl", "src2")
 
 # Spanish/Galician addendum (FREEZE_XL.md), frozen 2026-11-26 before any es/gl test run.
@@ -462,8 +473,8 @@ def c7(res, m, fz, split, rng):
 # ----------------------------------------------------------------------------- main
 def score(res, split, models=None, stimuli=None, seed=SEED):
     table, inputs = {}, {}
-    for m, fz in FROZEN.items():
-        if models and m not in models:
+    for m, fz in ALL_FROZEN.items():
+        if (models and m not in models) or (not models and m not in FROZEN):
             continue
         rng = np.random.default_rng(seed)
         row, used = {}, []
@@ -507,13 +518,16 @@ def main(argv=None):
     p.add_argument("--split", default="test0", choices=("dev", "test0", "test1", "test2", "test3"))
     p.add_argument("--stimuli", default=None, help="replication set: bx-transitive (C2, C3, C5) or es / gl (C2, C3, C4, C5, C5b; FREEZE_XL.md)")
     p.add_argument("--models", nargs="*", default=None)
+    p.add_argument("--set", default="core", choices=("core", "70b"),
+                   help="core: the five models of FREEZE.md (default); 70b: the two models of FREEZE_70B.md")
     p.add_argument("--out", default=None)
     args = p.parse_args(argv)
-    table, inputs = score(args.results, args.split, args.models, args.stimuli)
+    models = args.models or (list(FROZEN_70B) if args.set == "70b" else None)
+    table, inputs = score(args.results, args.split, models, args.stimuli)
     md = markdown(table)
     print(md)
     report = dict(scorer_version=SCORER_VERSION, split=args.split, stimuli=args.stimuli, n_boot=N_BOOT, seed=SEED,
-                  frozen=FROZEN, table=table, inputs_sha256=inputs, markdown=md)
+                  frozen={m: ALL_FROZEN[m] for m in table}, table=table, inputs_sha256=inputs, markdown=md)
     if args.out:
         with open(args.out, "w") as f:
             json.dump(report, f, indent=1)

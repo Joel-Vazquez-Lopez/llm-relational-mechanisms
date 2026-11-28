@@ -161,3 +161,15 @@ def test_scorer_xl_addendum(tmp_path):
     assert row["C4"]["verdict"] == "PASS" and row["C4"]["frozen"] == h
     assert row["C5"]["verdict"] == "PASS"                                 # other_failing .3 not scored for XL
     assert row["C5b"]["verdict"] == "PASS" and abs(row["C5b"]["top_minus_other_working"] - .35) < .05
+
+
+def test_scorer_70b_set_only_when_named(tmp_path):
+    """FREEZE_70B.md: the two 70B models are scored only with --set 70b / --models; the default stays the core five."""
+    assert set(fs.FROZEN_70B).isdisjoint(fs.FROZEN)
+    for m, fz in fs.FROZEN_70B.items():
+        assert fz["by"] < fz["role"] < fz["handover"] < fz["n_layers"] and fz["rf"].startswith(f"otr09_{fz['slug']}_dev_")
+    core = fs.main(["--results", str(tmp_path), "--split", "test0"])
+    assert set(core["table"]) == set(fs.FROZEN)
+    big = fs.main(["--results", str(tmp_path), "--split", "test0", "--set", "70b"])
+    assert set(big["table"]) == set(fs.FROZEN_70B) and set(big["frozen"]) == set(fs.FROZEN_70B)
+    assert all(r["C1"]["verdict"].startswith("not evaluable") for r in big["table"].values())  # nothing run yet
