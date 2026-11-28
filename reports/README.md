@@ -3,6 +3,7 @@
 Reports contain scientific claims, failed hypotheses, preregistration artifacts, and references to raw evidence.
 
 - [Scratch-trained research overview and evidence ledger](../investigations/scratch_transformers/CURRENT_FINDINGS.md)
+- [EXP-102 research-pack notes](../README_EXP102.txt) — original root-level historical note; retain at its existing path.
 - [Pretrained-LLM research overview](../investigations/pretrained_llms/README.md)
 - [ML-056 controlled-exposure pilot](ml056/README.md)
 - [ML-065 frozen routing predictions](ml065/frozen_predictions.json)

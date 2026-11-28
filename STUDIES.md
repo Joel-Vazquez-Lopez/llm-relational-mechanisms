@@ -46,7 +46,7 @@ The 24 November manuscript draft (25 November state snapshot) organizes the inve
 
 **[Paper architecture](papers/order-to-role/PAPER_MAP.md)** · **[Transfer and generality](papers/order-to-role/TRANSFER.md)** · **[Validation status](papers/order-to-role/EVIDENCE.md)**
 
-**Current external research links:** [Code and stimulus branch](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/tree/order-to-role/stimuli) · [Development and test0 results branch](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/tree/25c6914e29473e4b1a1063600c48743f68b705c3/results) · [November review package](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/blob/9c437928f61351a72e8d7be4cac6d3a964844a7e/docs/order_to_role/review_2026-11/README.md)
+**Where the work lives on `main`:** [OTR scripts](scripts/) · [Stimulus generators](src/relational_lab/experiments/) · [Frozen protocols](docs/order_to_role/FREEZE.md) · [Curated results](papers/order-to-role/results/) · [November review package](docs/order_to_role/review_2026-11/README.md) · [Results-branch snapshot (provenance)](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/tree/25c6914e29473e4b1a1063600c48743f68b705c3/results)
 
 ---
 
