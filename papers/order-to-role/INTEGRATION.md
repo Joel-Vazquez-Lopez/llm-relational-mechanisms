@@ -2,7 +2,7 @@
 
 # Integration of Paper II into `main`
 
-An audit of every branch that holds Order-to-Role material, against `main` at `b170ac8` (after PR #11, and after Paper I's PRs #13 and #16, which touch only `papers/learning-relations/`). It also sets out the plan to develop future work from a unified `main`. This page implements **Phase C** (OTR code) and the Paper II part of **Phase D** (results stewardship) of the [shared integration plan](../../docs/INTEGRATION_PLAN.md). Paper I and the shared entrance are out of scope.
+**Current state (28 November 2026):** Paper II code, raw tracked outputs, curated analyses, supplementary materials and OTR-12 knockout summaries are on `main` (PRs #19, #20, #21, #25 and #26). The original branch audit below was conducted against `main` at `b170ac8`; its counts of files *then missing* are a historical snapshot, not the current status. `order-to-role/results-dev` remains for pinned-commit provenance and pending external archival/licence decisions. This page documents the implementation of **Phase C** and the Paper II part of **Phase D** of the [shared integration plan](../../docs/INTEGRATION_PLAN.md). Paper I is outside its scope.
 
 ## 1. Branch audit (27 November 2026)
 
@@ -56,7 +56,7 @@ Only files under `papers/order-to-role/supplementary/` change (plus one navigati
 | `src/relational_lab/instrumentation/hf_scoring.py`, `patching.py` (+ new `chat.py`) | Shared package | Approved; no conflicting Paper I changes. Additive, backward-compatible defaults; on `main` only OTR code and their own tests import them; Paper I is unaffected |
 | `ORDER_TO_ROLE_HANDOFF.md` at the root | Would change the shared entrance | Moved into `docs/order_to_role/` |
 | `STUDIES.md` (shared guide) | It says test0 scoring "is not asserted" and calls FREEZE.md §6 a dry run only | Not edited by Paper II. Suggested replacement sentence: *"English test0 was scored with the frozen scorer: 37 of 38 checks pass (phi-4 C5 fails a control); BX 15/15; Spanish 29/30; Galician 30/30 (evidence ledger: `papers/order-to-role/EVIDENCE.md`)."* |
-| `papers/MAP.md`, `docs/INTEGRATION_PLAN.md` | Mention OTR code as branch-only | Update after PR B merges (coordinating chat) |
+| `papers/MAP.md`, `docs/INTEGRATION_PLAN.md` | Previously described OTR code and results as branch-only | **Done in this documentation PR**: updated to canonical `main` paths and completed-phase status |
 
 ## 3. Results stewardship
 
@@ -82,6 +82,7 @@ Only files under `papers/order-to-role/supplementary/` change (plus one navigati
 | PR #19 code integration (merge commit) | Merged as `8c095fb` (head `0b323da`) |
 | PR #20 research section | Merged as `e1b503a` (head `c8819a7`) |
 | PR #21 supplementary materials | Merged as `dde717d` (head `49e2b91`) |
-| Results consolidation (`paper2/results-consolidation`) | Ready for review |
+| PR #25 raw results consolidation (`paper2/results-consolidation`) | Merged as `08eae12` (head `b99340f`) |
 | Archive deposit (Zenodo or a GitHub release) | Package built and verified locally; deposit awaits the licence decision |
-| Shared navigation, repository map, integration plan, branch retirement | Coordinating chat |
+| PR #26 OTR-12 knockout/steering supplement | Merged as `f8fda8a` (head `aacedd5`) |
+| Shared navigation, repository map and integration plan | Updated in this documentation PR; branch retirement remains separate owner decision |
