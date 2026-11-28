@@ -2,7 +2,7 @@
 
 # Repository map and research ownership
 
-The repository has **two paper-facing paths** under `papers/` and one shared technical codebase. This is a navigation layer: canonical scripts, protected protocols and existing result paths are not moved by this documentation change.
+The repository has **two paper-facing paths** under `papers/` and one shared technical codebase. This page records where each kind of file lives on `main` as of 28 November 2026. Canonical scripts, protected protocols and result paths are never moved for the sake of tidiness; this map explains the existing layout instead.
 
 | Entry point | Purpose |
 |:--|:--|
@@ -17,28 +17,32 @@ The repository has **two paper-facing paths** under `papers/` and one shared tec
 
 ## Where files actually live
 
-| Canonical path | Responsibility / note |
-|:--|:--|
-| `paper/` | Scratch manuscript and historical ML/EXP plus newer branch-specific protocols; preserve frozen paths |
-| `scripts/ml*.py`, `scripts/exp*.py` | Existing experiment entrypoints; **prefix alone does not decide paper ownership** |
-| `scripts/otr*.py` | Order-to-Role entrypoints: current versions on the [stimuli branch](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/tree/9c437928f61351a72e8d7be4cac6d3a964844a7e/scripts); earlier OTR-01/02 versions on `main` |
-| `src/relational_lab/` | Shared package and instrumentation; OTR implementations live on its code branch |
-| `investigations/` | Historical track-level overviews and indexes |
-| `reports/` | Archived experiments, protocols, evidence and analysis summaries |
-| `results/` | Local/gitignored outputs plus tracked historical outputs; PR #12 imported an earlier OTR results snapshot into `main`, with newer runs on the results branch |
-| `docs/` | Shared reproducibility policies; OTR review figures currently on the stimuli branch |
-| `tests/` | Root tests and branch-specific OTR tests |
+| Path | What it holds | Paper |
+|:--|:--|:--|
+| `papers/learning-relations/` | Paper I hub: reading guide, results, methods, mechanisms, evidence, experiment index, reproducibility, supplementary | I |
+| `papers/order-to-role/` | Paper II hub: reading guide, evidence scorecards, experiments, layers, interventions, transfer, reproducibility; **curated** `results/`, `supplementary/` and checksummed `archive/` | II |
+| `paper/` (singular) | Paper I working manuscript (`manuscript.md`) and historical ML/EXP/SLOG protocols. *Not the same as `papers/`.* | I |
+| `docs/order_to_role/` | Paper II freeze and large-model protocols (FREEZE.md, FREEZE_XL.md, BIG_MODELS.md), input checksums, test0 attempt log, review package, state snapshots and figures. *Underscore name kept for path stability; the hub is `papers/order-to-role/`.* | II |
+| `docs/` (other files) | Shared standards: evidence policy, provenance, workflow, research charter and log, experiment template, integration plan | Shared |
+| `scripts/ml*.py`, `scripts/exp*.py` | Historical and Paper I experiment entrypoints. **A filename prefix does not decide paper ownership.** | I / history |
+| `scripts/otr*.py` | Paper II entrypoints OTR-01 through OTR-15, plus battery, freeze scorer, generation checks and rescoring | II |
+| `scripts/slurm/` | Cluster job scripts | Shared |
+| `src/relational_lab/` | Shared package. `experiments/` contains Paper II stimulus generators and adapters (order-role, BX, XL, UD, WIKI-ROLES, Swedish) alongside shared instrumentation. | Shared |
+| `tests/` | Unit tests, including the 13 OTR/order-role test files | Shared |
+| `results/` | **Raw** run outputs (JSON, PNG, Slurm logs), flat, about 851 MiB of tracked files, mixing historical `ml*` and Paper II `otr*` runs. Cite curated tables in the paper hubs, not these files directly. Four Wikipedia-derived data files are deliberately not tracked. | Raw |
+| `reports/` | Archived per-experiment reports, protocols and analysis summaries (mostly ML-series and Paper I) | I / history |
+| `investigations/` | Historical chronology and the complete ML-series index | History |
 
-## Current branches and integration boundaries
+## Branches and integration boundaries
 
-| Source | Intended treatment |
-|:--|:--|
-| `main` | Public navigation and established canonical material |
-| [`experiments/exp102-clean-design`](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/tree/experiments/exp102-clean-design) | Review post-merge EXP-109–116 and PHASE2 additions independently |
-| [Scratch study branches](learning-relations/EXPERIMENTS.md) | Fifteen current surface/diversity/recovery/mechanism/repair/origins studies plus position controls; pinned snapshots; no scientific branch merge in PR #11 |
-| [`order-to-role/stimuli`](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/tree/order-to-role/stimuli) | Integrate OTR implementations, lightweight tests and documentation selectively |
-| [`order-to-role/results-dev`](https://github.com/Joel-Vazquez-Lopez/llm-relational-mechanisms/tree/order-to-role/results-dev) | Preserve development and test0 results for provenance; audit PR #12's existing snapshot and avoid bulk-importing more outputs |
-| Other historical branches | Inspect whether they contain unique work before closing or archiving |
+| Source | Status | Treatment |
+|:--|:--|:--|
+| `main` | Canonical | Paper II code, protocols, tracked raw and curated results; Paper I manuscript and established studies |
+| `order-to-role/stimuli` | **Merged into `main`** | Historical. Keep pinned links to `9c437928` for provenance; no new work here. |
+| `order-to-role/results-dev` | Files imported into `main`; branch retained | **Keep:** pinned links to `25c6914e` depend on it. Read-only provenance; the four Wikipedia text files remain excluded from Git. |
+| `experiments/exp102-clean-design` | Not merged | Paper I EXP-109–116 and PHASE2; review against its protocols before integrating |
+| [Paper I study branches](learning-relations/EXPERIMENTS.md) | Mostly not merged | See the Paper I experiment index and [branch disposition](learning-relations/BRANCH_DISPOSITION.md) |
+| Other branches | Mixed | Many are merged or superseded; see the integration plan. No branch deletion without archival review. |
 
 Use the [integration plan](../docs/INTEGRATION_PLAN.md) for sequencing and preservation checks.
 
@@ -51,7 +55,7 @@ ROLE-LEARNING-ORIGINS-v0 is ongoing locally. Preserve its active worktree, jobs,
 1. Do not change frozen script bytes, paths, evaluation splits or protocol hashes merely to make folders look symmetrical.
 2. Keep manuscript claims separate from exploratory observations, selected interventions and independent replications.
 3. Record model revisions, generator versions, seed and split provenance, scoring rules and rights status when publishing results.
-4. Keep branch-only files explicitly labeled until code and reports are actually integrated.
+4. Label any file that exists only on a branch. Once it is merged, link to the `main` path and keep a pinned-commit link only where provenance needs it.
 5. Do not automatically assign historical `ML-` studies to either paper based on a filename prefix.
 
 **Documentation map, not a certification that all archived results are reproducible from `main`.**
