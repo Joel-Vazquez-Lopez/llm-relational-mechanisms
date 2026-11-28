@@ -15,8 +15,8 @@ Everything is on `main`.
 | What | Where |
 |:--|:--|
 | OTR scripts, generators, frozen protocols, scorer, tests | `scripts/`, `src/relational_lab/`, `docs/order_to_role/`, `tests/`. Merged from `order-to-role/stimuli` @ `9c43792` with its history (PR #19); byte-identical to that snapshot apart from the relocated handoff note |
-| Development, test0 and 70B result files | `results/`. PR #12 brought the outputs up to 21 November; the results-consolidation PR brings the rest from `order-to-role/results-dev` @ `25c6914`, except four files of Wikipedia text |
-| The complete results-dev record, Wikipedia item sets included | The archive described in [`archive/README.md`](archive/README.md): inventory, SHA-256 checksums and a deterministic builder |
+| Development, test0 and 70B result files | `results/`. PR #12 brought the outputs up to 21 November, and PR #25 imported the remaining authors' outputs from `order-to-role/results-dev` @ `25c6914`, except four files of Wikipedia text |
+| The complete results-dev record, Wikipedia item sets included | The inventory and verified archive-building instructions in [`archive/README.md`](archive/README.md), including the four excluded Wikipedia files; external deposit remains pending |
 | This section's tables, figures and scorer output | `papers/order-to-role/results/` and `papers/order-to-role/supplementary/` |
 
 The pinned links to `9c43792` throughout these pages stay valid, and every linked file is byte-identical on `main`.
